@@ -39,6 +39,28 @@
     "output_tokens": null,
     "notes": "Placeholder device result format. Not a real benchmark result."
   },
+  "suite_b_measurement": {
+    "prompt_token_band": "demo-placeholder",
+    "output_token_band": "demo-placeholder",
+    "warmup_procedure": "Demo placeholder only. No real warm-up was performed.",
+    "measurement_procedure": "Demo placeholder only. No real measurement was performed.",
+    "measured_run_count": null,
+    "aggregation_method": "median",
+    "cold_or_warm_start_state": "unknown",
+    "timing_boundaries": "Demo placeholder only. No real timing boundaries were used.",
+    "failed_or_interrupted_run_handling": "Demo placeholder only. No real runs were attempted.",
+    "per_run_metrics": [
+      {
+        "run_index": null,
+        "ttft_ms": null,
+        "prefill_tokens_per_second": null,
+        "decode_tokens_per_second": null,
+        "peak_memory_mb": null,
+        "thermal_state": null,
+        "notes": "Demo placeholder only. No real per-run metrics."
+      }
+    ]
+  },
   "output": {
     "raw_output_path": null,
     "summary": "Placeholder only.",

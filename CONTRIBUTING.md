@@ -61,6 +61,8 @@ Every result must include:
 
 Submitted results must include enough reproducibility metadata for independent review. If a field is not applicable, use `null` instead of omitting required fields.
 
+For Suite B result submissions, include prompt token band, output token band, warm-up procedure, measurement procedure, measured run count, aggregation method, cold or warm start state, timing boundaries, failed or interrupted run handling, and per-run metrics when available.
+
 Demo or placeholder data must be clearly marked and must not be used for official leaderboard results.
 
 ## Data Integrity

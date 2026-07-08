@@ -39,6 +39,28 @@
     "output_tokens": null,
     "notes": ""
   },
+  "suite_b_measurement": {
+    "prompt_token_band": "",
+    "output_token_band": "",
+    "warmup_procedure": "",
+    "measurement_procedure": "",
+    "measured_run_count": null,
+    "aggregation_method": "median",
+    "cold_or_warm_start_state": "",
+    "timing_boundaries": "",
+    "failed_or_interrupted_run_handling": "",
+    "per_run_metrics": [
+      {
+        "run_index": null,
+        "ttft_ms": null,
+        "prefill_tokens_per_second": null,
+        "decode_tokens_per_second": null,
+        "peak_memory_mb": null,
+        "thermal_state": null,
+        "notes": ""
+      }
+    ]
+  },
   "output": {
     "raw_output_path": null,
     "summary": "",
