@@ -37,6 +37,8 @@ Typical scoring:
 
 Suite B evaluates local model performance on Apple devices.
 
+Suite B is the first prioritized suite for Benchmark Framework v1 task design. Initial Suite B work should focus on durable measurement protocols, not benchmark runners or official rankings.
+
 Example metrics:
 
 - TTFT

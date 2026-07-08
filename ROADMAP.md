@@ -19,7 +19,9 @@
 
 ## Next
 
-- Add reviewed benchmark tasks for each suite.
+- Prioritize Suite B draft measurement protocols for on-device performance.
+- Refine Suite B reproducibility requirements before activating official results.
+- Add reviewed benchmark tasks for the remaining suites after Suite B conventions stabilize.
 - Define reviewer calibration guidance.
 - Expand model and device metadata schemas.
 - Improve leaderboard generation for separate suite-level results.

@@ -40,6 +40,8 @@ iOS-LLM-Leaderboard is organized into five independent suites. Each suite may pr
 
 Suite boundaries are intentional. Swift code generation tasks, app feature intelligence tasks, Xcode workflow tasks, runtime measurements, and on-device performance results should remain separate unless a future methodology explicitly defines an aggregate view.
 
+Suite B is the first prioritized benchmark suite. Its initial draft protocols define measurement requirements for TTFT, decode throughput, prefill throughput, peak memory, and thermal stability, but they do not include official measurements or rankings.
+
 ## Benchmark Framework
 
 Benchmark Framework v1 defines how tasks, results, validation rules, and suite-level documentation should be written.
