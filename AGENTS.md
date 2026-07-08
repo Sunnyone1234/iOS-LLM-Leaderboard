@@ -70,6 +70,20 @@ Keep this separation consistent.
 
 ---
 
+# Suite Organization
+
+All benchmark tasks and methodology must be organized under the correct suite:
+
+- Suite A: Swift Code Generation
+- Suite B: On-device Performance
+- Suite C: Xcode Integration
+- Suite D: App Feature Intelligence
+- Suite E: Runtime Evaluation
+
+Do not mix Swift code generation tasks, app feature intelligence tasks, Xcode workflow tasks, runtime measurements, and on-device performance results.
+
+---
+
 # Benchmark Philosophy
 
 Every benchmark should be:

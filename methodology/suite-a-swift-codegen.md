@@ -1,6 +1,8 @@
-# Swift Code Generation Methodology
+# Suite A: Swift Code Generation Methodology
 
-Swift code generation tasks evaluate whether a model can produce correct, maintainable code for real iOS development workflows.
+Suite A evaluates whether a model can produce correct, maintainable Swift and SwiftUI code for real iOS development workflows.
+
+This suite is independent from Suite C. Suite A focuses on generated code quality rather than editor integration behavior.
 
 ## Evaluation Focus
 
@@ -13,7 +15,7 @@ Swift code generation tasks evaluate whether a model can produce correct, mainta
 
 ## Rubric
 
-Use the Swift Codegen Score from [scoring.md](scoring.md):
+Use the Suite A Swift Code Generation Score from [scoring.md](scoring.md):
 
 - Compile success: 30%
 - Functional correctness: 30%
@@ -32,3 +34,7 @@ Reviewers should record:
 - manual fixes required, if any
 
 Generated code should not receive full credit if it only works after substantial reviewer repair.
+
+## Suite Boundary
+
+Tasks that primarily measure completion, inline fixes, or refactoring inside an editor workflow belong in Suite C.

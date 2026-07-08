@@ -17,7 +17,7 @@ Create a small Swift example with a protocol-based network client and XCTest tes
 
 ## Scoring Rubric
 
-Use the Swift Codegen Score in `methodology/scoring.md`.
+Use the Suite A Swift Code Generation Score in `methodology/scoring.md`.
 
 ## Notes for Reviewers
 

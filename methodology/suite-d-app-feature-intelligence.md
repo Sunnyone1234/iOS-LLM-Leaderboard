@@ -1,6 +1,6 @@
-# App Feature Task Methodology
+# Suite D: App Feature Intelligence Methodology
 
-App feature tasks evaluate model usefulness inside real iOS product features.
+Suite D evaluates model usefulness inside real iOS product features.
 
 Examples include natural-language extraction, summarization, translation, safety-aware roleplay, and App Store review response drafting.
 
@@ -18,3 +18,7 @@ Examples include natural-language extraction, summarization, translation, safety
 Reviewers should document prompt versions, model settings, input examples, and expected output schema.
 
 Safety-sensitive tasks should include explicit expected refusal or redirection behavior.
+
+## Suite Boundary
+
+Tasks that evaluate product-facing intelligence behavior belong in Suite D. Tasks that primarily evaluate Swift or SwiftUI code generation belong in Suite A.

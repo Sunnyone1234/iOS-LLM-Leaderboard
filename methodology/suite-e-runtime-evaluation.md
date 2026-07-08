@@ -1,6 +1,8 @@
-# Runtime Comparison Methodology
+# Suite E: Runtime Evaluation Methodology
 
-Runtime comparison tracks how local and Apple-platform inference runtimes differ for iOS developers.
+Suite E tracks how local and Apple-platform inference runtimes differ for iOS developers.
+
+This suite is independent from Suite B. Suite E focuses on runtime characteristics, integration tradeoffs, and comparable runtime reporting.
 
 No benchmark numbers are defined in this MVP.
 
@@ -28,3 +30,7 @@ No benchmark numbers are defined in this MVP.
 ## Reporting
 
 Runtime reports should include device metadata, model metadata, runtime version, build settings, and measurement method.
+
+## Suite Boundary
+
+Device-specific local performance submissions belong in Suite B. Cross-runtime comparison and runtime integration evaluation belong in Suite E.

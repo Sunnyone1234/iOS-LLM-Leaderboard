@@ -17,7 +17,7 @@ Write Swift code for loading subscription products, starting a purchase, and che
 
 ## Scoring Rubric
 
-Use the Swift Codegen Score in `methodology/scoring.md`.
+Use the Suite A Swift Code Generation Score in `methodology/scoring.md`.
 
 ## Notes for Reviewers
 

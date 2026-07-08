@@ -3,18 +3,18 @@
 ## MVP
 
 - Establish repository structure.
-- Document scoring methodology.
-- Define initial benchmark task formats.
+- Document suite-specific scoring methodology.
+- Define initial benchmark task formats under the five-suite structure.
 - Provide JSON result templates.
 - Provide contributor submission guides.
 - Add simple validation and leaderboard generation scripts.
 
 ## Next
 
-- Add reviewed benchmark tasks for Swift, SwiftUI, and app feature workflows.
+- Add reviewed benchmark tasks for each suite.
 - Define reviewer calibration guidance.
 - Expand model and device metadata schemas.
-- Improve leaderboard generation from structured results.
+- Improve leaderboard generation for separate suite-level results.
 - Add example iOS integration projects.
 
 ## Later

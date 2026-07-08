@@ -17,7 +17,7 @@ Create a SwiftUI view that displays a list of editable items and supports deleti
 
 ## Scoring Rubric
 
-Use the Swift Codegen Score in `methodology/scoring.md`.
+Use the Suite A Swift Code Generation Score in `methodology/scoring.md`.
 
 ## Notes for Reviewers
 

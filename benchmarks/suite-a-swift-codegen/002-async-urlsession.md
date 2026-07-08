@@ -17,7 +17,7 @@ Write Swift code that fetches and decodes JSON from a URL using `URLSession` and
 
 ## Scoring Rubric
 
-Use the Swift Codegen Score in `methodology/scoring.md`.
+Use the Suite A Swift Code Generation Score in `methodology/scoring.md`.
 
 ## Notes for Reviewers
 

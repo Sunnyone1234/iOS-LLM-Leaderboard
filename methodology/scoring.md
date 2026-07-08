@@ -1,6 +1,6 @@
 # Scoring Methodology
 
-This document defines the initial scoring model for iOS-LLM-Leaderboard. Scores are intended to be transparent, reviewable, and reproducible.
+This document defines the initial scoring model for iOS-LLM-Leaderboard. Scores are intended to be transparent, reviewable, and reproducible across the five independent benchmark suites.
 
 No official benchmark results exist yet.
 
@@ -13,7 +13,7 @@ Unless a task defines otherwise, scores should use a 0 to 100 scale.
 - `80`: useful with minor issues
 - `100`: excellent and production-ready for the stated task
 
-## Swift Codegen Score
+## Suite A: Swift Code Generation Score
 
 Swift and SwiftUI code generation tasks use this weighted rubric:
 
@@ -25,20 +25,7 @@ Swift and SwiftUI code generation tasks use this weighted rubric:
 | Modern Apple API usage | 10% |
 | Readability and architecture | 10% |
 
-## App Feature Score
-
-App feature tasks evaluate whether a model can support realistic product features in an iOS app.
-
-Recommended dimensions:
-
-- Task accuracy
-- Structured output quality
-- Robustness across edge cases
-- Cost and latency awareness
-- Safety and refusal behavior where appropriate
-- Integration suitability for iOS apps
-
-## On-device Performance Score
+## Suite B: On-device Performance Score
 
 On-device scores should not be aggregated until enough device and runtime data exists. Early submissions should report raw measurements with device metadata.
 
@@ -50,6 +37,48 @@ Metrics include:
 - thermal behavior
 - battery or energy observations
 - runtime and quantization details
+
+## Suite C: Xcode Integration Score
+
+Xcode integration tasks evaluate usefulness inside editor workflows.
+
+Recommended dimensions:
+
+- completion or edit relevance
+- compile correctness
+- edit minimality
+- preservation of surrounding project style
+- explanation quality when requested
+- workflow usefulness
+
+## Suite D: App Feature Intelligence Score
+
+App feature tasks evaluate whether a model can support realistic product features in an iOS app.
+
+Recommended dimensions:
+
+- Task accuracy
+- Structured output quality
+- Robustness across edge cases
+- Cost and latency awareness
+- Safety and refusal behavior where appropriate
+- integration suitability for iOS apps
+
+## Suite E: Runtime Evaluation Score
+
+Runtime evaluation should report raw measurements and qualitative integration notes until a suite-specific scoring model is defined.
+
+Recommended dimensions:
+
+- supported model formats
+- iOS support maturity
+- Apple Silicon support
+- quantization support
+- memory profile
+- first token latency
+- tokens per second
+- integration complexity
+- licensing and redistribution considerations
 
 ## Privacy and Compliance Score
 
@@ -67,3 +96,5 @@ Review dimensions include:
 ## Reviewer Notes
 
 Reviewers should record assumptions, test environment, model version, date, and any deviations from the task instructions.
+
+Suite scores should remain independent unless a future methodology explicitly defines an aggregate score.

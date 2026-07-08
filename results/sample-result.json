@@ -3,7 +3,7 @@
   "placeholder": true,
   "model_name": "DemoModel-A",
   "provider": "Demo Provider",
-  "task_id": "benchmarks/swift-codegen/001-swiftui-list-delete.md",
+  "task_id": "benchmarks/suite-a-swift-codegen/001-swiftui-list-delete.md",
   "score": 0,
   "evaluator": "Demo Evaluator",
   "date": "2026-07-08",

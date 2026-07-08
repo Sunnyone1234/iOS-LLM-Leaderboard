@@ -17,7 +17,7 @@ Create a minimal SwiftUI and SwiftData example that can create, display, update,
 
 ## Scoring Rubric
 
-Use the Swift Codegen Score in `methodology/scoring.md`.
+Use the Suite A Swift Code Generation Score in `methodology/scoring.md`.
 
 ## Notes for Reviewers
 

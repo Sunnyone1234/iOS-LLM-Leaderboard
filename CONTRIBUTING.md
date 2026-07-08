@@ -28,6 +28,16 @@ Every benchmark task should include:
 - Scoring rubric
 - Notes for reviewers
 
+Place every task in the correct suite directory:
+
+- `benchmarks/suite-a-swift-codegen/`
+- `benchmarks/suite-b-on-device-performance/`
+- `benchmarks/suite-c-xcode-integration/`
+- `benchmarks/suite-d-app-feature-intelligence/`
+- `benchmarks/suite-e-runtime-evaluation/`
+
+Do not mix Swift code generation tasks, app feature intelligence tasks, Xcode workflow tasks, runtime measurements, and on-device performance results.
+
 Do not add tasks that depend on private data, undisclosed model access, or unverifiable scoring.
 
 ## Result Contributions
@@ -51,6 +61,7 @@ Do not invent benchmark results, rankings, device measurements, or performance n
 ## Pull Request Checklist
 
 - Documentation is updated.
+- New or moved benchmark content is in the correct suite.
 - Placeholder data is clearly labeled.
 - JSON files validate with `python3 scripts/validate_result.py <file>`.
 - Generated leaderboard changes are intentional.
