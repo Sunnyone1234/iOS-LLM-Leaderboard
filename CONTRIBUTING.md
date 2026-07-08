@@ -43,7 +43,7 @@ Place every task in the correct suite directory:
 
 Do not mix Swift code generation tasks, app feature intelligence tasks, Xcode workflow tasks, runtime measurements, and on-device performance results.
 
-Suite B is currently the first prioritized suite. Suite B task contributions should focus on measurement protocol clarity and must record device, runtime, model, quantization, OS version, prompt length, output length, warm-up procedure, and measurement procedure.
+For Suite B contributions, measurement protocols and results must record device, runtime, model, quantization, OS version, prompt length, output length, warm-up procedure, and measurement procedure.
 
 Do not add tasks that depend on private data, undisclosed model access, or unverifiable scoring.
 
