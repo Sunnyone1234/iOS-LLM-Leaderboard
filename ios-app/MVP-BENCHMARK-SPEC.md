@@ -6,6 +6,30 @@ This document freezes the first harness pilot closely enough to implement and
 test the runner. It is not an official benchmark release. Results produced by
 this pilot are not eligible for an official leaderboard.
 
+### Measurement Foundation Phase 1 Closure
+
+The measurement-foundation phase was accepted on 2026-07-11. The accepted
+baseline separates model preparation from performance measurement and has
+been exercised on a physical iPhone with a locally retained 0.5 result bundle.
+That private device result passed the repository validator and was not added
+to the repository.
+
+The closure covers:
+
+- revision-specific cache verification before model loading;
+- a mandatory process restart after any download;
+- a local-only preparation pass before measurement admission;
+- plan-driven model, prompt, runtime, generation, and run-count identity;
+- one warm-up followed by five independent measured attempts;
+- raw token-event, environment, preparation, eligibility, and summary evidence;
+- recalculation and validation of supported metrics from the raw bundle; and
+- backward-compatible validation of the earlier pilot bundle versions.
+
+This closure does not make the pilot official and does not freeze a user
+experience workload. `b-ux-001-short-interaction`, user-visible TTFT, further
+pipeline profiles, community submission, and leaderboard presentation remain
+later work.
+
 The machine-readable plan is
 `ios-app/benchmark-plans/suite-b-pilot-001.json`.
 
