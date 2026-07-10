@@ -18,6 +18,29 @@ struct RuntimeGenerationResult: Codable, Sendable, Equatable {
     let stopReason: StopReason
     let promptTimeSeconds: Double?
     let generateTimeSeconds: Double?
+    let userVisibleTTFTNanoseconds: UInt64?
+    let requestCompletionNanoseconds: UInt64?
+    let generatedText: String?
+
+    init(
+        promptTokenCount: Int,
+        outputTokenCount: Int,
+        stopReason: StopReason,
+        promptTimeSeconds: Double?,
+        generateTimeSeconds: Double?,
+        userVisibleTTFTNanoseconds: UInt64? = nil,
+        requestCompletionNanoseconds: UInt64? = nil,
+        generatedText: String? = nil
+    ) {
+        self.promptTokenCount = promptTokenCount
+        self.outputTokenCount = outputTokenCount
+        self.stopReason = stopReason
+        self.promptTimeSeconds = promptTimeSeconds
+        self.generateTimeSeconds = generateTimeSeconds
+        self.userVisibleTTFTNanoseconds = userVisibleTTFTNanoseconds
+        self.requestCompletionNanoseconds = requestCompletionNanoseconds
+        self.generatedText = generatedText
+    }
 }
 
 protocol LanguageModelRuntime: Sendable {

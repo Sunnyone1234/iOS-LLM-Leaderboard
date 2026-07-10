@@ -179,6 +179,7 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
         }
 
         let clock = ContinuousClock()
+        let requestStart = clock.now
         let parameters = GenerateParameters(
             maxTokens: outputTokenLimit,
             temperature: Float(preparedPlan.generation.temperature),
@@ -190,7 +191,13 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
 
         let (stream, task, generationStart) = try await modelContainer.perform { context in
             let input = try await context.processor.prepare(
-                input: UserInput(prompt: prompt)
+                input: UserInput(
+                    prompt: prompt,
+                    additionalContext: preparedPlan.generation.thinkingMode
+                        == "disabled-via-chat-template"
+                        ? ["enable_thinking": false]
+                        : nil
+                )
             )
             let generationStart = clock.now
             let (stream, task) = try generateTokensTask(
@@ -203,12 +210,26 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
         }
 
         var tokenIndex = 0
+        var tokenIDs: [Int] = []
+        var userVisibleTTFTNanoseconds: UInt64?
         var completionInfo: GenerateCompletionInfo?
+        let tokenizer = await modelContainer.tokenizer
 
         for await event in stream {
             switch event {
             case .token(let tokenID):
                 let elapsed = generationStart.duration(to: clock.now)
+                tokenIDs.append(tokenID)
+                if userVisibleTTFTNanoseconds == nil {
+                    let decoded = tokenizer.decode(
+                        tokenIds: tokenIDs,
+                        skipSpecialTokens: true
+                    )
+                    if !decoded.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        userVisibleTTFTNanoseconds = requestStart.duration(to: clock.now)
+                            .nanoseconds
+                    }
+                }
                 await onToken(
                     RuntimeToken(
                         index: tokenIndex,
@@ -232,7 +253,16 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
             outputTokenCount: completionInfo.generationTokenCount,
             stopReason: completionInfo.stopReason.runtimeStopReason,
             promptTimeSeconds: completionInfo.promptTime,
-            generateTimeSeconds: completionInfo.generateTime
+            generateTimeSeconds: completionInfo.generateTime,
+            userVisibleTTFTNanoseconds: preparedPlan.measurementMode
+                .userVisibleTtftAvailable ? userVisibleTTFTNanoseconds : nil,
+            requestCompletionNanoseconds: preparedPlan.measurementMode
+                .userVisibleTtftAvailable
+                ? requestStart.duration(to: clock.now).nanoseconds
+                : nil,
+            generatedText: preparedPlan.measurementMode.userVisibleTtftAvailable
+                ? tokenizer.decode(tokenIds: tokenIDs, skipSpecialTokens: true)
+                : nil
         )
     }
 }

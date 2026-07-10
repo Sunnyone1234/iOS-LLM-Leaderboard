@@ -139,13 +139,17 @@ final class BenchmarkRunnerTests: XCTestCase {
                     outputTokenCount: 3,
                     stopReason: .endOfSequence,
                     promptTimeSeconds: 0.5,
-                    generateTimeSeconds: 0.15
+                    generateTimeSeconds: 0.15,
+                    userVisibleTTFTNanoseconds: 125_000_000,
+                    requestCompletionNanoseconds: 275_000_000
                 )
             )
         )
 
         let metrics = AttemptMetrics.calculate(for: attempt)
         XCTAssertEqual(metrics.ttftMilliseconds, 100)
+        XCTAssertEqual(metrics.userVisibleTTFTMilliseconds, 125)
+        XCTAssertEqual(metrics.requestCompletionMilliseconds, 275)
         XCTAssertEqual(metrics.prefillTokensPerSecond, 400)
         XCTAssertNotNil(metrics.decodeTokensPerSecond)
         XCTAssertEqual(

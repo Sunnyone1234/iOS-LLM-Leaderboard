@@ -173,6 +173,57 @@ struct RunBenchmarkView: View {
                     }
                 }
 
+                if let summary = viewModel.uxValidationSummary {
+                    Section("B-UX-001 Candidate · Median") {
+                        LabeledContent(
+                            "Model input tokens",
+                            value: summary.promptTokenCount.map(String.init) ?? "Unavailable"
+                        )
+                        LabeledContent(
+                            "Pipeline TTFT",
+                            value: viewModel.metricText(
+                                summary.medianPipelineTTFTMilliseconds,
+                                unit: "ms"
+                            )
+                        )
+                        LabeledContent(
+                            "User-visible TTFT",
+                            value: viewModel.metricText(
+                                summary.medianUserVisibleTTFTMilliseconds,
+                                unit: "ms"
+                            )
+                        )
+                        LabeledContent(
+                            "Request completion",
+                            value: viewModel.metricText(
+                                summary.medianRequestCompletionMilliseconds,
+                                unit: "ms"
+                            )
+                        )
+                        LabeledContent(
+                            "Output tokens",
+                            value: summary.outputTokenCount.map(String.init) ?? "Unavailable"
+                        )
+                        LabeledContent("Stop reason", value: summary.stopReason ?? "Unavailable")
+                        if let output = summary.sampleOutput {
+                            DisclosureGroup("Sample visible output") {
+                                Text(output)
+                                    .textSelection(.enabled)
+                            }
+                        }
+                    }
+
+                    Section("Measured UX Runs") {
+                        ForEach(Array(summary.measuredMetrics.enumerated()), id: \.offset) { index, metrics in
+                            DisclosureGroup("Run \(index + 1)") {
+                                LabeledContent("Pipeline TTFT", value: viewModel.metricText(metrics.ttftMilliseconds, unit: "ms"))
+                                LabeledContent("User-visible TTFT", value: viewModel.metricText(metrics.userVisibleTTFTMilliseconds, unit: "ms"))
+                                LabeledContent("Request completion", value: viewModel.metricText(metrics.requestCompletionMilliseconds, unit: "ms"))
+                            }
+                        }
+                    }
+                }
+
                 if !viewModel.measuredAttemptRecords.isEmpty {
                     Section("Measured Runs") {
                         ForEach(

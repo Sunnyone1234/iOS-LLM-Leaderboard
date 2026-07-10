@@ -4,6 +4,16 @@ import Observation
 @MainActor
 @Observable
 final class BenchmarkViewModel {
+    struct UXValidationSummary: Equatable {
+        let promptTokenCount: Int?
+        let medianPipelineTTFTMilliseconds: Double?
+        let medianUserVisibleTTFTMilliseconds: Double?
+        let medianRequestCompletionMilliseconds: Double?
+        let sampleOutput: String?
+        let outputTokenCount: Int?
+        let stopReason: String?
+        let measuredMetrics: [AttemptMetrics]
+    }
     enum PreparationPhase: Equatable {
         case notPrepared
         case preparing
@@ -25,6 +35,7 @@ final class BenchmarkViewModel {
     private(set) var modelPreparation: ModelPreparationEvidence?
     private(set) var result: PilotResultBundle?
     private(set) var resultFileURL: URL?
+    private(set) var uxValidationSummary: UXValidationSummary?
     private(set) var currentThermalState = SystemMeasurements.thermalState
     private(set) var debuggerAttached = DebuggerStatus.isAttached
     private(set) var lowPowerModeEnabled = ProcessInfo.processInfo.isLowPowerModeEnabled
@@ -177,6 +188,37 @@ final class BenchmarkViewModel {
                 if case .completed = attempt.outcome { return false }
                 return true
             }.count
+            if loadedPlan.plan.workload.category == "user-experience" {
+                let completed = session.measuredAttempts.compactMap { attempt -> (RuntimeGenerationResult, AttemptMetrics)? in
+                    guard case .completed(let generation) = attempt.outcome else { return nil }
+                    return (generation, AttemptMetrics.calculate(for: attempt))
+                }
+                uxValidationSummary = UXValidationSummary(
+                    promptTokenCount: completed.first?.0.promptTokenCount,
+                    medianPipelineTTFTMilliseconds: AttemptMetrics.median(
+                        completed.map { $0.1.ttftMilliseconds }
+                    ),
+                    medianUserVisibleTTFTMilliseconds: AttemptMetrics.median(
+                        completed.map { $0.1.userVisibleTTFTMilliseconds }
+                    ),
+                    medianRequestCompletionMilliseconds: AttemptMetrics.median(
+                        completed.map { $0.1.requestCompletionMilliseconds }
+                    ),
+                    sampleOutput: completed.first?.0.generatedText,
+                    outputTokenCount: completed.first?.0.outputTokenCount,
+                    stopReason: completed.first?.0.stopReason.rawValue,
+                    measuredMetrics: completed.map(\.1)
+                )
+                result = nil
+                resultFileURL = nil
+                currentThermalState = session.measuredAttempts.last?.thermalStateAfter
+                    ?? SystemMeasurements.thermalState
+                phase = .completed(
+                    measuredAttempts: session.measuredAttempts.count,
+                    failedAttempts: failures
+                )
+                return
+            }
             let bundle = PilotResultBundle.make(
                 session: session,
                 environment: sessionEnvironment,

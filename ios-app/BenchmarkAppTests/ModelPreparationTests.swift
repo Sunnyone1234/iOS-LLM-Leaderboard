@@ -113,8 +113,12 @@ final class ModelPreparationTests: XCTestCase {
 
     func testBundledPlanAndPromptLoadTogether() throws {
         let loaded = try PilotPlanLoader.load()
-        XCTAssertEqual(loaded.plan.planVersion, "0.3.0")
+        XCTAssertEqual(loaded.plan.planVersion, "0.2.0-candidate")
+        XCTAssertEqual(loaded.plan.workload.workloadId, "b-ux-001-short-interaction")
         XCTAssertFalse(loaded.prompt.isEmpty)
+
+        let pipeline = try PilotPlanLoader.load(resource: "suite-b-pilot-001")
+        XCTAssertEqual(pipeline.plan.planVersion, "0.3.0")
     }
 
     func testRuntimeIdentityMismatchStopsPreparation() {

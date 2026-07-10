@@ -113,9 +113,12 @@ enum PilotPlanLoader {
         }
     }
 
-    static func load(bundle: Bundle = .main) throws -> LoadedPilotPlan {
+    static func load(
+        resource: String = "b-ux-001-short-interaction",
+        bundle: Bundle = .main
+    ) throws -> LoadedPilotPlan {
         guard let planURL = bundle.url(
-            forResource: "suite-b-pilot-001",
+            forResource: resource,
             withExtension: "json"
         ) else {
             throw PlanError.planMissing
@@ -162,15 +165,16 @@ enum PilotPlanLoader {
                 "unexpected plan schema \(plan.planSchemaVersion)"
             )
         }
-        guard plan.planId == "suite-b-pilot-001" else {
-            throw PlanError.unsupportedPlan("unexpected plan ID \(plan.planId)")
-        }
-        guard plan.planVersion == "0.3.0" else {
-            throw PlanError.unsupportedPlan("unexpected plan version \(plan.planVersion)")
-        }
-        guard plan.workload.workloadId == "suite-b-pilot-001-fixed-generation" else {
+        let supported = [
+            ("suite-b-pilot-001", "0.3.0", "suite-b-pilot-001-fixed-generation"),
+            ("b-ux-001-validation", "0.2.0-candidate", "b-ux-001-short-interaction"),
+        ]
+        guard supported.contains(where: {
+            $0.0 == plan.planId && $0.1 == plan.planVersion
+                && $0.2 == plan.workload.workloadId
+        }) else {
             throw PlanError.unsupportedPlan(
-                "unexpected workload ID \(plan.workload.workloadId)"
+                "unexpected plan identity \(plan.planId)@\(plan.planVersion)"
             )
         }
     }

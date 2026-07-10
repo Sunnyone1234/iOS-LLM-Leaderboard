@@ -10,6 +10,7 @@ from scripts.validate_result import validate
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN_PATH = ROOT / "ios-app" / "benchmark-plans" / "suite-b-pilot-001.json"
+UX_PLAN_PATH = ROOT / "ios-app" / "benchmark-plans" / "b-ux-001-short-interaction.json"
 FIXTURE_PATH = (
     ROOT
     / "ios-app"
@@ -98,6 +99,32 @@ class BenchmarkAppPlanTests(unittest.TestCase):
         self.assertEqual(fixture["provenance"]["source"], "demo-placeholder")
         self.assertTrue(all(value is None for value in fixture["metrics"].values()))
         self.assertEqual(fixture["suite_b_measurement"]["per_run_metrics"], [])
+
+
+class ShortInteractionPlanTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.plan = load_json(UX_PLAN_PATH)
+
+    def test_candidate_identity_and_prompt_hash_are_frozen(self) -> None:
+        self.assertEqual(self.plan["plan_id"], "b-ux-001-validation")
+        self.assertEqual(self.plan["status"], "validation-candidate")
+        workload = self.plan["workload"]
+        prompt = ROOT / workload["prompt_path"]
+        self.assertEqual(
+            hashlib.sha256(prompt.read_bytes()).hexdigest(),
+            workload["prompt_sha256"],
+        )
+
+    def test_candidate_uses_visible_boundary_and_disables_thinking(self) -> None:
+        self.assertEqual(self.plan["workload"]["output_token_limit"], 128)
+        self.assertTrue(
+            self.plan["measurement_mode"]["user_visible_ttft_available"]
+        )
+        self.assertEqual(
+            self.plan["generation"]["thinking_mode"],
+            "disabled-via-chat-template",
+        )
+        self.assertFalse(self.plan["generation"]["sampling_enabled"])
 
 
 if __name__ == "__main__":

@@ -1,0 +1,71 @@
+{
+  "plan_schema_version": "0.3",
+  "plan_id": "b-ux-001-validation",
+  "plan_version": "0.2.0-candidate",
+  "status": "validation-candidate",
+  "model_profile": {
+    "display_name": "Qwen3 0.6B",
+    "base_model_id": "Qwen/Qwen3-0.6B",
+    "artifact_id": "mlx-community/Qwen3-0.6B-4bit",
+    "artifact_revision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+    "quantization": "4-bit",
+    "model_format": "MLX Safetensors",
+    "artifact_content_hash": null
+  },
+  "runtime_profile": {
+    "runtime_name": "MLX Swift LM",
+    "package_version": "3.31.4",
+    "package_revision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+    "mlx_swift_version": "0.31.6",
+    "mlx_swift_revision": "0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+    "backend": "MLX/Metal",
+    "downloader_package": "swift-huggingface 0.9.0",
+    "tokenizer_package": "swift-transformers 1.3.0"
+  },
+  "workload": {
+    "workload_id": "b-ux-001-short-interaction",
+    "workload_version": "0.2.0-candidate",
+    "v2_profile_mapping": "b-ux-001-short-interaction@0.2.0-candidate",
+    "category": "user-experience",
+    "prompt_path": "ios-app/workloads/b-ux-001-short-interaction-prompt.txt",
+    "prompt_sha256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84",
+    "output_token_limit": 128
+  },
+  "generation": {
+    "sampling_enabled": false,
+    "temperature": 0,
+    "top_p": 1,
+    "top_k": 0,
+    "seed": 0,
+    "repetition_penalty": null,
+    "thinking_mode": "disabled-via-chat-template",
+    "chat_template_identity": "artifact-tokenizer-config-enable-thinking-false",
+    "include_stop_token_in_raw_events": false,
+    "context_policy": "new-context-for-each-generation",
+    "model_load_policy": "load-once-before-warmup",
+    "kv_cache_policy": "new-cache-for-each-generation"
+  },
+  "measurement_mode": {
+    "measurement_mode_id": "b-mode-warm-resident-ux-v1",
+    "timing_boundary_version": "mlx-ux-visible-boundaries-1",
+    "pipeline_ttft_start": "after-chat-template-and-tokenization-immediately-before-generateTokensTask",
+    "pipeline_ttft_end": "first-raw-token-received-by-adapter",
+    "user_visible_ttft_available": true,
+    "prefill_source": "mlx-generate-completion-info-prompt-time",
+    "decode_formula": "(raw_token_count-1)/(last_raw_token_time-first_raw_token_time)",
+    "memory_metric": "TASK_VM_INFO.phys_footprint",
+    "memory_sampling_interval_milliseconds": 50
+  },
+  "procedure": {
+    "warmup_runs": 1,
+    "measured_runs": 5,
+    "minimum_successful_runs_for_summary": 3,
+    "rest_interval_seconds": 0
+  },
+  "environment_requirements": {
+    "release_build_required": true,
+    "debugger_detached_required": true,
+    "initial_thermal_state": "nominal",
+    "low_power_mode": "off"
+  }
+}

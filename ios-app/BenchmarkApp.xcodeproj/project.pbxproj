@@ -27,6 +27,8 @@
 		A10000000000000000000018 /* ModelPreparation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* ModelPreparation.swift */; };
 		A10000000000000000000019 /* benchmark-plans/suite-b-pilot-001.json in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* benchmark-plans/suite-b-pilot-001.json */; };
 		A10000000000000000000020 /* ModelPreparationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000022 /* ModelPreparationTests.swift */; };
+		A10000000000000000000021 /* workloads/b-ux-001-short-interaction-prompt.txt in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000023 /* workloads/b-ux-001-short-interaction-prompt.txt */; };
+		A10000000000000000000022 /* benchmark-plans/b-ux-001-short-interaction.json in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000024 /* benchmark-plans/b-ux-001-short-interaction.json */; };
 		C10000000000000000000001 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000001 /* MLXLLM */; };
 		C10000000000000000000002 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000002 /* MLXLMCommon */; };
 		C10000000000000000000004 /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000004 /* HuggingFace */; };
@@ -66,6 +68,8 @@
 		A20000000000000000000020 /* ModelPreparation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPreparation.swift; sourceTree = "<group>"; };
 		A20000000000000000000021 /* benchmark-plans/suite-b-pilot-001.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "benchmark-plans/suite-b-pilot-001.json"; sourceTree = SOURCE_ROOT; };
 		A20000000000000000000022 /* ModelPreparationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPreparationTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000023 /* workloads/b-ux-001-short-interaction-prompt.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "workloads/b-ux-001-short-interaction-prompt.txt"; sourceTree = SOURCE_ROOT; };
+		A20000000000000000000024 /* benchmark-plans/b-ux-001-short-interaction.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "benchmark-plans/b-ux-001-short-interaction.json"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +103,8 @@
 				A70000000000000000000004 /* Products */,
 				A20000000000000000000012 /* workloads/suite-b-pilot-001-prompt.txt */,
 				A20000000000000000000021 /* benchmark-plans/suite-b-pilot-001.json */,
+				A20000000000000000000023 /* workloads/b-ux-001-short-interaction-prompt.txt */,
+				A20000000000000000000024 /* benchmark-plans/b-ux-001-short-interaction.json */,
 				A20000000000000000000009 /* XCTest.framework */,
 			);
 			sourceTree = "<group>";
@@ -237,6 +243,8 @@
 			files = (
 				A10000000000000000000010 /* workloads/suite-b-pilot-001-prompt.txt in Resources */,
 				A10000000000000000000019 /* benchmark-plans/suite-b-pilot-001.json in Resources */,
+				A10000000000000000000021 /* workloads/b-ux-001-short-interaction-prompt.txt in Resources */,
+				A10000000000000000000022 /* benchmark-plans/b-ux-001-short-interaction.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
