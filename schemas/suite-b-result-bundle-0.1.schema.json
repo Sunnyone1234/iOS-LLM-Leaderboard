@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YizeSun/iOS-LLM-Leaderboard/schemas/suite-b-result-bundle-0.1.schema.json",
+  "title": "Unified Suite B Result Bundle 0.1",
+  "type": "object",
+  "required": ["schemaVersion", "resultID", "createdAt", "officialResultEligible", "plan", "workload", "measurementMode", "generationConfiguration", "model", "runtime", "device", "modelPreparation", "eligibility", "sessions"],
+  "properties": {
+    "schemaVersion": { "const": "suite-b-result-bundle-0.1" },
+    "resultID": { "type": "string", "minLength": 8 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "officialResultEligible": { "const": false },
+    "plan": { "type": "object", "required": ["id", "version", "runnerKind", "warmupRuns", "measuredRuns", "outputTokenLimit"] },
+    "workload": { "type": "object", "required": ["id", "version", "category", "fixtureSHA256"] },
+    "measurementMode": { "type": "object" },
+    "generationConfiguration": { "type": "object" },
+    "model": { "type": "object" },
+    "runtime": { "type": "object" },
+    "device": { "type": "object" },
+    "modelPreparation": { "type": "object" },
+    "eligibility": { "type": "object", "required": ["sessionValid", "officialLeaderboardEligible", "reasonCodes"] },
+    "bundleSummary": { "type": ["object", "null"] },
+    "sessions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "targetInputTokens", "fixtureSHA256", "paddingRepetitions", "performanceEligible", "qualityEligible", "timingEvidenceRetained", "summary", "attempts"],
+        "properties": {
+          "timingEvidenceRetained": { "const": true },
+          "summary": { "type": "object" },
+          "attempts": { "type": "array", "minItems": 6, "maxItems": 6 }
+        }
+      }
+    }
+  }
+}

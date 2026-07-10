@@ -123,6 +123,19 @@ final class ModelPreparationTests: XCTestCase {
         XCTAssertEqual(ux.plan.workload.workloadId, "b-ux-001-short-interaction")
     }
 
+    func testUnifiedRegistryLoadsAllWorkloads() throws {
+        let registry = try SuiteBPlanRegistryLoader.load()
+        XCTAssertEqual(registry.plans.count, 4)
+        XCTAssertEqual(
+            registry.plan(workloadID: "b-pipe-002-input-length-sweep")?.targetInputTokens,
+            [32, 128, 512, 2048]
+        )
+        XCTAssertEqual(
+            registry.plan(workloadID: "b-ux-002-context-assistance")?.outputTokenLimit,
+            128
+        )
+    }
+
     func testRuntimeIdentityMismatchStopsPreparation() {
         let valid = pilotPlan()
         let invalid = PilotPlan(

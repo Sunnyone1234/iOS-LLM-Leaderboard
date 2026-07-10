@@ -179,6 +179,9 @@ def validate_summary(data: dict[str, Any], attempts: list[dict[str, Any]]) -> li
 
 
 def validate(data: dict[str, Any]) -> list[str]:
+    if data.get("schemaVersion") == "suite-b-result-bundle-0.1":
+        from scripts.validate_suite_b_result_bundle import validate as validate_unified
+        return validate_unified(data)
     errors: list[str] = []
     schema = data.get("schemaVersion")
     if schema not in SUPPORTED_SCHEMAS:

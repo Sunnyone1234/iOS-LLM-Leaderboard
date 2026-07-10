@@ -101,8 +101,10 @@ launch-time value. A run can start only from the system-reported `nominal`
 state. If the state reaches `critical`, the current generation is retained and
 remaining generations are recorded as `notRun` instead of being started.
 
-App version `0.3.0` build `3` exports raw bundle schema
-`suite-b-pilot-bundle-0.6`, which records model-preparation evidence
+App version `0.4.0` build `4` exports raw bundle schema
+`suite-b-result-bundle-0.1`. It uses the
+same envelope for B-PIPE-001, B-PIPE-002, B-UX-001, and B-UX-002 and records
+model-preparation evidence
 alongside the frozen non-official B-PIPE-001 workload identity, Pipeline TTFT
 boundary, generation and cache configuration, underlying
 MLX dependency identity, battery state, and Low Power Mode. It also records
@@ -112,6 +114,12 @@ and official leaderboard eligibility. A transition from `nominal` through
 `fair` to `serious` is valid thermal evidence; it is not filtered out for
 being slower. Official eligibility remains false while the protocol is a
 non-official pilot.
+
+The bundled `suite-b-plan-registry-0.1` is the execution source of truth for
+workload identity, runner kind, run counts, output limit, token-exact points,
+fixture hashes, thinking mode, and availability of User-visible TTFT. Legacy
+bundle schemas remain validator-compatible but are no longer the default App
+export.
 
 The bundle is written after the complete session, not after each individual
 attempt. Per-attempt checkpoint recovery and Framework v1 repository export

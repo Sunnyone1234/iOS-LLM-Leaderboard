@@ -3,6 +3,8 @@
 Machine-readable schemas are introduced incrementally during the Framework v2
 transition.
 
+- `suite-b-plan-registry-0.1.schema.json` defines the common typed execution
+  registry for the four current Suite B workloads.
 - `suite-b-workload-0.1.schema.json` defines draft Suite B workload manifests.
 - `suite-b-pilot-bundle-0.3.schema.json` documents the current non-official
   iPhone pilot export before explicit v2 identities and power evidence.
@@ -22,7 +24,11 @@ transition.
 - `suite-b-context-assistance-bundle-0.1.schema.json` defines the non-official
   B-UX-002 token-exact context variants, retained timing evidence, visible
   answers, and deterministic per-attempt answer-contract evidence.
+- `suite-b-result-bundle-0.1.schema.json` is the unified envelope emitted by
+  all four current workloads. Single-run workloads contain one `sessions`
+  entry; point-series workloads contain one entry per token-exact point.
 
-The pilot schema is transitional. An official Suite B v2 result schema will be
+The earlier workload-specific schemas remain supported for existing evidence.
+An official Suite B v2 result schema will be
 frozen only after timing boundaries, generation configuration, environment
 evidence, and workload identities are emitted and validated by the app.

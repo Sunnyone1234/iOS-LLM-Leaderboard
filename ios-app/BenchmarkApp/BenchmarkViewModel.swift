@@ -76,6 +76,7 @@ final class BenchmarkViewModel {
     private(set) var contextResults: [ContextPointSummary] = []
     private(set) var contextRunError: String?
     private(set) var isRunningContext = false
+    private(set) var workloadRegistry: SuiteBPlanRegistry?
 
     let loadedPlan: LoadedPilotPlan?
 
@@ -97,6 +98,11 @@ final class BenchmarkViewModel {
                 configurationError = String(describing: error)
             }
         }
+        do {
+            workloadRegistry = try SuiteBPlanRegistryLoader.load()
+        } catch {
+            configurationError = String(describing: error)
+        }
     }
 
     var canPrepare: Bool {
@@ -112,19 +118,23 @@ final class BenchmarkViewModel {
 
     var canCalibrateInputLengths: Bool {
         preparationPhase == .ready && phase != .running && !isCalibratingInputLengths
+            && workloadRegistry?.plan(workloadID: "b-pipe-002-input-length-sweep") != nil
     }
 
     var canRunInputSweep: Bool {
-        canRun && inputLengthCalibrations.map(\.targetTokenCount) == [32, 128, 512, 2048]
+        canRun && inputLengthCalibrations.map(\.targetTokenCount)
+            == workloadRegistry?.plan(workloadID: "b-pipe-002-input-length-sweep")?.targetInputTokens
             && !isRunningInputSweep
     }
 
     var canCalibrateContext: Bool {
         preparationPhase == .ready && phase != .running && !isCalibratingContext
+            && workloadRegistry?.plan(workloadID: "b-ux-002-context-assistance") != nil
     }
 
     var canRunContext: Bool {
-        canRun && contextCalibrations.map(\.targetTokenCount) == [1024, 2048]
+        canRun && contextCalibrations.map(\.targetTokenCount)
+            == workloadRegistry?.plan(workloadID: "b-ux-002-context-assistance")?.targetInputTokens
             && !isRunningContext
     }
 
@@ -263,13 +273,26 @@ final class BenchmarkViewModel {
                     measuredMetrics: completed.map(\.1)
                 )
                 result = nil
-                let uxBundle = UXResultBundle.make(
-                    session: session,
+                guard let registryPlan = workloadRegistry?.plan(
+                    workloadID: loadedPlan.plan.workload.workloadId
+                ) else { throw SuiteBPlanRegistryLoader.RegistryError.missing }
+                let unified = SuiteBResultBundle.common(
+                    registryPlan: registryPlan,
+                    basePlan: loadedPlan.plan,
                     environment: sessionEnvironment,
-                    plan: loadedPlan.plan,
-                    modelPreparation: modelPreparation
+                    modelPreparation: modelPreparation,
+                    sessions: [SuiteBResultBundle.session(
+                        id: "default",
+                        target: nil,
+                        fixtureSHA256: registryPlan.fixtureSha256[0],
+                        padding: nil,
+                        benchmarkSession: session,
+                        memoryInterval: loadedPlan.plan.measurementMode.memorySamplingIntervalMilliseconds,
+                        minimumSuccessfulRuns: loadedPlan.plan.procedure.minimumSuccessfulRunsForSummary,
+                        includeQuality: false
+                    )]
                 )
-                resultFileURL = try await resultStore.save(uxBundle)
+                resultFileURL = try await resultStore.save(unified)
                 currentThermalState = session.measuredAttempts.last?.thermalStateAfter
                     ?? SystemMeasurements.thermalState
                 phase = .completed(
@@ -284,7 +307,34 @@ final class BenchmarkViewModel {
                 plan: loadedPlan.plan,
                 modelPreparation: modelPreparation
             )
-            resultFileURL = try await resultStore.save(bundle)
+            guard let registryPlan = workloadRegistry?.plan(
+                workloadID: loadedPlan.plan.workload.workloadId
+            ) else { throw SuiteBPlanRegistryLoader.RegistryError.missing }
+            let degradation = bundle.summary.degradation
+            let unified = SuiteBResultBundle.common(
+                registryPlan: registryPlan,
+                basePlan: loadedPlan.plan,
+                environment: sessionEnvironment,
+                modelPreparation: modelPreparation,
+                sessions: [SuiteBResultBundle.session(
+                    id: "default",
+                    target: nil,
+                    fixtureSHA256: registryPlan.fixtureSha256[0],
+                    padding: nil,
+                    benchmarkSession: session,
+                    memoryInterval: loadedPlan.plan.measurementMode.memorySamplingIntervalMilliseconds,
+                    minimumSuccessfulRuns: loadedPlan.plan.procedure.minimumSuccessfulRunsForSummary,
+                    includeQuality: false
+                )],
+                bundleSummary: .init(
+                    firstMeasuredRunIndex: degradation.firstMeasuredRunIndex,
+                    lastMeasuredRunIndex: degradation.lastMeasuredRunIndex,
+                    decodePercentChange: degradation.decodePercentChange,
+                    ttftPercentChange: degradation.ttftPercentChange,
+                    prefillPercentChange: degradation.prefillPercentChange
+                )
+            )
+            resultFileURL = try await resultStore.save(unified)
             result = bundle
             currentThermalState = bundle.summary.finalThermalState
             phase = .completed(
@@ -309,8 +359,11 @@ final class BenchmarkViewModel {
         isCalibratingInputLengths = true
         inputLengthCalibrationError = nil
         do {
+            guard let plan = workloadRegistry?.plan(
+                workloadID: "b-pipe-002-input-length-sweep"
+            ) else { throw SuiteBPlanRegistryLoader.RegistryError.missing }
             inputLengthCalibrations = try await runtime.calibrateInputLengthFixtures(
-                targets: [32, 128, 512, 2048]
+                targets: plan.targetInputTokens
             )
         } catch {
             inputLengthCalibrations = []
@@ -320,7 +373,10 @@ final class BenchmarkViewModel {
     }
 
     func runInputSweep() async {
-        guard canRunInputSweep else { return }
+        guard canRunInputSweep,
+              let sweepPlan = workloadRegistry?.plan(
+                workloadID: "b-pipe-002-input-length-sweep"
+              ) else { return }
         isRunningInputSweep = true
         inputSweepError = nil
         inputSweepResults = []
@@ -338,9 +394,9 @@ final class BenchmarkViewModel {
             let session = await BenchmarkRunner(
                 runtime: runtime,
                 procedure: BenchmarkProcedure(
-                    warmupRuns: 1,
-                    measuredRuns: 5,
-                    outputTokenLimit: 32
+                    warmupRuns: sweepPlan.warmupRuns,
+                    measuredRuns: sweepPlan.measuredRuns,
+                    outputTokenLimit: sweepPlan.outputTokenLimit
                 )
             ).run(prompt: prompt)
             let completed = session.measuredAttempts.compactMap { attempt -> (RuntimeGenerationResult, AttemptMetrics)? in
@@ -380,11 +436,24 @@ final class BenchmarkViewModel {
             }
         }
         if let modelPreparation {
-            let bundle = InputSweepResultBundle.make(
-                calibratedSessions: calibratedSessions,
+            let sessions = calibratedSessions.map { calibration, benchmarkSession in
+                SuiteBResultBundle.session(
+                    id: "input-\(calibration.targetTokenCount)",
+                    target: calibration.targetTokenCount,
+                    fixtureSHA256: calibration.promptSHA256,
+                    padding: calibration.paddingRepetitions,
+                    benchmarkSession: benchmarkSession,
+                    memoryInterval: loadedPlan!.plan.measurementMode.memorySamplingIntervalMilliseconds,
+                    minimumSuccessfulRuns: 3,
+                    includeQuality: false
+                )
+            }
+            let bundle = SuiteBResultBundle.common(
+                registryPlan: sweepPlan,
+                basePlan: loadedPlan!.plan,
                 environment: DeviceEnvironment.current,
-                plan: loadedPlan!.plan,
-                modelPreparation: modelPreparation
+                modelPreparation: modelPreparation,
+                sessions: sessions
             )
             do {
                 resultFileURL = try await resultStore.save(bundle)
@@ -412,10 +481,13 @@ final class BenchmarkViewModel {
             }
             let document = try String(contentsOf: documentURL, encoding: .utf8)
             let question = try String(contentsOf: questionURL, encoding: .utf8)
+            guard let plan = workloadRegistry?.plan(
+                workloadID: "b-ux-002-context-assistance"
+            ) else { throw SuiteBPlanRegistryLoader.RegistryError.missing }
             contextCalibrations = try await runtime.calibrateContextAssistanceFixtures(
                 document: document,
                 question: question,
-                targets: [1024, 2048]
+                targets: plan.targetInputTokens
             )
         } catch {
             contextCalibrations = []
@@ -425,7 +497,10 @@ final class BenchmarkViewModel {
     }
 
     func runContextAssistance() async {
-        guard canRunContext else { return }
+        guard canRunContext,
+              let contextPlan = workloadRegistry?.plan(
+                workloadID: "b-ux-002-context-assistance"
+              ) else { return }
         isRunningContext = true
         contextResults = []
         contextRunError = nil
@@ -450,7 +525,11 @@ final class BenchmarkViewModel {
                 )
                 let session = await BenchmarkRunner(
                     runtime: runtime,
-                    procedure: .init(warmupRuns: 1, measuredRuns: 5, outputTokenLimit: 128)
+                    procedure: .init(
+                        warmupRuns: contextPlan.warmupRuns,
+                        measuredRuns: contextPlan.measuredRuns,
+                        outputTokenLimit: contextPlan.outputTokenLimit
+                    )
                 ).run(prompt: prompt)
                 let completed = session.measuredAttempts.compactMap { attempt -> (RuntimeGenerationResult, AttemptMetrics)? in
                     guard case .completed(let generation) = attempt.outcome else { return nil }
@@ -479,11 +558,24 @@ final class BenchmarkViewModel {
                 calibratedSessions.append((calibration, session))
             }
             if let modelPreparation {
-                let bundle = ContextAssistanceResultBundle.make(
-                    calibratedSessions: calibratedSessions,
+                let sessions = calibratedSessions.map { calibration, benchmarkSession in
+                    SuiteBResultBundle.session(
+                        id: "context-\(calibration.targetTokenCount)",
+                        target: calibration.targetTokenCount,
+                        fixtureSHA256: calibration.promptSHA256,
+                        padding: calibration.paddingRepetitions,
+                        benchmarkSession: benchmarkSession,
+                        memoryInterval: loadedPlan!.plan.measurementMode.memorySamplingIntervalMilliseconds,
+                        minimumSuccessfulRuns: 3,
+                        includeQuality: true
+                    )
+                }
+                let bundle = SuiteBResultBundle.common(
+                    registryPlan: contextPlan,
+                    basePlan: loadedPlan!.plan,
                     environment: DeviceEnvironment.current,
-                    plan: loadedPlan!.plan,
-                    modelPreparation: modelPreparation
+                    modelPreparation: modelPreparation,
+                    sessions: sessions
                 )
                 resultFileURL = try await resultStore.save(bundle)
             }

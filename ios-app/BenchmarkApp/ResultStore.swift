@@ -1,6 +1,23 @@
 import Foundation
 
 actor ResultStore {
+    func save(_ result: SuiteBResultBundle) throws -> URL {
+        let fileManager = FileManager.default
+        let directory = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            .appending(path: "BenchmarkResults", directoryHint: .isDirectory)
+        try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        let timestamp = formatter.string(from: result.createdAt).replacingOccurrences(of: ":", with: "-")
+        let device = result.device.machineIdentifier.lowercased().replacingOccurrences(of: ",", with: "-")
+        let url = directory.appending(path: "\(timestamp)_\(result.workload.id)_qwen3-0.6b-4bit_\(device)_\(result.resultID.prefix(8)).json")
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        try encoder.encode(result).write(to: url, options: .atomic)
+        return url
+    }
+
     func save(_ result: PilotResultBundle) throws -> URL {
         let fileManager = FileManager.default
         let directory = try fileManager.url(

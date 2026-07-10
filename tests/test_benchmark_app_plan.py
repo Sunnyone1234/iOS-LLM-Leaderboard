@@ -11,6 +11,7 @@ from scripts.validate_result import validate
 ROOT = Path(__file__).resolve().parents[1]
 PLAN_PATH = ROOT / "ios-app" / "benchmark-plans" / "suite-b-pilot-001.json"
 UX_PLAN_PATH = ROOT / "ios-app" / "benchmark-plans" / "b-ux-001-short-interaction.json"
+REGISTRY_PATH = ROOT / "ios-app" / "benchmark-plans" / "suite-b-workload-registry.json"
 FIXTURE_PATH = (
     ROOT
     / "ios-app"
@@ -128,6 +129,24 @@ class ShortInteractionPlanTests(unittest.TestCase):
             "disabled-via-chat-template",
         )
         self.assertFalse(self.plan["generation"]["sampling_enabled"])
+
+
+class SuiteBPlanRegistryTests(unittest.TestCase):
+    def test_registry_versions_all_four_workloads(self) -> None:
+        registry = load_json(REGISTRY_PATH)
+        self.assertEqual(registry["schema_version"], "suite-b-plan-registry-0.1")
+        plans = registry["plans"]
+        self.assertEqual(len(plans), 4)
+        self.assertEqual(len({plan["workload_id"] for plan in plans}), 4)
+        self.assertTrue(all(plan["warmup_runs"] == 1 for plan in plans))
+        self.assertTrue(all(plan["measured_runs"] == 5 for plan in plans))
+        self.assertTrue(all(plan["thinking_mode"].startswith("disabled-") for plan in plans))
+
+    def test_point_series_targets_and_hashes_are_parallel(self) -> None:
+        for plan in load_json(REGISTRY_PATH)["plans"]:
+            targets, hashes = plan["target_input_tokens"], plan["fixture_sha256"]
+            self.assertEqual(len(targets), len(hashes)) if targets else self.assertEqual(len(hashes), 1)
+            self.assertTrue(all(len(digest) == 64 for digest in hashes))
 
 
 if __name__ == "__main__":

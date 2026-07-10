@@ -62,6 +62,13 @@ presented as a complete thermal-stability characterization.
 
 ## Standard Session Rules
 
+The Benchmark App loads the four current workload execution identities from
+the versioned `suite-b-plan-registry-0.1`. New evidence from every workload is
+written using `suite-b-result-bundle-0.1`; the common `sessions` array contains
+one entry for a single-session workload or one entry per token-exact point.
+Workload-specific quality evidence is optional inside the common attempt shape
+and does not change the timing formulas.
+
 Unless a workload declares a stricter compatible mode:
 
 1. verify the exact revision manifest and required cached artifact files;
