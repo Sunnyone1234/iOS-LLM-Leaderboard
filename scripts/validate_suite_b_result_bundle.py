@@ -9,7 +9,10 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from scripts.validate_suite_b_context_assistance_bundle import evaluate_contract
+try:
+    from scripts.validate_suite_b_context_assistance_bundle import evaluate_contract
+except ModuleNotFoundError:
+    from validate_suite_b_context_assistance_bundle import evaluate_contract
 
 PLANS = {
     "b-pipe-001-sustained-generation": ("b-pipe-001-validation", "0.2.0-pilot", "pipeline", 512, [], ["b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996"]),
