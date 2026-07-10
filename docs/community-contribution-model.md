@@ -77,6 +77,12 @@ python3 scripts/validate_suite_b_submission.py path/to/submission.json
 
 The App cannot assign Reproduced, Verified, or Maintainer Reference status.
 
+Repository intake stores immutable Draft packages under
+`submissions/suite-b/draft/`. CI emits a structural report but does not alter
+trust. A maintainer may then use `promote_suite_b_submission.py` to create a
+separate, hash-bound Community Submitted review record. See
+[Community Submissions](../submissions/README.md).
+
 Evidence level describes the submission process, not permanent truth.
 
 ## Low-friction Contribution Principles

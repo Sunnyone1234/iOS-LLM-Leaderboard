@@ -30,6 +30,10 @@ transition.
 - `suite-b-community-submission-0.1.schema.json` wraps exact result bytes,
   integrity evidence, contributor declarations, and a Draft trust request for
   offline repository submission.
+- `suite-b-intake-report-0.1.schema.json` records CI structural findings without
+  changing trust or leaderboard state.
+- `suite-b-community-review-0.1.schema.json` records an explicit maintainer
+  promotion from Draft to Community Submitted only.
 
 The earlier workload-specific schemas remain supported for existing evidence.
 An official Suite B v2 result schema will be

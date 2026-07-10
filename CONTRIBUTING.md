@@ -102,6 +102,11 @@ contributor reviews a unified Suite B result. Validate it with
 Community Submitted, but it is never accepted as official, verified, or added
 to the default leaderboard automatically.
 
+For repository placement, rename the untouched App export to
+`<submissionID>.json` and add it under `submissions/suite-b/draft/`. See
+[Community Submissions](submissions/README.md) for CI and maintainer review
+commands.
+
 ## Data Integrity
 
 Do not invent benchmark results, rankings, device measurements, or performance numbers. Placeholder examples must be clearly labeled as placeholder or demo data.

@@ -1,0 +1,38 @@
+name: Suite B submissions
+
+on:
+  pull_request:
+    paths:
+      - "submissions/suite-b/**"
+      - "schemas/suite-b-*.json"
+      - "scripts/validate_suite_b_*.py"
+      - "tests/test_suite_b_*.py"
+  push:
+    branches: [main]
+    paths:
+      - "submissions/suite-b/**"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Validate Draft intake
+        run: python3 scripts/validate_suite_b_intake.py submissions/suite-b/draft --report /tmp/suite-b-intake-report.json
+      - name: Validate review records
+        run: python3 scripts/validate_suite_b_reviews.py --submissions submissions/suite-b/draft --reviews submissions/suite-b/reviews/community-submitted
+      - name: Upload intake report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: suite-b-intake-report
+          path: /tmp/suite-b-intake-report.json
+
