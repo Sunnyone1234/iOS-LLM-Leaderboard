@@ -54,8 +54,16 @@ A submission service or GitHub App should:
 4. attach validation findings;
 5. allow public review.
 
-An earlier MVP may export a bundle and open a prepared contribution flow before
-full one-tap upload is implemented.
+The current offline MVP exports `suite-b-community-submission-0.1`. It embeds
+the exact unified result bytes as Base64, records their SHA-256 digest, and
+requires review, a no-personal-data confirmation, and license acceptance. It
+does not upload or create a pull request. Every App-generated package starts as
+`Draft` and only requests `Community Submitted`; repository validation and
+review control transitions.
+
+```bash
+python3 scripts/validate_suite_b_submission.py path/to/submission.json
+```
 
 ## Evidence Levels
 
@@ -66,6 +74,8 @@ full one-tap upload is implemented.
 | Reproduced | Independent compatible evidence exists | Candidate |
 | Verified | Full release, workload, configuration, and evidence rules pass | Yes |
 | Maintainer Reference | Maintainer run using the official reference procedure | Yes, labeled |
+
+The App cannot assign Reproduced, Verified, or Maintainer Reference status.
 
 Evidence level describes the submission process, not permanent truth.
 

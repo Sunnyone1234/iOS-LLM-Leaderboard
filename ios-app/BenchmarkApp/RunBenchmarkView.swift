@@ -358,6 +358,33 @@ struct RunBenchmarkView: View {
                         Text("Non-official workload evidence. Review before sharing.")
                     }
                 }
+
+                if viewModel.latestUnifiedResult != nil {
+                    Section {
+                        TextField("GitHub handle or public name", text: $viewModel.contributorName)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                        Toggle("I reviewed the result and raw evidence", isOn: $viewModel.reviewedResult)
+                        Toggle("This submission contains no personal data", isOn: $viewModel.confirmsNoPersonalData)
+                        Toggle("I agree to the repository license", isOn: $viewModel.agreesToRepositoryLicense)
+                        Button("Generate Repository Submission") {
+                            Task { await viewModel.generateCommunitySubmission() }
+                        }
+                        .disabled(!viewModel.canGenerateSubmission)
+                        if let error = viewModel.submissionError {
+                            Text(error).foregroundStyle(.red)
+                        }
+                        if let url = viewModel.submissionFileURL {
+                            ShareLink(item: url) {
+                                Label("Export Submission JSON", systemImage: "shippingbox.and.arrow.backward")
+                            }
+                        }
+                    } header: {
+                        Text("Community Submission")
+                    } footer: {
+                        Text("Generated submissions remain Draft until repository validation. They request Community Submitted status and never enter the default leaderboard automatically.")
+                    }
+                }
             }
             .navigationTitle("Run Benchmark")
             .refreshable {

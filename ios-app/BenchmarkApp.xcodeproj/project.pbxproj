@@ -38,6 +38,7 @@
 		A10000000000000000000029 /* SuiteBPlanRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000031 /* SuiteBPlanRegistry.swift */; };
 		A10000000000000000000030 /* benchmark-plans/suite-b-workload-registry.json in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000032 /* benchmark-plans/suite-b-workload-registry.json */; };
 		A10000000000000000000031 /* SuiteBResultBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000033 /* SuiteBResultBundle.swift */; };
+		A10000000000000000000032 /* CommunitySubmissionBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000034 /* CommunitySubmissionBundle.swift */; };
 		C10000000000000000000001 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000001 /* MLXLLM */; };
 		C10000000000000000000002 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000002 /* MLXLMCommon */; };
 		C10000000000000000000004 /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000004 /* HuggingFace */; };
@@ -88,6 +89,7 @@
 		A20000000000000000000031 /* SuiteBPlanRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteBPlanRegistry.swift; sourceTree = "<group>"; };
 		A20000000000000000000032 /* benchmark-plans/suite-b-workload-registry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "benchmark-plans/suite-b-workload-registry.json"; sourceTree = SOURCE_ROOT; };
 		A20000000000000000000033 /* SuiteBResultBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteBResultBundle.swift; sourceTree = "<group>"; };
+		A20000000000000000000034 /* CommunitySubmissionBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunitySubmissionBundle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +152,7 @@
 				A20000000000000000000030 /* ContextAssistanceResultBundle.swift */,
 				A20000000000000000000031 /* SuiteBPlanRegistry.swift */,
 				A20000000000000000000033 /* SuiteBResultBundle.swift */,
+				A20000000000000000000034 /* CommunitySubmissionBundle.swift */,
 				A20000000000000000000017 /* ResultStore.swift */,
 				A20000000000000000000010 /* MLXSwiftRuntime.swift */,
 				A20000000000000000000011 /* BenchmarkViewModel.swift */,
@@ -309,6 +312,7 @@
 				A10000000000000000000028 /* ContextAssistanceResultBundle.swift in Sources */,
 				A10000000000000000000029 /* SuiteBPlanRegistry.swift in Sources */,
 				A10000000000000000000031 /* SuiteBResultBundle.swift in Sources */,
+				A10000000000000000000032 /* CommunitySubmissionBundle.swift in Sources */,
 				A10000000000000000000015 /* ResultStore.swift in Sources */,
 				A10000000000000000000008 /* MLXSwiftRuntime.swift in Sources */,
 				A10000000000000000000009 /* BenchmarkViewModel.swift in Sources */,
@@ -361,7 +365,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = ZMN7LG4SD9;
 				ENABLE_TESTABILITY = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -385,7 +389,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = ZMN7LG4SD9;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "LLM Benchmark";

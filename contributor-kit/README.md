@@ -2,9 +2,10 @@
 
 This kit explains how community members can contribute to iOS-LLM-Leaderboard.
 
-The current kit documents the Framework v1 manual workflow. It does not make a
-submission official or verified. The preferred future Suite B workflow will use
-the official benchmark app and a versioned result bundle.
+Framework v1 retains a manual workflow. For Suite B, App 0.4 can generate a
+reviewed offline Draft submission containing the exact unified result bytes and
+integrity digest. It does not make a submission official or verified and does
+not upload to GitHub.
 
 You can contribute:
 
@@ -29,3 +30,9 @@ Useful files:
 - [Submit a device result](submit-device-result.md)
 - [Model result template](../templates/model-result-template.json)
 - [Device result template](../templates/device-result-template.json)
+
+Validate an App-generated Suite B package with:
+
+```bash
+python3 scripts/validate_suite_b_submission.py path/to/submission.json
+```

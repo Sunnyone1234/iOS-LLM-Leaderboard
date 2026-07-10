@@ -96,9 +96,11 @@ When the official benchmark app is available, app-generated result bundles
 will be the preferred Suite B submission route. Manual submissions will need
 to demonstrate equivalent workload, runner, and raw-evidence compatibility.
 
-The current Benchmark App is a non-official pilot. Its local bundles may be
-checked with `scripts/validate_suite_b_bundle.py`, but they are not accepted as
-official or verified leaderboard entries.
+The current Benchmark App can generate an offline Draft submission after the
+contributor reviews a unified Suite B result. Validate it with
+`scripts/validate_suite_b_submission.py`. A passing package may be reviewed as
+Community Submitted, but it is never accepted as official, verified, or added
+to the default leaderboard automatically.
 
 ## Data Integrity
 

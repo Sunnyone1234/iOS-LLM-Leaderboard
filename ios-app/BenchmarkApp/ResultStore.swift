@@ -1,6 +1,19 @@
 import Foundation
 
 actor ResultStore {
+    func save(_ submission: CommunitySubmissionBundle) throws -> URL {
+        let directory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            .appending(path: "BenchmarkSubmissions", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let formatter = ISO8601DateFormatter(); formatter.formatOptions = [.withInternetDateTime]
+        let timestamp = formatter.string(from: submission.createdAt).replacingOccurrences(of: ":", with: "-")
+        let url = directory.appending(path: "\(timestamp)_\(submission.result.workloadID)_submission_\(submission.submissionID.prefix(8)).json")
+        let encoder = JSONEncoder(); encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        try encoder.encode(submission).write(to: url, options: .atomic)
+        return url
+    }
+
     func save(_ result: SuiteBResultBundle) throws -> URL {
         let fileManager = FileManager.default
         let directory = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)

@@ -27,6 +27,9 @@ transition.
 - `suite-b-result-bundle-0.1.schema.json` is the unified envelope emitted by
   all four current workloads. Single-run workloads contain one `sessions`
   entry; point-series workloads contain one entry per token-exact point.
+- `suite-b-community-submission-0.1.schema.json` wraps exact result bytes,
+  integrity evidence, contributor declarations, and a Draft trust request for
+  offline repository submission.
 
 The earlier workload-specific schemas remain supported for existing evidence.
 An official Suite B v2 result schema will be

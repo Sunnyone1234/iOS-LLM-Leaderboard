@@ -101,7 +101,7 @@ launch-time value. A run can start only from the system-reported `nominal`
 state. If the state reaches `critical`, the current generation is retained and
 remaining generations are recorded as `notRun` instead of being started.
 
-App version `0.4.0` build `4` exports raw bundle schema
+App version `0.4.0` build `5` exports raw bundle schema
 `suite-b-result-bundle-0.1`. It uses the
 same envelope for B-PIPE-001, B-PIPE-002, B-UX-001, and B-UX-002 and records
 model-preparation evidence
@@ -120,6 +120,11 @@ workload identity, runner kind, run counts, output limit, token-exact points,
 fixture hashes, thinking mode, and availability of User-visible TTFT. Legacy
 bundle schemas remain validator-compatible but are no longer the default App
 export.
+
+After reviewing a completed result, a contributor can enter a public name or
+GitHub handle, confirm the privacy and license declarations, and export
+`suite-b-community-submission-0.1`. The package embeds the exact result bytes
+and SHA-256 digest, remains Draft, and performs no network upload.
 
 The bundle is written after the complete session, not after each individual
 attempt. Per-attempt checkpoint recovery and Framework v1 repository export

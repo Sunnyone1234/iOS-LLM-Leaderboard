@@ -77,6 +77,13 @@ final class BenchmarkViewModel {
     private(set) var contextRunError: String?
     private(set) var isRunningContext = false
     private(set) var workloadRegistry: SuiteBPlanRegistry?
+    private(set) var latestUnifiedResult: SuiteBResultBundle?
+    private(set) var submissionFileURL: URL?
+    private(set) var submissionError: String?
+    var contributorName = ""
+    var reviewedResult = false
+    var confirmsNoPersonalData = false
+    var agreesToRepositoryLicense = false
 
     let loadedPlan: LoadedPilotPlan?
 
@@ -150,6 +157,31 @@ final class BenchmarkViewModel {
             ),
             requirements: plan.environmentRequirements
         )
+    }
+
+    var canGenerateSubmission: Bool {
+        latestUnifiedResult != nil
+            && !contributorName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && reviewedResult && confirmsNoPersonalData && agreesToRepositoryLicense
+    }
+
+    func generateCommunitySubmission() async {
+        guard canGenerateSubmission, let latestUnifiedResult else { return }
+        do {
+            let submission = try CommunitySubmissionBundle.make(
+                result: latestUnifiedResult,
+                contributorName: contributorName,
+                declarations: .init(
+                    reviewedResult: reviewedResult,
+                    confirmsNoPersonalData: confirmsNoPersonalData,
+                    agreesToRepositoryLicense: agreesToRepositoryLicense
+                )
+            )
+            submissionFileURL = try await resultStore.save(submission)
+            submissionError = nil
+        } catch {
+            submissionError = String(describing: error)
+        }
     }
 
     var statusText: String {
@@ -293,6 +325,8 @@ final class BenchmarkViewModel {
                     )]
                 )
                 resultFileURL = try await resultStore.save(unified)
+                latestUnifiedResult = unified
+                submissionFileURL = nil
                 currentThermalState = session.measuredAttempts.last?.thermalStateAfter
                     ?? SystemMeasurements.thermalState
                 phase = .completed(
@@ -335,6 +369,8 @@ final class BenchmarkViewModel {
                 )
             )
             resultFileURL = try await resultStore.save(unified)
+            latestUnifiedResult = unified
+            submissionFileURL = nil
             result = bundle
             currentThermalState = bundle.summary.finalThermalState
             phase = .completed(
@@ -457,6 +493,8 @@ final class BenchmarkViewModel {
             )
             do {
                 resultFileURL = try await resultStore.save(bundle)
+                latestUnifiedResult = bundle
+                submissionFileURL = nil
             } catch {
                 inputSweepError = "Sweep completed but export failed: \(error)"
             }
@@ -578,6 +616,8 @@ final class BenchmarkViewModel {
                     sessions: sessions
                 )
                 resultFileURL = try await resultStore.save(bundle)
+                latestUnifiedResult = bundle
+                submissionFileURL = nil
             }
         } catch {
             contextRunError = String(describing: error)
