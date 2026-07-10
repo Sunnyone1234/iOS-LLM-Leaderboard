@@ -203,6 +203,10 @@ struct RunBenchmarkView: View {
                             DisclosureGroup("\(point.targetTokenCount) context tokens") {
                                 LabeledContent("Successful runs", value: "\(point.successfulMeasuredRuns) / 5")
                                 LabeledContent("Answer contract", value: "\(point.contractPassingRuns) / 5 passed")
+                                LabeledContent(
+                                    "UX comparison eligible",
+                                    value: point.successfulMeasuredRuns == 5 && point.contractPassingRuns == 5 ? "Yes" : "No"
+                                )
                                 LabeledContent("Pipeline TTFT", value: viewModel.metricText(point.medianPipelineTTFTMilliseconds, unit: "ms"))
                                 LabeledContent("User-visible TTFT", value: viewModel.metricText(point.medianUserVisibleTTFTMilliseconds, unit: "ms"))
                                 LabeledContent("Request completion", value: viewModel.metricText(point.medianRequestCompletionMilliseconds, unit: "ms"))

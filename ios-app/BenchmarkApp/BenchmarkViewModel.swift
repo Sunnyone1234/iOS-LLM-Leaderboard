@@ -429,6 +429,7 @@ final class BenchmarkViewModel {
         isRunningContext = true
         contextResults = []
         contextRunError = nil
+        var calibratedSessions: [(InputLengthFixtureCalibration, BenchmarkSession)] = []
         do {
             guard let documentURL = Bundle.main.url(forResource: "b-ux-002-context-assistance-document", withExtension: "txt"),
                   let questionURL = Bundle.main.url(forResource: "b-ux-002-context-assistance-question", withExtension: "txt") else {
@@ -475,6 +476,16 @@ final class BenchmarkViewModel {
                     sampleOutput: completed.first?.0.generatedText,
                     finalThermalState: session.attempts.last?.thermalStateAfter ?? "unknown"
                 ))
+                calibratedSessions.append((calibration, session))
+            }
+            if let modelPreparation {
+                let bundle = ContextAssistanceResultBundle.make(
+                    calibratedSessions: calibratedSessions,
+                    environment: DeviceEnvironment.current,
+                    plan: loadedPlan!.plan,
+                    modelPreparation: modelPreparation
+                )
+                resultFileURL = try await resultStore.save(bundle)
             }
         } catch {
             contextRunError = String(describing: error)

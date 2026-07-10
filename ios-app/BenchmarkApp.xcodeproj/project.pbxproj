@@ -34,6 +34,7 @@
 		A10000000000000000000025 /* b-ux-002-context-assistance-document.txt in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000027 /* b-ux-002-context-assistance-document.txt */; };
 		A10000000000000000000026 /* b-ux-002-context-assistance-question.txt in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000028 /* b-ux-002-context-assistance-question.txt */; };
 		A10000000000000000000027 /* ContextAnswerContract.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000029 /* ContextAnswerContract.swift */; };
+		A10000000000000000000028 /* ContextAssistanceResultBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000030 /* ContextAssistanceResultBundle.swift */; };
 		C10000000000000000000001 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000001 /* MLXLLM */; };
 		C10000000000000000000002 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000002 /* MLXLMCommon */; };
 		C10000000000000000000004 /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000004 /* HuggingFace */; };
@@ -80,6 +81,7 @@
 		A20000000000000000000027 /* b-ux-002-context-assistance-document.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "workloads/b-ux-002-context-assistance-document.txt"; sourceTree = SOURCE_ROOT; };
 		A20000000000000000000028 /* b-ux-002-context-assistance-question.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "workloads/b-ux-002-context-assistance-question.txt"; sourceTree = SOURCE_ROOT; };
 		A20000000000000000000029 /* ContextAnswerContract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextAnswerContract.swift; sourceTree = "<group>"; };
+		A20000000000000000000030 /* ContextAssistanceResultBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextAssistanceResultBundle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +141,7 @@
 				A20000000000000000000025 /* UXResultBundle.swift */,
 				A20000000000000000000026 /* InputSweepResultBundle.swift */,
 				A20000000000000000000029 /* ContextAnswerContract.swift */,
+				A20000000000000000000030 /* ContextAssistanceResultBundle.swift */,
 				A20000000000000000000017 /* ResultStore.swift */,
 				A20000000000000000000010 /* MLXSwiftRuntime.swift */,
 				A20000000000000000000011 /* BenchmarkViewModel.swift */,
@@ -294,6 +297,7 @@
 				A10000000000000000000023 /* UXResultBundle.swift in Sources */,
 				A10000000000000000000024 /* InputSweepResultBundle.swift in Sources */,
 				A10000000000000000000027 /* ContextAnswerContract.swift in Sources */,
+				A10000000000000000000028 /* ContextAssistanceResultBundle.swift in Sources */,
 				A10000000000000000000015 /* ResultStore.swift in Sources */,
 				A10000000000000000000008 /* MLXSwiftRuntime.swift in Sources */,
 				A10000000000000000000009 /* BenchmarkViewModel.swift in Sources */,

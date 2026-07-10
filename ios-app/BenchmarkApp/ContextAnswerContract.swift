@@ -1,6 +1,6 @@
 import Foundation
 
-struct ContextAnswerContract: Sendable, Equatable {
+struct ContextAnswerContract: Codable, Sendable, Equatable {
     let hasReferenceCode: Bool
     let hasLocalSafetyFact: Bool
     let hasStableNetworkFact: Bool

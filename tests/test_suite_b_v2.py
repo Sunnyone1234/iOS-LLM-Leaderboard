@@ -267,11 +267,12 @@ class WorkloadManifestTests(unittest.TestCase):
                 point["prompt_sha256"],
             )
 
-    def test_context_assistance_candidate_freezes_sources_and_answer_contract(self) -> None:
+    def test_context_assistance_pilot_freezes_sources_and_answer_contract(self) -> None:
         workload = json.loads(
             (WORKLOADS / "b-ux-002-context-assistance.json").read_text()
         )
-        self.assertEqual(workload["status"], "validation-candidate")
+        self.assertEqual(workload["status"], "pilot-validated")
+        self.assertEqual(workload["workload_version"], "0.2.0-pilot")
         for path_key, hash_key in (
             ("fixture_path", "sha256"),
             ("question_path", "question_sha256"),

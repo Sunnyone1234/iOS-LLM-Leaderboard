@@ -16,6 +16,9 @@ transition.
   output, and raw token-event evidence.
 - `suite-b-input-sweep-bundle-0.1.schema.json` defines the non-official
   B-PIPE-002 four-point input-length sweep and its per-attempt evidence.
+- `suite-b-context-assistance-bundle-0.1.schema.json` defines the non-official
+  B-UX-002 token-exact context variants, retained timing evidence, visible
+  answers, and deterministic per-attempt answer-contract evidence.
 
 The pilot schema is transitional. An official Suite B v2 result schema will be
 frozen only after timing boundaries, generation configuration, environment

@@ -74,4 +74,21 @@ actor ResultStore {
         try encoder.encode(result).write(to: url, options: .atomic)
         return url
     }
+
+    func save(_ result: ContextAssistanceResultBundle) throws -> URL {
+        let fileManager = FileManager.default
+        let directory = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            .appending(path: "BenchmarkResults", directoryHint: .isDirectory)
+        try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        let timestamp = formatter.string(from: result.createdAt).replacingOccurrences(of: ":", with: "-")
+        let device = result.device.machineIdentifier.lowercased().replacingOccurrences(of: ",", with: "-")
+        let url = directory.appending(path: "\(timestamp)_b-ux-002_qwen3-0.6b-4bit_\(device)_\(result.resultID.prefix(8)).json")
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        try encoder.encode(result).write(to: url, options: .atomic)
+        return url
+    }
 }

@@ -1,8 +1,8 @@
 {
   "schema_version": "suite-b-workload-0.1",
   "workload_id": "b-ux-002-context-assistance",
-  "workload_version": "0.2.0-candidate",
-  "status": "validation-candidate",
+  "workload_version": "0.2.0-pilot",
+  "status": "pilot-validated",
   "category": "user-experience",
   "title": "Context Assistance",
   "scenario": "A user asks for a concise answer grounded in a fixed local document.",
@@ -65,9 +65,10 @@
       ]
     }
   },
-  "blocking_decisions": [
-    "calibrate the two exact context variants on the pinned reference adapter",
-    "verify the minimum answer contract on a physical iPhone",
-    "freeze context variant hashes and result bundle schema"
-  ]
+  "validation_evidence": {
+    "physical_device": "iPhone 14 Pro Max (iPhone15,3)",
+    "token_exact_variants_confirmed": true,
+    "answer_contract_behavior_confirmed": true,
+    "quality_failure_rule": "timing evidence is retained, but a point requires 5 of 5 measured answers to pass before UX performance comparison"
+  }
 }
