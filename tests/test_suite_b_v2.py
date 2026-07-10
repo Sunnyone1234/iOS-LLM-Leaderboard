@@ -241,7 +241,7 @@ class WorkloadManifestTests(unittest.TestCase):
         workload = json.loads(
             (WORKLOADS / "b-pipe-002-input-length-sweep.json").read_text()
         )
-        self.assertEqual(workload["status"], "validation-candidate")
+        self.assertEqual(workload["status"], "pilot-validated")
         self.assertEqual(
             workload["input"]["target_model_input_tokens"]["values"],
             [32, 128, 512, 2048],

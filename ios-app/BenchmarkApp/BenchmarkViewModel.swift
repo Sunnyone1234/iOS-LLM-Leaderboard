@@ -297,6 +297,7 @@ final class BenchmarkViewModel {
         isRunningInputSweep = true
         inputSweepError = nil
         inputSweepResults = []
+        var calibratedSessions: [(InputLengthFixtureCalibration, BenchmarkSession)] = []
 
         for calibration in inputLengthCalibrations {
             guard SystemMeasurements.thermalState == "nominal" else {
@@ -344,10 +345,24 @@ final class BenchmarkViewModel {
                         ?? SystemMeasurements.thermalState
                 )
             )
+            calibratedSessions.append((calibration, session))
             if SystemMeasurements.thermalState == "critical" {
                 inputSweepError = "Thermal state became critical; remaining points were not run."
                 isRunningInputSweep = false
                 return
+            }
+        }
+        if let modelPreparation {
+            let bundle = InputSweepResultBundle.make(
+                calibratedSessions: calibratedSessions,
+                environment: DeviceEnvironment.current,
+                plan: loadedPlan!.plan,
+                modelPreparation: modelPreparation
+            )
+            do {
+                resultFileURL = try await resultStore.save(bundle)
+            } catch {
+                inputSweepError = "Sweep completed but export failed: \(error)"
             }
         }
         currentThermalState = SystemMeasurements.thermalState

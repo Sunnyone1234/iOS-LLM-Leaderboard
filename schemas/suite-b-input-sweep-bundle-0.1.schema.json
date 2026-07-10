@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YizeSun/iOS-LLM-Leaderboard/schemas/suite-b-input-sweep-bundle-0.1.schema.json",
+  "title": "Suite B Input Length Sweep Bundle 0.1",
+  "type": "object",
+  "required": ["schemaVersion", "resultID", "createdAt", "officialResultEligible", "workloadID", "workloadVersion", "pointOrder", "outputTokenLimit", "model", "runtime", "device", "modelPreparation", "points"],
+  "properties": {
+    "schemaVersion": { "const": "suite-b-input-sweep-bundle-0.1" },
+    "officialResultEligible": { "const": false },
+    "workloadID": { "const": "b-pipe-002-input-length-sweep" },
+    "workloadVersion": { "const": "0.2.0-pilot" },
+    "pointOrder": { "const": [32, 128, 512, 2048] },
+    "outputTokenLimit": { "const": 32 },
+    "model": { "type": "object" },
+    "runtime": { "type": "object" },
+    "device": { "type": "object" },
+    "modelPreparation": { "type": "object" },
+    "points": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["targetInputTokens", "fixtureSHA256", "paddingRepetitions", "successfulMeasuredRuns", "medianPipelineTTFTMilliseconds", "medianPrefillTokensPerSecond", "medianPeakMemoryMegabytes", "finalThermalState", "attempts"]
+      }
+    }
+  }
+}

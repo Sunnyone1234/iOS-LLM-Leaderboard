@@ -1,8 +1,8 @@
 {
   "schema_version": "suite-b-workload-0.1",
   "workload_id": "b-pipe-002-input-length-sweep",
-  "workload_version": "0.2.0-calibration-candidate",
-  "status": "validation-candidate",
+  "workload_version": "0.2.0-pilot",
+  "status": "pilot-validated",
   "category": "pipeline",
   "title": "Input Length Sweep",
   "scenario": "Token-exact input fixtures characterize prefill, TTFT, and memory scaling.",
@@ -53,7 +53,6 @@
     "process_physical_footprint_mib@1"
   ],
   "blocking_decisions": [
-    "validate the first complete sweep on the pinned physical-iPhone reference profile",
-    "freeze the result bundle and recalculation validator after pilot evidence"
+    "validate the exported result bundle from the pinned physical-iPhone reference profile"
   ]
 }

@@ -146,7 +146,7 @@ struct RunBenchmarkView: View {
                 } header: {
                     Text("B-PIPE-002 Fixture Calibration")
                 } footer: {
-                    Text("Preparation only. Uses the pinned tokenizer and chat template; no generation or performance result is recorded.")
+                    Text("Calibration records no performance result. Run Input Length Sweep performs and exports the measured sequence.")
                 }
 
                 if !viewModel.inputSweepResults.isEmpty {
