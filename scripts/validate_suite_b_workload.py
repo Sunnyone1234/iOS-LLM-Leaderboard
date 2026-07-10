@@ -89,6 +89,16 @@ def validate(data: dict[str, Any]) -> list[str]:
                     errors.append("input.sha256 must be a 64-character digest")
                 elif hashlib.sha256(path.read_bytes()).hexdigest() != digest:
                     errors.append("input.sha256 does not match the fixture")
+        question = input_value.get("question_path")
+        question_digest = input_value.get("question_sha256")
+        if question is not None:
+            question_path = ROOT / question
+            if not question_path.is_file():
+                errors.append(f"input question does not exist: {question}")
+            elif not isinstance(question_digest, str) or len(question_digest) != 64:
+                errors.append("input.question_sha256 must be a 64-character digest")
+            elif hashlib.sha256(question_path.read_bytes()).hexdigest() != question_digest:
+                errors.append("input.question_sha256 does not match the question")
 
     output = data.get("output")
     if not isinstance(output, dict):

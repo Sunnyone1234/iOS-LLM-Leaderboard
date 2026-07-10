@@ -58,6 +58,11 @@ protocol ModelPreparingRuntime: LanguageModelRuntime {
     func calibrateInputLengthFixtures(
         targets: [Int]
     ) async throws -> [InputLengthFixtureCalibration]
+    func calibrateContextAssistanceFixtures(
+        document: String,
+        question: String,
+        targets: [Int]
+    ) async throws -> [InputLengthFixtureCalibration]
 }
 
 struct InputLengthFixtureCalibration: Sendable, Equatable {
@@ -72,5 +77,18 @@ enum InputLengthFixtureGenerator {
 
     static func prompt(paddingRepetitions: Int) -> String {
         baseText + String(repeating: " x", count: paddingRepetitions)
+    }
+}
+
+enum ContextAssistanceFixtureGenerator {
+    static func prompt(
+        document: String,
+        question: String,
+        paddingRepetitions: Int
+    ) -> String {
+        document
+            + "\nBackground records appendix:"
+            + String(repeating: " x", count: paddingRepetitions)
+            + "\n\nQuestion:\n" + question
     }
 }

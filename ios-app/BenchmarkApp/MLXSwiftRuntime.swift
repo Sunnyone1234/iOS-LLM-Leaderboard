@@ -87,6 +87,63 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
         return results
     }
 
+    func calibrateContextAssistanceFixtures(
+        document: String,
+        question: String,
+        targets: [Int]
+    ) async throws -> [InputLengthFixtureCalibration] {
+        guard let modelContainer else { throw RuntimeError.modelNotLoaded }
+        func prompt(_ repetitions: Int) -> String {
+            ContextAssistanceFixtureGenerator.prompt(
+                document: document,
+                question: question,
+                paddingRepetitions: repetitions
+            )
+        }
+        func count(_ repetitions: Int) async throws -> Int {
+            let value = prompt(repetitions)
+            return try await modelContainer.perform { context in
+                let input = try await context.processor.prepare(
+                    input: UserInput(
+                        prompt: value,
+                        additionalContext: ["enable_thinking": false]
+                    )
+                )
+                return input.text.tokens.size
+            }
+        }
+        var results: [InputLengthFixtureCalibration] = []
+        for target in targets {
+            var low = 0
+            var high = target * 2
+            while low <= high {
+                let middle = (low + high) / 2
+                let actual = try await count(middle)
+                if actual == target {
+                    let value = prompt(middle)
+                    let digest = SHA256.hash(data: Data(value.utf8)).map {
+                        String(format: "%02x", $0)
+                    }.joined()
+                    results.append(.init(
+                        targetTokenCount: target,
+                        actualTokenCount: actual,
+                        paddingRepetitions: middle,
+                        promptSHA256: digest
+                    ))
+                    break
+                } else if actual < target {
+                    low = middle + 1
+                } else {
+                    high = middle - 1
+                }
+            }
+            guard results.last?.targetTokenCount == target else {
+                throw RuntimeError.exactInputLengthUnavailable(target)
+            }
+        }
+        return results
+    }
+
     nonisolated let identity =
         "MLX Swift LM 3.31.4 · mlx-community/Qwen3-0.6B-4bit@73e3e38d"
 

@@ -267,6 +267,29 @@ class WorkloadManifestTests(unittest.TestCase):
                 point["prompt_sha256"],
             )
 
+    def test_context_assistance_candidate_freezes_sources_and_answer_contract(self) -> None:
+        workload = json.loads(
+            (WORKLOADS / "b-ux-002-context-assistance.json").read_text()
+        )
+        self.assertEqual(workload["status"], "validation-candidate")
+        for path_key, hash_key in (
+            ("fixture_path", "sha256"),
+            ("question_path", "question_sha256"),
+        ):
+            path = ROOT / workload["input"][path_key]
+            self.assertEqual(
+                hashlib.sha256(path.read_bytes()).hexdigest(),
+                workload["input"][hash_key],
+            )
+        self.assertEqual(
+            [variant["target_model_input_tokens"] for variant in workload["variants"]],
+            [1024, 2048],
+        )
+        contract = workload["minimum_answer_contract"]
+        self.assertEqual(contract["required_reference_code"], "ORCHID-47")
+        self.assertEqual(len(contract["required_facts"]), 4)
+        self.assertFalse(workload["generation"]["sampling"])
+
 
 class PilotBundleValidatorTests(unittest.TestCase):
     def test_valid_bundle_recalculates_cleanly(self) -> None:

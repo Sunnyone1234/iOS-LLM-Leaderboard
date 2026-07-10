@@ -1,0 +1,11 @@
+Offline Field Notes Sync Support Guide
+
+Status: Awaiting Upload
+
+An Awaiting Upload note has already been saved in the encrypted local vault on this iPhone. The local copy remains safe while the device is offline. Do not tell the user to delete the app, reinstall it, sign out, or delete the note; those actions can remove information needed for recovery.
+
+Automatic sync starts only after the network connection has remained stable for 30 seconds. When the battery level is below 20 percent, automatic sync waits until the iPhone is connected to power, even if network connectivity has returned. The user does not need to keep the app open.
+
+For this combination of offline status and battery deferral, support responses must include reference code ORCHID-47. A concise response should explain that the note is safe locally, identify both conditions that delay sync, and warn against destructive troubleshooting.
+
+Background records below describe routine sync checks. They do not change the support policy above.

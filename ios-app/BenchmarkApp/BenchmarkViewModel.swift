@@ -58,6 +58,9 @@ final class BenchmarkViewModel {
     private(set) var inputSweepResults: [InputSweepPointSummary] = []
     private(set) var inputSweepError: String?
     private(set) var isRunningInputSweep = false
+    private(set) var contextCalibrations: [InputLengthFixtureCalibration] = []
+    private(set) var contextCalibrationError: String?
+    private(set) var isCalibratingContext = false
 
     let loadedPlan: LoadedPilotPlan?
 
@@ -99,6 +102,10 @@ final class BenchmarkViewModel {
     var canRunInputSweep: Bool {
         canRun && inputLengthCalibrations.map(\.targetTokenCount) == [32, 128, 512, 2048]
             && !isRunningInputSweep
+    }
+
+    var canCalibrateContext: Bool {
+        preparationPhase == .ready && phase != .running && !isCalibratingContext
     }
 
     var admissionReasonCodes: [String] {
@@ -367,6 +374,34 @@ final class BenchmarkViewModel {
         }
         currentThermalState = SystemMeasurements.thermalState
         isRunningInputSweep = false
+    }
+
+    func calibrateContextAssistance() async {
+        guard canCalibrateContext else { return }
+        isCalibratingContext = true
+        contextCalibrationError = nil
+        do {
+            guard let documentURL = Bundle.main.url(
+                forResource: "b-ux-002-context-assistance-document",
+                withExtension: "txt"
+            ), let questionURL = Bundle.main.url(
+                forResource: "b-ux-002-context-assistance-question",
+                withExtension: "txt"
+            ) else {
+                throw CocoaError(.fileNoSuchFile)
+            }
+            let document = try String(contentsOf: documentURL, encoding: .utf8)
+            let question = try String(contentsOf: questionURL, encoding: .utf8)
+            contextCalibrations = try await runtime.calibrateContextAssistanceFixtures(
+                document: document,
+                question: question,
+                targets: [1024, 2048]
+            )
+        } catch {
+            contextCalibrations = []
+            contextCalibrationError = String(describing: error)
+        }
+        isCalibratingContext = false
     }
 
     func metricText(_ value: Double?, unit: String) -> String {

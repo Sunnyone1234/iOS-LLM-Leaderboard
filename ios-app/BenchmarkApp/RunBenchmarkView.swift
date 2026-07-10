@@ -167,6 +167,26 @@ struct RunBenchmarkView: View {
                     }
                 }
 
+                Section {
+                    Button("Calibrate Context Variants") {
+                        Task { await viewModel.calibrateContextAssistance() }
+                    }
+                    .disabled(!viewModel.canCalibrateContext)
+                    ForEach(viewModel.contextCalibrations, id: \.targetTokenCount) { item in
+                        LabeledContent(
+                            "Target \(item.targetTokenCount)",
+                            value: "\(item.actualTokenCount) tokens · padding \(item.paddingRepetitions)"
+                        )
+                    }
+                    if let error = viewModel.contextCalibrationError {
+                        Text(error).foregroundStyle(.red)
+                    }
+                } header: {
+                    Text("B-UX-002 Context Calibration")
+                } footer: {
+                    Text("Preparation only. No generation or performance result is recorded.")
+                }
+
                 if let summary = viewModel.result?.summary {
                     Section("Latest Result · Median") {
                         LabeledContent(
