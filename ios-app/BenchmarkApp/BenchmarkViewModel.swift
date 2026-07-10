@@ -25,6 +25,18 @@ final class BenchmarkViewModel {
         let medianPeakMemoryMegabytes: Double?
         let finalThermalState: String
     }
+
+    struct ContextPointSummary: Equatable {
+        let targetTokenCount: Int
+        let successfulMeasuredRuns: Int
+        let contractPassingRuns: Int
+        let medianPipelineTTFTMilliseconds: Double?
+        let medianUserVisibleTTFTMilliseconds: Double?
+        let medianRequestCompletionMilliseconds: Double?
+        let medianPeakMemoryMegabytes: Double?
+        let sampleOutput: String?
+        let finalThermalState: String
+    }
     enum PreparationPhase: Equatable {
         case notPrepared
         case preparing
@@ -61,6 +73,9 @@ final class BenchmarkViewModel {
     private(set) var contextCalibrations: [InputLengthFixtureCalibration] = []
     private(set) var contextCalibrationError: String?
     private(set) var isCalibratingContext = false
+    private(set) var contextResults: [ContextPointSummary] = []
+    private(set) var contextRunError: String?
+    private(set) var isRunningContext = false
 
     let loadedPlan: LoadedPilotPlan?
 
@@ -106,6 +121,11 @@ final class BenchmarkViewModel {
 
     var canCalibrateContext: Bool {
         preparationPhase == .ready && phase != .running && !isCalibratingContext
+    }
+
+    var canRunContext: Bool {
+        canRun && contextCalibrations.map(\.targetTokenCount) == [1024, 2048]
+            && !isRunningContext
     }
 
     var admissionReasonCodes: [String] {
@@ -402,6 +422,65 @@ final class BenchmarkViewModel {
             contextCalibrationError = String(describing: error)
         }
         isCalibratingContext = false
+    }
+
+    func runContextAssistance() async {
+        guard canRunContext else { return }
+        isRunningContext = true
+        contextResults = []
+        contextRunError = nil
+        do {
+            guard let documentURL = Bundle.main.url(forResource: "b-ux-002-context-assistance-document", withExtension: "txt"),
+                  let questionURL = Bundle.main.url(forResource: "b-ux-002-context-assistance-question", withExtension: "txt") else {
+                throw CocoaError(.fileNoSuchFile)
+            }
+            let document = try String(contentsOf: documentURL, encoding: .utf8)
+            let question = try String(contentsOf: questionURL, encoding: .utf8)
+            for calibration in contextCalibrations {
+                guard SystemMeasurements.thermalState == "nominal" else {
+                    contextRunError = "Target \(calibration.targetTokenCount) was not started because thermal state was not nominal."
+                    isRunningContext = false
+                    return
+                }
+                let prompt = ContextAssistanceFixtureGenerator.prompt(
+                    document: document,
+                    question: question,
+                    paddingRepetitions: calibration.paddingRepetitions
+                )
+                let session = await BenchmarkRunner(
+                    runtime: runtime,
+                    procedure: .init(warmupRuns: 1, measuredRuns: 5, outputTokenLimit: 128)
+                ).run(prompt: prompt)
+                let completed = session.measuredAttempts.compactMap { attempt -> (RuntimeGenerationResult, AttemptMetrics)? in
+                    guard case .completed(let generation) = attempt.outcome else { return nil }
+                    return (generation, .calculate(for: attempt))
+                }
+                guard completed.count >= 3,
+                      completed.allSatisfy({ $0.0.promptTokenCount == calibration.targetTokenCount }) else {
+                    contextRunError = "Target \(calibration.targetTokenCount) failed exact-token or run-count admission."
+                    isRunningContext = false
+                    return
+                }
+                let passing = completed.filter {
+                    ContextAnswerContract.evaluate($0.0.generatedText).passed
+                }.count
+                contextResults.append(.init(
+                    targetTokenCount: calibration.targetTokenCount,
+                    successfulMeasuredRuns: completed.count,
+                    contractPassingRuns: passing,
+                    medianPipelineTTFTMilliseconds: AttemptMetrics.median(completed.map { $0.1.ttftMilliseconds }),
+                    medianUserVisibleTTFTMilliseconds: AttemptMetrics.median(completed.map { $0.1.userVisibleTTFTMilliseconds }),
+                    medianRequestCompletionMilliseconds: AttemptMetrics.median(completed.map { $0.1.requestCompletionMilliseconds }),
+                    medianPeakMemoryMegabytes: AttemptMetrics.median(completed.map { $0.1.peakMemoryMegabytes }),
+                    sampleOutput: completed.first?.0.generatedText,
+                    finalThermalState: session.attempts.last?.thermalStateAfter ?? "unknown"
+                ))
+            }
+        } catch {
+            contextRunError = String(describing: error)
+        }
+        currentThermalState = SystemMeasurements.thermalState
+        isRunningContext = false
     }
 
     func metricText(_ value: Double?, unit: String) -> String {

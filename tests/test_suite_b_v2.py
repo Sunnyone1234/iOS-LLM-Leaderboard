@@ -289,6 +289,16 @@ class WorkloadManifestTests(unittest.TestCase):
         self.assertEqual(contract["required_reference_code"], "ORCHID-47")
         self.assertEqual(len(contract["required_facts"]), 4)
         self.assertFalse(workload["generation"]["sampling"])
+        document = (ROOT / workload["input"]["fixture_path"]).read_text()
+        question = (ROOT / workload["input"]["question_path"]).read_text()
+        for variant in workload["context_extension"]["reference_profile"]["variants"]:
+            prompt = document + "\nBackground records appendix:" \
+                + " x" * variant["padding_repetitions"] \
+                + "\n\nQuestion:\n" + question
+            self.assertEqual(
+                hashlib.sha256(prompt.encode()).hexdigest(),
+                variant["prompt_sha256"],
+            )
 
 
 class PilotBundleValidatorTests(unittest.TestCase):

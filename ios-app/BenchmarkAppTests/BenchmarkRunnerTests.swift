@@ -2,6 +2,11 @@ import XCTest
 @testable import BenchmarkApp
 
 final class BenchmarkRunnerTests: XCTestCase {
+    func testContextAnswerContractRequiresAllGroundedFacts() {
+        let valid = "ORCHID-47: The note is safe in the local vault. Sync waits until the network is stable for 30 seconds and, below 20%, until connected to power; do not delete or reinstall the app."
+        XCTAssertTrue(ContextAnswerContract.evaluate(valid).passed)
+        XCTAssertFalse(ContextAnswerContract.evaluate("The note will sync later.").passed)
+    }
     func testBuildConfigurationIsExplicit() {
         XCTAssertTrue(["Debug", "Release"].contains(BuildMetadata.configuration))
         XCTAssertFalse(BuildMetadata.appVersion.isEmpty)

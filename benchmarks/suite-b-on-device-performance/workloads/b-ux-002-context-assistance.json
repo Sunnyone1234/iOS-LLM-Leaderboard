@@ -53,7 +53,17 @@
   "context_extension": {
     "section": "background records appendix",
     "semantic_rule": "padding must not add, remove, or contradict answer-bearing facts",
-    "token_rule": "prepared post-chat-template input must exactly match the variant target"
+    "token_rule": "prepared post-chat-template input must exactly match the variant target",
+    "reference_profile": {
+      "artifact_id": "mlx-community/Qwen3-0.6B-4bit",
+      "artifact_revision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+      "validated_device": "iPhone15,3",
+      "validated_on": "2026-07-11",
+      "variants": [
+        { "target_tokens": 1024, "padding_repetitions": 751, "prompt_sha256": "a31d6da2063892ab60e7b510e8b1721dbe0f71c7a1dc43f8a787336f20427987" },
+        { "target_tokens": 2048, "padding_repetitions": 1775, "prompt_sha256": "44db8ce745be99713867619d0e18d2c0ab62148149c5ed49089053e31e27cccc" }
+      ]
+    }
   },
   "blocking_decisions": [
     "calibrate the two exact context variants on the pinned reference adapter",

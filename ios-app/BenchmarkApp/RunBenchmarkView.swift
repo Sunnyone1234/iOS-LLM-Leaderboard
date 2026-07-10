@@ -181,10 +181,41 @@ struct RunBenchmarkView: View {
                     if let error = viewModel.contextCalibrationError {
                         Text(error).foregroundStyle(.red)
                     }
+                    Button("Run Context Assistance") {
+                        Task { await viewModel.runContextAssistance() }
+                    }
+                    .disabled(!viewModel.canRunContext)
+                    if viewModel.isRunningContext {
+                        ProgressView("Running context variants…")
+                    }
+                    if let error = viewModel.contextRunError {
+                        Text(error).foregroundStyle(.red)
+                    }
                 } header: {
                     Text("B-UX-002 Context Calibration")
                 } footer: {
-                    Text("Preparation only. No generation or performance result is recorded.")
+                    Text("Calibration records no performance result. The context run evaluates both timing and the fixed answer contract.")
+                }
+
+                if !viewModel.contextResults.isEmpty {
+                    Section("B-UX-002 Context Results") {
+                        ForEach(viewModel.contextResults, id: \.targetTokenCount) { point in
+                            DisclosureGroup("\(point.targetTokenCount) context tokens") {
+                                LabeledContent("Successful runs", value: "\(point.successfulMeasuredRuns) / 5")
+                                LabeledContent("Answer contract", value: "\(point.contractPassingRuns) / 5 passed")
+                                LabeledContent("Pipeline TTFT", value: viewModel.metricText(point.medianPipelineTTFTMilliseconds, unit: "ms"))
+                                LabeledContent("User-visible TTFT", value: viewModel.metricText(point.medianUserVisibleTTFTMilliseconds, unit: "ms"))
+                                LabeledContent("Request completion", value: viewModel.metricText(point.medianRequestCompletionMilliseconds, unit: "ms"))
+                                LabeledContent("Memory peak", value: viewModel.metricText(point.medianPeakMemoryMegabytes, unit: "MiB"))
+                                LabeledContent("Final thermal", value: point.finalThermalState)
+                                if let output = point.sampleOutput {
+                                    DisclosureGroup("Sample output") {
+                                        Text(output).textSelection(.enabled)
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 if let summary = viewModel.result?.summary {
