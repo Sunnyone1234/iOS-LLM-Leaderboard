@@ -103,6 +103,99 @@ def valid_bundle() -> dict:
     }
 
 
+def valid_0_5_bundle() -> dict:
+    bundle = valid_bundle()
+    prompt_hash = "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996"
+    bundle["schemaVersion"] = "suite-b-pilot-bundle-0.5"
+    bundle["plan"]["version"] = "0.3.0"
+    bundle["plan"]["promptSHA256"] = prompt_hash
+    bundle["plan"]["v2ProfileMapping"] = (
+        "b-pipe-001-sustained-generation@0.1.0-draft"
+    )
+    bundle["workload"] = {
+        "id": "suite-b-pilot-001-fixed-generation",
+        "version": "1.0",
+        "category": "pipeline",
+        "promptSHA256": prompt_hash,
+    }
+    bundle["measurementMode"] = {
+        "id": "b-mode-sustained-no-rest-v1",
+        "timingBoundaryVersion": "mlx-pilot-pipeline-boundaries-1",
+        "pipelineTTFTStart": "prepared",
+        "pipelineTTFTEnd": "raw-token",
+        "userVisibleTTFTAvailable": False,
+        "prefillSource": "mlx",
+        "decodeFormula": "documented",
+        "memoryMetric": "TASK_VM_INFO.phys_footprint",
+        "memorySamplingIntervalMilliseconds": 50,
+    }
+    bundle["generationConfiguration"] = {
+        "samplingEnabled": False,
+        "temperature": 0,
+        "topP": None,
+        "topK": None,
+        "seed": None,
+        "repetitionPenalty": None,
+        "thinkingMode": "disabled-via-prompt-directive",
+        "chatTemplateIdentity": "artifact-tokenizer-config",
+        "includeStopTokenInRawEvents": False,
+        "outputTokenLimit": 512,
+        "contextPolicy": "new-context-for-each-generation",
+        "modelLoadPolicy": "load-once-before-warmup",
+        "kvCachePolicy": "new-cache-for-each-generation",
+    }
+    bundle["model"] = {
+        "displayName": "Qwen3 0.6B",
+        "baseModelID": "Qwen/Qwen3-0.6B",
+        "artifactID": "mlx-community/Qwen3-0.6B-4bit",
+        "artifactRevision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+        "quantization": "4-bit",
+        "modelFormat": "MLX Safetensors",
+        "artifactContentHash": None,
+    }
+    bundle["runtime"] = {
+        "name": "MLX Swift LM",
+        "version": "3.31.4",
+        "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+        "backend": "MLX/Metal",
+        "mlxSwiftVersion": "0.31.6",
+        "mlxSwiftRevision": "0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+        "downloaderPackage": "swift-huggingface 0.9.0",
+        "tokenizerPackage": "swift-transformers 1.3.0",
+    }
+    bundle["device"] = {
+        "displayName": "iPhone 14 Pro Max (iPhone15,3)",
+        "machineIdentifier": "iPhone15,3",
+        "systemName": "iOS",
+        "systemVersion": "26.5",
+        "systemBuild": "23F77",
+        "debuggerAttached": False,
+        "buildConfiguration": "Release",
+        "appVersion": "0.3.0",
+        "appBuild": "3",
+        "appSourceCommit": None,
+        "lowPowerModeEnabled": False,
+        "batteryLevelPercent": 75,
+        "batteryState": "unplugged",
+    }
+    bundle["modelPreparation"] = {
+        "artifactID": "mlx-community/Qwen3-0.6B-4bit",
+        "artifactRevision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+        "cacheStateBeforePreparation": "cached",
+        "downloadOccurredDuringSession": False,
+        "preparationDurationMilliseconds": 500,
+        "preparationCompleted": True,
+        "modelLoadCompleted": True,
+        "eligibleForPerformanceMeasurement": True,
+        "reasonCodes": [],
+        "cacheVerificationMethod": (
+            "huggingface_revision_manifest_cached_file_size_v1"
+        ),
+        "preparedAt": "2026-07-10T13:00:00Z",
+    }
+    return bundle
+
+
 class WorkloadManifestTests(unittest.TestCase):
     def test_four_draft_workloads_have_distinct_ids(self) -> None:
         manifests = [json.loads(path.read_text()) for path in sorted(WORKLOADS.glob("*.json"))]
@@ -189,6 +282,33 @@ class PilotBundleValidatorTests(unittest.TestCase):
         del bundle["generationConfiguration"]
         self.assertIn(
             "generationConfiguration must be an object",
+            validate(bundle),
+        )
+
+    def test_0_5_model_preparation_is_validated(self) -> None:
+        bundle = valid_0_5_bundle()
+        self.assertEqual(validate(bundle), [])
+
+        bundle["modelPreparation"]["artifactRevision"] = "b" * 40
+        self.assertIn(
+            "modelPreparation.artifactRevision must match model",
+            validate(bundle),
+        )
+
+    def test_0_5_download_cannot_be_marked_eligible(self) -> None:
+        bundle = valid_0_5_bundle()
+        bundle["modelPreparation"]["cacheStateBeforePreparation"] = "not_cached"
+        bundle["modelPreparation"]["downloadOccurredDuringSession"] = True
+        self.assertIn(
+            "downloaded model cannot be eligible in the same App session",
+            validate(bundle),
+        )
+
+    def test_0_5_unknown_cache_cannot_be_marked_eligible(self) -> None:
+        bundle = valid_0_5_bundle()
+        bundle["modelPreparation"]["cacheStateBeforePreparation"] = "unknown"
+        self.assertIn(
+            "unknown model cache state cannot be eligible",
             validate(bundle),
         )
 

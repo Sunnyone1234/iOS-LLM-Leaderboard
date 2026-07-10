@@ -4,6 +4,15 @@ import Observation
 @MainActor
 @Observable
 final class BenchmarkViewModel {
+    enum PreparationPhase: Equatable {
+        case notPrepared
+        case preparing
+        case ready
+        case restartRequired
+        case blocked(message: String)
+        case failed(message: String)
+    }
+
     enum Phase: Equatable {
         case ready
         case running
@@ -12,22 +21,79 @@ final class BenchmarkViewModel {
     }
 
     private(set) var phase: Phase = .ready
+    private(set) var preparationPhase: PreparationPhase = .notPrepared
+    private(set) var modelPreparation: ModelPreparationEvidence?
     private(set) var result: PilotResultBundle?
     private(set) var resultFileURL: URL?
     private(set) var currentThermalState = SystemMeasurements.thermalState
     private(set) var debuggerAttached = DebuggerStatus.isAttached
     private(set) var lowPowerModeEnabled = ProcessInfo.processInfo.isLowPowerModeEnabled
     private(set) var buildConfiguration = BuildMetadata.configuration
+    private(set) var configurationError: String?
+
+    let loadedPlan: LoadedPilotPlan?
+
+    private let runtime: any ModelPreparingRuntime
+    private let resultStore = ResultStore()
+
+    init(
+        runtime: any ModelPreparingRuntime = MLXSwiftRuntime(),
+        loadedPlan: LoadedPilotPlan? = nil
+    ) {
+        self.runtime = runtime
+        if let loadedPlan {
+            self.loadedPlan = loadedPlan
+        } else {
+            do {
+                self.loadedPlan = try PilotPlanLoader.load()
+            } catch {
+                self.loadedPlan = nil
+                configurationError = String(describing: error)
+            }
+        }
+    }
+
+    var canPrepare: Bool {
+        loadedPlan != nil
+            && preparationPhase != .preparing
+            && phase != .running
+            && preparationPhase != .restartRequired
+    }
 
     var canRun: Bool {
-        phase != .running
-            && !debuggerAttached
-            && buildConfiguration == "Release"
-            && !lowPowerModeEnabled
-            && currentThermalState == "nominal"
+        phase != .running && admissionReasonCodes.isEmpty
+    }
+
+    var admissionReasonCodes: [String] {
+        guard let plan = loadedPlan?.plan else { return ["plan_not_loaded"] }
+        return BenchmarkAdmission.reasonCodes(
+            preparation: modelPreparation,
+            environment: .init(
+                debuggerAttached: debuggerAttached,
+                buildConfiguration: buildConfiguration,
+                lowPowerModeEnabled: lowPowerModeEnabled,
+                thermalState: currentThermalState
+            ),
+            requirements: plan.environmentRequirements
+        )
     }
 
     var statusText: String {
+        if let configurationError {
+            return "Configuration error: \(configurationError)"
+        }
+        switch preparationPhase {
+        case .notPrepared:
+            return "Prepare the pinned model before measuring."
+        case .preparing:
+            return "Checking the pinned revision, downloading if needed, then loading the model…"
+        case .restartRequired:
+            return "Model downloaded — restart required before measuring."
+        case .blocked(let message), .failed(let message):
+            return message
+        case .ready:
+            break
+        }
         if debuggerAttached {
             return "Debugger attached. In Edit Scheme → Run → Info, turn off Debug executable before measuring."
         }
@@ -42,9 +108,9 @@ final class BenchmarkViewModel {
         }
         return switch phase {
         case .ready:
-            "Ready. The first run downloads and caches the pinned model."
+            "Model prepared from a verified cache. Ready to measure."
         case .running:
-            "Loading the model, then running 1 warm-up and 5 measured attempts…"
+            "Running \(loadedPlan?.plan.procedure.warmupRuns ?? 0) warm-up and \(loadedPlan?.plan.procedure.measuredRuns ?? 0) measured attempts…"
         case .completed(let measuredAttempts, let failedAttempts):
             "Saved \(measuredAttempts) measured records; \(failedAttempts) did not complete."
         case .failed(let message):
@@ -52,24 +118,53 @@ final class BenchmarkViewModel {
         }
     }
 
-    private let runtime = MLXSwiftRuntime()
-    private let resultStore = ResultStore()
+    func prepareModel() async {
+        guard canPrepare, let plan = loadedPlan?.plan else { return }
+        preparationPhase = .preparing
+        let evidence = await runtime.prepare(plan: plan)
+        modelPreparation = evidence
+        preparationPhase = Self.preparationPhase(for: evidence)
+    }
+
+    static func preparationPhase(
+        for evidence: ModelPreparationEvidence
+    ) -> PreparationPhase {
+        if evidence.downloadOccurredDuringSession {
+            return .restartRequired
+        } else if evidence.eligibleForPerformanceMeasurement {
+            return .ready
+        } else if evidence.reasonCodes.contains("model_preparation_failed")
+            || evidence.reasonCodes.contains("model_load_failed") {
+            return .failed(
+                message: "Model preparation failed: \(evidence.reasonCodes.joined(separator: ", "))"
+            )
+        } else {
+            return .blocked(
+                message: "Model preparation blocked: \(evidence.reasonCodes.joined(separator: ", "))"
+            )
+        }
+    }
 
     func run() async {
         debuggerAttached = DebuggerStatus.isAttached
         lowPowerModeEnabled = ProcessInfo.processInfo.isLowPowerModeEnabled
         buildConfiguration = BuildMetadata.configuration
-        guard canRun else { return }
+        guard canRun,
+              let loadedPlan,
+              let modelPreparation else { return }
         let sessionEnvironment = DeviceEnvironment.current
         phase = .running
         currentThermalState = SystemMeasurements.thermalState
 
         do {
-            let prompt = try Self.loadPrompt()
             let session = await BenchmarkRunner(
                 runtime: runtime,
-                procedure: .pilot
-            ).run(prompt: prompt)
+                procedure: BenchmarkProcedure(
+                    warmupRuns: loadedPlan.plan.procedure.warmupRuns,
+                    measuredRuns: loadedPlan.plan.procedure.measuredRuns,
+                    outputTokenLimit: loadedPlan.plan.workload.outputTokenLimit
+                )
+            ).run(prompt: loadedPlan.prompt)
 
             guard !session.measuredAttempts.isEmpty else {
                 let message = session.attempts.first.map(Self.failureMessage)
@@ -84,7 +179,9 @@ final class BenchmarkViewModel {
             }.count
             let bundle = PilotResultBundle.make(
                 session: session,
-                environment: sessionEnvironment
+                environment: sessionEnvironment,
+                plan: loadedPlan.plan,
+                modelPreparation: modelPreparation
             )
             resultFileURL = try await resultStore.save(bundle)
             result = bundle
@@ -126,16 +223,6 @@ final class BenchmarkViewModel {
 
     var warmupAttemptRecord: PilotResultBundle.Attempt? {
         result?.attempts.first { $0.role == "warmup" }
-    }
-
-    private static func loadPrompt() throws -> String {
-        guard let url = Bundle.main.url(
-            forResource: "suite-b-pilot-001-prompt",
-            withExtension: "txt"
-        ) else {
-            throw CocoaError(.fileNoSuchFile)
-        }
-        return try String(contentsOf: url, encoding: .utf8)
     }
 
     private static func failureMessage(_ attempt: BenchmarkAttempt) -> String {

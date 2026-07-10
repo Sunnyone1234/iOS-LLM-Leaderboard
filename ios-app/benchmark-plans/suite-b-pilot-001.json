@@ -1,7 +1,7 @@
 {
-  "plan_schema_version": "0.2",
+  "plan_schema_version": "0.3",
   "plan_id": "suite-b-pilot-001",
-  "plan_version": "0.2.0",
+  "plan_version": "0.3.0",
   "status": "draft-pilot",
   "suite": "Suite B: On-device Performance",
   "framework_version": "v2-design-draft",
@@ -49,7 +49,7 @@
     "top_k": null,
     "seed": null,
     "repetition_penalty": null,
-    "thinking_mode": "model-default",
+    "thinking_mode": "disabled-via-prompt-directive",
     "chat_template_identity": "artifact-tokenizer-config",
     "include_stop_token_in_raw_events": false,
     "stop_conditions": ["model-eos", "output-token-limit", "cancellation", "error"],
@@ -109,6 +109,6 @@
     "Thermal observations from five runs are not a thermal-stability claim.",
     "Sampled process footprint is not an exact system-wide memory peak.",
     "The current result bundle does not yet report user-visible TTFT.",
-    "Battery and Low Power Mode evidence is specified but not yet emitted by the pilot app."
+    "A network connection is required during Prepare Model to verify the pinned revision manifest against the local cache."
   ]
 }

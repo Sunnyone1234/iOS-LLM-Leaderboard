@@ -72,16 +72,20 @@ Later adapters may support:
 The repository now includes a minimal SwiftUI Xcode project targeting iPhone
 on iOS 26 or later. It provides:
 
-- a Run Benchmark screen that displays the locked pilot configuration;
+- separate Prepare Model and Run Benchmark operations for the locked plan;
 - public device, OS, and thermal-state inspection;
 - a runtime-neutral `LanguageModelRuntime` boundary;
 - a runner that executes one warm-up followed by five measured attempts; and
 - unit tests proving that warm-up and failed attempts remain distinguishable.
 
-The pinned MLX Swift LM adapter is connected to the Run button. The first run
-downloads and caches the fixed Qwen3 artifact; generation starts only after the
-snapshot has been materialized. The app does not generate simulated
-measurements and does not upload results.
+Prepare Model obtains the pinned revision manifest, verifies every required
+MLX model/tokenizer file in the revision-specific Hugging Face cache, downloads
+missing files when necessary, and loads the model without inference. If that
+App session downloads model files, measurement remains disabled until the user
+fully closes and relaunches the App, then prepares the cached model again. A
+manifest or cache verification failure produces `unknown` and never silently
+admits a measurement. The App does not generate simulated measurements and
+does not upload results.
 
 The current runner calculates TTFT, MLX-reported prefill throughput, decode
 throughput, token-interval percentiles, sampled process physical footprint, and
@@ -97,7 +101,9 @@ launch-time value. A run can start only from the system-reported `nominal`
 state. If the state reaches `critical`, the current generation is retained and
 remaining generations are recorded as `notRun` instead of being started.
 
-Raw bundle schema `suite-b-pilot-bundle-0.4` records the draft v2 workload
+App version `0.3.0` build `3` exports raw bundle schema
+`suite-b-pilot-bundle-0.5`, which records model-preparation evidence
+alongside the draft v2 workload
 mapping, Pipeline TTFT boundary, generation and cache configuration, underlying
 MLX dependency identity, battery state, and Low Power Mode. It also records
 separate decisions for
@@ -130,6 +136,11 @@ Release build configuration, Low Power Mode, battery level and charging state,
 and the app version and build. The current runner requires a Release build,
 detached debugger, Low Power Mode off, and a `nominal` thermal state before it
 enables measurement.
+
+The Run button additionally requires successful preparation from an already
+complete cache in the current App session. It never downloads or loads the
+model. Prepare Model performs no warm-up or measured generation; Run Benchmark
+performs the one warm-up and five measured attempts.
 
 The current TTFT is explicitly Pipeline TTFT. MLX chat-template application and
 tokenization complete before the monotonic generation clock starts. The app

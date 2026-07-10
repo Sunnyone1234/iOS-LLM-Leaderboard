@@ -7,6 +7,7 @@ import json
 import math
 import statistics
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -15,6 +16,7 @@ SUPPORTED_SCHEMAS = {
     "suite-b-pilot-bundle-0.2",
     "suite-b-pilot-bundle-0.3",
     "suite-b-pilot-bundle-0.4",
+    "suite-b-pilot-bundle-0.5",
 }
 THERMAL_STATES = {"nominal", "fair", "serious", "critical", "unknown"}
 
@@ -221,7 +223,11 @@ def validate(data: dict[str, Any]) -> list[str]:
     errors.extend(validate_summary(data, attempts))
 
     eligibility = data.get("eligibility")
-    if schema in {"suite-b-pilot-bundle-0.3", "suite-b-pilot-bundle-0.4"}:
+    if schema in {
+        "suite-b-pilot-bundle-0.3",
+        "suite-b-pilot-bundle-0.4",
+        "suite-b-pilot-bundle-0.5",
+    }:
         if not isinstance(eligibility, dict):
             errors.append("0.3 bundles require eligibility decisions")
         else:
@@ -229,7 +235,7 @@ def validate(data: dict[str, Any]) -> list[str]:
             if not isinstance(official, dict) or official.get("eligible") is not False:
                 errors.append("pilot officialLeaderboard eligibility must be false")
 
-    if schema == "suite-b-pilot-bundle-0.4":
+    if schema in {"suite-b-pilot-bundle-0.4", "suite-b-pilot-bundle-0.5"}:
         require_keys(plan, "plan", ("v2ProfileMapping",), errors)
         workload = require_object(data, "workload", errors)
         measurement = require_object(data, "measurementMode", errors)
@@ -322,6 +328,161 @@ def validate(data: dict[str, Any]) -> list[str]:
                 "unknown", "unplugged", "charging", "full"
             }:
                 errors.append("0.4 device.batteryState is unsupported")
+
+    if schema == "suite-b-pilot-bundle-0.5":
+        require_keys(
+            measurement,
+            "measurementMode",
+            ("prefillSource", "memorySamplingIntervalMilliseconds"),
+            errors,
+        )
+        require_keys(
+            generation,
+            "generationConfiguration",
+            (
+                "includeStopTokenInRawEvents",
+                "contextPolicy",
+                "modelLoadPolicy",
+            ),
+            errors,
+        )
+        if plan.get("version") != "0.3.0":
+            errors.append("0.5 plan.version must be 0.3.0")
+        if plan.get("promptSHA256") != (
+            "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996"
+        ):
+            errors.append("0.5 plan.promptSHA256 does not match the Pilot plan")
+        if plan.get("outputTokenLimit") != 512:
+            errors.append("0.5 plan.outputTokenLimit must be 512")
+        expected_mapping = "b-pipe-001-sustained-generation@0.1.0-draft"
+        if plan.get("v2ProfileMapping") != expected_mapping:
+            errors.append("0.5 plan.v2ProfileMapping is unsupported")
+
+        workload = require_object(data, "workload", errors)
+        if workload.get("id") != "suite-b-pilot-001-fixed-generation":
+            errors.append("0.5 workload.id is unsupported")
+        if workload.get("version") != "1.0" or workload.get("category") != "pipeline":
+            errors.append("0.5 workload identity is unsupported")
+        if workload.get("promptSHA256") != plan.get("promptSHA256"):
+            errors.append("0.5 workload prompt hash must match plan")
+
+        model = require_object(data, "model", errors)
+        runtime = require_object(data, "runtime", errors)
+        require_keys(model, "model", ("displayName",), errors)
+        if model.get("artifactID") != "mlx-community/Qwen3-0.6B-4bit":
+            errors.append("0.5 model.artifactID is unsupported")
+        if model.get("artifactRevision") != (
+            "73e3e38d981303bc594367cd910ea6eb48349da8"
+        ):
+            errors.append("0.5 model.artifactRevision is unsupported")
+        expected_runtime = {
+            "name": "MLX Swift LM",
+            "version": "3.31.4",
+            "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+            "mlxSwiftVersion": "0.31.6",
+            "mlxSwiftRevision": "0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+        }
+        for key, expected in expected_runtime.items():
+            if runtime.get(key) != expected:
+                errors.append(f"0.5 runtime.{key} does not match the Pilot plan")
+
+        device = require_object(data, "device", errors)
+        require_keys(
+            device,
+            "device",
+            (
+                "displayName",
+                "machineIdentifier",
+                "systemName",
+                "systemVersion",
+                "systemBuild",
+                "debuggerAttached",
+                "buildConfiguration",
+                "appVersion",
+                "appBuild",
+            ),
+            errors,
+        )
+
+        preparation = require_object(data, "modelPreparation", errors)
+        require_keys(
+            preparation,
+            "modelPreparation",
+            (
+                "artifactID",
+                "artifactRevision",
+                "cacheStateBeforePreparation",
+                "downloadOccurredDuringSession",
+                "preparationDurationMilliseconds",
+                "preparationCompleted",
+                "modelLoadCompleted",
+                "eligibleForPerformanceMeasurement",
+                "reasonCodes",
+                "cacheVerificationMethod",
+                "preparedAt",
+            ),
+            errors,
+        )
+        if preparation.get("artifactID") != model.get("artifactID"):
+            errors.append("modelPreparation.artifactID must match model")
+        if preparation.get("artifactRevision") != model.get("artifactRevision"):
+            errors.append("modelPreparation.artifactRevision must match model")
+        cache_state = preparation.get("cacheStateBeforePreparation")
+        if cache_state not in {"cached", "not_cached", "incomplete", "unknown"}:
+            errors.append("modelPreparation.cacheStateBeforePreparation is unsupported")
+        downloaded = preparation.get("downloadOccurredDuringSession")
+        preparation_eligible = preparation.get("eligibleForPerformanceMeasurement")
+        if not isinstance(downloaded, bool):
+            errors.append("modelPreparation.downloadOccurredDuringSession must be boolean")
+        if not isinstance(preparation_eligible, bool):
+            errors.append("modelPreparation.eligibleForPerformanceMeasurement must be boolean")
+        for key in ("preparationCompleted", "modelLoadCompleted"):
+            if not isinstance(preparation.get(key), bool):
+                errors.append(f"modelPreparation.{key} must be boolean")
+        duration = preparation.get("preparationDurationMilliseconds")
+        if not is_number(duration) or duration < 0:
+            errors.append(
+                "modelPreparation.preparationDurationMilliseconds must be non-negative"
+            )
+        reason_codes = preparation.get("reasonCodes")
+        if not isinstance(reason_codes, list) or not all(
+            isinstance(reason, str) and reason for reason in reason_codes
+        ):
+            errors.append("modelPreparation.reasonCodes must be a string array")
+        elif len(reason_codes) != len(set(reason_codes)):
+            errors.append("modelPreparation.reasonCodes must not contain duplicates")
+        prepared_at = preparation.get("preparedAt")
+        try:
+            if not isinstance(prepared_at, str):
+                raise ValueError
+            datetime.fromisoformat(prepared_at.replace("Z", "+00:00"))
+        except ValueError:
+            errors.append("modelPreparation.preparedAt must be an ISO-8601 timestamp")
+        if downloaded and preparation_eligible:
+            errors.append("downloaded model cannot be eligible in the same App session")
+        if cache_state == "unknown" and preparation_eligible:
+            errors.append("unknown model cache state cannot be eligible")
+        if preparation_eligible and (
+            cache_state != "cached"
+            or preparation.get("preparationCompleted") is not True
+            or preparation.get("modelLoadCompleted") is not True
+        ):
+            errors.append("eligible model preparation must be cached and fully loaded")
+        if preparation.get("cacheVerificationMethod") != (
+            "huggingface_revision_manifest_cached_file_size_v1"
+        ):
+            errors.append("modelPreparation.cacheVerificationMethod is unsupported")
+
+        session_validity = eligibility.get("sessionValidity", {})
+        if preparation_eligible is False and isinstance(session_validity, dict) \
+                and session_validity.get("eligible") is True:
+            errors.append("ineligible model preparation cannot produce an eligible session")
+        if downloaded and isinstance(session_validity, dict) \
+                and session_validity.get("eligible") is True:
+            errors.append("downloaded model cannot produce an eligible session")
+        if cache_state == "unknown" and isinstance(session_validity, dict) \
+                and session_validity.get("eligible") is True:
+            errors.append("unknown cache state cannot produce an eligible session")
 
     return errors
 

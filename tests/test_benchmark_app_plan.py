@@ -27,6 +27,7 @@ class BenchmarkAppPlanTests(unittest.TestCase):
         self.plan = load_json(PLAN_PATH)
 
     def test_pilot_cannot_be_treated_as_official(self) -> None:
+        self.assertEqual(self.plan["plan_version"], "0.3.0")
         self.assertEqual(self.plan["status"], "draft-pilot")
         self.assertFalse(self.plan["official_result_eligible"])
 
@@ -86,6 +87,10 @@ class BenchmarkAppPlanTests(unittest.TestCase):
         self.assertEqual(generation["kv_cache_policy"], "new-cache-for-each-generation")
         self.assertEqual(environment["initial_thermal_state"], "nominal")
         self.assertEqual(environment["low_power_mode"], "off")
+        self.assertEqual(
+            generation["thinking_mode"],
+            "disabled-via-prompt-directive",
+        )
 
     def test_framework_v1_fixture_is_a_valid_empty_placeholder(self) -> None:
         fixture = load_json(FIXTURE_PATH)

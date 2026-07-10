@@ -23,11 +23,13 @@ struct RuntimeGenerationResult: Codable, Sendable, Equatable {
 protocol LanguageModelRuntime: Sendable {
     var identity: String { get }
 
-    func load() async throws
-
     func generate(
         prompt: String,
         outputTokenLimit: Int,
         onToken: @Sendable (RuntimeToken) async -> Void
     ) async throws -> RuntimeGenerationResult
+}
+
+protocol ModelPreparingRuntime: LanguageModelRuntime {
+    func prepare(plan: PilotPlan) async -> ModelPreparationEvidence
 }

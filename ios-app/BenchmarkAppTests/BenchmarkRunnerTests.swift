@@ -26,15 +26,13 @@ final class BenchmarkRunnerTests: XCTestCase {
         let runtime = FixtureRuntime()
         let session = await BenchmarkRunner(
             runtime: runtime,
-            procedure: .pilot
+            procedure: pilotProcedure
         ).run(prompt: "fixed")
 
         XCTAssertEqual(session.attempts.count, 6)
         XCTAssertEqual(session.attempts.first?.role, .warmup)
         XCTAssertEqual(session.measuredAttempts.count, 5)
-        let loadCount = await runtime.loadCount
         let generateCount = await runtime.generateCount
-        XCTAssertEqual(loadCount, 1)
         XCTAssertEqual(generateCount, 6)
     }
 
@@ -42,7 +40,7 @@ final class BenchmarkRunnerTests: XCTestCase {
         let runtime = FixtureRuntime(failingGeneration: 3)
         let session = await BenchmarkRunner(
             runtime: runtime,
-            procedure: .pilot
+            procedure: pilotProcedure
         ).run(prompt: "fixed")
 
         XCTAssertEqual(session.attempts.count, 6)
@@ -60,7 +58,7 @@ final class BenchmarkRunnerTests: XCTestCase {
         ])
         let session = await BenchmarkRunner(
             runtime: runtime,
-            procedure: .pilot,
+            procedure: pilotProcedure,
             thermalState: { states.next() }
         ).run(prompt: "fixed")
 
@@ -87,6 +85,7 @@ final class BenchmarkRunnerTests: XCTestCase {
         }
         let eligibility = PilotResultBundle.Eligibility.evaluate(
             attempts: attempts,
+            modelPreparation: preparedEvidence(),
             debuggerAttached: false,
             buildConfiguration: "Release",
             lowPowerModeEnabled: false,
@@ -106,6 +105,7 @@ final class BenchmarkRunnerTests: XCTestCase {
         }
         let eligibility = PilotResultBundle.Eligibility.evaluate(
             attempts: attempts,
+            modelPreparation: preparedEvidence(),
             debuggerAttached: false,
             buildConfiguration: "Debug",
             lowPowerModeEnabled: true,
@@ -242,6 +242,31 @@ final class BenchmarkRunnerTests: XCTestCase {
             tokenEvents: []
         )
     }
+
+    private var pilotProcedure: BenchmarkProcedure {
+        BenchmarkProcedure(
+            warmupRuns: 1,
+            measuredRuns: 5,
+            outputTokenLimit: 512
+        )
+    }
+
+    private func preparedEvidence() -> ModelPreparationEvidence {
+        ModelPreparationEvidence(
+            artifactID: "mlx-community/Qwen3-0.6B-4bit",
+            artifactRevision: "73e3e38d981303bc594367cd910ea6eb48349da8",
+            cacheStateBeforePreparation: .cached,
+            downloadOccurredDuringSession: false,
+            preparationDurationMilliseconds: 100,
+            preparationCompleted: true,
+            modelLoadCompleted: true,
+            eligibleForPerformanceMeasurement: true,
+            reasonCodes: [],
+            cacheVerificationMethod:
+                "huggingface_revision_manifest_cached_file_size_v1",
+            preparedAt: Date(timeIntervalSince1970: 0)
+        )
+    }
 }
 
 private final class ThermalSequence: @unchecked Sendable {
@@ -266,16 +291,11 @@ private actor FixtureRuntime: LanguageModelRuntime {
     }
 
     nonisolated let identity = "fixture-runtime"
-    private(set) var loadCount = 0
     private(set) var generateCount = 0
     private let failingGeneration: Int?
 
     init(failingGeneration: Int? = nil) {
         self.failingGeneration = failingGeneration
-    }
-
-    func load() {
-        loadCount += 1
     }
 
     func generate(

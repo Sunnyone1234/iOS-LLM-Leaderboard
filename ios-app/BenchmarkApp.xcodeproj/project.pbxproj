@@ -23,6 +23,10 @@
 		A10000000000000000000014 /* PilotResultBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* PilotResultBundle.swift */; };
 		A10000000000000000000015 /* ResultStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* ResultStore.swift */; };
 		A10000000000000000000016 /* ExecutionEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000018 /* ExecutionEnvironment.swift */; };
+		A10000000000000000000017 /* PilotPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* PilotPlan.swift */; };
+		A10000000000000000000018 /* ModelPreparation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* ModelPreparation.swift */; };
+		A10000000000000000000019 /* benchmark-plans/suite-b-pilot-001.json in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* benchmark-plans/suite-b-pilot-001.json */; };
+		A10000000000000000000020 /* ModelPreparationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000022 /* ModelPreparationTests.swift */; };
 		C10000000000000000000001 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000001 /* MLXLLM */; };
 		C10000000000000000000002 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000002 /* MLXLMCommon */; };
 		C10000000000000000000004 /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000004 /* HuggingFace */; };
@@ -58,6 +62,10 @@
 		A20000000000000000000016 /* PilotResultBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PilotResultBundle.swift; sourceTree = "<group>"; };
 		A20000000000000000000017 /* ResultStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultStore.swift; sourceTree = "<group>"; };
 		A20000000000000000000018 /* ExecutionEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutionEnvironment.swift; sourceTree = "<group>"; };
+		A20000000000000000000019 /* PilotPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PilotPlan.swift; sourceTree = "<group>"; };
+		A20000000000000000000020 /* ModelPreparation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPreparation.swift; sourceTree = "<group>"; };
+		A20000000000000000000021 /* benchmark-plans/suite-b-pilot-001.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "benchmark-plans/suite-b-pilot-001.json"; sourceTree = SOURCE_ROOT; };
+		A20000000000000000000022 /* ModelPreparationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPreparationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +98,7 @@
 				A70000000000000000000003 /* BenchmarkAppTests */,
 				A70000000000000000000004 /* Products */,
 				A20000000000000000000012 /* workloads/suite-b-pilot-001-prompt.txt */,
+				A20000000000000000000021 /* benchmark-plans/suite-b-pilot-001.json */,
 				A20000000000000000000009 /* XCTest.framework */,
 			);
 			sourceTree = "<group>";
@@ -103,6 +112,8 @@
 				A20000000000000000000013 /* DeviceModelCatalog.swift */,
 				A20000000000000000000014 /* SystemMeasurements.swift */,
 				A20000000000000000000018 /* ExecutionEnvironment.swift */,
+				A20000000000000000000019 /* PilotPlan.swift */,
+				A20000000000000000000020 /* ModelPreparation.swift */,
 				A20000000000000000000004 /* LanguageModelRuntime.swift */,
 				A20000000000000000000005 /* BenchmarkRunner.swift */,
 				A20000000000000000000015 /* BenchmarkMetrics.swift */,
@@ -118,6 +129,7 @@
 			isa = PBXGroup;
 			children = (
 				A20000000000000000000006 /* BenchmarkRunnerTests.swift */,
+				A20000000000000000000022 /* ModelPreparationTests.swift */,
 			);
 			path = BenchmarkAppTests;
 			sourceTree = "<group>";
@@ -224,6 +236,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000000000000000000010 /* workloads/suite-b-pilot-001-prompt.txt in Resources */,
+				A10000000000000000000019 /* benchmark-plans/suite-b-pilot-001.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -247,6 +260,8 @@
 				A10000000000000000000011 /* DeviceModelCatalog.swift in Sources */,
 				A10000000000000000000012 /* SystemMeasurements.swift in Sources */,
 				A10000000000000000000016 /* ExecutionEnvironment.swift in Sources */,
+				A10000000000000000000017 /* PilotPlan.swift in Sources */,
+				A10000000000000000000018 /* ModelPreparation.swift in Sources */,
 				A10000000000000000000004 /* LanguageModelRuntime.swift in Sources */,
 				A10000000000000000000005 /* BenchmarkRunner.swift in Sources */,
 				A10000000000000000000013 /* BenchmarkMetrics.swift in Sources */,
@@ -262,6 +277,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000000000000000000006 /* BenchmarkRunnerTests.swift in Sources */,
+				A10000000000000000000020 /* ModelPreparationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,7 +318,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = ZMN7LG4SD9;
 				ENABLE_TESTABILITY = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -310,7 +326,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.benchmark;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -326,14 +342,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = ZMN7LG4SD9;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "LLM Benchmark";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.benchmark;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

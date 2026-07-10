@@ -13,12 +13,18 @@ The machine-readable plan is
 
 The pilot validates one physical-iPhone path:
 
-1. load one pinned MLX model artifact;
-2. run one unrecorded warm-up generation;
-3. run five measured generations;
-4. retain every attempt, including failures and cancellation;
-5. save raw event and environment evidence locally; and
-6. export a reviewable non-official pilot result bundle.
+1. verify the complete pinned artifact revision in the Hugging Face cache;
+2. download and load it during Prepare Model when necessary;
+3. require a relaunch after any model download;
+4. prepare and load the verified cached model without inference;
+5. run one unrecorded warm-up and five measured generations;
+6. retain every attempt, including failures and cancellation;
+7. save raw event, preparation, and environment evidence locally; and
+8. export a reviewable non-official pilot result bundle.
+
+Prepare Model and Run Benchmark are separate operations. Model preparation
+never emits performance evidence, and the benchmark path never downloads or
+loads a model.
 
 The pilot is decode-oriented. Decode throughput is its primary metric. TTFT,
 prefill throughput, sampled process memory, thermal state, and token intervals
@@ -46,6 +52,24 @@ A run is invalid unless its evidence records:
 
 The artifact content hash remains `null` in the plan until the downloader has
 materialized and verified the complete artifact. It must not be guessed.
+
+## Model Preparation Admission
+
+Cache verification retrieves the file manifest for the exact 40-character
+artifact revision and filters the same `*.safetensors`, `*.json`, and `*.jinja`
+files required by the pinned MLX loader. Every required revision-specific
+cache path must exist and match the manifest file size. This is recorded as
+`huggingface_revision_manifest_cached_file_size_v1`.
+
+If the manifest cannot be retrieved or the cache cannot be inspected, cache
+state is `unknown` and measurement is blocked. A missing snapshot directory,
+one matching file, elapsed download time, or successful model load is not by
+itself treated as proof of a complete cache.
+
+If preparation downloads any model file, the App records the download and
+requires a full process restart. After relaunch, the user runs Prepare Model
+again; only a complete cache verified before preparation and a successful
+local-only model load admit performance measurement.
 
 ## Timing Events
 

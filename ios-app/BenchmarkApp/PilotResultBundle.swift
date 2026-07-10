@@ -12,6 +12,7 @@ struct PilotResultBundle: Codable, Sendable {
     let model: ModelIdentity
     let runtime: RuntimeIdentity
     let device: DeviceIdentity
+    let modelPreparation: ModelPreparationEvidence
     let eligibility: Eligibility
     let summary: Summary
     let attempts: [Attempt]
@@ -230,6 +231,7 @@ struct PilotResultBundle: Codable, Sendable {
 
         static func evaluate(
             attempts: [Attempt],
+            modelPreparation: ModelPreparationEvidence,
             debuggerAttached: Bool,
             buildConfiguration: String,
             lowPowerModeEnabled: Bool,
@@ -248,6 +250,15 @@ struct PilotResultBundle: Codable, Sendable {
             }
 
             var sessionReasons: [String] = []
+            if !modelPreparation.eligibleForPerformanceMeasurement {
+                sessionReasons.append(contentsOf: modelPreparation.reasonCodes)
+            }
+            if modelPreparation.downloadOccurredDuringSession {
+                sessionReasons.append("model_download_during_session")
+            }
+            if modelPreparation.cacheStateBeforePreparation == .unknown {
+                sessionReasons.append("model_cache_state_unknown")
+            }
             if debuggerAttached { sessionReasons.append("debugger_attached") }
             if buildConfiguration != "Release" {
                 sessionReasons.append("non_release_build")
@@ -297,7 +308,7 @@ struct PilotResultBundle: Codable, Sendable {
             return Eligibility(
                 sessionValidity: Decision(
                     eligible: sessionReasons.isEmpty,
-                    reasonCodes: sessionReasons
+                    reasonCodes: Array(Set(sessionReasons)).sorted()
                 ),
                 coldPerformance: Decision(
                     eligible: coldReasons.isEmpty,
@@ -380,7 +391,9 @@ struct PilotResultBundle: Codable, Sendable {
     @MainActor
     static func make(
         session: BenchmarkSession,
-        environment: DeviceEnvironment
+        environment: DeviceEnvironment,
+        plan: PilotPlan,
+        modelPreparation: ModelPreparationEvidence
     ) -> PilotResultBundle {
         let attemptRecords = session.attempts.map { attempt in
             let generation: RuntimeGenerationResult?
@@ -410,7 +423,8 @@ struct PilotResultBundle: Codable, Sendable {
                 stopReason: generation?.stopReason.rawValue,
                 thermalStateBefore: attempt.thermalStateBefore,
                 thermalStateAfter: attempt.thermalStateAfter,
-                memorySamplingIntervalMilliseconds: 50,
+                memorySamplingIntervalMilliseconds:
+                    plan.measurementMode.memorySamplingIntervalMilliseconds,
                 metrics: .calculate(for: attempt),
                 tokenEvents: attempt.tokens
             )
@@ -426,69 +440,72 @@ struct PilotResultBundle: Codable, Sendable {
         let failedCount = session.measuredAttempts.count - successful.count
 
         return PilotResultBundle(
-            schemaVersion: "suite-b-pilot-bundle-0.4",
+            schemaVersion: "suite-b-pilot-bundle-0.5",
             resultID: UUID().uuidString.lowercased(),
             createdAt: Date(),
             officialResultEligible: false,
             plan: PlanIdentity(
-                id: "suite-b-pilot-001",
-                version: "0.2.0",
-                promptSHA256: "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
-                warmupRuns: 1,
-                measuredRuns: 5,
-                outputTokenLimit: 512,
-                v2ProfileMapping: "b-pipe-001-sustained-generation@0.1.0-draft"
+                id: plan.planId,
+                version: plan.planVersion,
+                promptSHA256: plan.workload.promptSha256,
+                warmupRuns: plan.procedure.warmupRuns,
+                measuredRuns: plan.procedure.measuredRuns,
+                outputTokenLimit: plan.workload.outputTokenLimit,
+                v2ProfileMapping: plan.workload.v2ProfileMapping
             ),
             workload: WorkloadIdentity(
-                id: "suite-b-pilot-001-fixed-generation",
-                version: "1.0",
-                category: "pipeline",
-                promptSHA256: "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996"
+                id: plan.workload.workloadId,
+                version: plan.workload.workloadVersion,
+                category: plan.workload.category,
+                promptSHA256: plan.workload.promptSha256
             ),
             measurementMode: MeasurementModeIdentity(
-                id: "b-mode-sustained-no-rest-v1",
-                timingBoundaryVersion: "mlx-pilot-pipeline-boundaries-1",
-                pipelineTTFTStart: "after_prompt_preparation_before_generate_tokens_task",
-                pipelineTTFTEnd: "first_raw_token_received_by_adapter",
-                userVisibleTTFTAvailable: false,
-                prefillSource: "mlx_generate_completion_info_prompt_time",
-                decodeFormula: "(raw_token_count-1)/(last_raw_token_time-first_raw_token_time)",
-                memoryMetric: "TASK_VM_INFO.phys_footprint",
-                memorySamplingIntervalMilliseconds: 50
+                id: plan.measurementMode.measurementModeId,
+                timingBoundaryVersion: plan.measurementMode.timingBoundaryVersion,
+                pipelineTTFTStart: plan.measurementMode.pipelineTtftStart,
+                pipelineTTFTEnd: plan.measurementMode.pipelineTtftEnd,
+                userVisibleTTFTAvailable:
+                    plan.measurementMode.userVisibleTtftAvailable,
+                prefillSource: plan.measurementMode.prefillSource,
+                decodeFormula: plan.measurementMode.decodeFormula,
+                memoryMetric: plan.measurementMode.memoryMetric,
+                memorySamplingIntervalMilliseconds:
+                    plan.measurementMode.memorySamplingIntervalMilliseconds
             ),
             generationConfiguration: GenerationConfiguration(
-                samplingEnabled: false,
-                temperature: 0,
-                topP: nil,
-                topK: nil,
-                seed: nil,
-                repetitionPenalty: nil,
-                thinkingMode: "model-default",
-                chatTemplateIdentity: "artifact-tokenizer-config",
-                includeStopTokenInRawEvents: false,
-                outputTokenLimit: 512,
-                contextPolicy: "new-context-for-each-generation",
-                modelLoadPolicy: "load-once-before-warmup",
-                kvCachePolicy: "new-cache-for-each-generation"
+                samplingEnabled: plan.generation.samplingEnabled,
+                temperature: plan.generation.temperature,
+                topP: plan.generation.topP,
+                topK: plan.generation.topK,
+                seed: plan.generation.seed,
+                repetitionPenalty: plan.generation.repetitionPenalty,
+                thinkingMode: plan.generation.thinkingMode,
+                chatTemplateIdentity: plan.generation.chatTemplateIdentity,
+                includeStopTokenInRawEvents:
+                    plan.generation.includeStopTokenInRawEvents,
+                outputTokenLimit: plan.workload.outputTokenLimit,
+                contextPolicy: plan.generation.contextPolicy,
+                modelLoadPolicy: plan.generation.modelLoadPolicy,
+                kvCachePolicy: plan.generation.kvCachePolicy
             ),
             model: ModelIdentity(
-                displayName: "Qwen3 0.6B",
-                baseModelID: "Qwen/Qwen3-0.6B",
-                artifactID: "mlx-community/Qwen3-0.6B-4bit",
-                artifactRevision: "73e3e38d981303bc594367cd910ea6eb48349da8",
-                quantization: "4-bit",
-                modelFormat: "MLX Safetensors",
-                artifactContentHash: nil
+                displayName: plan.modelProfile.displayName,
+                baseModelID: plan.modelProfile.baseModelId,
+                artifactID: plan.modelProfile.artifactId,
+                artifactRevision: plan.modelProfile.artifactRevision,
+                quantization: plan.modelProfile.quantization,
+                modelFormat: plan.modelProfile.modelFormat,
+                artifactContentHash: plan.modelProfile.artifactContentHash
             ),
             runtime: RuntimeIdentity(
-                name: "MLX Swift LM",
-                version: "3.31.4",
-                resolvedRevision: "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
-                backend: "MLX/Metal",
-                mlxSwiftVersion: "0.31.6",
-                mlxSwiftRevision: "0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
-                downloaderPackage: "swift-huggingface 0.9.0",
-                tokenizerPackage: "swift-transformers 1.3.0"
+                name: plan.runtimeProfile.runtimeName,
+                version: plan.runtimeProfile.packageVersion,
+                resolvedRevision: plan.runtimeProfile.packageRevision,
+                backend: plan.runtimeProfile.backend,
+                mlxSwiftVersion: plan.runtimeProfile.mlxSwiftVersion,
+                mlxSwiftRevision: plan.runtimeProfile.mlxSwiftRevision,
+                downloaderPackage: plan.runtimeProfile.downloaderPackage,
+                tokenizerPackage: plan.runtimeProfile.tokenizerPackage
             ),
             device: DeviceIdentity(
                 displayName: environment.deviceDescription,
@@ -505,12 +522,14 @@ struct PilotResultBundle: Codable, Sendable {
                 batteryLevelPercent: environment.batteryLevelPercent,
                 batteryState: environment.batteryState
             ),
+            modelPreparation: modelPreparation,
             eligibility: .evaluate(
                 attempts: attemptRecords,
+                modelPreparation: modelPreparation,
                 debuggerAttached: environment.debuggerAttached,
                 buildConfiguration: environment.buildConfiguration,
                 lowPowerModeEnabled: environment.lowPowerModeEnabled,
-                plannedMeasuredRuns: 5
+                plannedMeasuredRuns: plan.procedure.measuredRuns
             ),
             summary: Summary(
                 successfulMeasuredRuns: successful.count,

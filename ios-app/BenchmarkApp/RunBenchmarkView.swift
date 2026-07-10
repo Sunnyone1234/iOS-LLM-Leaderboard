@@ -8,10 +8,43 @@ struct RunBenchmarkView: View {
         NavigationStack {
             Form {
                 Section("Benchmark") {
-                    LabeledContent("Plan", value: "Suite B Pilot 001")
-                    LabeledContent("Profile", value: "Pipeline · Sustained generation")
-                    LabeledContent("Model", value: "Qwen3 0.6B · MLX 4-bit")
-                    LabeledContent("Procedure", value: "1 warm-up + 5 measured")
+                    LabeledContent(
+                        "Plan",
+                        value: viewModel.loadedPlan?.plan.planId
+                            ?? "Unavailable"
+                    )
+                    LabeledContent(
+                        "Profile",
+                        value: viewModel.loadedPlan?.plan.workload.v2ProfileMapping
+                            ?? "Unavailable"
+                    )
+                    LabeledContent("Model", value: modelDescription)
+                    LabeledContent("Procedure", value: procedureDescription)
+                }
+
+                Section {
+                    if let evidence = viewModel.modelPreparation {
+                        LabeledContent(
+                            "Cache before preparation",
+                            value: evidence.cacheStateBeforePreparation.rawValue
+                        )
+                        LabeledContent(
+                            "Model load",
+                            value: evidence.modelLoadCompleted ? "Completed" : "Not completed"
+                        )
+                    } else {
+                        Text("The pinned model has not been prepared in this App session.")
+                    }
+                    Button("Prepare Model") {
+                        Task {
+                            await viewModel.prepareModel()
+                        }
+                    }
+                    .disabled(!viewModel.canPrepare)
+                } header: {
+                    Text("Model Preparation")
+                } footer: {
+                    Text(preparationStatusText)
                 }
 
                 Section("This iPhone") {
@@ -185,6 +218,35 @@ struct RunBenchmarkView: View {
         let state = environment.batteryState
         guard let level = environment.batteryLevelPercent else { return state }
         return "\(level.formatted(.number.precision(.fractionLength(0))))% · \(state)"
+    }
+
+    private var modelDescription: String {
+        guard let model = viewModel.loadedPlan?.plan.modelProfile else {
+            return "Unavailable"
+        }
+        return "\(model.displayName) · \(model.quantization)"
+    }
+
+    private var procedureDescription: String {
+        guard let plan = viewModel.loadedPlan?.plan else {
+            return "Unavailable"
+        }
+        return "\(plan.procedure.warmupRuns) warm-up + \(plan.procedure.measuredRuns) measured"
+    }
+
+    private var preparationStatusText: String {
+        switch viewModel.preparationPhase {
+        case .notPrepared:
+            "Checks the exact artifact revision, downloads if needed, and loads the model without running inference."
+        case .preparing:
+            "Preparing the pinned model…"
+        case .ready:
+            "Verified cached model loaded."
+        case .restartRequired:
+            "Model downloaded — restart required before measuring."
+        case .blocked(let message), .failed(let message):
+            message
+        }
     }
 
     @ViewBuilder

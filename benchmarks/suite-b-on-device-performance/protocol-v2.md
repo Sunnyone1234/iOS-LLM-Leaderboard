@@ -43,18 +43,20 @@ freeze the final workload.
 
 Unless a workload declares a stricter compatible mode:
 
-1. download and verify the model before measurement;
-2. begin only when the system thermal state is `nominal`;
-3. use a Release build with no debugger attached;
-4. record Low Power Mode, battery level, and charging state;
-5. load model weights once per session;
-6. run one unrecorded warm-up with the same configuration;
-7. run five measured attempts;
-8. create a new conversation and KV cache for every attempt;
-9. retain loaded weights and tokenizer resources between attempts;
-10. retain every failed, cancelled, OOM, early-stop, and not-run attempt;
-11. perform no automatic retry; and
-12. use the median of successful eligible measured attempts, requiring at
+1. verify the exact revision manifest and required cached artifact files;
+2. if preparation downloads model files, require a full App restart before measurement;
+3. after relaunch, verify the cache again and load without inference;
+4. begin only when the system thermal state is `nominal`;
+5. use a Release build with no debugger attached;
+6. record Low Power Mode, battery level, and charging state;
+7. load model weights once per session;
+8. run one unrecorded warm-up with the same configuration;
+9. run five measured attempts;
+10. create a new conversation and KV cache for every attempt;
+11. retain loaded weights and tokenizer resources between attempts;
+12. retain every failed, cancelled, OOM, early-stop, and not-run attempt;
+13. perform no automatic retry; and
+14. use the median of successful eligible measured attempts, requiring at
     least three.
 
 No rest interval is used for sustained-generation profiles. User-experience
@@ -120,4 +122,3 @@ Suite B has no global score. Compatible results may be viewed by:
 
 The default public presentation is model-first. Pipeline curves and raw
 configuration belong in engineering and evidence views.
-

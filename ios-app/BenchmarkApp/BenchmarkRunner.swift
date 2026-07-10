@@ -5,11 +5,6 @@ struct BenchmarkProcedure: Sendable, Equatable {
     let measuredRuns: Int
     let outputTokenLimit: Int
 
-    static let pilot = BenchmarkProcedure(
-        warmupRuns: 1,
-        measuredRuns: 5,
-        outputTokenLimit: 512
-    )
 }
 
 struct BenchmarkAttempt: Sendable, Equatable {
@@ -50,25 +45,6 @@ struct BenchmarkRunner: Sendable {
     }
 
     func run(prompt: String) async -> BenchmarkSession {
-        do {
-            try await runtime.load()
-        } catch {
-            return BenchmarkSession(
-                runtimeIdentity: runtime.identity,
-                attempts: [
-                    BenchmarkAttempt(
-                        index: 0,
-                        role: .warmup,
-                        tokens: [],
-                        peakMemoryBytes: ProcessMemory.physicalFootprintBytes(),
-                        thermalStateBefore: thermalState(),
-                        thermalStateAfter: thermalState(),
-                        outcome: .failed(message: String(describing: error))
-                    )
-                ]
-            )
-        }
-
         var attempts: [BenchmarkAttempt] = []
         let totalRuns = procedure.warmupRuns + procedure.measuredRuns
         var stoppedForCriticalThermalState = false

@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YizeSun/iOS-LLM-Leaderboard/schemas/suite-b-pilot-bundle-0.5.schema.json",
+  "title": "Suite B Pilot Result Bundle 0.5",
+  "description": "Non-official physical-iPhone pilot with verified model preparation separated from performance measurement.",
+  "type": "object",
+  "required": ["schemaVersion", "resultID", "createdAt", "officialResultEligible", "plan", "workload", "measurementMode", "generationConfiguration", "model", "runtime", "device", "modelPreparation", "eligibility", "summary", "attempts"],
+  "properties": {
+    "schemaVersion": { "const": "suite-b-pilot-bundle-0.5" },
+    "resultID": { "type": "string", "minLength": 8 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "officialResultEligible": { "const": false },
+    "plan": {
+      "type": "object",
+      "required": ["id", "version", "promptSHA256", "warmupRuns", "measuredRuns", "outputTokenLimit", "v2ProfileMapping"],
+      "properties": {
+        "id": { "const": "suite-b-pilot-001" },
+        "version": { "const": "0.3.0" },
+        "promptSHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "warmupRuns": { "const": 1 },
+        "measuredRuns": { "const": 5 },
+        "outputTokenLimit": { "const": 512 },
+        "v2ProfileMapping": { "const": "b-pipe-001-sustained-generation@0.1.0-draft" }
+      }
+    },
+    "workload": {
+      "type": "object",
+      "required": ["id", "version", "category", "promptSHA256"],
+      "properties": {
+        "id": { "const": "suite-b-pilot-001-fixed-generation" },
+        "version": { "const": "1.0" },
+        "category": { "const": "pipeline" },
+        "promptSHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "measurementMode": {
+      "type": "object",
+      "required": ["id", "timingBoundaryVersion", "pipelineTTFTStart", "pipelineTTFTEnd", "userVisibleTTFTAvailable", "prefillSource", "decodeFormula", "memoryMetric", "memorySamplingIntervalMilliseconds"]
+    },
+    "generationConfiguration": {
+      "type": "object",
+      "required": ["samplingEnabled", "temperature", "topP", "topK", "seed", "repetitionPenalty", "thinkingMode", "chatTemplateIdentity", "includeStopTokenInRawEvents", "outputTokenLimit", "contextPolicy", "modelLoadPolicy", "kvCachePolicy"]
+    },
+    "model": {
+      "type": "object",
+      "required": ["displayName", "baseModelID", "artifactID", "artifactRevision", "quantization", "modelFormat", "artifactContentHash"]
+    },
+    "runtime": {
+      "type": "object",
+      "required": ["name", "version", "resolvedRevision", "backend", "mlxSwiftVersion", "mlxSwiftRevision", "downloaderPackage", "tokenizerPackage"]
+    },
+    "device": {
+      "type": "object",
+      "required": ["displayName", "machineIdentifier", "systemName", "systemVersion", "systemBuild", "debuggerAttached", "buildConfiguration", "appVersion", "appBuild", "appSourceCommit", "lowPowerModeEnabled", "batteryLevelPercent", "batteryState"]
+    },
+    "modelPreparation": {
+      "type": "object",
+      "required": ["artifactID", "artifactRevision", "cacheStateBeforePreparation", "downloadOccurredDuringSession", "preparationDurationMilliseconds", "preparationCompleted", "modelLoadCompleted", "eligibleForPerformanceMeasurement", "reasonCodes", "cacheVerificationMethod", "preparedAt"],
+      "properties": {
+        "artifactID": { "type": "string", "minLength": 1 },
+        "artifactRevision": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "cacheStateBeforePreparation": { "enum": ["cached", "not_cached", "incomplete", "unknown"] },
+        "downloadOccurredDuringSession": { "type": "boolean" },
+        "preparationDurationMilliseconds": { "type": "number", "minimum": 0 },
+        "preparationCompleted": { "type": "boolean" },
+        "modelLoadCompleted": { "type": "boolean" },
+        "eligibleForPerformanceMeasurement": { "type": "boolean" },
+        "reasonCodes": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "cacheVerificationMethod": { "const": "huggingface_revision_manifest_cached_file_size_v1" },
+        "preparedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "eligibility": {
+      "type": "object",
+      "required": ["sessionValidity", "coldPerformance", "sustainedPerformance", "thermalStability", "officialLeaderboard"]
+    },
+    "summary": {
+      "type": "object",
+      "required": ["successfulMeasuredRuns", "failedMeasuredRuns", "finalThermalState", "degradation"]
+    },
+    "attempts": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["runIndex", "role", "outcome", "thermalStateBefore", "thermalStateAfter", "memorySamplingIntervalMilliseconds", "metrics", "tokenEvents"]
+      }
+    }
+  }
+}
