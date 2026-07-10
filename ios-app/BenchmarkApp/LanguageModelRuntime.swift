@@ -55,4 +55,14 @@ protocol LanguageModelRuntime: Sendable {
 
 protocol ModelPreparingRuntime: LanguageModelRuntime {
     func prepare(plan: PilotPlan) async -> ModelPreparationEvidence
+    func calibrateInputLengthFixtures(
+        targets: [Int]
+    ) async throws -> [InputLengthFixtureCalibration]
+}
+
+struct InputLengthFixtureCalibration: Sendable, Equatable {
+    let targetTokenCount: Int
+    let actualTokenCount: Int
+    let paddingRepetitions: Int
+    let promptSHA256: String
 }

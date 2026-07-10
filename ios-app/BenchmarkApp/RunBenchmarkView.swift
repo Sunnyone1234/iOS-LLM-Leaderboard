@@ -118,6 +118,27 @@ struct RunBenchmarkView: View {
                     Text(viewModel.statusText)
                 }
 
+                Section {
+                    Button("Calibrate Input Sweep Fixtures") {
+                        Task { await viewModel.calibrateInputLengths() }
+                    }
+                    .disabled(!viewModel.canCalibrateInputLengths)
+
+                    ForEach(viewModel.inputLengthCalibrations, id: \.targetTokenCount) { item in
+                        LabeledContent(
+                            "Target \(item.targetTokenCount)",
+                            value: "\(item.actualTokenCount) tokens · padding \(item.paddingRepetitions)"
+                        )
+                    }
+                    if let error = viewModel.inputLengthCalibrationError {
+                        Text(error).foregroundStyle(.red)
+                    }
+                } header: {
+                    Text("B-PIPE-002 Fixture Calibration")
+                } footer: {
+                    Text("Preparation only. Uses the pinned tokenizer and chat template; no generation or performance result is recorded.")
+                }
+
                 if let summary = viewModel.result?.summary {
                     Section("Latest Result · Median") {
                         LabeledContent(

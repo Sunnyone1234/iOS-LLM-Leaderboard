@@ -1,4 +1,5 @@
 import Foundation
+import CryptoKit
 import HuggingFace
 import MLXLLM
 import MLXLMCommon
@@ -10,6 +11,7 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
         case missingCompletionInfo
         case identityMismatch(String)
         case cacheVerificationFailed
+        case exactInputLengthUnavailable(Int)
 
         var errorDescription: String? {
             switch self {
@@ -21,8 +23,70 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
                 "Runtime identity mismatch: \(message)"
             case .cacheVerificationFailed:
                 "The downloaded model cache could not be verified as complete."
+            case .exactInputLengthUnavailable(let target):
+                "The fixture generator could not produce exactly \(target) post-template tokens."
             }
         }
+    }
+
+    func calibrateInputLengthFixtures(
+        targets: [Int]
+    ) async throws -> [InputLengthFixtureCalibration] {
+        guard let modelContainer else { throw RuntimeError.modelNotLoaded }
+        let base = "Read the following benchmark input and reply with OK. Input:"
+
+        func prompt(repetitions: Int) -> String {
+            base + String(repeating: " x", count: repetitions)
+        }
+
+        func tokenCount(repetitions: Int) async throws -> Int {
+            let value = prompt(repetitions: repetitions)
+            return try await modelContainer.perform { context in
+                let input = try await context.processor.prepare(
+                    input: UserInput(
+                        prompt: value,
+                        additionalContext: ["enable_thinking": false]
+                    )
+                )
+                return input.text.tokens.size
+            }
+        }
+
+        var results: [InputLengthFixtureCalibration] = []
+        for target in targets {
+            var low = 0
+            var high = max(target * 2, 64)
+            while try await tokenCount(repetitions: high) < target {
+                high *= 2
+            }
+            while low <= high {
+                let middle = (low + high) / 2
+                let actual = try await tokenCount(repetitions: middle)
+                if actual == target {
+                    let value = prompt(repetitions: middle)
+                    let digest = SHA256.hash(data: Data(value.utf8)).map {
+                        String(format: "%02x", $0)
+                    }.joined()
+                    results.append(
+                        InputLengthFixtureCalibration(
+                            targetTokenCount: target,
+                            actualTokenCount: actual,
+                            paddingRepetitions: middle,
+                            promptSHA256: digest
+                        )
+                    )
+                    break
+                } else if actual < target {
+                    low = middle + 1
+                } else {
+                    high = middle - 1
+                }
+            }
+            guard results.last?.targetTokenCount == target else {
+                throw RuntimeError.exactInputLengthUnavailable(target)
+            }
+        }
+        return results
     }
 
     nonisolated let identity =

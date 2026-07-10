@@ -45,6 +45,14 @@ presented as ordinary app-user scenarios.
 | `b-pipe-001-sustained-generation` | Repeated long generation from a fixed prompt | Five consecutive 512-token-limit attempts | Decode and thermal degradation |
 | `b-pipe-002-input-length-sweep` | Fixed generation across token-exact inputs | 32, 128, 512, and 2,048 input tokens | Prefill and TTFT scaling |
 
+The Input Length Sweep first performs an unmeasured fixture-calibration step.
+The pinned tokenizer and chat template prepare deterministic candidate text,
+and the adapter reads `LMInput.text.tokens.size` before generation. A point is
+accepted only when that value exactly matches its target. Calibration does not
+warm up through inference, does not produce a performance result, and blocks
+measurement if any target is unavailable; nearest-length substitution is not
+permitted.
+
 The current `suite-b-pilot-001` maps only to the draft sustained-generation
 profile. Its successful real-device run validates instrumentation; it does not
 freeze the final workload.

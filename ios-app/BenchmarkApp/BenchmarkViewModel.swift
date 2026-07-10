@@ -41,6 +41,9 @@ final class BenchmarkViewModel {
     private(set) var lowPowerModeEnabled = ProcessInfo.processInfo.isLowPowerModeEnabled
     private(set) var buildConfiguration = BuildMetadata.configuration
     private(set) var configurationError: String?
+    private(set) var inputLengthCalibrations: [InputLengthFixtureCalibration] = []
+    private(set) var inputLengthCalibrationError: String?
+    private(set) var isCalibratingInputLengths = false
 
     let loadedPlan: LoadedPilotPlan?
 
@@ -73,6 +76,10 @@ final class BenchmarkViewModel {
 
     var canRun: Bool {
         phase != .running && admissionReasonCodes.isEmpty
+    }
+
+    var canCalibrateInputLengths: Bool {
+        preparationPhase == .ready && phase != .running && !isCalibratingInputLengths
     }
 
     var admissionReasonCodes: [String] {
@@ -249,6 +256,21 @@ final class BenchmarkViewModel {
         debuggerAttached = DebuggerStatus.isAttached
         lowPowerModeEnabled = ProcessInfo.processInfo.isLowPowerModeEnabled
         buildConfiguration = BuildMetadata.configuration
+    }
+
+    func calibrateInputLengths() async {
+        guard canCalibrateInputLengths else { return }
+        isCalibratingInputLengths = true
+        inputLengthCalibrationError = nil
+        do {
+            inputLengthCalibrations = try await runtime.calibrateInputLengthFixtures(
+                targets: [32, 128, 512, 2048]
+            )
+        } catch {
+            inputLengthCalibrations = []
+            inputLengthCalibrationError = String(describing: error)
+        }
+        isCalibratingInputLengths = false
     }
 
     func metricText(_ value: Double?, unit: String) -> String {

@@ -1,8 +1,8 @@
 {
   "schema_version": "suite-b-workload-0.1",
   "workload_id": "b-pipe-002-input-length-sweep",
-  "workload_version": "0.1.0-draft",
-  "status": "design-draft",
+  "workload_version": "0.2.0-calibration-candidate",
+  "status": "validation-candidate",
   "category": "pipeline",
   "title": "Input Length Sweep",
   "scenario": "Token-exact input fixtures characterize prefill, TTFT, and memory scaling.",
@@ -21,14 +21,28 @@
   },
   "measurement_mode": "b-mode-length-sweep-v1",
   "metric_set": "suite-b-metrics-0.1",
+  "fixture_calibration": {
+    "version": "qwen3-x-padding-v1",
+    "base_text": "Read the following benchmark input and reply with OK. Input:",
+    "padding_unit": " x",
+    "chat_template_context": { "enable_thinking": false },
+    "search": "monotonic-binary-search-over-padding-repetitions",
+    "acceptance": "prepared LMInput.text.tokens.size must exactly equal every target",
+    "failure_behavior": "block measurement; do not use nearest length"
+  },
+  "ordering_policy": {
+    "point_order": [32, 128, 512, 2048],
+    "calibration_is_not_measurement": true,
+    "generation_before_calibration": false
+  },
   "primary_metrics": [
     "prefill_tokens_per_second@1",
     "pipeline_ttft_ms@1",
     "process_physical_footprint_mib@1"
   ],
   "blocking_decisions": [
-    "define token-exact, redistributable, model-neutral fixtures",
-    "define whether chat-template special tokens count inside each target length",
-    "define cooling and ordering policy across length points"
+    "verify exact calibration on the pinned physical-iPhone reference profile",
+    "freeze the four resulting fixture hashes",
+    "freeze cooling and measured-run ordering after calibration evidence"
   ]
 }

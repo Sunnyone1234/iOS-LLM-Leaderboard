@@ -237,6 +237,27 @@ class WorkloadManifestTests(unittest.TestCase):
             workload["input"]["sha256"],
         )
 
+    def test_input_sweep_requires_exact_pre_generation_calibration(self) -> None:
+        workload = json.loads(
+            (WORKLOADS / "b-pipe-002-input-length-sweep.json").read_text()
+        )
+        self.assertEqual(workload["status"], "validation-candidate")
+        self.assertEqual(
+            workload["input"]["target_model_input_tokens"]["values"],
+            [32, 128, 512, 2048],
+        )
+        self.assertIn(
+            "exactly equal",
+            workload["fixture_calibration"]["acceptance"],
+        )
+        self.assertEqual(
+            workload["fixture_calibration"]["failure_behavior"],
+            "block measurement; do not use nearest length",
+        )
+        self.assertFalse(
+            workload["ordering_policy"]["generation_before_calibration"]
+        )
+
 
 class PilotBundleValidatorTests(unittest.TestCase):
     def test_valid_bundle_recalculates_cleanly(self) -> None:
