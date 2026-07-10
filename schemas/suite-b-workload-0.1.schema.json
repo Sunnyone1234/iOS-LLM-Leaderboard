@@ -22,7 +22,7 @@
     "schema_version": { "const": "suite-b-workload-0.1" },
     "workload_id": { "type": "string", "pattern": "^b-(ux|pipe)-[0-9]{3}-[a-z0-9-]+$" },
     "workload_version": { "type": "string", "minLength": 1 },
-    "status": { "enum": ["design-draft", "pilot-mapped", "active", "deprecated"] },
+    "status": { "enum": ["design-draft", "validation-candidate", "pilot-mapped", "active", "deprecated"] },
     "category": { "enum": ["user-experience", "pipeline"] },
     "title": { "type": "string", "minLength": 1 },
     "scenario": { "type": "string", "minLength": 1 },

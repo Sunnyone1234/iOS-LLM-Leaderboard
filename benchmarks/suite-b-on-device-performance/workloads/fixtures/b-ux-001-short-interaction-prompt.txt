@@ -1,0 +1,1 @@
+You are helping inside an offline iPhone notes app. A note was saved locally but could not sync because the device has no connection. Write a calm message for the user in no more than two short sentences. Explain that the note is safe on this iPhone and will sync automatically when connectivity returns.

@@ -21,9 +21,18 @@ boundaries when the adapter can observe them.
 | `b-ux-001-short-interaction` | Short in-app request with a concise response | 64-256 actual model-input tokens | Natural stop, maximum 128 tokens | Responsiveness |
 | `b-ux-002-context-assistance` | Ask for a concise answer from a fixed local document | 1,024 or 2,048 actual model-input tokens | Natural stop, maximum 128 tokens | Context processing |
 
-Prompt content and hashes are not frozen yet. A workload cannot become active
-until its redistributable fixture, prompt, tokenizer output, and expected stop
-behavior are checked on the reference adapter.
+The `b-ux-001-short-interaction@0.2.0-candidate` prompt, response requirement,
+generation settings, and visible-content policy are frozen as a validation
+candidate. It cannot become active until its post-chat-template token count,
+thinking-mode setting, first-renderable-content boundary, and natural-stop
+behavior are checked on the pinned reference adapter and physical iPhone.
+
+For this candidate, Qwen3 thinking is explicitly disabled through the chat
+template. User-visible TTFT begins when the App accepts the canonical request
+and ends when cumulative raw-token decoding, with special tokens skipped,
+first produces non-whitespace content that is available to the render path.
+An adapter that cannot observe and prove that boundary reports the metric as
+`null`; it must not substitute Pipeline TTFT.
 
 ### Pipeline profiles
 

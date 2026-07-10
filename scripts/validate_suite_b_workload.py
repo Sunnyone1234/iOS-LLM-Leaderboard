@@ -13,7 +13,13 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 ID_PATTERN = re.compile(r"^b-(ux|pipe)-[0-9]{3}-[a-z0-9-]+$")
-STATUSES = {"design-draft", "pilot-mapped", "active", "deprecated"}
+STATUSES = {
+    "design-draft",
+    "validation-candidate",
+    "pilot-mapped",
+    "active",
+    "deprecated",
+}
 CATEGORIES = {"user-experience", "pipeline"}
 
 
@@ -125,4 +131,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

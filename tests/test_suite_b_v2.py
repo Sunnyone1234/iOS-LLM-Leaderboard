@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import unittest
 from pathlib import Path
 
@@ -214,6 +215,27 @@ class WorkloadManifestTests(unittest.TestCase):
         )
         self.assertEqual(manifest["pilot_mapping"], "suite-b-pilot-001")
         self.assertEqual(manifest["category"], "pipeline")
+
+    def test_short_interaction_candidate_has_frozen_fixture_and_policy(self) -> None:
+        workload_path = WORKLOADS / "b-ux-001-short-interaction.json"
+        workload = json.loads(workload_path.read_text())
+        fixture_path = ROOT / workload["input"]["fixture_path"]
+
+        self.assertEqual(workload["status"], "validation-candidate")
+        self.assertEqual(workload["output"]["maximum_tokens"], 128)
+        self.assertFalse(workload["generation"]["sampling"])
+        self.assertEqual(workload["generation"]["temperature"], 0)
+        self.assertFalse(
+            workload["generation"]["chat_template_context"]["enable_thinking"]
+        )
+        self.assertEqual(
+            workload["visible_content_policy"]["unobservable_behavior"],
+            "report user_visible_ttft_ms as null and mark measurement boundary unverified",
+        )
+        self.assertEqual(
+            hashlib.sha256(fixture_path.read_bytes()).hexdigest(),
+            workload["input"]["sha256"],
+        )
 
 
 class PilotBundleValidatorTests(unittest.TestCase):
