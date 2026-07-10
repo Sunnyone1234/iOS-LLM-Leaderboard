@@ -1,11 +1,7 @@
 # Leaderboard
 
-This file is generated from JSON files in `results/raw/`.
+This file is generated from validated, non-placeholder Framework v1 JSON files in results/raw/.
 
-No official results have been submitted yet.
+Suites remain separate. Measurement completeness scores are not used as device-performance rankings.
 
-The table below is placeholder/demo data only and must not be interpreted as a ranking.
-
-| Rank | Model | Provider | Task | Score | Evaluator | Date | Notes |
-| --- | --- | --- | --- | ---: | --- | --- | --- |
-| - | DemoModel-A | Demo Provider | demo-task | 0.00 | Demo Evaluator | 2026-07-08 | Placeholder only |
+No eligible non-placeholder results have been submitted yet.

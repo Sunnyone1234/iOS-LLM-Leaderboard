@@ -2,6 +2,10 @@
 
 iOS-LLM-Leaderboard is organized around five independent benchmark suites.
 
+Suite A and Suite C belong to the Developer Assistance track. Suite B, Suite D,
+and Suite E belong to the Embedded Intelligence track. Track membership does
+not create a shared score.
+
 ## Suite A: Swift Code Generation
 
 Suite A evaluates whether an LLM can generate production-quality Swift and SwiftUI code.

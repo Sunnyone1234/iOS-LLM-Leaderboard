@@ -67,7 +67,7 @@ Official leaderboard generation should only use validated result files. Demo-pla
   },
   "evaluation": {
     "score": null,
-    "max_score": 10,
+    "max_score": 100,
     "passed": null,
     "automatic_checks": [],
     "manual_review": [],
@@ -198,6 +198,11 @@ demo-placeholder
 ```
 
 Demo placeholder results must not be used in official leaderboard generation.
+
+The canonical example uses a 0–100 maximum for a general scored task. A
+suite-specific task may define another maximum. Suite B draft reproducibility
+rubrics currently use a 0–10 scale and must not be interpreted as performance
+scores.
 
 ## Suite-Specific Result Requirements
 

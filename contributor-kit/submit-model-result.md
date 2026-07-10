@@ -2,6 +2,9 @@
 
 Use this guide when submitting a result for a benchmark task.
 
+This is the current Framework v1 manual workflow. Passing format validation
+does not by itself make a result official, reproduced, or verified.
+
 ## Steps
 
 1. Choose an existing task from `benchmarks/`.

@@ -2,6 +2,10 @@
 
 Use this guide when submitting a local model or runtime result from iPhone, iPad, or Mac.
 
+This is a Framework v1 draft workflow. Results collected before Suite B
+workloads, runner, and evidence rules are frozen must remain non-official and
+must not enter a performance ranking.
+
 ## Steps
 
 1. Choose a fixed model, runtime, prompt, and device.
@@ -13,6 +17,10 @@ Use this guide when submitting a local model or runtime result from iPhone, iPad
 7. Add notes for unavailable metrics instead of inventing values.
 8. Confirm the JSON parses and follows `methodology/benchmark-result-specification.md`.
 9. Open a pull request with the completed JSON and reproduction notes.
+
+The official benchmark app will replace most manual steps in a future release.
+App-generated result bundles will be preferred because they can lock the
+benchmark release, workload, timing, and environment-capture behavior.
 
 ## Measurement Notes
 
