@@ -1,5 +1,5 @@
 {
-  "schema_version": "suite-b-plan-registry-0.1",
+  "schema_version": "suite-b-plan-registry-0.2",
   "plans": [
     {
       "plan_id": "b-pipe-001-validation",
@@ -10,6 +10,8 @@
       "runner_kind": "single-session",
       "thinking_mode": "disabled-via-prompt-directive",
       "user_visible_ttft_available": false,
+      "required_power_source": "unplugged",
+      "minimum_battery_level_percent": 50,
       "warmup_runs": 1,
       "measured_runs": 5,
       "output_token_limit": 512,
@@ -25,6 +27,8 @@
       "runner_kind": "single-session",
       "thinking_mode": "disabled-via-chat-template",
       "user_visible_ttft_available": true,
+      "required_power_source": "unplugged",
+      "minimum_battery_level_percent": 50,
       "warmup_runs": 1,
       "measured_runs": 5,
       "output_token_limit": 128,
@@ -40,6 +44,8 @@
       "runner_kind": "token-exact-point-series",
       "thinking_mode": "disabled-via-chat-template",
       "user_visible_ttft_available": false,
+      "required_power_source": "unplugged",
+      "minimum_battery_level_percent": 50,
       "warmup_runs": 1,
       "measured_runs": 5,
       "output_token_limit": 32,
@@ -60,6 +66,8 @@
       "runner_kind": "token-exact-point-series-with-quality",
       "thinking_mode": "disabled-via-chat-template",
       "user_visible_ttft_available": true,
+      "required_power_source": "unplugged",
+      "minimum_battery_level_percent": 50,
       "warmup_runs": 1,
       "measured_runs": 5,
       "output_token_limit": 128,

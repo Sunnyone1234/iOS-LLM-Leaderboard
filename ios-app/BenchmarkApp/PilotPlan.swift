@@ -84,6 +84,8 @@ struct PilotPlan: Decodable, Sendable, Equatable {
         let debuggerDetachedRequired: Bool
         let initialThermalState: String
         let lowPowerMode: String
+        let requiredPowerSource: String
+        let minimumBatteryLevelPercent: Double
     }
 }
 

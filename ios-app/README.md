@@ -101,8 +101,8 @@ launch-time value. A run can start only from the system-reported `nominal`
 state. If the state reaches `critical`, the current generation is retained and
 remaining generations are recorded as `notRun` instead of being started.
 
-App version `0.4.0` build `5` exports raw bundle schema
-`suite-b-result-bundle-0.1`. It uses the
+App version `0.4.0` build `6` exports raw bundle schema
+`suite-b-result-bundle-0.2`. It uses the
 same envelope for B-PIPE-001, B-PIPE-002, B-UX-001, and B-UX-002 and records
 model-preparation evidence
 alongside the frozen non-official B-PIPE-001 workload identity, Pipeline TTFT
@@ -115,11 +115,16 @@ and official leaderboard eligibility. A transition from `nominal` through
 being slower. Official eligibility remains false while the protocol is a
 non-official pilot.
 
-The bundled `suite-b-plan-registry-0.1` is the execution source of truth for
+The bundled `suite-b-plan-registry-0.2` is the execution source of truth for
 workload identity, runner kind, run counts, output limit, token-exact points,
 fixture hashes, thinking mode, and availability of User-visible TTFT. Legacy
 bundle schemas remain validator-compatible but are no longer the default App
 export.
+
+App admission requires `unplugged` battery power, at least 50% charge at the
+start of each measured workload, Low Power Mode off, and nominal thermal state.
+Charging, full/external power, unknown power state, unknown battery level, or a
+starting level below 50% blocks measurement with explicit reason codes.
 
 After reviewing a completed result, a contributor can enter a public name or
 GitHub handle, confirm the privacy and license declarations, and export

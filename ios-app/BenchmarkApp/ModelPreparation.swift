@@ -26,6 +26,8 @@ struct BenchmarkAdmissionEnvironment: Sendable, Equatable {
     let buildConfiguration: String
     let lowPowerModeEnabled: Bool
     let thermalState: String
+    let batteryState: String
+    let batteryLevelPercent: Double?
 }
 
 enum BenchmarkAdmission {
@@ -74,6 +76,20 @@ enum BenchmarkAdmission {
         }
         if environment.thermalState != requirements.initialThermalState {
             reasons.append("initial_thermal_state_not_nominal")
+        }
+        if requirements.requiredPowerSource == "unplugged" {
+            if environment.batteryState == "unknown" {
+                reasons.append("power_source_unknown")
+            } else if environment.batteryState != "unplugged" {
+                reasons.append("external_power_connected")
+            }
+        }
+        guard let batteryLevel = environment.batteryLevelPercent else {
+            reasons.append("battery_level_unknown")
+            return reasons
+        }
+        if batteryLevel < requirements.minimumBatteryLevelPercent {
+            reasons.append("battery_level_below_minimum")
         }
         return reasons
     }

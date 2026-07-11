@@ -170,7 +170,9 @@ final class ModelPreparationTests: XCTestCase {
                 debuggerAttached: true,
                 buildConfiguration: "Debug",
                 lowPowerModeEnabled: true,
-                thermalState: "fair"
+                thermalState: "fair",
+                batteryState: "charging",
+                batteryLevelPercent: 25
             ),
             requirements: pilotPlan().environmentRequirements
         )
@@ -181,6 +183,8 @@ final class ModelPreparationTests: XCTestCase {
                 "non_release_build",
                 "low_power_mode_enabled",
                 "initial_thermal_state_not_nominal",
+                "external_power_connected",
+                "battery_level_below_minimum",
             ])
         )
     }
@@ -194,7 +198,9 @@ final class ModelPreparationTests: XCTestCase {
                 debuggerAttached: false,
                 buildConfiguration: "Release",
                 lowPowerModeEnabled: false,
-                thermalState: "nominal"
+                thermalState: "nominal",
+                batteryState: "unplugged",
+                batteryLevelPercent: 75
             ),
             requirements: pilotPlan().environmentRequirements
         )
@@ -302,7 +308,9 @@ final class ModelPreparationTests: XCTestCase {
                 releaseBuildRequired: true,
                 debuggerDetachedRequired: true,
                 initialThermalState: "nominal",
-                lowPowerMode: "off"
+                lowPowerMode: "off",
+                requiredPowerSource: "unplugged",
+                minimumBatteryLevelPercent: 50
             )
         )
     }

@@ -13,6 +13,8 @@ struct SuiteBPlanRegistry: Decodable, Sendable, Equatable {
         let runnerKind: String
         let thinkingMode: String
         let userVisibleTtftAvailable: Bool
+        let requiredPowerSource: String
+        let minimumBatteryLevelPercent: Double
         let warmupRuns: Int
         let measuredRuns: Int
         let outputTokenLimit: Int
@@ -53,7 +55,7 @@ enum SuiteBPlanRegistryLoader {
             SuiteBPlanRegistry.self,
             from: Data(contentsOf: url)
         )
-        guard registry.schemaVersion == "suite-b-plan-registry-0.1" else {
+        guard registry.schemaVersion == "suite-b-plan-registry-0.2" else {
             throw RegistryError.unsupportedSchema(registry.schemaVersion)
         }
         var ids: Set<String> = []
@@ -64,6 +66,9 @@ enum SuiteBPlanRegistryLoader {
             guard plan.warmupRuns >= 0,
                   plan.measuredRuns > 0,
                   plan.outputTokenLimit > 0,
+                  plan.requiredPowerSource == "unplugged",
+                  plan.minimumBatteryLevelPercent >= 0,
+                  plan.minimumBatteryLevelPercent <= 100,
                   plan.targetInputTokens.count == plan.fixtureSha256.count
                     || plan.targetInputTokens.isEmpty && plan.fixtureSha256.count == 1,
                   plan.fixtureSha256.allSatisfy({ $0.count == 64 }) else {

@@ -66,6 +66,8 @@
     "release_build_required": true,
     "debugger_detached_required": true,
     "initial_thermal_state": "nominal",
-    "low_power_mode": "off"
+    "low_power_mode": "off",
+    "required_power_source": "unplugged",
+    "minimum_battery_level_percent": 50
   }
 }

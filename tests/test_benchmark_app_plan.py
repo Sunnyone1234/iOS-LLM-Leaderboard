@@ -134,13 +134,15 @@ class ShortInteractionPlanTests(unittest.TestCase):
 class SuiteBPlanRegistryTests(unittest.TestCase):
     def test_registry_versions_all_four_workloads(self) -> None:
         registry = load_json(REGISTRY_PATH)
-        self.assertEqual(registry["schema_version"], "suite-b-plan-registry-0.1")
+        self.assertEqual(registry["schema_version"], "suite-b-plan-registry-0.2")
         plans = registry["plans"]
         self.assertEqual(len(plans), 4)
         self.assertEqual(len({plan["workload_id"] for plan in plans}), 4)
         self.assertTrue(all(plan["warmup_runs"] == 1 for plan in plans))
         self.assertTrue(all(plan["measured_runs"] == 5 for plan in plans))
         self.assertTrue(all(plan["thinking_mode"].startswith("disabled-") for plan in plans))
+        self.assertTrue(all(plan["required_power_source"] == "unplugged" for plan in plans))
+        self.assertTrue(all(plan["minimum_battery_level_percent"] == 50 for plan in plans))
 
     def test_point_series_targets_and_hashes_are_parallel(self) -> None:
         for plan in load_json(REGISTRY_PATH)["plans"]:

@@ -38,7 +38,8 @@ def close(actual: Any, expected: float) -> bool:
 
 def validate(data: dict[str, Any]) -> list[str]:
     errors: list[str] = []
-    if data.get("schemaVersion") != "suite-b-result-bundle-0.1": errors.append("unsupported schemaVersion")
+    schema = data.get("schemaVersion")
+    if schema not in {"suite-b-result-bundle-0.1", "suite-b-result-bundle-0.2"}: errors.append("unsupported schemaVersion")
     if data.get("officialResultEligible") is not False: errors.append("officialResultEligible must be false")
     workload = data.get("workload", {})
     workload_id = workload.get("id")
@@ -55,6 +56,20 @@ def validate(data: dict[str, Any]) -> list[str]:
     if data.get("officialResultEligible") is not data.get("eligibility", {}).get("officialLeaderboardEligible"): errors.append("official eligibility mismatch")
     prep = data.get("modelPreparation", {})
     if prep.get("eligibleForPerformanceMeasurement") is not True or prep.get("cacheStateBeforePreparation") != "cached" or prep.get("downloadOccurredDuringSession") is not False: errors.append("model preparation is ineligible")
+    if schema == "suite-b-result-bundle-0.2":
+        if plan.get("requiredPowerSource") != "unplugged" or plan.get("minimumBatteryLevelPercent") != 50: errors.append("power admission plan mismatch")
+        device = data.get("device", {})
+        power_reasons: list[str] = []
+        if device.get("batteryState") == "unknown": power_reasons.append("power_source_unknown")
+        elif device.get("batteryState") != "unplugged": power_reasons.append("external_power_connected")
+        level = device.get("batteryLevelPercent")
+        if not number(level): power_reasons.append("battery_level_unknown")
+        elif level < 50: power_reasons.append("battery_level_below_minimum")
+        eligibility = data.get("eligibility", {})
+        if power_reasons:
+            if eligibility.get("sessionValid") is not False: errors.append("ineligible power state cannot produce a valid session")
+            for reason in power_reasons:
+                if reason not in eligibility.get("reasonCodes", []): errors.append(f"missing power reason code: {reason}")
     sessions = data.get("sessions")
     expected_count = len(targets) if targets else 1
     if not isinstance(sessions, list) or len(sessions) != expected_count: return errors + ["session count mismatch"]

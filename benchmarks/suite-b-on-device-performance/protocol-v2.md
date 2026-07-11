@@ -76,7 +76,8 @@ Unless a workload declares a stricter compatible mode:
 3. after relaunch, verify the cache again and load without inference;
 4. begin only when the system thermal state is `nominal`;
 5. use a Release build with no debugger attached;
-6. record Low Power Mode, battery level, and charging state;
+6. require battery power (`unplugged`), at least 50% starting charge, and Low
+   Power Mode off; record battery level and charging state;
 7. load model weights once per session;
 8. run one unrecorded warm-up with the same configuration;
 9. run five measured attempts;

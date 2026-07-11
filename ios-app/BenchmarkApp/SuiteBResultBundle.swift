@@ -24,6 +24,8 @@ struct SuiteBResultBundle: Codable, Sendable {
         let warmupRuns: Int
         let measuredRuns: Int
         let outputTokenLimit: Int
+        let requiredPowerSource: String
+        let minimumBatteryLevelPercent: Double
     }
 
     struct WorkloadIdentity: Codable, Sendable {
@@ -103,8 +105,17 @@ struct SuiteBResultBundle: Codable, Sendable {
             && !environment.debuggerAttached
             && environment.buildConfiguration == "Release"
             && !environment.lowPowerModeEnabled
+            && environment.batteryState == registryPlan.requiredPowerSource
+            && environment.batteryLevelPercent.map {
+                $0 >= registryPlan.minimumBatteryLevelPercent
+            } == true
+        var reasonCodes = ["pilot_protocol_not_official"]
+        if environment.batteryState == "unknown" { reasonCodes.append("power_source_unknown") }
+        else if environment.batteryState != registryPlan.requiredPowerSource { reasonCodes.append("external_power_connected") }
+        if environment.batteryLevelPercent == nil { reasonCodes.append("battery_level_unknown") }
+        else if environment.batteryLevelPercent! < registryPlan.minimumBatteryLevelPercent { reasonCodes.append("battery_level_below_minimum") }
         return SuiteBResultBundle(
-            schemaVersion: "suite-b-result-bundle-0.1",
+            schemaVersion: "suite-b-result-bundle-0.2",
             resultID: UUID().uuidString.lowercased(),
             createdAt: Date(),
             officialResultEligible: false,
@@ -114,7 +125,9 @@ struct SuiteBResultBundle: Codable, Sendable {
                 runnerKind: registryPlan.runnerKind,
                 warmupRuns: registryPlan.warmupRuns,
                 measuredRuns: registryPlan.measuredRuns,
-                outputTokenLimit: registryPlan.outputTokenLimit
+                outputTokenLimit: registryPlan.outputTokenLimit,
+                requiredPowerSource: registryPlan.requiredPowerSource,
+                minimumBatteryLevelPercent: registryPlan.minimumBatteryLevelPercent
             ),
             workload: .init(
                 id: registryPlan.workloadId,
@@ -155,7 +168,7 @@ struct SuiteBResultBundle: Codable, Sendable {
             eligibility: .init(
                 sessionValid: sessionValid,
                 officialLeaderboardEligible: false,
-                reasonCodes: sessionValid ? ["pilot_protocol_not_official"] : ["session_environment_ineligible", "pilot_protocol_not_official"]
+                reasonCodes: sessionValid ? reasonCodes : ["session_environment_ineligible"] + reasonCodes
             ),
             bundleSummary: bundleSummary,
             sessions: sessions

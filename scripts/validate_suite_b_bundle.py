@@ -179,7 +179,7 @@ def validate_summary(data: dict[str, Any], attempts: list[dict[str, Any]]) -> li
 
 
 def validate(data: dict[str, Any]) -> list[str]:
-    if data.get("schemaVersion") == "suite-b-result-bundle-0.1":
+    if data.get("schemaVersion") in {"suite-b-result-bundle-0.1", "suite-b-result-bundle-0.2"}:
         try:
             from scripts.validate_suite_b_result_bundle import validate as validate_unified
         except ModuleNotFoundError:

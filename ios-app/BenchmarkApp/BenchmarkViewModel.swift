@@ -63,6 +63,8 @@ final class BenchmarkViewModel {
     private(set) var debuggerAttached = DebuggerStatus.isAttached
     private(set) var lowPowerModeEnabled = ProcessInfo.processInfo.isLowPowerModeEnabled
     private(set) var buildConfiguration = BuildMetadata.configuration
+    private(set) var batteryState = DeviceEnvironment.current.batteryState
+    private(set) var batteryLevelPercent = DeviceEnvironment.current.batteryLevelPercent
     private(set) var configurationError: String?
     private(set) var inputLengthCalibrations: [InputLengthFixtureCalibration] = []
     private(set) var inputLengthCalibrationError: String?
@@ -153,7 +155,9 @@ final class BenchmarkViewModel {
                 debuggerAttached: debuggerAttached,
                 buildConfiguration: buildConfiguration,
                 lowPowerModeEnabled: lowPowerModeEnabled,
-                thermalState: currentThermalState
+                thermalState: currentThermalState,
+                batteryState: batteryState,
+                batteryLevelPercent: batteryLevelPercent
             ),
             requirements: plan.environmentRequirements
         )
@@ -252,9 +256,13 @@ final class BenchmarkViewModel {
     }
 
     func run() async {
+        let liveEnvironment = DeviceEnvironment.current
         debuggerAttached = DebuggerStatus.isAttached
         lowPowerModeEnabled = ProcessInfo.processInfo.isLowPowerModeEnabled
         buildConfiguration = BuildMetadata.configuration
+        currentThermalState = liveEnvironment.thermalState
+        batteryState = liveEnvironment.batteryState
+        batteryLevelPercent = liveEnvironment.batteryLevelPercent
         guard canRun,
               let loadedPlan,
               let modelPreparation else { return }
@@ -384,10 +392,13 @@ final class BenchmarkViewModel {
     }
 
     func refreshThermalState() {
+        let environment = DeviceEnvironment.current
         currentThermalState = SystemMeasurements.thermalState
         debuggerAttached = DebuggerStatus.isAttached
         lowPowerModeEnabled = ProcessInfo.processInfo.isLowPowerModeEnabled
         buildConfiguration = BuildMetadata.configuration
+        batteryState = environment.batteryState
+        batteryLevelPercent = environment.batteryLevelPercent
     }
 
     func calibrateInputLengths() async {
@@ -409,6 +420,7 @@ final class BenchmarkViewModel {
     }
 
     func runInputSweep() async {
+        refreshThermalState()
         guard canRunInputSweep,
               let sweepPlan = workloadRegistry?.plan(
                 workloadID: "b-pipe-002-input-length-sweep"
@@ -535,6 +547,7 @@ final class BenchmarkViewModel {
     }
 
     func runContextAssistance() async {
+        refreshThermalState()
         guard canRunContext,
               let contextPlan = workloadRegistry?.plan(
                 workloadID: "b-ux-002-context-assistance"

@@ -397,8 +397,8 @@ struct RunBenchmarkView: View {
     }
 
     private var batteryDescription: String {
-        let state = environment.batteryState
-        guard let level = environment.batteryLevelPercent else { return state }
+        let state = viewModel.batteryState
+        guard let level = viewModel.batteryLevelPercent else { return state }
         return "\(level.formatted(.number.precision(.fractionLength(0))))% · \(state)"
     }
 
