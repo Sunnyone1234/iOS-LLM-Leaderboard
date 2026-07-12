@@ -42,6 +42,17 @@ enum BuildMetadata {
     }
 
     static var sourceCommit: String? {
-        Bundle.main.object(forInfoDictionaryKey: "GIT_COMMIT_SHA") as? String
+        guard let rawValue = Bundle.main.object(
+            forInfoDictionaryKey: "GIT_COMMIT_SHA"
+        ) as? String else {
+            return nil
+        }
+        let value = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !value.isEmpty,
+              value != "unknown",
+              value != "$(GIT_COMMIT_SHA)" else {
+            return nil
+        }
+        return value
     }
 }

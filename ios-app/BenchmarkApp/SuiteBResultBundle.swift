@@ -9,7 +9,7 @@ struct SuiteBResultBundle: Codable, Sendable {
     let workload: WorkloadIdentity
     let measurementMode: PilotResultBundle.MeasurementModeIdentity
     let generationConfiguration: PilotResultBundle.GenerationConfiguration
-    let model: PilotResultBundle.ModelIdentity
+    let model: ModelIdentity
     let runtime: PilotResultBundle.RuntimeIdentity
     let device: PilotResultBundle.DeviceIdentity
     let modelPreparation: ModelPreparationEvidence
@@ -33,6 +33,24 @@ struct SuiteBResultBundle: Codable, Sendable {
         let version: String
         let category: String
         let fixtureSHA256: [String]
+    }
+
+    struct ModelIdentity: Codable, Sendable {
+        let displayName: String
+        let baseModelID: String
+        let artifactID: String
+        let artifactRevision: String
+        let modelFamily: String
+        let parameterSizeClass: String
+        let quantization: String
+        let modelFormat: String
+        let tokenizerIdentity: String
+        let sourceURL: String
+        let licenseIdentifier: String
+        let licenseSourceURL: String
+        let artifactRepositorySizeBytes: Int64
+        let compatibilityConstraints: [String]
+        let artifactContentHash: String?
     }
 
     struct Eligibility: Codable, Sendable {
@@ -93,6 +111,29 @@ struct SuiteBResultBundle: Codable, Sendable {
         let tokenEvents: [RuntimeToken]
     }
 
+    static func executionIdentityMatches(
+        registryPlan: SuiteBPlanRegistry.Plan,
+        plan: PilotPlan
+    ) -> Bool {
+        registryPlan.planId == plan.planId
+            && registryPlan.planVersion == plan.planVersion
+            && registryPlan.workloadId == plan.workload.workloadId
+            && registryPlan.workloadVersion == plan.workload.workloadVersion
+            && registryPlan.category == plan.workload.category
+            && registryPlan.thinkingMode == plan.generation.thinkingMode
+            && registryPlan.userVisibleTtftAvailable
+                == plan.measurementMode.userVisibleTtftAvailable
+            && registryPlan.warmupRuns == plan.procedure.warmupRuns
+            && registryPlan.measuredRuns == plan.procedure.measuredRuns
+            && registryPlan.outputTokenLimit == plan.workload.outputTokenLimit
+            && registryPlan.requiredPowerSource
+                == plan.environmentRequirements.requiredPowerSource
+            && registryPlan.minimumBatteryLevelPercent
+                == plan.environmentRequirements.minimumBatteryLevelPercent
+            && registryPlan.targetInputTokens.isEmpty
+            && registryPlan.fixtureSha256 == [plan.workload.promptSha256]
+    }
+
     static func common(
         registryPlan: SuiteBPlanRegistry.Plan,
         basePlan: PilotPlan,
@@ -115,7 +156,7 @@ struct SuiteBResultBundle: Codable, Sendable {
         if environment.batteryLevelPercent == nil { reasonCodes.append("battery_level_unknown") }
         else if environment.batteryLevelPercent! < registryPlan.minimumBatteryLevelPercent { reasonCodes.append("battery_level_below_minimum") }
         return SuiteBResultBundle(
-            schemaVersion: "suite-b-result-bundle-0.2",
+            schemaVersion: "suite-b-result-bundle-0.3",
             resultID: UUID().uuidString.lowercased(),
             createdAt: Date(),
             officialResultEligible: false,
@@ -250,8 +291,26 @@ struct SuiteBResultBundle: Codable, Sendable {
         )
     }
 
-    private static func modelIdentity(_ plan: PilotPlan) -> PilotResultBundle.ModelIdentity {
-        .init(displayName: plan.modelProfile.displayName, baseModelID: plan.modelProfile.baseModelId, artifactID: plan.modelProfile.artifactId, artifactRevision: plan.modelProfile.artifactRevision, quantization: plan.modelProfile.quantization, modelFormat: plan.modelProfile.modelFormat, artifactContentHash: plan.modelProfile.artifactContentHash)
+    private static func modelIdentity(_ plan: PilotPlan) -> ModelIdentity {
+        .init(
+            displayName: plan.modelProfile.displayName,
+            baseModelID: plan.modelProfile.baseModelId,
+            artifactID: plan.modelProfile.artifactId,
+            artifactRevision: plan.modelProfile.artifactRevision,
+            modelFamily: plan.modelProfile.modelFamily,
+            parameterSizeClass: plan.modelProfile.parameterSizeClass,
+            quantization: plan.modelProfile.quantization,
+            modelFormat: plan.modelProfile.modelFormat,
+            tokenizerIdentity: plan.modelProfile.tokenizerIdentity,
+            sourceURL: plan.modelProfile.sourceUrl,
+            licenseIdentifier: plan.modelProfile.licenseIdentifier,
+            licenseSourceURL: plan.modelProfile.licenseSourceUrl,
+            artifactRepositorySizeBytes:
+                plan.modelProfile.artifactRepositorySizeBytes,
+            compatibilityConstraints:
+                plan.modelProfile.compatibilityConstraints,
+            artifactContentHash: plan.modelProfile.artifactContentHash
+        )
     }
 
     private static func runtimeIdentity(_ plan: PilotPlan) -> PilotResultBundle.RuntimeIdentity {

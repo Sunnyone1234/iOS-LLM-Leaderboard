@@ -145,13 +145,14 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
     }
 
     nonisolated let identity =
-        "MLX Swift LM 3.31.4 · mlx-community/Qwen3-0.6B-4bit@73e3e38d"
+        "MLX Swift LM 3.31.4 · fixed Power + Ship Pilot profiles"
 
     private static let cacheVerificationMethod =
         "huggingface_revision_manifest_cached_file_size_v1"
     private static let requiredFileSuffixes = [".safetensors", ".json", ".jinja"]
 
     private var modelContainer: ModelContainer?
+    private var loadedModelIdentity: String?
     private var preparedPlan: PilotPlan?
 
     func prepare(plan: PilotPlan) async -> ModelPreparationEvidence {
@@ -259,24 +260,32 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
     }
 
     private func load(plan: PilotPlan, localFilesOnly: Bool) async throws {
-        guard modelContainer == nil else { return }
+        let requestedIdentity =
+            "\(plan.modelProfile.artifactId)@\(plan.modelProfile.artifactRevision)"
+        if modelContainer != nil, loadedModelIdentity == requestedIdentity {
+            return
+        }
+        modelContainer = nil
+        loadedModelIdentity = nil
+        preparedPlan = nil
         let configuration = ModelConfiguration(
             id: plan.modelProfile.artifactId,
             revision: plan.modelProfile.artifactRevision
         )
-        modelContainer = try await loadModelContainer(
+        let loaded = try await loadModelContainer(
             from: HuggingFaceDownloader(localFilesOnly: localFilesOnly),
             using: HuggingFaceTokenizerLoader(),
             configuration: configuration,
             useLatest: false
         )
+        modelContainer = loaded
+        loadedModelIdentity = requestedIdentity
     }
 
     static func validateIdentity(_ plan: PilotPlan) throws {
         let model = plan.modelProfile
         let runtime = plan.runtimeProfile
-        guard model.artifactId == "mlx-community/Qwen3-0.6B-4bit",
-              model.artifactRevision == "73e3e38d981303bc594367cd910ea6eb48349da8" else {
+        guard ProductionModelProfile.matching(model) != nil else {
             throw RuntimeError.identityMismatch("model artifact or revision")
         }
         guard runtime.runtimeName == "MLX Swift LM",

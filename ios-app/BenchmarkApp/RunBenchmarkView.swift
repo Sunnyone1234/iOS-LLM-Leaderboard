@@ -2,12 +2,32 @@ import SwiftUI
 
 struct RunBenchmarkView: View {
     private let environment = DeviceEnvironment.current
+    @State private var selectedPlan = ProductionBenchmarkPlan.sustainedGeneration
+    @State private var selectedModelProfile = ProductionModelProfile.small
     @State private var viewModel = BenchmarkViewModel()
 
     var body: some View {
         NavigationStack {
             Form {
-                Section("Benchmark") {
+                Section {
+                    Picker("Model profile", selection: $selectedModelProfile) {
+                        ForEach(ProductionModelProfile.allCases) { profile in
+                            Text(profile.title).tag(profile)
+                        }
+                    }
+                    .disabled(!viewModel.canSelectModelProfile)
+                    .onChange(of: selectedModelProfile) { _, selection in
+                        viewModel.selectModelProfile(selection)
+                    }
+                    Picker("Workload", selection: $selectedPlan) {
+                        ForEach(ProductionBenchmarkPlan.allCases) { selection in
+                            Text(selection.title).tag(selection)
+                        }
+                    }
+                    .disabled(!viewModel.canSelectBenchmarkPlan)
+                    .onChange(of: selectedPlan) { _, selection in
+                        viewModel.selectBenchmarkPlan(selection)
+                    }
                     LabeledContent(
                         "Plan",
                         value: viewModel.loadedPlan?.plan.planId
@@ -20,6 +40,11 @@ struct RunBenchmarkView: View {
                     )
                     LabeledContent("Model", value: modelDescription)
                     LabeledContent("Procedure", value: procedureDescription)
+                    Text(timingBoundaryDescription)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                } header: {
+                    Text("Power + Ship Pilot v0.1 · Non-official")
                 }
 
                 Section {
@@ -144,9 +169,9 @@ struct RunBenchmarkView: View {
                         Text(error).foregroundStyle(.red)
                     }
                 } header: {
-                    Text("B-PIPE-002 Fixture Calibration")
+                    Text("Experimental · B-PIPE-002 Fixture Calibration")
                 } footer: {
-                    Text("Calibration records no performance result. Run Input Length Sweep performs and exports the measured sequence.")
+                    Text("Non-official experimental workload. Calibration records no performance result. Run Input Length Sweep performs and exports the measured sequence.")
                 }
 
                 if !viewModel.inputSweepResults.isEmpty {
@@ -192,9 +217,9 @@ struct RunBenchmarkView: View {
                         Text(error).foregroundStyle(.red)
                     }
                 } header: {
-                    Text("B-UX-002 Context Calibration")
+                    Text("Experimental · B-UX-002 Context Calibration")
                 } footer: {
-                    Text("Calibration records no performance result. The context run evaluates both timing and the fixed answer contract.")
+                    Text("Non-official experimental workload. Calibration records no performance result. The context run evaluates both timing and the fixed answer contract.")
                 }
 
                 if !viewModel.contextResults.isEmpty {
@@ -208,7 +233,7 @@ struct RunBenchmarkView: View {
                                     value: point.successfulMeasuredRuns == 5 && point.contractPassingRuns == 5 ? "Yes" : "No"
                                 )
                                 LabeledContent("Pipeline TTFT", value: viewModel.metricText(point.medianPipelineTTFTMilliseconds, unit: "ms"))
-                                LabeledContent("User-visible TTFT", value: viewModel.metricText(point.medianUserVisibleTTFTMilliseconds, unit: "ms"))
+                                LabeledContent("First-renderable proxy TTFT", value: viewModel.metricText(point.medianUserVisibleTTFTMilliseconds, unit: "ms"))
                                 LabeledContent("Request completion", value: viewModel.metricText(point.medianRequestCompletionMilliseconds, unit: "ms"))
                                 LabeledContent("Memory peak", value: viewModel.metricText(point.medianPeakMemoryMegabytes, unit: "MiB"))
                                 LabeledContent("Final thermal", value: point.finalThermalState)
@@ -278,7 +303,7 @@ struct RunBenchmarkView: View {
                 }
 
                 if let summary = viewModel.uxValidationSummary {
-                    Section("B-UX-001 Candidate · Median") {
+                    Section("B-UX-001 Short Interaction · Median") {
                         LabeledContent(
                             "Model input tokens",
                             value: summary.promptTokenCount.map(String.init) ?? "Unavailable"
@@ -291,7 +316,7 @@ struct RunBenchmarkView: View {
                             )
                         )
                         LabeledContent(
-                            "User-visible TTFT",
+                            "First-renderable proxy TTFT",
                             value: viewModel.metricText(
                                 summary.medianUserVisibleTTFTMilliseconds,
                                 unit: "ms"
@@ -321,7 +346,7 @@ struct RunBenchmarkView: View {
                         ForEach(Array(summary.measuredMetrics.enumerated()), id: \.offset) { index, metrics in
                             DisclosureGroup("Run \(index + 1)") {
                                 LabeledContent("Pipeline TTFT", value: viewModel.metricText(metrics.ttftMilliseconds, unit: "ms"))
-                                LabeledContent("User-visible TTFT", value: viewModel.metricText(metrics.userVisibleTTFTMilliseconds, unit: "ms"))
+                                LabeledContent("First-renderable proxy TTFT", value: viewModel.metricText(metrics.userVisibleTTFTMilliseconds, unit: "ms"))
                                 LabeledContent("Request completion", value: viewModel.metricText(metrics.requestCompletionMilliseconds, unit: "ms"))
                             }
                         }
@@ -345,6 +370,34 @@ struct RunBenchmarkView: View {
                     Section("Evidence") {
                         DisclosureGroup("Warm-up · excluded from summary") {
                             attemptDetails(warmup)
+                        }
+                    }
+                }
+
+                if viewModel.result == nil
+                    && !viewModel.unifiedMeasuredAttemptRecords.isEmpty {
+                    Section("Measured Attempt Evidence") {
+                        ForEach(
+                            Array(viewModel.unifiedMeasuredAttemptRecords.enumerated()),
+                            id: \.offset
+                        ) { offset, attempt in
+                            DisclosureGroup("Run \(offset + 1) · \(attempt.outcome)") {
+                                unifiedAttemptDetails(attempt)
+                            }
+                        }
+                    }
+                }
+
+                if viewModel.result == nil
+                    && !viewModel.unifiedWarmupAttemptRecords.isEmpty {
+                    Section("Evidence") {
+                        ForEach(
+                            Array(viewModel.unifiedWarmupAttemptRecords.enumerated()),
+                            id: \.offset
+                        ) { _, attempt in
+                            DisclosureGroup("Warm-up · \(attempt.outcome) · excluded from summary") {
+                                unifiedAttemptDetails(attempt)
+                            }
                         }
                     }
                 }
@@ -380,9 +433,9 @@ struct RunBenchmarkView: View {
                             }
                         }
                     } header: {
-                        Text("Community Submission")
+                        Text("Legacy Draft Submission")
                     } footer: {
-                        Text("Generated submissions remain Draft until repository validation. They request Community Submitted status and never enter the default leaderboard automatically.")
+                        Text("Legacy Draft submission export; it is not required by the Pilot v0.1 ingestion path. Pilot data uses the unmodified raw result JSON.")
                     }
                 }
             }
@@ -414,6 +467,16 @@ struct RunBenchmarkView: View {
             return "Unavailable"
         }
         return "\(plan.procedure.warmupRuns) warm-up + \(plan.procedure.measuredRuns) measured"
+    }
+
+    private var timingBoundaryDescription: String {
+        guard let plan = viewModel.loadedPlan?.plan else {
+            return "Timing boundary unavailable."
+        }
+        if plan.measurementMode.userVisibleTtftAvailable {
+            return "The historical userVisibleTTFT field is labeled First-renderable proxy TTFT. It is measured inside the adapter, not at the screen, and Pipeline TTFT remains a separate diagnostic boundary."
+        }
+        return "This pipeline workload reports Pipeline TTFT after chat-template application and tokenization. User-visible TTFT is unavailable and is never inferred from Pipeline TTFT."
     }
 
     private var preparationStatusText: String {
@@ -460,6 +523,48 @@ struct RunBenchmarkView: View {
         LabeledContent("Token interval p99", value: viewModel.metricText(
             attempt.metrics.p99TokenIntervalMilliseconds,
             unit: "ms"
+        ))
+        LabeledContent(
+            "Tokens",
+            value: "\(attempt.promptTokenCount ?? 0) → \(attempt.outputTokenCount ?? 0)"
+        )
+        LabeledContent(
+            "Thermal",
+            value: "\(attempt.thermalStateBefore) → \(attempt.thermalStateAfter)"
+        )
+        LabeledContent("Stop reason", value: attempt.stopReason ?? "Unavailable")
+        if let error = attempt.errorMessage {
+            Text(error)
+                .foregroundStyle(.red)
+        }
+    }
+
+
+    @ViewBuilder
+    private func unifiedAttemptDetails(_ attempt: SuiteBResultBundle.Attempt) -> some View {
+        LabeledContent("Pipeline TTFT", value: viewModel.metricText(
+            attempt.metrics.ttftMilliseconds,
+            unit: "ms"
+        ))
+        LabeledContent("First-renderable proxy TTFT", value: viewModel.metricText(
+            attempt.metrics.userVisibleTTFTMilliseconds,
+            unit: "ms"
+        ))
+        LabeledContent("Request completion", value: viewModel.metricText(
+            attempt.metrics.requestCompletionMilliseconds,
+            unit: "ms"
+        ))
+        LabeledContent("Prefill", value: viewModel.metricText(
+            attempt.metrics.prefillTokensPerSecond,
+            unit: "tok/s"
+        ))
+        LabeledContent("Decode", value: viewModel.metricText(
+            attempt.metrics.decodeTokensPerSecond,
+            unit: "tok/s"
+        ))
+        LabeledContent("Memory peak", value: viewModel.metricText(
+            attempt.metrics.peakMemoryMegabytes,
+            unit: "MiB"
         ))
         LabeledContent(
             "Tokens",

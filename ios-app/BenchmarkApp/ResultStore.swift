@@ -23,7 +23,10 @@ actor ResultStore {
         formatter.formatOptions = [.withInternetDateTime]
         let timestamp = formatter.string(from: result.createdAt).replacingOccurrences(of: ":", with: "-")
         let device = result.device.machineIdentifier.lowercased().replacingOccurrences(of: ",", with: "-")
-        let url = directory.appending(path: "\(timestamp)_\(result.workload.id)_qwen3-0.6b-4bit_\(device)_\(result.resultID.prefix(8)).json")
+        let artifact = result.model.artifactID.lowercased()
+            .replacingOccurrences(of: "/", with: "-")
+            .replacingOccurrences(of: " ", with: "-")
+        let url = directory.appending(path: "\(timestamp)_\(result.workload.id)_\(artifact)_\(device)_\(result.resultID.prefix(8)).json")
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]

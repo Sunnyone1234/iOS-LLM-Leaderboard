@@ -1,37 +1,44 @@
 # iOS-LLM-Leaderboard
 
 iOS-LLM-Leaderboard is a community-maintained, reproducible benchmark and
-integration reference for large language models from an iOS developer
-perspective.
+integration reference for deploying on-device AI on Apple platforms.
 
-It evaluates both:
+The Phase 1 public product is organized around two questions:
 
-- models used to build iOS applications; and
-- models, runtimes, and device configurations embedded inside iOS applications.
+- **Power**: can a model provide useful intelligence inside an iOS app with
+  acceptable behavior on the target Apple device?
+- **Ship**: can the tested model, runtime, and device configuration be
+  integrated and distributed in a real app?
 
-The project is designed to help developers answer three practical questions:
+The long-term vision also includes **Build**, but Build is a Phase 2 Research
+Track rather than a Phase 1 product. Its future subject is complete iOS software
+delivery, not isolated Swift snippets or code completion.
 
-1. Which models are most useful for Swift, SwiftUI, and Xcode workflows?
-2. Which local models run best on iPhone, iPad, and Apple Silicon?
-3. Which models are suitable for real iOS app features, privacy requirements,
-   and deployment constraints?
+The Phase 1 product helps developers answer:
+
+1. Which local models run best on iPhone, iPad, and Apple Silicon?
+2. Which configurations meet the quality and performance needs of real app
+   features?
+3. Which models and runtimes fit practical integration, distribution,
+   privacy-review, and deployment constraints?
 
 This repository is currently a documentation-first framework. It does not yet
 publish official rankings or verified performance results.
 
-## Product Structure
+## Product Strategy
 
-The project has two evaluation tracks and three product layers.
+The long-term architecture is Build, Power, and Ship, with an explicit delivery
+priority.
 
-### Evaluation Tracks
+| Track | Status | Question | Current suite relationship |
+| --- | --- | --- | --- |
+| Power | Phase 1 product | Which embedded configurations provide useful, acceptable on-device intelligence? | Suite B and applicable Suite D quality work |
+| Ship | Phase 1 product | Which tested configurations are practical to integrate and deploy? | Suite E evidence reusing Suite B measurements |
+| Build | Phase 2 Research Track | Can an AI system deliver a complete iOS application? | Suite A and Suite C retained for compatibility, not Phase 1 priority |
 
-| Track | Question | Suites |
-| --- | --- | --- |
-| Developer Assistance | Which models and tools best help developers build iOS apps? | Suite A and Suite C |
-| Embedded Intelligence | Which models and runtimes best support intelligence inside iOS apps? | Suite B, Suite D, and Suite E |
-
-The tracks remain separate. A cloud coding model and a small on-device model do
-not belong in one global ranking.
+Phase 1 success is based entirely on trustworthy Power + Ship evidence. No
+coding task, coding-agent comparison, or Xcode workflow is required for Phase 1
+success.
 
 ### Product Layers
 
@@ -44,20 +51,61 @@ not belong in one global ranking.
 See [Project Vision](docs/project-vision.md) and
 [Product Architecture](docs/product-architecture.md).
 
+## Current Release Target: Power + Ship Pilot v0.1
+
+The current release target is a narrow, non-official Pilot that validates the
+Power evidence path and an evidence-linked Ship profile with 2–3 exact model
+artifacts, one reference runtime, and 1–2 physical iPhone models.
+
+Pilot v0.1 includes exactly two Suite B workload IDs:
+
+- `b-ux-001-short-interaction`;
+- `b-pipe-001-sustained-generation`.
+
+`b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` remain
+Experimental and are excluded from Pilot eligibility and comparison. No Suite
+D or Suite E benchmark task is added to the Pilot; its Ship output reuses the
+same tested Suite B configuration and does not create a deployment score.
+
+The Pilot does not activate official rankings, rename suite or workload IDs,
+replace historical schemas, or move existing benchmark directories. The App
+remains non-official Pilot infrastructure and is versioned when reliability
+fixes change its behavior. See the complete scope, publication checklist, and
+readiness gates in
+[Power + Ship Pilot v0.1](docs/power-ship-pilot-v0.1.md).
+
+Unmodified App exports can be placed under
+`results/suite-b-pilot-v0.1/raw/` and processed with:
+
+```bash
+python3 scripts/generate_suite_b_pilot.py
+```
+
+The generated [Pilot leaderboard](results/suite-b-pilot-v0.1/LEADERBOARD.md)
+and [Ship evidence view](results/suite-b-pilot-v0.1/SHIP-EVIDENCE.md) contain the
+complete six-result physical-iPhone Pilot matrix: three exact model artifacts,
+one iPhone 14 Pro Max, and both frozen workloads. All six App 0.6.0 build 8
+exports are genuine, retained unmodified, and accepted by the Pilot pipeline.
+See the [Pilot v0.1 release notes](results/suite-b-pilot-v0.1/RELEASE-NOTES.md)
+and [SHA-256 manifest](results/suite-b-pilot-v0.1/SHA256SUMS) for the frozen
+release-candidate scope, integrity checks, and known limitations.
+
 ## Benchmark Suites
 
 | Suite | Name | Focus |
 | --- | --- | --- |
-| Suite A | Swift Code Generation | Swift, SwiftUI, Apple API, and XCTest code quality |
+| Suite A | Swift Code Generation | Existing Build research material; not a Phase 1 priority |
 | Suite B | On-device Performance | Measured local inference on Apple devices |
-| Suite C | Xcode Integration | Completion, fixes, refactoring, and editor workflow fit |
-| Suite D | App Feature Intelligence | Intelligence used inside real iOS product features |
-| Suite E | Runtime Evaluation | Runtime compatibility, integration, licensing, and deployment tradeoffs |
+| Suite C | Xcode Integration | Existing Build research material; not a Phase 1 priority |
+| Suite D | App Feature Intelligence | Quality evidence for intelligence used inside product features |
+| Suite E | Runtime Evaluation | Ship compatibility, integration, licensing, and deployment evidence |
 
 Each suite may produce its own reports and leaderboard views. The project does
 not define a single aggregate score across all suites.
 
-Suite B is the first implementation priority.
+Suite B remains the first implementation priority and the measurement
+foundation for Phase 1 Power. Ship guidance must reuse this evidence rather
+than redefine its metrics.
 
 ## Community Benchmark App
 

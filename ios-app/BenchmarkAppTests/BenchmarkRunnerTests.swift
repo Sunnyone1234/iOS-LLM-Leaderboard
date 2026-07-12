@@ -54,6 +54,30 @@ final class BenchmarkRunnerTests: XCTestCase {
         }
     }
 
+    func testUnifiedExportRetainsFailedAttemptEvidence() async {
+        let session = await BenchmarkRunner(
+            runtime: FixtureRuntime(failingGeneration: 3),
+            procedure: pilotProcedure
+        ).run(prompt: "fixed")
+
+        let exported = SuiteBResultBundle.session(
+            id: "default",
+            target: nil,
+            fixtureSHA256: String(repeating: "a", count: 64),
+            padding: nil,
+            benchmarkSession: session,
+            memoryInterval: 50,
+            minimumSuccessfulRuns: 3,
+            includeQuality: false
+        )
+
+        XCTAssertEqual(exported.attempts.count, 6)
+        XCTAssertEqual(exported.summary.successfulMeasuredRuns, 4)
+        XCTAssertEqual(exported.summary.failedMeasuredRuns, 1)
+        XCTAssertEqual(exported.attempts[3].outcome, "failed")
+        XCTAssertNotNil(exported.attempts[3].errorMessage)
+    }
+
     func testCriticalThermalStatePreventsRemainingGenerations() async {
         let runtime = FixtureRuntime()
         let states = ThermalSequence([

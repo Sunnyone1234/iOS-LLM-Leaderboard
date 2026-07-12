@@ -123,6 +123,183 @@ final class ModelPreparationTests: XCTestCase {
         XCTAssertEqual(ux.plan.workload.workloadId, "b-ux-001-short-interaction")
     }
 
+    func testProductionPickerContainsOnlyTheTwoPilotWorkloads() {
+        XCTAssertEqual(
+            ProductionBenchmarkPlan.allCases.map(\.workloadID),
+            [
+                "b-pipe-001-sustained-generation",
+                "b-ux-001-short-interaction",
+            ]
+        )
+    }
+
+    func testProductionModelPickerContainsExactlyThreeFixedProfiles() {
+        XCTAssertEqual(
+            ProductionModelProfile.allCases.map {
+                $0.planModelProfile.artifactId
+            },
+            [
+                "mlx-community/Qwen3-0.6B-4bit",
+                "mlx-community/Qwen3-1.7B-4bit",
+                "mlx-community/Qwen3-4B-3bit",
+            ]
+        )
+        XCTAssertEqual(
+            Set(ProductionModelProfile.allCases.map {
+                $0.planModelProfile.artifactRevision
+            }).count,
+            3
+        )
+    }
+
+    func testProductionPlanSelectionLoadsTheExactPlan() {
+        let viewModel = BenchmarkViewModel()
+
+        viewModel.selectBenchmarkPlan(.shortInteraction)
+        XCTAssertEqual(
+            viewModel.loadedPlan?.plan.workload.workloadId,
+            "b-ux-001-short-interaction"
+        )
+        XCTAssertTrue(
+            viewModel.loadedPlan?.plan.measurementMode.userVisibleTtftAvailable
+                == true
+        )
+
+        viewModel.selectBenchmarkPlan(.sustainedGeneration)
+        XCTAssertEqual(
+            viewModel.loadedPlan?.plan.workload.workloadId,
+            "b-pipe-001-sustained-generation"
+        )
+        XCTAssertTrue(
+            viewModel.loadedPlan?.plan.measurementMode.userVisibleTtftAvailable
+                == false
+        )
+    }
+
+    func testModelSelectionLoadsExactArtifactAndPreservesWorkload() {
+        let viewModel = BenchmarkViewModel()
+        viewModel.selectBenchmarkPlan(.shortInteraction)
+        viewModel.selectModelProfile(.medium)
+
+        XCTAssertEqual(
+            viewModel.loadedPlan?.plan.workload.workloadId,
+            "b-ux-001-short-interaction"
+        )
+        XCTAssertEqual(
+            viewModel.loadedPlan?.plan.modelProfile.artifactId,
+            "mlx-community/Qwen3-1.7B-4bit"
+        )
+        XCTAssertEqual(viewModel.preparationPhase, .notPrepared)
+
+        viewModel.selectModelProfile(.large)
+        XCTAssertEqual(
+            viewModel.loadedPlan?.plan.modelProfile.artifactRevision,
+            "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf"
+        )
+        XCTAssertEqual(viewModel.preparationPhase, .notPrepared)
+    }
+
+    func testUnifiedExportIdentifiesSelectedModelProfile() throws {
+        let loaded = try PilotPlanLoader.load(
+            resource: ProductionBenchmarkPlan.shortInteraction.rawValue,
+            modelProfile: .medium
+        )
+        let registry = try SuiteBPlanRegistryLoader.load()
+        let registryPlan = try XCTUnwrap(
+            registry.plan(workloadID: loaded.plan.workload.workloadId)
+        )
+        let profile = loaded.plan.modelProfile
+        let preparation = ModelPreparationEvidence(
+            artifactID: profile.artifactId,
+            artifactRevision: profile.artifactRevision,
+            cacheStateBeforePreparation: .cached,
+            downloadOccurredDuringSession: false,
+            preparationDurationMilliseconds: 100,
+            preparationCompleted: true,
+            modelLoadCompleted: true,
+            eligibleForPerformanceMeasurement: true,
+            reasonCodes: [],
+            cacheVerificationMethod:
+                "huggingface_revision_manifest_cached_file_size_v1",
+            preparedAt: Date(timeIntervalSince1970: 0)
+        )
+        let bundle = SuiteBResultBundle.common(
+            registryPlan: registryPlan,
+            basePlan: loaded.plan,
+            environment: DeviceEnvironment(
+                modelIdentifier: "iPhone15,3",
+                systemName: "iOS",
+                systemVersion: "26.5",
+                systemBuild: "23F77",
+                operatingSystemVersion: .init(
+                    majorVersion: 26,
+                    minorVersion: 5,
+                    patchVersion: 0
+                ),
+                thermalState: "nominal",
+                debuggerAttached: false,
+                buildConfiguration: "Release",
+                appVersion: "0.6.0",
+                appBuild: "8",
+                appSourceCommit: nil,
+                lowPowerModeEnabled: false,
+                batteryLevelPercent: 75,
+                batteryState: "unplugged"
+            ),
+            modelPreparation: preparation,
+            sessions: []
+        )
+
+        XCTAssertEqual(bundle.schemaVersion, "suite-b-result-bundle-0.3")
+        XCTAssertEqual(bundle.model.artifactID, profile.artifactId)
+        XCTAssertEqual(bundle.model.artifactRevision, profile.artifactRevision)
+        XCTAssertEqual(bundle.model.modelFamily, "Qwen3 dense")
+        XCTAssertEqual(bundle.model.parameterSizeClass, "medium-1.7b")
+        XCTAssertEqual(bundle.model.artifactRepositorySizeBytes, 979_502_864)
+        XCTAssertEqual(
+            bundle.generationConfiguration.chatTemplateIdentity,
+            "artifact-tokenizer-config-enable-thinking-false"
+        )
+    }
+
+    func testProductionPlansMatchTheirExportRegistryIdentity() throws {
+        let registry = try SuiteBPlanRegistryLoader.load()
+        for selection in ProductionBenchmarkPlan.allCases {
+            for modelProfile in ProductionModelProfile.allCases {
+                let loaded = try PilotPlanLoader.load(
+                    resource: selection.rawValue,
+                    modelProfile: modelProfile
+                )
+                let registryPlan = try XCTUnwrap(
+                    registry.plan(workloadID: selection.workloadID)
+                )
+                XCTAssertTrue(
+                    SuiteBResultBundle.executionIdentityMatches(
+                        registryPlan: registryPlan,
+                        plan: loaded.plan
+                    ),
+                    "\(selection.workloadID) / \(modelProfile.rawValue)"
+                )
+                XCTAssertNoThrow(
+                    try MLXSwiftRuntime.validateIdentity(loaded.plan)
+                )
+            }
+        }
+
+        let pipeline = try PilotPlanLoader.load(
+            resource: ProductionBenchmarkPlan.sustainedGeneration.rawValue
+        )
+        let uxRegistry = try XCTUnwrap(
+            registry.plan(workloadID: ProductionBenchmarkPlan.shortInteraction.workloadID)
+        )
+        XCTAssertFalse(
+            SuiteBResultBundle.executionIdentityMatches(
+                registryPlan: uxRegistry,
+                plan: pipeline.plan
+            )
+        )
+    }
+
     func testUnifiedRegistryLoadsAllWorkloads() throws {
         let registry = try SuiteBPlanRegistryLoader.load()
         XCTAssertEqual(registry.plans.count, 4)
@@ -250,8 +427,16 @@ final class ModelPreparationTests: XCTestCase {
                 baseModelId: "Qwen/Qwen3-0.6B",
                 artifactId: "mlx-community/Qwen3-0.6B-4bit",
                 artifactRevision: "73e3e38d981303bc594367cd910ea6eb48349da8",
+                modelFamily: "Qwen3 dense",
+                parameterSizeClass: "small-0.6b",
                 quantization: "4-bit",
                 modelFormat: "MLX Safetensors",
+                tokenizerIdentity: "mlx-community/Qwen3-0.6B-4bit@73e3e38d981303bc594367cd910ea6eb48349da8/tokenizer_config.json",
+                sourceUrl: "https://huggingface.co/mlx-community/Qwen3-0.6B-4bit/tree/73e3e38d981303bc594367cd910ea6eb48349da8",
+                licenseIdentifier: "apache-2.0",
+                licenseSourceUrl: "https://huggingface.co/Qwen/Qwen3-0.6B/blob/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE",
+                artifactRepositorySizeBytes: 682_323_786,
+                compatibilityConstraints: ["physical-run-required-before-publication"],
                 artifactContentHash: nil
             ),
             runtimeProfile: .init(

@@ -1,0 +1,10 @@
+2f08fd91c0244104c421b862d97db8db681966d59c1cf5d82c1c653bccd1ac35  results/suite-b-pilot-v0.1/raw/2026-07-12T23-08-09Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_c5431488.json
+13e1120b53b0b62de3fb73748fbbaf48c0b120b7a62f7395364b07427a0b03f4  results/suite-b-pilot-v0.1/raw/2026-07-12T23-08-54Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_ba496540.json
+87ada974aa55d04e763668a5e56d5c71767d5007a75ccab88914bb33b126d8d4  results/suite-b-pilot-v0.1/raw/2026-07-12T23-14-51Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_17c24892.json
+459b2797f9a64d2c770ebf2472fec002ae5db57a268675875bacc9ed1f2267f9  results/suite-b-pilot-v0.1/raw/2026-07-12T23-22-34Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_897b896a.json
+ffaac2c50701f015ba1d1c03a1fb5972b6b96c889ee5902786251735a64aa1ea  results/suite-b-pilot-v0.1/raw/2026-07-12T23-30-22Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_124ac922.json
+8c76e3acd8ee1f830af282b407d97a769950fcfd7f246664060d9db302d5b7d3  results/suite-b-pilot-v0.1/raw/2026-07-12T23-37-49Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_b5a84431.json
+32bc0a3febff2d8111ec9347d4a302f253bec27f134906d2ab162f67171be4d8  results/suite-b-pilot-v0.1/normalized-results.json
+6e9307a54b0e6ebb8cf9ad0485682d8a2821735b2ccd4d110144d88689c3434a  results/suite-b-pilot-v0.1/pipeline-report.json
+862893d6472a189310164c56b2d7b19eb50b2a52622f71805bbb2ea0f9ce98ee  results/suite-b-pilot-v0.1/LEADERBOARD.md
+2a565737b542a017bdb4cb3fc6b1a2cfd08590ecbb965034e550557b5ed60376  results/suite-b-pilot-v0.1/SHIP-EVIDENCE.md

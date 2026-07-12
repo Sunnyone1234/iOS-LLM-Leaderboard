@@ -8,8 +8,22 @@
     "base_model_id": "Qwen/Qwen3-0.6B",
     "artifact_id": "mlx-community/Qwen3-0.6B-4bit",
     "artifact_revision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+    "model_family": "Qwen3 dense",
+    "parameter_size_class": "small-0.6b",
     "quantization": "4-bit",
     "model_format": "MLX Safetensors",
+    "tokenizer_identity": "mlx-community/Qwen3-0.6B-4bit@73e3e38d981303bc594367cd910ea6eb48349da8/tokenizer_config.json",
+    "source_url": "https://huggingface.co/mlx-community/Qwen3-0.6B-4bit/tree/73e3e38d981303bc594367cd910ea6eb48349da8",
+    "license_identifier": "apache-2.0",
+    "license_source_url": "https://huggingface.co/Qwen/Qwen3-0.6B/blob/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE",
+    "artifact_repository_size_bytes": 682323786,
+    "compatibility_constraints": [
+      "runtime:MLX-Swift-LM-3.31.4",
+      "backend:MLX/Metal",
+      "architecture:qwen3-dense",
+      "pilot-reference-device:iPhone15,3",
+      "physical-run-required-before-publication"
+    ],
     "artifact_content_hash": null
   },
   "runtime_profile": {

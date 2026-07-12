@@ -8,6 +8,12 @@ metric.
 
 - Framework v1 remains the repository-wide accepted format.
 - Suite B Protocol v2 is a design draft.
+- [Power + Ship Pilot v0.1](../../docs/power-ship-pilot-v0.1.md) is the current
+  narrow, non-official release target.
+- `b-ux-001-short-interaction` and `b-pipe-001-sustained-generation` are the
+  only Pilot workload candidates.
+- `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` remain
+  Experimental and are excluded from Pilot eligibility and comparison.
 - `b-pipe-001-sustained-generation@0.2.0-pilot` is the frozen successor to
   the legacy `suite-b-pilot-001` runner; it remains non-official evidence.
 - No Suite B result is currently eligible for the default leaderboard.

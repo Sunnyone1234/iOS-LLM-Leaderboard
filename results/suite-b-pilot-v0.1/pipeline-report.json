@@ -1,0 +1,10 @@
+{
+  "eligibleResultCount": 6,
+  "ineligible": [],
+  "ineligibleResultCount": 0,
+  "inputFileCount": 6,
+  "normalizedResultCount": 6,
+  "pipelineVersion": "suite-b-pilot-data-pipeline-0.1",
+  "rejected": [],
+  "rejectedResultCount": 0
+}

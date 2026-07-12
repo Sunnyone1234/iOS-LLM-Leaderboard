@@ -87,7 +87,8 @@ final class BenchmarkViewModel {
     var confirmsNoPersonalData = false
     var agreesToRepositoryLicense = false
 
-    let loadedPlan: LoadedPilotPlan?
+    private(set) var loadedPlan: LoadedPilotPlan?
+    private(set) var selectedModelProfile: ProductionModelProfile = .small
 
     private let runtime: any ModelPreparingRuntime
     private let resultStore = ResultStore()
@@ -99,6 +100,9 @@ final class BenchmarkViewModel {
         self.runtime = runtime
         if let loadedPlan {
             self.loadedPlan = loadedPlan
+            selectedModelProfile = ProductionModelProfile.matching(
+                loadedPlan.plan.modelProfile
+            ) ?? .small
         } else {
             do {
                 self.loadedPlan = try PilotPlanLoader.load()
@@ -121,12 +125,30 @@ final class BenchmarkViewModel {
             && preparationPhase != .restartRequired
     }
 
+    var canSelectBenchmarkPlan: Bool {
+        preparationPhase != .preparing
+            && preparationPhase != .restartRequired
+            && phase != .running
+            && !isCalibratingInputLengths
+            && !isRunningInputSweep
+            && !isCalibratingContext
+            && !isRunningContext
+    }
+
+    var canSelectModelProfile: Bool { canSelectBenchmarkPlan }
+
     var canRun: Bool {
-        phase != .running && admissionReasonCodes.isEmpty
+        phase != .running
+            && !isCalibratingInputLengths
+            && !isRunningInputSweep
+            && !isCalibratingContext
+            && !isRunningContext
+            && admissionReasonCodes.isEmpty
     }
 
     var canCalibrateInputLengths: Bool {
         preparationPhase == .ready && phase != .running && !isCalibratingInputLengths
+            && !isRunningInputSweep && !isCalibratingContext && !isRunningContext
             && workloadRegistry?.plan(workloadID: "b-pipe-002-input-length-sweep") != nil
     }
 
@@ -138,6 +160,7 @@ final class BenchmarkViewModel {
 
     var canCalibrateContext: Bool {
         preparationPhase == .ready && phase != .running && !isCalibratingContext
+            && !isRunningContext && !isCalibratingInputLengths && !isRunningInputSweep
             && workloadRegistry?.plan(workloadID: "b-ux-002-context-assistance") != nil
     }
 
@@ -167,6 +190,47 @@ final class BenchmarkViewModel {
         latestUnifiedResult != nil
             && !contributorName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             && reviewedResult && confirmsNoPersonalData && agreesToRepositoryLicense
+    }
+
+    func selectBenchmarkPlan(_ selection: ProductionBenchmarkPlan) {
+        guard canSelectBenchmarkPlan,
+              loadedPlan?.plan.workload.workloadId != selection.workloadID else {
+            return
+        }
+        resetResultsForPlanSelection()
+        do {
+            loadedPlan = try PilotPlanLoader.load(
+                resource: selection.rawValue,
+                modelProfile: selectedModelProfile
+            )
+            configurationError = nil
+        } catch {
+            loadedPlan = nil
+            configurationError = String(describing: error)
+        }
+    }
+
+    func selectModelProfile(_ selection: ProductionModelProfile) {
+        guard canSelectModelProfile,
+              loadedPlan?.plan.modelProfile.artifactId
+                != selection.planModelProfile.artifactId else {
+            return
+        }
+        let workload = ProductionBenchmarkPlan.allCases.first {
+            $0.workloadID == loadedPlan?.plan.workload.workloadId
+        } ?? .sustainedGeneration
+        resetResultsForPlanSelection()
+        selectedModelProfile = selection
+        do {
+            loadedPlan = try PilotPlanLoader.load(
+                resource: workload.rawValue,
+                modelProfile: selection
+            )
+            configurationError = nil
+        } catch {
+            loadedPlan = nil
+            configurationError = String(describing: error)
+        }
     }
 
     func generateCommunitySubmission() async {
@@ -266,6 +330,21 @@ final class BenchmarkViewModel {
         guard canRun,
               let loadedPlan,
               let modelPreparation else { return }
+        guard let registryPlan = workloadRegistry?.plan(
+            workloadID: loadedPlan.plan.workload.workloadId
+        ) else {
+            phase = .failed(message: "The selected workload is missing from the bundled registry.")
+            return
+        }
+        guard SuiteBResultBundle.executionIdentityMatches(
+            registryPlan: registryPlan,
+            plan: loadedPlan.plan
+        ) else {
+            phase = .failed(
+                message: "The selected plan does not match its bundled execution registry identity."
+            )
+            return
+        }
         let sessionEnvironment = DeviceEnvironment.current
         phase = .running
         currentThermalState = SystemMeasurements.thermalState
@@ -313,9 +392,6 @@ final class BenchmarkViewModel {
                     measuredMetrics: completed.map(\.1)
                 )
                 result = nil
-                guard let registryPlan = workloadRegistry?.plan(
-                    workloadID: loadedPlan.plan.workload.workloadId
-                ) else { throw SuiteBPlanRegistryLoader.RegistryError.missing }
                 let unified = SuiteBResultBundle.common(
                     registryPlan: registryPlan,
                     basePlan: loadedPlan.plan,
@@ -349,9 +425,6 @@ final class BenchmarkViewModel {
                 plan: loadedPlan.plan,
                 modelPreparation: modelPreparation
             )
-            guard let registryPlan = workloadRegistry?.plan(
-                workloadID: loadedPlan.plan.workload.workloadId
-            ) else { throw SuiteBPlanRegistryLoader.RegistryError.missing }
             let degradation = bundle.summary.degradation
             let unified = SuiteBResultBundle.common(
                 registryPlan: registryPlan,
@@ -659,6 +732,41 @@ final class BenchmarkViewModel {
 
     var warmupAttemptRecord: PilotResultBundle.Attempt? {
         result?.attempts.first { $0.role == "warmup" }
+    }
+
+    var unifiedMeasuredAttemptRecords: [SuiteBResultBundle.Attempt] {
+        latestUnifiedResult?.sessions.flatMap(\.attempts).filter {
+            $0.role == "measured"
+        } ?? []
+    }
+
+    var unifiedWarmupAttemptRecords: [SuiteBResultBundle.Attempt] {
+        latestUnifiedResult?.sessions.flatMap(\.attempts).filter {
+            $0.role == "warmup"
+        } ?? []
+    }
+
+    private func resetResultsForPlanSelection() {
+        phase = .ready
+        preparationPhase = .notPrepared
+        modelPreparation = nil
+        result = nil
+        resultFileURL = nil
+        uxValidationSummary = nil
+        inputLengthCalibrations = []
+        inputLengthCalibrationError = nil
+        inputSweepResults = []
+        inputSweepError = nil
+        contextCalibrations = []
+        contextCalibrationError = nil
+        contextResults = []
+        contextRunError = nil
+        latestUnifiedResult = nil
+        submissionFileURL = nil
+        submissionError = nil
+        reviewedResult = false
+        confirmsNoPersonalData = false
+        agreesToRepositoryLicense = false
     }
 
     private static func failureMessage(_ attempt: BenchmarkAttempt) -> String {

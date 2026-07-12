@@ -101,8 +101,18 @@ launch-time value. A run can start only from the system-reported `nominal`
 state. If the state reaches `critical`, the current generation is retained and
 remaining generations are recorded as `notRun` instead of being started.
 
-App version `0.4.0` build `6` exports raw bundle schema
-`suite-b-result-bundle-0.2`. It uses the
+App version `0.6.0` build `8` exposes two directly selectable pilot workloads
+and exactly three fixed model profiles: Qwen3 0.6B 4-bit, Qwen3 1.7B 4-bit,
+and Qwen3 4B 3-bit. Selecting a workload or model clears prior preparation and
+result state, so the exact artifact must be prepared again with that workload's
+generation and measurement plan before Run Benchmark is enabled. The App
+rejects a run when either identity is outside the fixed Pilot registry.
+
+The App exports raw bundle schema
+`suite-b-result-bundle-0.3`. The additive model identity records the exact
+artifact source, revision, tokenizer identity, repository size, license source,
+and compatibility constraints. The Pilot ingestion path retains support for
+the genuine App 0.5.0 build 7 schema-0.2 Stage 1 evidence. The envelope uses the
 same envelope for B-PIPE-001, B-PIPE-002, B-UX-001, and B-UX-002 and records
 model-preparation evidence
 alongside the frozen non-official B-PIPE-001 workload identity, Pipeline TTFT
@@ -117,9 +127,14 @@ non-official pilot.
 
 The bundled `suite-b-plan-registry-0.2` is the execution source of truth for
 workload identity, runner kind, run counts, output limit, token-exact points,
-fixture hashes, thinking mode, and availability of User-visible TTFT. Legacy
+fixture hashes, thinking mode, and availability of the First-renderable proxy
+TTFT. Legacy
 bundle schemas remain validator-compatible but are no longer the default App
 export.
+
+B-PIPE-002 and B-UX-002 remain visibly labeled Experimental and non-official in
+the App. They are not part of the two-workload Power + Ship Pilot v0.1 release
+path.
 
 App admission requires `unplugged` battery power, at least 50% charge at the
 start of each measured workload, Low Power Mode off, and nominal thermal state.
@@ -160,9 +175,18 @@ complete cache in the current App session. It never downloads or loads the
 model. Prepare Model performs no warm-up or measured generation; Run Benchmark
 performs the one warm-up and five measured attempts.
 
-The current TTFT is explicitly Pipeline TTFT. MLX chat-template application and
-tokenization complete before the monotonic generation clock starts. The app
-does not yet report user-visible TTFT.
+B-PIPE-001 reports Pipeline TTFT: MLX chat-template application and tokenization
+complete before its monotonic generation clock starts. It does not report or
+infer screen-visible TTFT. B-UX-001 retains the historical
+`userVisibleTTFTMilliseconds` field, but Pilot v0.1 labels it **First-renderable
+proxy TTFT**: it starts at adapter request acceptance and ends when cumulative
+decoding first produces non-whitespace content. It is not measured at the
+screen. Pipeline TTFT remains a separate diagnostic measurement.
+
+Release builds may inject the exact source revision with the
+`GIT_COMMIT_SHA=<40-character-commit>` Xcode build setting. If that value is not
+provided, the exported `appSourceCommit` remains `null`; the App never guesses a
+revision.
 
 ## Current MVP Design
 
