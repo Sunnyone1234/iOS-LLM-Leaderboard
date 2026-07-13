@@ -1,0 +1,66 @@
+{
+  "benchmarkRelease": {
+    "id": "suite-b-power",
+    "version": "1.0.0-rc.1"
+  },
+  "errors": [],
+  "evidenceLevel": {
+    "level": "unreviewed",
+    "reasonCodes": [
+      "evidence_not_reviewed"
+    ]
+  },
+  "metricEligibility": {
+    "decode_first_to_last_percent_change@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 2,
+      "reasonCodes": []
+    },
+    "decode_tokens_per_second@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    },
+    "pipeline_ttft_ms@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    },
+    "prefill_tokens_per_second@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    },
+    "process_physical_footprint_mib@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    }
+  },
+  "overallStatus": "validWithWarnings",
+  "protocolConformance": {
+    "reasonCodes": [],
+    "valid": true
+  },
+  "rankingEligibility": {
+    "eligible": false,
+    "reasonCodes": [
+      "release_candidate_not_official",
+      "ranking_not_authorized"
+    ]
+  },
+  "resultID": "C4F133ED-64F8-4019-9AB8-5322FBBDA217",
+  "schemaVersion": "suite-b-power-validation-report-1.0.0-rc.1",
+  "structuralValidity": {
+    "reasonCodes": [],
+    "valid": true
+  },
+  "validator": {
+    "id": "suite-b-power-validator",
+    "version": "1.0.0-rc.1"
+  },
+  "warnings": [
+    "evidence has not received independent review",
+    "release candidate does not authorize leaderboard ranking"
+  ]
+}

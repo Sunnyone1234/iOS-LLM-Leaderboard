@@ -2,7 +2,8 @@
 
 ## Status
 
-F4 implementation candidate; awaiting dependent pull-request review.
+F4 complete and reviewed. F5 physical-device verification is recorded in
+[`power-benchmark-1.0-f5-device-verification.md`](power-benchmark-1.0-f5-device-verification.md).
 
 This work hardens App `0.8.0` build `10` against the already frozen
 `suite-b-power@1.0.0-rc.1` F2/F3 contract. It does not change the protocol,

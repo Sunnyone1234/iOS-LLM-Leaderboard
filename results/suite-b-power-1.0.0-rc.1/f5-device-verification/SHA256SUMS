@@ -1,0 +1,12 @@
+a930c344f4b4d408479957ebdc07ab51727e8e0ac2e8e987ec2eb04277edfcae  raw/2026-07-13T12-10-55Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_2c2f23b4.json
+f11dd3282daa10d4080b1a510c959baa53bf37c865ddfbdd04e2d73ee4685687  raw/2026-07-13T12-11-49Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_1b0a18f0.json
+ea1f59492705668b2e9525e5c7f17a4d81a8e1d2346da7d01beb381acf86a0da  raw/2026-07-13T12-16-23Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_f64ab629.json
+be6d1613da47b7340cc6cf50b1f6fa9748fc2fd91b554783731b4e58f91d658a  raw/2026-07-13T12-20-48Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_99a70d26.json
+026fde6bbb1f9d45524cc7c8f3e7558d0e6185bab4677cb327a3847b1169651e  raw/2026-07-13T12-27-41Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_c4f133ed.json
+64c7d6077156412fb1afe26e3c377d42e98706d65cd708f91f608727492c60dc  raw/2026-07-13T12-32-28Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_ecb64a54.json
+b1559c8271cdeeecd23cb5dc006b18c33f0d428f8f9c525d45b1968d9b49c571  validation/2026-07-13T12-10-55Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_2c2f23b4.validation.json
+4170d9e19ce7b9ed04ea97a97c86a0b78677c9ac6fa55a325f0867dfcec7dfab  validation/2026-07-13T12-11-49Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_1b0a18f0.validation.json
+6422a34cc658791c0cef677eee848846ab000eee78c51289bf899b9dbfa0f2c5  validation/2026-07-13T12-16-23Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_f64ab629.validation.json
+692f0effaaeb741197420a001336f44b389d244c9f3843743837e718ec1d1311  validation/2026-07-13T12-20-48Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_99a70d26.validation.json
+e18b97185b9b6e620cb9bf19373da4846b7d68fde4e958551df8ab83c56394a5  validation/2026-07-13T12-27-41Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_c4f133ed.validation.json
+e3de1007369340213278844145049b7ac9e13674a357af19bad5b08e1859e984  validation/2026-07-13T12-32-28Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_ecb64a54.validation.json

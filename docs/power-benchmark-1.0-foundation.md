@@ -130,7 +130,7 @@ keeps evidence review and ranking authorization false at this stage.
 
 ### F4 — Reference App hardening
 
-Implementation candidate complete; awaiting dependent pull-request review.
+Complete.
 
 - Make the App execute only identities compatible with the selected benchmark
   release.
@@ -153,7 +153,7 @@ does not authorize ranking. See
 
 ### F5 — Release-candidate verification
 
-Next after F4 review.
+Complete for the declared single-device, single-runtime matrix.
 
 - Run the frozen App on physical devices without changing the release
   contract.
@@ -163,7 +163,20 @@ Next after F4 review.
 - Perform independent metric, integrity, privacy, documentation, and
   reproducibility review.
 
+Six genuine App 0.8.0 build 10 exports cover the three pinned model artifacts
+and both frozen workloads on a physical `iPhone15,3`. All six are structurally
+valid and protocol-conformant under the frozen F3 validator. Five cells have
+eligible metrics. The Qwen3 0.6B Short Interaction cell completed all attempts
+but failed its frozen response-conformance gate, so its null metrics are
+retained as an ineligible capability outcome rather than hidden or rerun.
+
+The complete evidence, recalculation, integrity, privacy, and reproducibility
+review is recorded in
+[`power-benchmark-1.0-f5-device-verification.md`](power-benchmark-1.0-f5-device-verification.md).
+
 ### F6 — Governance and publication
+
+Next.
 
 - Freeze the submission bundle and contributor declarations.
 - Define acceptance, review, reproduction, correction, withdrawal,

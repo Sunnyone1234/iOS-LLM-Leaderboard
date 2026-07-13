@@ -1,0 +1,84 @@
+{
+  "benchmarkRelease": {
+    "id": "suite-b-power",
+    "version": "1.0.0-rc.1"
+  },
+  "errors": [],
+  "evidenceLevel": {
+    "level": "unreviewed",
+    "reasonCodes": [
+      "evidence_not_reviewed"
+    ]
+  },
+  "metricEligibility": {
+    "decode_tokens_per_second@1": {
+      "eligible": false,
+      "eligibleMeasuredAttempts": 0,
+      "reasonCodes": [
+        "insufficient_metric_eligible_attempts"
+      ]
+    },
+    "first_renderable_proxy_ttft_ms@1": {
+      "eligible": false,
+      "eligibleMeasuredAttempts": 0,
+      "reasonCodes": [
+        "insufficient_metric_eligible_attempts"
+      ]
+    },
+    "pipeline_ttft_ms@1": {
+      "eligible": false,
+      "eligibleMeasuredAttempts": 0,
+      "reasonCodes": [
+        "insufficient_metric_eligible_attempts"
+      ]
+    },
+    "prefill_tokens_per_second@1": {
+      "eligible": false,
+      "eligibleMeasuredAttempts": 0,
+      "reasonCodes": [
+        "insufficient_metric_eligible_attempts"
+      ]
+    },
+    "process_physical_footprint_mib@1": {
+      "eligible": false,
+      "eligibleMeasuredAttempts": 0,
+      "reasonCodes": [
+        "insufficient_metric_eligible_attempts"
+      ]
+    },
+    "request_completion_ms@1": {
+      "eligible": false,
+      "eligibleMeasuredAttempts": 0,
+      "reasonCodes": [
+        "insufficient_metric_eligible_attempts"
+      ]
+    }
+  },
+  "overallStatus": "validWithWarnings",
+  "protocolConformance": {
+    "reasonCodes": [],
+    "valid": true
+  },
+  "rankingEligibility": {
+    "eligible": false,
+    "reasonCodes": [
+      "release_candidate_not_official",
+      "ranking_not_authorized"
+    ]
+  },
+  "resultID": "2C2F23B4-58FA-460E-9481-EB2D3837FDE2",
+  "schemaVersion": "suite-b-power-validation-report-1.0.0-rc.1",
+  "structuralValidity": {
+    "reasonCodes": [],
+    "valid": true
+  },
+  "validator": {
+    "id": "suite-b-power-validator",
+    "version": "1.0.0-rc.1"
+  },
+  "warnings": [
+    "one or more ranked metrics are ineligible",
+    "evidence has not received independent review",
+    "release candidate does not authorize leaderboard ranking"
+  ]
+}
