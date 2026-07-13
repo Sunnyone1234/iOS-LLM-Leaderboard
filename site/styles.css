@@ -438,6 +438,22 @@ h1 {
 .thermal.serious,
 .thermal.critical { color: var(--serious); }
 
+.evidence-status {
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.evidence-status.reproduced {
+  color: var(--nominal);
+  font-weight: 600;
+}
+
+.variation-warning {
+  color: var(--warning);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .details-button {
   padding: 0;
   border: 0;

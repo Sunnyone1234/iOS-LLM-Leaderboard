@@ -77,6 +77,19 @@ not authorize any individual submission as official, verified, or ranked.
    separate, hash-bound publication decision; the immutable `1.0.0` release
    package and tag are never rewritten.
 
+These rules continue to govern formal evidence levels and the immutable
+official release. The later
+[Power Community Reproduction and Live Ranking policy](power-community-ranking.md)
+adds a separate, explicitly labeled live community view. A valid package
+merged into `main` may enter that view automatically without changing its
+formal evidence level or the Power 1.0 release package.
+
+For the live view, the declared GitHub handle must match the pull-request
+author. Different GitHub accounts count as independent contributors inside an
+exact comparison cell. The same account may contribute to any number of
+different cells; repeated runs by that account within one cell do not increase
+the independent-contributor count.
+
 Failed, cancelled, OOM, not-run, early-stop, and metric-ineligible attempts are
 valid evidence when preserved by the App. Contributors must not rerun a test
 merely to hide an unfavorable outcome.

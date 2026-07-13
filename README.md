@@ -30,8 +30,9 @@ original non-official identity.
 
 [**Open the interactive Power + Ship leaderboard →**](https://yizesun.github.io/iOS-LLM-Leaderboard/)
 
-The website reads the same checked-in evidence used by the auditable Markdown
-reports. It provides Power workload rankings plus a sortable Ship deployment
+The website combines the immutable Power 1.0 Maintainer Reference evidence
+with valid merged community packages. It provides Power workload rankings,
+per-cell contributor and variation evidence, plus a sortable Ship deployment
 profile view linked to exact tested configurations and Swift integration code.
 To preview the site locally from the repository root:
 
@@ -39,11 +40,12 @@ To preview the site locally from the repository root:
 python3 -m http.server 4173
 ```
 
-Then open `http://localhost:4173/`. The site ranks five eligible Power 1.0 rows
-and retains the sixth response-ineligible result outside the ranking. The Ship
-tab shows three evidence profiles with explicit verified, implementation-only,
-and unknown claims. It does not introduce a global score or change any
-benchmark rule.
+Then open `http://localhost:4173/`. The live dataset begins with the five
+eligible Power 1.0 rows and retains the sixth response-ineligible result
+outside the ranking. Merged community runs are grouped only with exact
+matching configurations. The Ship tab shows three evidence profiles with
+explicit verified, implementation-only, and unknown claims. It does not
+introduce a global score or change any benchmark rule.
 
 ## Product Strategy
 
@@ -174,10 +176,14 @@ The app should:
 - create a repository submission with minimal manual work.
 
 Repository results will progress through evidence levels such as Community
-Submitted, Reproduced, and Verified. A single submission should not
-automatically enter the default ranking.
+Submitted, Reproduced, and Verified. Separately, a valid package merged into
+`main` can enter the clearly labeled live community view: one GitHub account
+counts once per exact comparison cell, two accounts display as reproduced,
+and three or more enable contributor-weighted aggregation. The same account
+can contribute to any number of different cells.
 
-See [Community Contribution Model](docs/community-contribution-model.md).
+See [Community Contribution Model](docs/community-contribution-model.md) and
+[Power Community Reproduction and Live Ranking](docs/power-community-ranking.md).
 
 ## Leaderboard Experience
 

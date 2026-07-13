@@ -84,6 +84,13 @@ pinned [RC1 package definition](power-benchmark-1.0-submission.md).
 
 The App cannot assign Reproduced, Verified, or Maintainer Reference status.
 
+The live Power community view separately derives contributor counts from
+valid merged packages. Inside one exact comparison cell, two different GitHub
+accounts display as `Reproduced` and three or more enable a community
+aggregate. This display is not a formal evidence-level transition. One account
+counts once per cell but may participate in any number of different cells. See
+[Power Community Reproduction and Live Ranking](power-community-ranking.md).
+
 Power 1.0 intake stores immutable two-file packages under
 `submissions/suite-b/power-1.0.0-rc.1/draft/`. CI emits structural, semantic,
 integrity, and declaration findings but does not alter trust. Separate review

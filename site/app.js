@@ -1,4 +1,5 @@
-const POWER_DATA_URL = "results/suite-b-power-1.0/normalized-results.json";
+const POWER_DATA_URL = "results/suite-b-power-community/normalized-results.json";
+const OFFICIAL_POWER_DATA_URL = "results/suite-b-power-1.0/normalized-results.json";
 const SHIP_DATA_URL = "results/ship-1.0/deployment-profiles.json";
 
 const state = {
@@ -30,6 +31,8 @@ const modeConfig = {
       column("decode", "Decode", row => row.summary.medianDecodeTokensPerSecond, value => formatRate(value), true),
       column("memory", "Peak memory", row => row.summary.medianPeakMemoryMiB, value => formatMemory(value), true),
       column("thermal", "Thermal", row => thermalOrder(row.summary.finalThermalState), (_, row) => thermalMarkup(row.summary.finalThermalState), true),
+      column("contributors", "Contributors", row => row.community.contributorCount, (_, row) => communityCount(row), true),
+      column("variation", "Variation", row => row.community.primaryMetricVariation.value, (_, row) => communityVariation(row), true),
       column("details", "Evidence", () => 0, () => "", false),
     ],
   },
@@ -50,6 +53,8 @@ const modeConfig = {
       column("memory", "Peak memory", row => row.summary.medianPeakMemoryMiB, value => formatMemory(value), true),
       column("degradation", "Decode change", row => row.summary.decodeFirstToLastPercentChange, value => formatPercent(value), true),
       column("thermal", "Thermal", row => thermalOrder(row.summary.finalThermalState), (_, row) => thermalMarkup(row.summary.finalThermalState), true),
+      column("contributors", "Contributors", row => row.community.contributorCount, (_, row) => communityCount(row), true),
+      column("variation", "Variation", row => row.community.primaryMetricVariation.value, (_, row) => communityVariation(row), true),
       column("details", "Evidence", () => 0, () => "", false),
     ],
   },
@@ -137,14 +142,9 @@ function renderReleaseSummary(data) {
   document.querySelector("#summary-configurations").textContent = String(configurations.size);
   document.querySelector("#summary-results").textContent = String(data.resultCount);
   document.querySelector("#summary-device").textContent = devices.map(device => device.displayName).join(", ");
-  const active = data.publication.officialResultEligible
-    && data.publication.publicationAuthorized
-    && data.publication.rankingAuthorized
-    && data.activeRankedResultCount > 0;
-  elements.releaseLabel.textContent = active ? "Power 1.0" : "Power 1.0 final candidate";
-  elements.footerStatus.textContent = active
-    ? "Power 1.0 · Official rankings within each workload"
-    : "Power 1.0 final review candidate · Official ranking not yet active";
+  elements.releaseLabel.textContent = "Power 1.0 + Community";
+  elements.releaseLabel.title = `Live community view derived from ${OFFICIAL_POWER_DATA_URL}`;
+  elements.footerStatus.textContent = "Power 1.0 reference · Live merged community evidence";
 }
 
 function workloadRows(rows, workload) {
@@ -164,13 +164,13 @@ function renderBoard() {
   elements.rowCount.textContent = `${rows.length} tested configuration${rows.length === 1 ? "" : "s"}`;
   elements.footerStatus.textContent = config.kind === "ship"
     ? "Ship 1.0 · Published evidence profiles · No deployment score"
-    : "Power 1.0 · Official rankings within each workload";
+    : "Power 1.0 reference · Live merged community evidence";
   elements.footerChecksums.href = config.kind === "ship"
     ? "results/ship-1.0/SHA256SUMS"
     : "results/suite-b-power-1.0/SHA256SUMS";
   elements.footerTable.href = config.kind === "ship"
     ? "results/ship-1.0/PROFILES.md"
-    : "results/suite-b-power-1.0/LEADERBOARD.md";
+    : "results/suite-b-power-community/LEADERBOARD.md";
   elements.footerTable.textContent = config.kind === "ship" ? "Profile table" : "Evidence table";
   elements.empty.hidden = rows.length !== 0;
   renderHead(config.columns);
@@ -228,7 +228,7 @@ function renderCell(columnConfig, row, index) {
     return `<td class="model-cell"><span class="model-name">${escapeHtml(model.displayName)}</span><span class="model-meta">${escapeHtml(model.parameterSizeClass)} · ${escapeHtml(model.modelFormat)}</span></td>`;
   }
   if (columnConfig.key === "details") {
-    const identity = row.resultID ?? row.profileID;
+    const identity = row.comparisonID ?? row.profileID;
     return `<td><button class="details-button" type="button" data-result="${escapeHtml(identity)}">${row.profileID ? "Profile" : "Evidence"}</button></td>`;
   }
   const value = columnConfig.accessor(row);
@@ -250,7 +250,7 @@ function defaultDirection(key) {
 }
 
 function openDetails(resultID) {
-  const row = state.power.results.find(item => item.resultID === resultID);
+  const row = state.power.results.find(item => item.comparisonID === resultID);
   if (!row) return openShipDetails(resultID);
   const model = row.configuration.model;
   const runtime = row.configuration.runtime;
@@ -268,13 +268,15 @@ function openDetails(resultID) {
       ${detailItem("Repository size", formatBytes(model.artifactRepositorySizeBytes))}
       ${detailItem("License metadata", model.licenseIdentifier)}
       ${detailItem("App identity", `${device.appVersion} build ${device.appBuild}`)}
-      ${detailItem("Evidence level", row.evidence.level)}
+      ${detailItem("Community evidence", `${eligibleContributorLabel(row)} · ${row.community.runCount} run${row.community.runCount === 1 ? "" : "s"}`)}
+      ${detailItem("Reproduction", row.community.status === "reproduced" ? "Reproduced" : "Single contributor")}
+      ${detailItem("Primary variation", variationText(row))}
       ${detailItem("Source release", row.sourceEvidenceRelease.version)}
     </div>
     <div class="dialog-links">
       <a class="button button-primary" href="${escapeAttribute(model.sourceURL)}" target="_blank" rel="noreferrer">Model source</a>
       <a class="button button-secondary" href="${escapeAttribute(model.licenseSourceURL)}" target="_blank" rel="noreferrer">License source</a>
-      ${rawLink(row)}
+      ${rawLinks(row)}
     </div>`;
   elements.dialog.showModal();
 }
@@ -318,8 +320,8 @@ function claimCount(row, status) {
   return row.deploymentClaims.filter(item => item.status === status).length;
 }
 
-function rawLink(row) {
-  return `<a class="button button-secondary" href="${escapeAttribute(row.source.rawPath)}">Raw ${escapeHtml(shortWorkload(row.workload.id))}</a>`;
+function rawLinks(row) {
+  return row.evidence.map(item => `<a class="button button-secondary" href="${escapeAttribute(item.rawPath)}">${escapeHtml(item.contributor)} · ${escapeHtml(shortWorkload(row.workload.id))}</a>`).join("");
 }
 
 function detailItem(label, value) {
@@ -345,6 +347,36 @@ function formatBytes(value) {
 function formatPercent(value) {
   if (value == null) return "—";
   return `${value > 0 ? "+" : ""}${value.toFixed(1)}%`;
+}
+
+function communityCount(row) {
+  const count = row.community.eligibleContributorCount;
+  const label = `${count} contributor${count === 1 ? "" : "s"}`;
+  return row.community.status === "reproduced"
+    ? `<span class="evidence-status reproduced">${label}</span>`
+    : `<span class="evidence-status">${label}</span>`;
+}
+
+function eligibleContributorLabel(row) {
+  const eligible = row.community.eligibleContributorCount;
+  const total = row.community.contributorCount;
+  const base = `${eligible} metric-eligible contributor${eligible === 1 ? "" : "s"}`;
+  return eligible === total ? base : `${base} · ${total} total`;
+}
+
+function communityVariation(row) {
+  const variation = row.community.primaryMetricVariation;
+  if (variation.value == null) return "—";
+  const value = `${variation.value.toFixed(2)}%`;
+  return variation.high
+    ? `<span class="variation-warning">${value} · High</span>`
+    : value;
+}
+
+function variationText(row) {
+  const variation = row.community.primaryMetricVariation;
+  if (variation.value == null) return "Not available with one contributor";
+  return `${variation.value.toFixed(2)}%${variation.high ? " · High variation" : ""}`;
 }
 
 function thermalMarkup(value) {

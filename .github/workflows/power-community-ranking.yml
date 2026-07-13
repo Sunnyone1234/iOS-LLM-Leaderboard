@@ -1,0 +1,75 @@
+name: Power community ranking
+
+on:
+  pull_request:
+    paths:
+      - "submissions/suite-b/power-1.0.0-rc.1/**"
+      - "scripts/generate_power_community_ranking.py"
+      - "scripts/validate_power_pr_contributor.py"
+      - "tests/test_power_community_ranking.py"
+  push:
+    branches: [main]
+    paths:
+      - "submissions/suite-b/power-1.0.0-rc.1/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Bind new submission manifests to the pull-request author
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          git diff --name-only --diff-filter=AM "$BASE_SHA" "$HEAD_SHA" -- 'submissions/suite-b/power-1.0.0-rc.1/draft/*/submission.json' > /tmp/power-submission-manifests.txt
+          python3 scripts/validate_power_pr_contributor.py --expected-contributor "$PR_AUTHOR" --paths-file /tmp/power-submission-manifests.txt
+      - name: Test community ranking rules
+        run: python3 -m unittest tests.test_power_community_ranking -v
+      - name: Generate community ranking preview
+        run: python3 scripts/generate_power_community_ranking.py --output /tmp/power-community-ranking
+      - name: Upload ranking preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: power-community-ranking-preview
+          path: /tmp/power-community-ranking
+
+  deploy:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    needs: validate
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Regenerate live community ranking
+        run: python3 scripts/generate_power_community_ranking.py
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
