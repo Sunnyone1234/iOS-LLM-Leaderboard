@@ -22,25 +22,28 @@ The Phase 1 product helps developers answer:
 3. Which models and runtimes fit practical integration, distribution,
    privacy-review, and deployment constraints?
 
-This repository currently publishes non-official historical Pilot and Power
-RC verification evidence. It does not yet publish an official Suite B
-benchmark release or verified default ranking.
+This repository currently contains historical Pilot evidence, the completed
+Power RC verification matrix, and a Power Benchmark 1.0 final review package.
+The 1.0 publication and default ranking remain disabled until the maintainer
+approves the complete final package.
 
 ## Interactive Leaderboard
 
 [**Open the interactive Power leaderboard →**](https://yizesun.github.io/iOS-LLM-Leaderboard/)
 
 The website reads the same checked-in `normalized-results.json` used by the
-auditable Markdown reports. It provides workload tabs, configuration filters,
-sortable metric columns, deployment facts, and direct links to raw evidence.
+auditable Markdown reports. It provides Power workload tabs, configuration
+filters, sortable metric columns, and direct links to raw evidence.
 To preview the site locally from the repository root:
 
 ```bash
 python3 -m http.server 4173
 ```
 
-Then open `http://localhost:4173/`. The site remains explicitly Pilot evidence;
-it does not introduce a global score or change any benchmark rule.
+Then open `http://localhost:4173/`. Until final approval, the site labels its
+five eligible rows as a Power 1.0 candidate ranking and retains the sixth
+response-ineligible result outside the ranking. It does not introduce a global
+score or change any benchmark rule.
 
 ## Product Strategy
 
@@ -68,17 +71,22 @@ success.
 See [Project Vision](docs/project-vision.md) and
 [Product Architecture](docs/product-architecture.md).
 
-## Current Standardization Target: Power Benchmark 1.0 RC1
+## Current Release Target: Power Benchmark 1.0
 
-F2–F5 have frozen the Power protocol, result schema, semantic validator,
-reference App, and physical-device verification matrix. F6 is preparing the
-submission, review, reproduction, correction, withdrawal, deprecation, and
-release-history governance needed for a Power Benchmark 1.0 RC1 review.
+F2–F6 have frozen and reviewed the Power protocol, result schema, semantic
+validator, reference App, physical-device verification matrix, submission
+package, and evidence governance. The final review package adopts the exact six
+F5 RC1 result files without rerunning them because the App and every benchmark
+semantic contract remain unchanged. Their original bytes and RC1 identities
+remain visible and are bound into Power 1.0 by result ID and SHA-256.
 
-See the [Foundation work order](docs/power-benchmark-1.0-foundation.md),
-[submission guide](docs/power-benchmark-1.0-submission.md), and
-[governance policy](docs/power-benchmark-1.0-governance.md). RC1 does not yet
-authorize official results, ranking, a version 1.0 tag, or a GitHub Release.
+See the [Power 1.0 finalization decision](docs/power-benchmark-1.0-finalization.md),
+[generated leaderboard](results/suite-b-power-1.0/LEADERBOARD.md),
+[release notes](results/suite-b-power-1.0/RELEASE-NOTES.md), and
+[checksums](results/suite-b-power-1.0/SHA256SUMS). Publication, official-result
+status, the default ranking, the `1.0.0` tag, and the GitHub Release remain
+disabled until the maintainer approves the final package and contributor
+declarations.
 
 The completed Power + Ship Pilot v0.1 matrix is retained as historical
 foundation evidence. It will not be published as a tagged release and its
@@ -219,11 +227,12 @@ draft [Suite B Protocol v2](benchmarks/suite-b-on-device-performance/protocol-v2
 - Framework v1 result templates and demo placeholders;
 - contributor guidance;
 - Framework v1 and Suite B pilot validation tooling;
-- a real physical-iPhone MLX Benchmark App pilot with local JSON export.
+- a real physical-iPhone MLX Benchmark App and six-result Power 1.0 final
+  review dataset with immutable raw evidence.
 
-No official benchmark release, ranking, or verified performance dataset is
-included yet. The App and its exports remain explicitly non-official pilot
-infrastructure.
+The Power 1.0 final review package is included, but it is not yet a published
+official release. Its candidate ranking is intentionally inactive until final
+maintainer authorization; historical Pilot evidence remains non-official.
 
 ## Result Integrity
 

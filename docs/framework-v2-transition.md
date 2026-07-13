@@ -87,12 +87,13 @@ Suite A may store generated files, compile results, tests, and rubric scores.
 - App 0.8.0 exports the frozen RC1 envelope, including bounded cumulative token
   evidence for independent First-renderable proxy TTFT recalculation.
 - The F5 physical-iPhone matrix verifies three pinned model artifacts across
-  both workloads. It remains review evidence and is not ranking-eligible.
-- F6 adds hash-bound community submission, evidence-transition, correction,
+  both workloads. Power 1.0 adopts these six immutable RC1 source results by
+  exact identity and hash; five have candidate-eligible primary metrics.
+- F6 added hash-bound community submission, evidence-transition, correction,
   withdrawal, privacy-removal, and release-review contracts without changing
   the frozen benchmark or App.
-- The RC1 package still requires explicit maintainer decisions. It is not an
-  official Power 1.0 publication and must not be tagged or ranked before that
-  approval.
+- The Power 1.0 final package is prepared but not yet official. Contributor
+  declarations, publication, ranking, and tag authorization still require
+  explicit maintainer approval.
 - Framework v2 outside this bounded Suite B Power slice remains a design and
   migration target; other suites continue to use their existing contracts.

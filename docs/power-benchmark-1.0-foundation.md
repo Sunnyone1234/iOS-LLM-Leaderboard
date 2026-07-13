@@ -2,10 +2,11 @@
 
 ## Status
 
-Power Benchmark 1.0 Foundation is the active pre-release standardization
-track for Phase 1 Power. It is not an official benchmark release, does not
-authorize official results, and must not be tagged or published as version
-1.0.
+Power Benchmark 1.0 Foundation is complete. Its frozen contracts, physical
+device matrix, and governance package now support a Power 1.0 final review
+candidate. The candidate is not yet an official benchmark release, does not
+authorize official results, and must not be tagged or published until the
+maintainer approves the final package.
 
 The completed Power + Ship Pilot v0.1 matrix is retained as historical
 foundation evidence. The Pilot proved that the App, raw-result, validation,
@@ -176,7 +177,7 @@ review is recorded in
 
 ### F6 — Governance and publication
 
-Implementation candidate complete; awaiting maintainer review.
+Complete and merged.
 
 - Freeze the submission bundle and contributor declarations.
 - Define acceptance, review, reproduction, correction, withdrawal,
@@ -184,14 +185,31 @@ Implementation candidate complete; awaiting maintainer review.
 - Produce Power Benchmark 1.0 RC1 for review.
 - Publish and tag 1.0 only after explicit maintainer approval.
 
-The F6 candidate adds a strict two-file submission package, explicit
+F6 adds a strict two-file submission package, explicit
 contributor declarations and conflict disclosure, semantic intake validation,
 hash-bound evidence transitions, independent reproduction checks, maintainer
 authority, conduct, correction, withdrawal, deprecation, and release-history
-rules. All RC publication and ranking flags remain false.
+rules. The merged RC publication and ranking flags remain false.
 
-Review the complete gate and unresolved approval decisions in
+The complete RC gate and its original approval decisions are recorded in
 [`power-benchmark-1.0-rc1-review.md`](power-benchmark-1.0-rc1-review.md).
+
+## Finalization decision
+
+The maintainer approved preparing Power Benchmark 1.0 without rerunning the
+F5 matrix. This is an exact evidence-adoption decision, not an in-place rename:
+
+- App 0.8.0 build 10 and its source commit are unchanged;
+- protocol semantics, workload fixtures, result schema, validator, metric
+  formulas, and eligibility rules are unchanged;
+- all six raw files retain their RC1 release and schema identities;
+- every raw result and validation report is pinned by path, result/session ID,
+  and SHA-256 in a separate adoption manifest; and
+- the Power 1.0 publication layer exposes the source RC1 identity rather than
+  rewriting submitted evidence.
+
+The final review package and remaining activation decisions are documented in
+[`power-benchmark-1.0-finalization.md`](power-benchmark-1.0-finalization.md).
 
 ## Power Benchmark 1.0 Release Gate
 
