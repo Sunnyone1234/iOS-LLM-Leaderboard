@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "power-model-test-catalog-1.0",
+  "schemaVersion": "power-model-test-catalog-1.1",
   "reviewedAt": "2026-07-13",
-  "purpose": "Recommended untested model artifacts for new physical-iPhone Power evidence",
+  "purpose": "App-ready untested artifacts plus an explicitly non-runnable open-model watchlist",
   "referenceApp": {
     "version": "0.9.0",
     "build": "11",
@@ -20,6 +20,15 @@
     "requiredQuantization": "4-bit",
     "requiresPinnedArtifactRevision": true,
     "requiresRuntimeModelTypeRegistration": true,
+    "performanceClaimsAllowedWithoutEvidence": false
+  },
+  "openModelWatchlistPolicy": {
+    "purpose": "Open-weight models requested for future Apple-device compatibility review",
+    "modelLevelEntriesOnly": true,
+    "appSelectable": false,
+    "rankingEligible": false,
+    "requiresCompatiblePinnedArtifactBeforeAppAdmission": true,
+    "requiresLockedRuntimeRegistrationBeforeAppAdmission": true,
     "performanceClaimsAllowedWithoutEvidence": false
   },
   "models": [
@@ -98,6 +107,68 @@
       "runtimeRegistryStatus": "registered-not-device-verified",
       "physicalDeviceEvidenceStatus": "untested",
       "recommendationReason": "Adds an Apache-2.0 3B candidate near the upper end of the initial iPhone-oriented test range."
+    }
+  ],
+  "openModelWatchlist": [
+    {
+      "displayName": "GLM 5.2",
+      "sourceListingName": "GLM 5.2 (Max)",
+      "officialModelID": "zai-org/GLM-5.2",
+      "modelFamily": "GLM 5.2",
+      "licenseIdentifier": "mit",
+      "licenseSourceURL": "https://huggingface.co/zai-org/GLM-5.2/blob/main/LICENSE",
+      "sourceURL": "https://huggingface.co/zai-org/GLM-5.2",
+      "appEligibility": "not-app-testable",
+      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
+      "appEligibilityReason": "The official weights are open, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+    },
+    {
+      "displayName": "GLM 5.1",
+      "sourceListingName": "GLM 5.1",
+      "officialModelID": "zai-org/GLM-5.1",
+      "modelFamily": "GLM 5.1",
+      "licenseIdentifier": "mit",
+      "licenseSourceURL": "https://huggingface.co/zai-org/GLM-5.1/blob/main/LICENSE",
+      "sourceURL": "https://huggingface.co/zai-org/GLM-5.1",
+      "appEligibility": "not-app-testable",
+      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
+      "appEligibilityReason": "The official weights are open, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+    },
+    {
+      "displayName": "Kimi K2.7 Code",
+      "sourceListingName": "Kimi K2.7 Code",
+      "officialModelID": "moonshotai/Kimi-K2.7-Code",
+      "modelFamily": "Kimi K2.7",
+      "licenseIdentifier": "modified-mit",
+      "licenseSourceURL": "https://huggingface.co/moonshotai/Kimi-K2.7-Code/blob/main/LICENSE",
+      "sourceURL": "https://huggingface.co/moonshotai/Kimi-K2.7-Code",
+      "appEligibility": "not-app-testable",
+      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
+      "appEligibilityReason": "The official weights are open, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+    },
+    {
+      "displayName": "DeepSeek V4 Pro",
+      "sourceListingName": "DeepSeek V4 Pro",
+      "officialModelID": "deepseek-ai/DeepSeek-V4-Pro",
+      "modelFamily": "DeepSeek V4",
+      "licenseIdentifier": "mit",
+      "licenseSourceURL": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro/blob/main/LICENSE",
+      "sourceURL": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
+      "appEligibility": "not-app-testable",
+      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
+      "appEligibilityReason": "The official weights are open, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
+    },
+    {
+      "displayName": "Kimi K2.6",
+      "sourceListingName": "Kimi K2.6",
+      "officialModelID": "moonshotai/Kimi-K2.6",
+      "modelFamily": "Kimi K2.6",
+      "licenseIdentifier": "modified-mit",
+      "licenseSourceURL": "https://huggingface.co/moonshotai/Kimi-K2.6/blob/main/LICENSE",
+      "sourceURL": "https://huggingface.co/moonshotai/Kimi-K2.6",
+      "appEligibility": "not-app-testable",
+      "appEligibilityReasonCode": "unsupported-runtime-architecture-and-device-scale",
+      "appEligibilityReason": "The official weights are open, but the locked MLX Swift LM runtime does not register this model architecture and no iPhone-viable pinned artifact has been approved."
     }
   ]
 }

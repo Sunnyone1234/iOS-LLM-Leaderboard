@@ -21,6 +21,28 @@ The catalog pins each exact artifact revision, license source, repository
 size, and locked-runtime registry basis. Do not substitute a similarly named
 artifact or a newer revision.
 
+## Open-model watchlist
+
+The same catalog also records five open-weight models requested for future
+compatibility review:
+
+- `zai-org/GLM-5.2` (shown in the source listing as GLM 5.2 (Max));
+- `zai-org/GLM-5.1`;
+- `moonshotai/Kimi-K2.7-Code`;
+- `deepseek-ai/DeepSeek-V4-Pro`; and
+- `moonshotai/Kimi-K2.6`.
+
+These are model-level watchlist entries, not approved App artifacts. Their
+official weights and license sources are linked, but the App's locked MLX
+Swift LM runtime does not register their exact architectures and no
+iPhone-viable pinned artifacts have been approved. They therefore remain
+visible on the website as **Not App-ready**, are absent from the App model
+picker, and cannot receive benchmark rows or placeholder results.
+
+Do not substitute a smaller distillation or a similarly named API endpoint
+and report it as one of these exact models. Moving a watchlist entry into the
+App-ready list requires a separate artifact and runtime compatibility review.
+
 ## 1. Check out the exact candidate App source
 
 Fork and clone the repository, then create a detached worktree at the source

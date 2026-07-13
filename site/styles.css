@@ -499,6 +499,13 @@ h1 {
   font-weight: 600;
 }
 
+.catalog-watchlist {
+  color: #6b4f10;
+  font-size: 0.78rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
 .catalog-reason {
   min-width: 280px;
   max-width: 380px;
@@ -525,6 +532,14 @@ h1 {
 .catalog-source:hover {
   color: var(--accent);
   text-decoration: underline;
+}
+
+.catalog-unavailable {
+  display: block;
+  color: var(--text-tertiary);
+  font-size: 0.7rem;
+  line-height: 1.25;
+  max-width: 9rem;
 }
 
 .details-button {

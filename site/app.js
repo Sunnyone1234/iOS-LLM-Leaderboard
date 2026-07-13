@@ -98,20 +98,20 @@ const modeConfig = {
   },
   catalog: {
     kind: "catalog",
-    label: "Recommended models to test",
-    description: "Pinned MLX artifacts with runtime registry support but no accepted physical-iPhone evidence. These are not rankings.",
+    label: "Open model catalog",
+    description: "App-ready candidates and requested open models awaiting compatible Apple-device artifacts. These are not rankings.",
     defaultSort: "priority",
     defaultDirection: "asc",
     columns: [
-      column("priority", "Priority", row => row.recommendedPriority, value => `#${value}`, true, true),
+      column("priority", "Priority", row => row.catalogEntryType === "app-ready" ? row.recommendedPriority : null, value => value == null ? "—" : `#${value}`, true, true),
       column("model", "Model", row => row.configuration.model.displayName, value => value),
-      column("quantization", "Quant", row => row.configuration.model.quantization, value => escapeHtml(value)),
-      column("size", "Download", row => row.configuration.model.artifactRepositorySizeBytes, value => formatBytes(value), true),
+      column("quantization", "Quant", row => row.configuration.model.quantization, value => value == null ? "—" : escapeHtml(value)),
+      column("size", "Download", row => row.configuration.model.artifactRepositorySizeBytes, value => value == null ? "—" : formatBytes(value), true),
       column("license", "License", row => row.configuration.model.licenseIdentifier, value => escapeHtml(value), true),
-      column("support", "Runtime basis", row => row.runtimeRegistryStatus, () => '<span class="catalog-support">Registry confirmed</span>', true),
-      column("status", "Evidence", row => row.physicalDeviceEvidenceStatus, () => '<span class="catalog-status">Untested</span>', true),
-      column("reason", "Why test", row => row.recommendationReason, value => escapeHtml(value), false),
-      column("catalog-action", "Action", () => 0, (_, row) => `<a class="details-button" href="${MODEL_TEST_GUIDE_URL}" target="_blank" rel="noreferrer">Test this model</a><a class="catalog-source" href="${escapeAttribute(row.configuration.model.sourceURL)}" target="_blank" rel="noreferrer">Source</a>`, false),
+      column("support", "App status", row => row.runtimeRegistryStatus, (_, row) => catalogSupportMarkup(row), true),
+      column("status", "Evidence", row => row.physicalDeviceEvidenceStatus, (_, row) => catalogEvidenceMarkup(row), true),
+      column("reason", "Why listed", row => row.recommendationReason ?? row.appEligibilityReason, value => escapeHtml(value), false),
+      column("catalog-action", "Action", () => 0, (_, row) => catalogActionMarkup(row), false),
     ],
   },
 };
@@ -153,6 +153,7 @@ async function loadEvidence() {
     if (!Array.isArray(power.results) || power.results.length === 0) throw new Error("Power evidence is empty");
     if (!Array.isArray(ship.profiles) || ship.profiles.length === 0) throw new Error("Ship profiles are empty");
     if (!Array.isArray(catalog.models) || catalog.models.length === 0) throw new Error("Model test catalog is empty");
+    if (!Array.isArray(catalog.openModelWatchlist)) throw new Error("Open model watchlist is unavailable");
     state.power = power;
     state.ship = ship;
     state.catalog = catalog;
@@ -228,16 +229,57 @@ function buildCoverageRows(rows) {
   });
 }
 
+function buildCatalogRows(catalog) {
+  const appReady = catalog.models.map(model => ({
+    ...model,
+    catalogEntryType: "app-ready",
+    configuration: { model, runtime: catalog.runtime },
+  }));
+  const watchlist = catalog.openModelWatchlist.map(model => ({
+    ...model,
+    catalogEntryType: "open-model-watchlist",
+    runtimeRegistryStatus: "unsupported-in-locked-runtime",
+    physicalDeviceEvidenceStatus: "not-app-testable",
+    configuration: {
+      model: {
+        ...model,
+        artifactID: model.officialModelID,
+        quantization: null,
+        artifactRepositorySizeBytes: null,
+      },
+      runtime: catalog.runtime,
+    },
+  }));
+  return [...appReady, ...watchlist];
+}
+
+function catalogSupportMarkup(row) {
+  return row.catalogEntryType === "app-ready"
+    ? '<span class="catalog-support">Ready in App</span>'
+    : '<span class="catalog-watchlist">Not App-ready</span>';
+}
+
+function catalogEvidenceMarkup(row) {
+  return row.catalogEntryType === "app-ready"
+    ? '<span class="catalog-status">Untested</span>'
+    : '<span class="catalog-watchlist">Watchlist</span>';
+}
+
+function catalogActionMarkup(row) {
+  const source = `<a class="catalog-source" href="${escapeAttribute(row.configuration.model.sourceURL)}" target="_blank" rel="noreferrer">Source</a>`;
+  if (row.catalogEntryType !== "app-ready") {
+    return `<span class="catalog-unavailable">Await compatible artifact</span>${source}`;
+  }
+  return `<a class="details-button" href="${MODEL_TEST_GUIDE_URL}" target="_blank" rel="noreferrer">Test this model</a>${source}`;
+}
+
 function renderBoard() {
   if (!state.power || !state.ship || !state.catalog) return;
   const config = modeConfig[state.mode];
   let rows;
   if (config.kind === "ship") rows = state.ship.profiles;
   else if (config.kind === "coverage") rows = buildCoverageRows(state.power.results);
-  else if (config.kind === "catalog") rows = state.catalog.models.map(model => ({
-    ...model,
-    configuration: { model, runtime: state.catalog.runtime },
-  }));
+  else if (config.kind === "catalog") rows = buildCatalogRows(state.catalog);
   else rows = workloadRows(state.power.results, config.workload);
   rows = filterRows(rows, config);
   rows = sortRows(rows, config);
@@ -249,14 +291,14 @@ function renderBoard() {
   elements.rowCount.textContent = config.kind === "coverage"
     ? `${rows.length} tested profile${rows.length === 1 ? "" : "s"} · ${openSlots} open contributor slot${openSlots === 1 ? "" : "s"}`
     : config.kind === "catalog"
-      ? `${rows.length} recommended untested model${rows.length === 1 ? "" : "s"}`
+      ? `${rows.filter(row => row.catalogEntryType === "app-ready").length} App-ready · ${rows.filter(row => row.catalogEntryType === "open-model-watchlist").length} watchlist`
       : `${rows.length} tested configuration${rows.length === 1 ? "" : "s"}`;
   elements.footerStatus.textContent = config.kind === "ship"
     ? "Ship 1.0 · Published evidence profiles · No deployment score"
     : config.kind === "coverage"
       ? "Coverage derived from live Power evidence · No placeholder devices"
       : config.kind === "catalog"
-        ? "Recommended test catalog · No performance claims · No leaderboard placement"
+        ? "Open model catalog · App-ready and watchlist entries are explicitly separated · No performance claims"
       : "Power 1.0 reference · Live merged community evidence";
   elements.footerChecksums.href = config.kind === "ship"
     ? "results/ship-1.0/SHA256SUMS"
@@ -328,7 +370,10 @@ function renderCell(columnConfig, row, index) {
   if (columnConfig.key === "rank") return `<td class="rank-cell">${index + 1}</td>`;
   if (columnConfig.key === "model") {
     const model = row.configuration.model;
-    return `<td class="model-cell"><span class="model-name">${escapeHtml(model.displayName)}</span><span class="model-meta">${escapeHtml(model.parameterSizeClass)} · ${escapeHtml(model.modelFormat)}</span></td>`;
+    const metadata = row.catalogEntryType === "open-model-watchlist"
+      ? `${model.licenseIdentifier} · Open model watchlist`
+      : `${model.parameterSizeClass} · ${model.modelFormat}`;
+    return `<td class="model-cell"><span class="model-name">${escapeHtml(model.displayName)}</span><span class="model-meta">${escapeHtml(metadata)}</span></td>`;
   }
   if (columnConfig.key === "details") {
     const identity = row.comparisonID ?? row.profileID;
