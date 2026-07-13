@@ -67,27 +67,31 @@ success.
 See [Project Vision](docs/project-vision.md) and
 [Product Architecture](docs/product-architecture.md).
 
-## Current Release Target: Power + Ship Pilot v0.1
+## Current Standardization Target: Power Benchmark 1.0 Foundation
 
-The current release target is a narrow, non-official Pilot that validates the
-Power evidence path and an evidence-linked Ship profile with 2–3 exact model
-artifacts, one reference runtime, and 1–2 physical iPhone models.
+The active target is now
+[Power Benchmark 1.0 Foundation](docs/power-benchmark-1.0-foundation.md).
+Foundation work turns the proven physical-device evidence path into a frozen,
+reviewable benchmark contract. It does not yet authorize official results,
+ranking, a version 1.0 tag, or a GitHub Release.
 
-Pilot v0.1 includes exactly two Suite B workload IDs:
+The completed Power + Ship Pilot v0.1 matrix is retained as historical
+foundation evidence. It will not be published as a tagged release and its
+`0.2.0-pilot` results will not be relabeled as Power 1.0 evidence.
+
+The historical Pilot v0.1 includes exactly two Suite B workload IDs:
 
 - `b-ux-001-short-interaction`;
 - `b-pipe-001-sustained-generation`.
 
 `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` remain
-Experimental and are excluded from Pilot eligibility and comparison. No Suite
-D or Suite E benchmark task is added to the Pilot; its Ship output reuses the
-same tested Suite B configuration and does not create a deployment score.
+Experimental and are outside the 1.0 Foundation release contract. No Suite D
+or Suite E benchmark task is added; Ship continues to reuse the same tested
+Suite B configuration and does not create a deployment score.
 
-The Pilot does not activate official rankings, rename suite or workload IDs,
-replace historical schemas, or move existing benchmark directories. The App
-remains non-official Pilot infrastructure and is versioned when reliability
-fixes change its behavior. See the complete scope, publication checklist, and
-readiness gates in
+The historical Pilot did not activate official rankings, rename suite or
+workload IDs, replace historical schemas, or move existing benchmark
+directories. See its completed evidence scope in
 [Power + Ship Pilot v0.1](docs/power-ship-pilot-v0.1.md).
 
 Unmodified App exports can be placed under
@@ -102,9 +106,9 @@ and [Ship evidence view](results/suite-b-pilot-v0.1/SHIP-EVIDENCE.md) contain th
 complete six-result physical-iPhone Pilot matrix: three exact model artifacts,
 one iPhone 14 Pro Max, and both frozen workloads. All six App 0.6.0 build 8
 exports are genuine, retained unmodified, and accepted by the Pilot pipeline.
-See the [Pilot v0.1 release notes](results/suite-b-pilot-v0.1/RELEASE-NOTES.md)
+See the [untagged Pilot evidence notes](results/suite-b-pilot-v0.1/RELEASE-NOTES.md)
 and [SHA-256 manifest](results/suite-b-pilot-v0.1/SHA256SUMS) for the frozen
-release-candidate scope, integrity checks, and known limitations.
+historical scope, integrity checks, and known limitations.
 
 ## Legacy Suite Namespaces
 

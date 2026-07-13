@@ -31,6 +31,10 @@ transition.
   entry; point-series workloads contain one entry per token-exact point.
 - `suite-b-result-bundle-0.2.schema.json` records and enforces the versioned
   power admission requirements while keeping 0.1 evidence valid.
+- `suite-b-result-bundle-0.3.schema.json` documents the historical App 0.6.0
+  Pilot envelope with the additive fixed-profile model, source, license, and
+  compatibility metadata. It remains non-official and is not the Power
+  Benchmark 1.0 result schema.
 - `suite-b-community-submission-0.1.schema.json` wraps exact result bytes,
   integrity evidence, contributor declarations, and a Draft trust request for
   offline repository submission.
@@ -40,6 +44,7 @@ transition.
   promotion from Draft to Community Submitted only.
 
 The earlier workload-specific schemas remain supported for existing evidence.
-An official Suite B v2 result schema will be
-frozen only after timing boundaries, generation configuration, environment
-evidence, and workload identities are emitted and validated by the app.
+An official Power Benchmark 1.0 result schema will be frozen only after
+immutable benchmark-release identity, normative edge cases, independently
+recalculable official metrics, migration rules, and App/validator compatibility
+are frozen together.

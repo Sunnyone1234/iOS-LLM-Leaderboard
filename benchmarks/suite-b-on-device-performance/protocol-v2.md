@@ -2,7 +2,9 @@
 
 ## Status
 
-Design draft. This protocol does not yet authorize official results.
+Design draft under the
+[Power Benchmark 1.0 Foundation](../../docs/power-benchmark-1.0-foundation.md)
+work order. This protocol does not yet authorize official results.
 
 ## Benchmark Question
 

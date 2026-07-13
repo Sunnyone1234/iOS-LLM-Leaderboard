@@ -1,8 +1,11 @@
-# Suite B Internal Pilot v0.1 Data Pipeline
+# Suite B Historical Pilot v0.1 Evidence
 
-This directory is a non-official, internal data path for reviewing real output
-from the existing Benchmark App. It does not define an official benchmark
-release, result schema, submission process, trust level, or public ranking.
+This directory retains the completed, untagged Pilot v0.1 evidence used to
+validate the physical-device result path. The maintainer chose not to publish a
+Pilot tag or GitHub Release and moved active work to Power Benchmark 1.0
+Foundation. This directory does not define an official benchmark release,
+result schema, submission process, trust level, or public ranking, and its
+files cannot be relabeled as Power 1.0 results.
 
 The Pilot deliberately accepts only:
 
@@ -25,7 +28,7 @@ workloads. The current pipeline report is 6 normalized, 6 eligible, 0
 ineligible, and 0 rejected. The two earlier App 0.5.0 smoke exports are retained
 under `stage-1-smoke/` and are not included in generated comparisons.
 
-Review [the release notes](RELEASE-NOTES.md) for scope, headline evidence,
+Review [the evidence notes](RELEASE-NOTES.md) for scope, headline evidence,
 validation, privacy review, and known limitations. Verify the final raw and
 generated artifacts with [SHA256SUMS](SHA256SUMS).
 

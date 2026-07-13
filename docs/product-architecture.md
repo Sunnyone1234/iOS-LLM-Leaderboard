@@ -16,10 +16,12 @@ The Phase 1 public product is **Power + Ship**. Its purpose is to establish a
 trustworthy, reproducible, developer-oriented evaluation standard for
 deploying on-device AI on Apple platforms.
 
-The current delivery target is the narrower
-[Power + Ship Pilot v0.1](power-ship-pilot-v0.1.md), which validates the evidence
-loop with only B-UX-001 and B-PIPE-001 before the requirements for Suite B 1.0
-are declared complete.
+The current delivery target is
+[Power Benchmark 1.0 Foundation](power-benchmark-1.0-foundation.md). The
+completed Power + Ship Pilot v0.1 is retained as non-official historical
+evidence; it will not be tagged or published as a release. Foundation work
+keeps B-UX-001 and B-PIPE-001 as the only 1.0 candidates while the official
+protocol, schema, validator, App, and release-governance contracts are frozen.
 
 **Build is a Phase 2 Research Track.** It remains part of the long-term vision,
 but it is not part of the Phase 1 product, benchmark release, public

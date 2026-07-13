@@ -1,10 +1,12 @@
 from __future__ import annotations
-import statistics, unittest
+import json, statistics, unittest
+from pathlib import Path
 from scripts.validate_suite_b_context_assistance_bundle import evaluate_contract
 from scripts.validate_suite_b_result_bundle import PLANS, THINKING_MODES, validate
 
 PASSING = "The note is safe in the local vault. Network must be stable for 30 seconds; below 20 percent wait for power. Avoid deleting or reinstalling. ORCHID-47."
 FAILING = "The note is safe locally. ORCHID-47."
+ROOT = Path(__file__).resolve().parents[1]
 
 def attempt(target: int | None, index: int, role: str, quality: bool) -> dict:
     first = 100_000_000 + index * 1_000_000
@@ -21,7 +23,7 @@ def bundle(workload_id: str, schema: str = "suite-b-result-bundle-0.1") -> dict:
         attempts = [attempt(target, 0, "warmup", quality)] + [attempt(target, i, "measured", quality) for i in range(1, 6)]
         measured = attempts[1:]
         sessions.append({"id": "default" if target is None else f"point-{target}", "targetInputTokens": target, "fixtureSHA256": digests[position], "paddingRepetitions": None, "performanceEligible": True, "qualityEligible": True if quality else None, "timingEvidenceRetained": True, "summary": {"successfulMeasuredRuns": 5, "failedMeasuredRuns": 0, "answerContractPassingRuns": 5 if quality else None, "modelInputTokens": target or 235, "medianPipelineTTFTMilliseconds": statistics.median(a["metrics"]["ttftMilliseconds"] for a in measured), "medianUserVisibleTTFTMilliseconds": statistics.median(a["metrics"]["userVisibleTTFTMilliseconds"] for a in measured), "medianRequestCompletionMilliseconds": statistics.median(a["metrics"]["requestCompletionMilliseconds"] for a in measured), "medianPrefillTokensPerSecond": 500.0, "medianDecodeTokensPerSecond": 95.0, "medianPeakMemoryMegabytes": 700.0, "finalThermalState": "nominal"}, "attempts": attempts})
-    return {"schemaVersion": schema, "officialResultEligible": False, "plan": {"id": plan_id, "version": version, "runnerKind": "test", "warmupRuns": 1, "measuredRuns": 5, "outputTokenLimit": output_limit, "requiredPowerSource": "unplugged", "minimumBatteryLevelPercent": 50}, "workload": {"id": workload_id, "version": version, "category": category, "fixtureSHA256": digests}, "measurementMode": {"userVisibleTTFTAvailable": visible}, "generationConfiguration": {"outputTokenLimit": output_limit, "thinkingMode": thinking}, "modelPreparation": {"eligibleForPerformanceMeasurement": True, "cacheStateBeforePreparation": "cached", "downloadOccurredDuringSession": False}, "device": {"batteryState": "unplugged", "batteryLevelPercent": 70}, "eligibility": {"officialLeaderboardEligible": False, "sessionValid": True, "reasonCodes": ["pilot_protocol_not_official"]}, "sessions": sessions}
+    return {"schemaVersion": schema, "resultID": "11111111-1111-4111-8111-111111111111", "createdAt": "2026-07-13T00:00:00Z", "officialResultEligible": False, "plan": {"id": plan_id, "version": version, "runnerKind": "test", "warmupRuns": 1, "measuredRuns": 5, "outputTokenLimit": output_limit, "requiredPowerSource": "unplugged", "minimumBatteryLevelPercent": 50}, "workload": {"id": workload_id, "version": version, "category": category, "fixtureSHA256": digests}, "measurementMode": {"userVisibleTTFTAvailable": visible}, "generationConfiguration": {"outputTokenLimit": output_limit, "thinkingMode": thinking}, "model": {"displayName": "Test Model", "baseModelID": "example/base", "artifactID": "example/artifact", "artifactRevision": "0123456789abcdef0123456789abcdef01234567", "modelFamily": "Test", "parameterSizeClass": "test", "quantization": "4-bit", "modelFormat": "test", "tokenizerIdentity": "example/tokenizer", "sourceURL": "https://example.com/model", "licenseIdentifier": "test", "licenseSourceURL": "https://example.com/license", "artifactRepositorySizeBytes": 1, "compatibilityConstraints": ["test-only"]}, "modelPreparation": {"eligibleForPerformanceMeasurement": True, "cacheStateBeforePreparation": "cached", "downloadOccurredDuringSession": False}, "device": {"batteryState": "unplugged", "batteryLevelPercent": 70}, "eligibility": {"officialLeaderboardEligible": False, "sessionValid": True, "reasonCodes": ["pilot_protocol_not_official"]}, "sessions": sessions}
 
 class UnifiedSuiteBBundleTests(unittest.TestCase):
     def test_all_four_workloads_share_one_valid_envelope(self):
@@ -56,5 +58,46 @@ class UnifiedSuiteBBundleTests(unittest.TestCase):
         value["eligibility"]["sessionValid"] = False
         value["eligibility"]["reasonCodes"] = ["session_environment_ineligible", "pilot_protocol_not_official"]
         self.assertEqual(validate(value), [])
+
+    def test_0_3_requires_additive_model_identity(self):
+        value = bundle(
+            "b-pipe-001-sustained-generation",
+            "suite-b-result-bundle-0.3",
+        )
+        del value["model"]["licenseSourceURL"]
+        self.assertIn(
+            "model.licenseSourceURL must be a non-empty string",
+            validate(value),
+        )
+
+    def test_all_retained_app_0_6_exports_pass_unified_validation(self):
+        raw = ROOT / "results" / "suite-b-pilot-v0.1" / "raw"
+        paths = sorted(raw.glob("*.json"))
+        self.assertEqual(len(paths), 6)
+        for path in paths:
+            with self.subTest(path=path.name):
+                value = json.loads(path.read_text(encoding="utf-8"))
+                self.assertEqual(
+                    value["schemaVersion"],
+                    "suite-b-result-bundle-0.3",
+                )
+                self.assertEqual(validate(value), [])
+
+    def test_0_3_public_schema_is_present_and_identifies_historical_export(self):
+        schema = json.loads(
+            (
+                ROOT
+                / "schemas"
+                / "suite-b-result-bundle-0.3.schema.json"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            schema["properties"]["schemaVersion"]["const"],
+            "suite-b-result-bundle-0.3",
+        )
+        self.assertEqual(
+            schema["properties"]["officialResultEligible"]["const"],
+            False,
+        )
 
 if __name__ == "__main__": unittest.main()

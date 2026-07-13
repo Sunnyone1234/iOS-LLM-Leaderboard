@@ -23,27 +23,30 @@ The long-term roadmap follows one dependency chain:
 Later phases must not be presented as complete before their dependencies are
 validated.
 
-Pilot v0.1 does not wait for community-submission infrastructure. It uses
-maintainer-collected, unmodified physical-device exports through the internal
-Pilot ingestion command. Community intake and trust governance remain later
-work.
+The completed, untagged Pilot v0.1 used maintainer-collected, unmodified
+physical-device exports through the internal Pilot ingestion command. It is
+retained as historical foundation evidence and will not be published as a
+tagged release.
 
 ## Product Phase 1: Power + Ship
 
-### Current release target: Power + Ship Pilot v0.1
+### Current standardization target: Power Benchmark 1.0 Foundation
 
-The immediate release target is a narrow, non-official Pilot using only:
+The active target is the pre-release
+[Power Benchmark 1.0 Foundation](docs/power-benchmark-1.0-foundation.md), using
+only these stable candidates:
 
 - `b-ux-001-short-interaction`;
 - `b-pipe-001-sustained-generation`.
 
 B-PIPE-002 and B-UX-002 remain Experimental. No additional workload, Suite D
-task, Suite E task, website application, global score, or Build deliverable is
-required for Pilot v0.1. The required Pilot leaderboard is a static report, and
-Ship output is an evidence profile for the same tested Suite B configuration.
+task, Suite E task, global score, or Build deliverable is part of the 1.0
+Foundation contract. Ship output remains an evidence profile for the same
+tested Suite B configuration.
 
-The Pilot blockers, pre-1.0 blockers, future scale requirements, and publication
-checklist are defined in
+The active work order and 1.0 release gate are defined in
+[Power Benchmark 1.0 Foundation](docs/power-benchmark-1.0-foundation.md). The
+completed Pilot scope remains documented in
 [Power + Ship Pilot v0.1](docs/power-ship-pilot-v0.1.md).
 
 ### Milestone 0: Vision and Architecture
@@ -196,12 +199,10 @@ release and a stable end-to-end iOS delivery problem can be defined.
 
 ## Current Immediate Work
 
-- Keep current results explicitly non-official.
-- Close the Pilot blockers in
-  [Power + Ship Pilot v0.1](docs/power-ship-pilot-v0.1.md).
-- Produce independently reviewable physical-iPhone evidence for both included
-  workloads and recalculate every exposed headline metric from raw evidence.
-- Publish one Ship profile linked to that same tested configuration.
-- Keep both Experimental workloads outside Pilot eligibility and presentation.
-- Complete the narrow Pilot before expanding model, runtime, device, or
-  benchmark quantity.
+- Keep current Pilot results explicitly non-official and untagged.
+- Align the App-emitted historical result schema, semantic validator, and
+  regression coverage.
+- Freeze immutable Power 1.0 release identity and Pilot migration rules.
+- Resolve the protocol and evidence gaps listed in the Foundation work order.
+- Keep both Experimental workloads outside the 1.0 release contract.
+- Do not publish Power 1.0 until every Foundation release gate passes.

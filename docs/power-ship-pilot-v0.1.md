@@ -2,14 +2,17 @@
 
 ## Status
 
-Power + Ship Pilot v0.1 is the current public-release target for Product Phase
-1. It validates the smallest credible end-to-end evidence path for on-device AI
-deployment on Apple platforms.
+Power + Ship Pilot v0.1 is a completed, untagged historical evidence milestone
+for Product Phase 1. It validated the smallest credible end-to-end evidence
+path for on-device AI deployment on Apple platforms. The maintainer decided
+not to publish a Pilot tag or GitHub Release and moved the active target to
+[Power Benchmark 1.0 Foundation](power-benchmark-1.0-foundation.md).
 
 The Pilot is narrower than Suite B 1.0. It is non-official evidence work and
 does not authorize a default leaderboard, verified ranking, or general claim
-about model or device performance. Existing workload, suite, task, protocol,
-schema, and directory identities remain unchanged.
+about model or device performance. Its results remain historical Pilot
+evidence and cannot be relabeled as Power 1.0 results. Existing workload,
+suite, task, protocol, schema, and directory identities remain unchanged.
 
 Build remains a Product Phase 2 Research Track. No Build task, protocol, runner,
 schema, or result is required for this Pilot.

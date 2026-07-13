@@ -1,13 +1,16 @@
-# Power + Ship Pilot v0.1 Release Notes
+# Power + Ship Pilot v0.1 Evidence Notes
 
 ## Status
 
-This package is the release candidate for the non-official Power + Ship Pilot
-v0.1. It is not Suite B 1.0, does not activate an official leaderboard, and
-does not establish general device-support or deployment-readiness claims.
+This package is the completed historical evidence set for the non-official
+Power + Ship Pilot v0.1. It is not Suite B 1.0, does not activate an official
+leaderboard, and does not establish general device-support or
+deployment-readiness claims.
 
-No tag or GitHub Release has been created. Publication remains subject to
-maintainer approval.
+No tag or GitHub Release was created. The maintainer decided not to publish the
+Pilot as a release and moved active work to Power Benchmark 1.0 Foundation.
+These files remain unmodified Pilot evidence and cannot be promoted or
+relabeled as Power 1.0 results.
 
 ## Scope
 

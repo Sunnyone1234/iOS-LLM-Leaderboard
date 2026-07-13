@@ -6,6 +6,8 @@ import json
 import math
 import statistics
 import sys
+import uuid
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -26,6 +28,11 @@ THINKING_MODES = {
     "b-pipe-002-input-length-sweep": ("disabled-via-chat-template", False),
     "b-ux-002-context-assistance": ("disabled-via-chat-template", True),
 }
+SUPPORTED_SCHEMAS = {
+    "suite-b-result-bundle-0.1",
+    "suite-b-result-bundle-0.2",
+    "suite-b-result-bundle-0.3",
+}
 
 
 def number(value: Any) -> bool:
@@ -38,8 +45,23 @@ def close(actual: Any, expected: float) -> bool:
 
 def validate(data: dict[str, Any]) -> list[str]:
     errors: list[str] = []
+    if not isinstance(data, dict):
+        return ["result bundle must be an object"]
     schema = data.get("schemaVersion")
-    if schema not in {"suite-b-result-bundle-0.1", "suite-b-result-bundle-0.2"}: errors.append("unsupported schemaVersion")
+    if schema not in SUPPORTED_SCHEMAS: errors.append("unsupported schemaVersion")
+    if schema == "suite-b-result-bundle-0.3":
+        try:
+            uuid.UUID(str(data.get("resultID")))
+        except (ValueError, AttributeError, TypeError):
+            errors.append("resultID must be a UUID")
+        try:
+            created_at = datetime.fromisoformat(
+                str(data.get("createdAt")).replace("Z", "+00:00")
+            )
+            if created_at.tzinfo is None:
+                errors.append("createdAt must include a timezone")
+        except ValueError:
+            errors.append("createdAt must be an ISO 8601 date-time")
     if data.get("officialResultEligible") is not False: errors.append("officialResultEligible must be false")
     workload = data.get("workload", {})
     workload_id = workload.get("id")
@@ -56,7 +78,7 @@ def validate(data: dict[str, Any]) -> list[str]:
     if data.get("officialResultEligible") is not data.get("eligibility", {}).get("officialLeaderboardEligible"): errors.append("official eligibility mismatch")
     prep = data.get("modelPreparation", {})
     if prep.get("eligibleForPerformanceMeasurement") is not True or prep.get("cacheStateBeforePreparation") != "cached" or prep.get("downloadOccurredDuringSession") is not False: errors.append("model preparation is ineligible")
-    if schema == "suite-b-result-bundle-0.2":
+    if schema in {"suite-b-result-bundle-0.2", "suite-b-result-bundle-0.3"}:
         if plan.get("requiredPowerSource") != "unplugged" or plan.get("minimumBatteryLevelPercent") != 50: errors.append("power admission plan mismatch")
         device = data.get("device", {})
         power_reasons: list[str] = []
@@ -70,6 +92,34 @@ def validate(data: dict[str, Any]) -> list[str]:
             if eligibility.get("sessionValid") is not False: errors.append("ineligible power state cannot produce a valid session")
             for reason in power_reasons:
                 if reason not in eligibility.get("reasonCodes", []): errors.append(f"missing power reason code: {reason}")
+    if schema == "suite-b-result-bundle-0.3":
+        model = data.get("model", {})
+        required_model_strings = (
+            "displayName", "baseModelID", "artifactID", "artifactRevision",
+            "modelFamily", "parameterSizeClass", "quantization",
+            "modelFormat", "tokenizerIdentity", "sourceURL",
+            "licenseIdentifier", "licenseSourceURL",
+        )
+        for field in required_model_strings:
+            if not isinstance(model.get(field), str) or not model[field]:
+                errors.append(f"model.{field} must be a non-empty string")
+        size = model.get("artifactRepositorySizeBytes")
+        if not isinstance(size, int) or isinstance(size, bool) or size <= 0:
+            errors.append("model.artifactRepositorySizeBytes must be a positive integer")
+        constraints = model.get("compatibilityConstraints")
+        if (
+            not isinstance(constraints, list)
+            or not constraints
+            or not all(isinstance(value, str) and value for value in constraints)
+        ):
+            errors.append(
+                "model.compatibilityConstraints must be a non-empty string array"
+            )
+        content_hash = model.get("artifactContentHash")
+        if content_hash is not None and (
+            not isinstance(content_hash, str) or not content_hash
+        ):
+            errors.append("model.artifactContentHash must be a non-empty string or null")
     sessions = data.get("sessions")
     expected_count = len(targets) if targets else 1
     if not isinstance(sessions, list) or len(sessions) != expected_count: return errors + ["session count mismatch"]

@@ -81,13 +81,18 @@ Suite A may store generated files, compile results, tests, and rubric scores.
 
 ## Current Progress
 
+- Power Benchmark 1.0 Foundation is now the active standardization track; the
+  completed Pilot matrix remains untagged, non-official historical evidence.
 - The physical-iPhone MLX pilot has completed the execution and raw-evidence
   feasibility step.
 - Its current TTFT clock starts after MLX prompt preparation, so it is Pipeline
   TTFT rather than user-visible TTFT.
 - The pilot maps to `b-pipe-001-sustained-generation`, not to a
   short-interaction user-experience workload.
-- Four draft workload manifests, metric definitions, schemas, and a
-  recalculating pilot-bundle validator now exist.
-- Frozen UX prompts, visible-token behavior, power evidence, and an official v2
-  result envelope remain open work.
+- Four draft workload manifests, metric definitions, historical schemas, and
+  recalculating validators now exist. The App 0.6.0
+  `suite-b-result-bundle-0.3` envelope is publicly documented and remains
+  non-official.
+- Immutable benchmark-release identity, normative edge cases, fully
+  independently recalculable evidence for every official metric, and the
+  official Power 1.0 result envelope remain open work.
