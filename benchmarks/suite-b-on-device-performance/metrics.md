@@ -89,16 +89,18 @@ The categorical `ProcessInfo.thermalState`: `nominal`, `fair`, `serious`,
 Record session start, attempt start, attempt end, session end, and timestamped
 state changes when available.
 
-### Sustained degradation (`first_to_last_percent_change@1`)
+### Decode sustained degradation (`decode_first_to_last_percent_change@1`)
 
-For a named metric `m` over the first and last successful measured attempts:
+For decode throughput over measured attempt indices one and five:
 
 ```text
-(m_last / m_first - 1) × 100
+(decode_last / decode_first - 1) × 100
 ```
 
-The result retains the two run indices. Negative decode or prefill change means
-slower sustained performance; positive TTFT change means worse latency.
+Both attempts must be decode-eligible and all six planned attempt records must
+exist. Negative means slower sustained decode. The historical Pilot metric ID
+`first_to_last_percent_change@1` remains attached to its original evidence and
+must not be relabeled as this Power 1.0 metric.
 
 ## Reliability Metrics
 

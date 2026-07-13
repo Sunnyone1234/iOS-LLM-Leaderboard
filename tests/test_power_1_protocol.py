@@ -81,6 +81,12 @@ class PowerOneProtocolFreezeTests(unittest.TestCase):
         )
         self.assertEqual(ux["response_conformance"]["maximum_sentences"], 2)
 
+    def test_power_degradation_metric_is_distinct_from_historical_pilot_id(self) -> None:
+        metrics = (SUITE / "metrics.md").read_text()
+        self.assertIn("decode_first_to_last_percent_change@1", metrics)
+        self.assertIn("historical Pilot metric ID", metrics)
+        self.assertIn("first_to_last_percent_change@1", metrics)
+
 
 if __name__ == "__main__":
     unittest.main()
