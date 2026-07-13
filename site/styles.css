@@ -590,6 +590,48 @@ h1 {
   margin-top: 20px;
 }
 
+.claim-heading {
+  margin: 24px 0 10px;
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.claim-list {
+  border-top: 1px solid var(--border);
+}
+
+.claim-item {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.claim-item strong {
+  font-size: 0.77rem;
+  font-weight: 600;
+}
+
+.claim-item p {
+  margin: 3px 0 0;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.claim-status {
+  align-self: start;
+  color: var(--text-secondary);
+  font-size: 0.67rem;
+  font-weight: 650;
+  text-transform: capitalize;
+}
+
+.claim-status.verified { color: var(--nominal); }
+.claim-status.implementation-supported { color: var(--accent); }
+.claim-status.unknown { color: var(--text-tertiary); }
+
 .button {
   min-height: 36px;
   display: inline-flex;
@@ -724,6 +766,11 @@ h1 {
 
   .detail-grid {
     grid-template-columns: 1fr;
+  }
+
+  .claim-item {
+    grid-template-columns: 1fr;
+    gap: 4px;
   }
 }
 

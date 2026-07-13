@@ -1,7 +1,9 @@
-const DATA_URL = "results/suite-b-power-1.0/normalized-results.json";
+const POWER_DATA_URL = "results/suite-b-power-1.0/normalized-results.json";
+const SHIP_DATA_URL = "results/ship-1.0/deployment-profiles.json";
 
 const state = {
-  data: null,
+  power: null,
+  ship: null,
   mode: "ux",
   sortKey: "response",
   sortDirection: "asc",
@@ -12,6 +14,7 @@ const state = {
 
 const modeConfig = {
   ux: {
+    kind: "power",
     workload: "b-ux-001-short-interaction",
     label: "First-renderable proxy TTFT",
     description: "Adapter boundary, not screen-render latency. Lower is better.",
@@ -31,6 +34,7 @@ const modeConfig = {
     ],
   },
   pipe: {
+    kind: "power",
     workload: "b-pipe-001-sustained-generation",
     label: "Sustained decode throughput",
     description: "Five measured generations without a rest interval. Higher is better.",
@@ -47,6 +51,24 @@ const modeConfig = {
       column("degradation", "Decode change", row => row.summary.decodeFirstToLastPercentChange, value => formatPercent(value), true),
       column("thermal", "Thermal", row => thermalOrder(row.summary.finalThermalState), (_, row) => thermalMarkup(row.summary.finalThermalState), true),
       column("details", "Evidence", () => 0, () => "", false),
+    ],
+  },
+  ship: {
+    kind: "ship",
+    label: "Deployment profiles",
+    description: "Evidence-backed guidance for the exact tested configurations. No Ship score.",
+    defaultSort: "artifact",
+    defaultDirection: "asc",
+    columns: [
+      column("model", "Model", row => row.configuration.model.displayName, value => escapeHtml(value)),
+      column("quantization", "Quant", row => row.configuration.model.quantization, value => escapeHtml(value)),
+      column("artifact", "Artifact size", row => row.observedConstraints.artifactRepositorySizeBytes, value => formatBytes(value), true, true),
+      column("memory", "Observed median peak", row => row.observedConstraints.maximumReportedMedianPeakMemoryMiB, value => formatMemory(value), true),
+      column("device", "Tested device", row => row.configuration.device.displayName, value => escapeHtml(value), true),
+      column("runtime", "Runtime", row => `${row.configuration.runtime.name} ${row.configuration.runtime.version}`, value => escapeHtml(value), true),
+      column("verified", "Verified", row => claimCount(row, "verified"), value => `${value} claims`, true),
+      column("unknown", "Unknown", row => claimCount(row, "unknown"), value => `${value} claims`, true),
+      column("details", "Profile", () => 0, () => "", false),
     ],
   },
 };
@@ -70,17 +92,25 @@ const elements = {
   dialogContent: document.querySelector("#dialog-content"),
   releaseLabel: document.querySelector("#release-label"),
   footerStatus: document.querySelector("#footer-status"),
+  footerChecksums: document.querySelector("#footer-checksums"),
+  footerTable: document.querySelector("#footer-table"),
 };
 
 async function loadEvidence() {
   try {
-    const evidenceResponse = await fetch(DATA_URL, { cache: "no-store" });
-    if (!evidenceResponse.ok) throw new Error(`Evidence request failed: ${evidenceResponse.status}`);
-    const data = await evidenceResponse.json();
-    if (!Array.isArray(data.results) || data.results.length === 0) throw new Error("Evidence is empty");
-    state.data = data;
-    populateFilters(data.results);
-    renderReleaseSummary(data);
+    const [powerResponse, shipResponse] = await Promise.all([
+      fetch(POWER_DATA_URL, { cache: "no-store" }),
+      fetch(SHIP_DATA_URL, { cache: "no-store" }),
+    ]);
+    if (!powerResponse.ok) throw new Error(`Power evidence request failed: ${powerResponse.status}`);
+    if (!shipResponse.ok) throw new Error(`Ship evidence request failed: ${shipResponse.status}`);
+    const [power, ship] = await Promise.all([powerResponse.json(), shipResponse.json()]);
+    if (!Array.isArray(power.results) || power.results.length === 0) throw new Error("Power evidence is empty");
+    if (!Array.isArray(ship.profiles) || ship.profiles.length === 0) throw new Error("Ship profiles are empty");
+    state.power = power;
+    state.ship = ship;
+    populateFilters([...power.results, ...ship.profiles]);
+    renderReleaseSummary(power);
     renderBoard();
   } catch (error) {
     console.error(error);
@@ -122,14 +152,26 @@ function workloadRows(rows, workload) {
 }
 
 function renderBoard() {
-  if (!state.data) return;
+  if (!state.power || !state.ship) return;
   const config = modeConfig[state.mode];
-  let rows = workloadRows(state.data.results, config.workload);
+  let rows = config.kind === "ship"
+    ? state.ship.profiles
+    : workloadRows(state.power.results, config.workload);
   rows = filterRows(rows);
   rows = sortRows(rows, config);
   elements.contextLabel.textContent = config.label;
   elements.contextDescription.textContent = config.description;
   elements.rowCount.textContent = `${rows.length} tested configuration${rows.length === 1 ? "" : "s"}`;
+  elements.footerStatus.textContent = config.kind === "ship"
+    ? "Ship 1.0 RC1 · Evidence profiles · No deployment score"
+    : "Power 1.0 · Official rankings within each workload";
+  elements.footerChecksums.href = config.kind === "ship"
+    ? "results/ship-1.0/SHA256SUMS"
+    : "results/suite-b-power-1.0/SHA256SUMS";
+  elements.footerTable.href = config.kind === "ship"
+    ? "results/ship-1.0/PROFILES.md"
+    : "results/suite-b-power-1.0/LEADERBOARD.md";
+  elements.footerTable.textContent = config.kind === "ship" ? "Profile table" : "Evidence table";
   elements.empty.hidden = rows.length !== 0;
   renderHead(config.columns);
   renderRows(rows, config.columns);
@@ -185,7 +227,10 @@ function renderCell(columnConfig, row, index) {
     const model = row.configuration.model;
     return `<td class="model-cell"><span class="model-name">${escapeHtml(model.displayName)}</span><span class="model-meta">${escapeHtml(model.parameterSizeClass)} · ${escapeHtml(model.modelFormat)}</span></td>`;
   }
-  if (columnConfig.key === "details") return `<td><button class="details-button" type="button" data-result="${escapeHtml(row.resultID)}">Evidence</button></td>`;
+  if (columnConfig.key === "details") {
+    const identity = row.resultID ?? row.profileID;
+    return `<td><button class="details-button" type="button" data-result="${escapeHtml(identity)}">${row.profileID ? "Profile" : "Evidence"}</button></td>`;
+  }
   const value = columnConfig.accessor(row);
   const formatted = columnConfig.formatter(value, row);
   return `<td class="metric-value${columnConfig.primary ? " primary-value" : ""}">${formatted}</td>`;
@@ -205,8 +250,8 @@ function defaultDirection(key) {
 }
 
 function openDetails(resultID) {
-  const row = state.data.results.find(item => item.resultID === resultID);
-  if (!row) return;
+  const row = state.power.results.find(item => item.resultID === resultID);
+  if (!row) return openShipDetails(resultID);
   const model = row.configuration.model;
   const runtime = row.configuration.runtime;
   const device = row.configuration.device;
@@ -232,6 +277,45 @@ function openDetails(resultID) {
       ${rawLink(row)}
     </div>`;
   elements.dialog.showModal();
+}
+
+function openShipDetails(profileID) {
+  const profile = state.ship.profiles.find(item => item.profileID === profileID);
+  if (!profile) return;
+  const model = profile.configuration.model;
+  const runtime = profile.configuration.runtime;
+  const device = profile.configuration.device;
+  const claims = profile.deploymentClaims.map(item => `
+    <div class="claim-item">
+      <span class="claim-status ${escapeHtml(item.status)}">${escapeHtml(item.status)}</span>
+      <div><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(item.statement)}</p></div>
+    </div>`).join("");
+  elements.dialogContent.innerHTML = `
+    <p class="dialog-kicker">Exact tested deployment profile · No Ship score</p>
+    <h2 class="dialog-title">${escapeHtml(model.displayName)} · ${escapeHtml(model.quantization)}</h2>
+    <div class="detail-grid">
+      ${detailItem("Artifact", `${model.artifactID}@${model.artifactRevision}`)}
+      ${detailItem("Runtime", `${runtime.name} ${runtime.version} · ${runtime.backend}`)}
+      ${detailItem("Tested device", `${device.displayName} · iOS ${device.systemVersion} (${device.systemBuild})`)}
+      ${detailItem("Observed median peak", formatMemory(profile.observedConstraints.maximumReportedMedianPeakMemoryMiB))}
+      ${detailItem("Artifact size", formatBytes(model.artifactRepositorySizeBytes))}
+      ${detailItem("Minimum supported device", "Unknown")}
+      ${detailItem("Evidence", `${profile.evidence.level} · ${profile.evidence.sourceResultCount} Power results`)}
+      ${detailItem("License metadata", `${model.licenseIdentifier} · developer review required`)}
+    </div>
+    <h3 class="claim-heading">Deployment evidence</h3>
+    <div class="claim-list">${claims}</div>
+    <div class="dialog-links">
+      <a class="button button-primary" href="${escapeAttribute(profile.integrationRecipe.path)}">Swift recipe</a>
+      <a class="button button-secondary" href="results/ship-1.0/deployment-profiles.json">Profile data</a>
+      <a class="button button-secondary" href="docs/ship-deployment-profiles.md">Evidence method</a>
+      <a class="button button-secondary" href="${escapeAttribute(model.licenseSourceURL)}" target="_blank" rel="noreferrer">License source</a>
+    </div>`;
+  elements.dialog.showModal();
+}
+
+function claimCount(row, status) {
+  return row.deploymentClaims.filter(item => item.status === status).length;
 }
 
 function rawLink(row) {

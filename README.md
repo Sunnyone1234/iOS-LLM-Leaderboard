@@ -28,11 +28,11 @@ original non-official identity.
 
 ## Interactive Leaderboard
 
-[**Open the interactive Power leaderboard →**](https://yizesun.github.io/iOS-LLM-Leaderboard/)
+[**Open the interactive Power + Ship leaderboard →**](https://yizesun.github.io/iOS-LLM-Leaderboard/)
 
-The website reads the same checked-in `normalized-results.json` used by the
-auditable Markdown reports. It provides Power workload tabs, configuration
-filters, sortable metric columns, and direct links to raw evidence.
+The website reads the same checked-in evidence used by the auditable Markdown
+reports. It provides Power workload rankings plus a sortable Ship deployment
+profile view linked to exact tested configurations and Swift integration code.
 To preview the site locally from the repository root:
 
 ```bash
@@ -40,8 +40,10 @@ python3 -m http.server 4173
 ```
 
 Then open `http://localhost:4173/`. The site ranks five eligible Power 1.0 rows
-and retains the sixth response-ineligible result outside the ranking. It does
-not introduce a global score or change any benchmark rule.
+and retains the sixth response-ineligible result outside the ranking. The Ship
+tab shows three evidence profiles with explicit verified, implementation-only,
+and unknown claims. It does not introduce a global score or change any
+benchmark rule.
 
 ## Product Strategy
 
@@ -51,7 +53,7 @@ priority.
 | Track | Status | Question | Current benchmark-namespace relationship |
 | --- | --- | --- | --- |
 | Power | Phase 1 product | Which embedded configurations provide useful, acceptable on-device intelligence? | Suite B measurements now; Suite D may add a later quality gate |
-| Ship | Phase 1 product | Which tested configurations are practical to integrate and deploy? | Pilot facts reuse Suite B configurations; Suite E may add later integration evidence |
+| Ship | Phase 1 product | Which tested configurations are practical to integrate and deploy? | Ship 1.0 RC1 profiles reuse published Power 1.0 evidence; Suite E may add later integration evidence |
 | Build | Phase 2 Research Track | Can an AI system deliver a complete iOS application? | Suite A and Suite C retained for compatibility, not Phase 1 priority |
 
 Phase 1 success is based entirely on trustworthy Power + Ship evidence. No
@@ -85,6 +87,18 @@ See the [Power 1.0 finalization decision](docs/power-benchmark-1.0-finalization.
 Maintainer Reference evidence; the five primary-metric-eligible rows are active
 in the official workload-specific ranking. See the
 [`1.0.0` GitHub Release](https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/1.0.0).
+
+## Current Ship Candidate: Deployment Profiles 1.0 RC1
+
+Ship RC1 converts the three exact tested Power configurations into versioned,
+machine-readable deployment profiles. It reuses all six Maintainer Reference
+results, changes no benchmark result or App code, and defines no deployment
+score. Claims not established by current evidence remain `Unknown`.
+
+See the [Ship evidence method](docs/ship-deployment-profiles.md),
+[deployment profile table](results/ship-1.0/PROFILES.md),
+[machine-readable data](results/ship-1.0/deployment-profiles.json), and
+[MLX Swift integration recipe](examples/mlx-swift/README.md).
 
 The completed Power + Ship Pilot v0.1 matrix is retained as historical
 foundation evidence. It will not be published as a tagged release and its

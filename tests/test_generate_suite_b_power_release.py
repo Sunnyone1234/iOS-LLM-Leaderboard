@@ -97,12 +97,16 @@ class PowerReleaseGenerationTests(unittest.TestCase):
         self.assertIn("published Power Benchmark 1.0 package", notes)
         self.assertNotIn("Required final decisions", notes)
 
-    def test_site_reads_power_1_data_and_defers_ship(self) -> None:
+    def test_site_reads_power_1_data_and_ship_profiles(self) -> None:
         app = (ROOT / "site/app.js").read_text()
         page = (ROOT / "index.html").read_text()
         self.assertIn('results/suite-b-power-1.0/normalized-results.json', app)
+        self.assertIn('results/ship-1.0/deployment-profiles.json', app)
         self.assertNotIn("suite-b-pilot-v0.1/normalized-results.json", app)
-        self.assertNotIn('data-mode="ship"', page)
+        self.assertIn('data-mode="ship"', page)
+        self.assertIn("No Ship score", app)
+        self.assertIn('results/ship-1.0/SHA256SUMS', app)
+        self.assertIn('results/ship-1.0/PROFILES.md', app)
         self.assertIn('<span id="release-label">Power 1.0</span>', page)
 
 

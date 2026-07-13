@@ -1,0 +1,809 @@
+{
+  "hasDeploymentScore": false,
+  "profileCount": 3,
+  "profiles": [
+    {
+      "configuration": {
+        "device": {
+          "appBuild": "10",
+          "appSourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
+          "appVersion": "0.8.0",
+          "displayName": "iPhone 14 Pro Max (iPhone15,3)",
+          "machineIdentifier": "iPhone15,3",
+          "physicalMemoryBytes": 5909987328,
+          "systemBuild": "23F77",
+          "systemName": "iOS",
+          "systemVersion": "26.5"
+        },
+        "model": {
+          "artifactContentHash": null,
+          "artifactID": "mlx-community/Qwen3-0.6B-4bit",
+          "artifactRepositorySizeBytes": 682323786,
+          "artifactRevision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+          "baseModelID": "Qwen/Qwen3-0.6B",
+          "displayName": "Qwen3 0.6B",
+          "licenseIdentifier": "apache-2.0",
+          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-0.6B/blob/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE",
+          "modelFormat": "MLX Safetensors",
+          "parameterSizeClass": "small-0.6b",
+          "quantization": "4-bit",
+          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-0.6B-4bit/tree/73e3e38d981303bc594367cd910ea6eb48349da8",
+          "tokenizerIdentity": "mlx-community/Qwen3-0.6B-4bit@73e3e38d981303bc594367cd910ea6eb48349da8/tokenizer_config.json"
+        },
+        "runtime": {
+          "backend": "MLX/Metal",
+          "dependencyVersions": {
+            "mlx-swift": "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+            "swift-huggingface": "swift-huggingface 0.9.0",
+            "swift-transformers": "swift-transformers 1.3.0"
+          },
+          "name": "MLX Swift LM",
+          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+          "version": "3.31.4"
+        }
+      },
+      "deploymentClaims": [
+        {
+          "basis": [
+            "results/suite-b-power-1.0/normalized-results.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-10-55Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_2c2f23b4.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-11-49Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_1b0a18f0.json"
+          ],
+          "id": "physical-device-local-inference",
+          "label": "Physical-device local inference",
+          "statement": "The pinned artifact loaded and produced completed inference attempts on the tested physical iPhone configuration.",
+          "status": "verified"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-10-55Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_2c2f23b4.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-11-49Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_1b0a18f0.json"
+          ],
+          "id": "pinned-cached-artifact-load",
+          "label": "Pinned cached artifact load",
+          "statement": "The exact artifact revision loaded from a verified pre-existing cache; no model download occurred during a measurement session.",
+          "status": "verified"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-10-55Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_2c2f23b4.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-11-49Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_1b0a18f0.json"
+          ],
+          "id": "runtime-token-stream",
+          "label": "Runtime token stream",
+          "statement": "Completed attempts retained ordered per-token runtime events. This is adapter evidence, not proof of screen-render behavior.",
+          "status": "verified"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0/normalized-results.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-10-55Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_2c2f23b4.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-11-49Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_1b0a18f0.json"
+          ],
+          "id": "fresh-attempt-context",
+          "label": "Fresh attempt context",
+          "statement": "Power attempts completed with a fresh conversation and fresh KV cache per attempt.",
+          "status": "verified"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0/normalized-results.json"
+          ],
+          "id": "model-license-metadata",
+          "label": "Model license metadata",
+          "statement": "The pinned profile records the publisher-provided license identifier and source URL. This is metadata, not legal advice.",
+          "status": "verified"
+        },
+        {
+          "basis": [
+            "ios-app/BenchmarkApp/MLXSwiftRuntime.swift",
+            "examples/mlx-swift/PinnedMLXModel.swift"
+          ],
+          "id": "first-run-download-path",
+          "label": "First-run download path",
+          "statement": "The reference implementation contains a revision-pinned download and cache-verification path, but first-run download was excluded from Power measurements.",
+          "status": "implementation-supported"
+        },
+        {
+          "basis": [
+            "ios-app/BenchmarkApp/MLXSwiftRuntime.swift",
+            "examples/mlx-swift/PinnedMLXModel.swift"
+          ],
+          "id": "swift-integration-recipe",
+          "label": "Swift integration recipe",
+          "statement": "A focused recipe mirrors the pinned loader and token-stream boundary used by the tested reference App.",
+          "status": "implementation-supported"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-10-55Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_2c2f23b4.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-11-49Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_1b0a18f0.json"
+          ],
+          "id": "offline-execution",
+          "label": "Offline execution",
+          "statement": "Network state was not recorded during measured attempts, so fully offline operation is not claimed.",
+          "status": "unknown"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0/normalized-results.json"
+          ],
+          "id": "generation-cancellation",
+          "label": "Generation cancellation",
+          "statement": "The published Power evidence does not include a cancelled attempt or a cancellation conformance test.",
+          "status": "unknown"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-10-55Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_2c2f23b4.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-11-49Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_1b0a18f0.json"
+          ],
+          "id": "bundled-model-distribution",
+          "label": "Bundled model distribution",
+          "statement": "The published evidence used a Hugging Face cache and does not test bundling model files inside an App distribution.",
+          "status": "unknown"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0/normalized-results.json"
+          ],
+          "id": "minimum-supported-device",
+          "label": "Minimum supported device",
+          "statement": "Only the tested device is established; no minimum iPhone, iPad, RAM, or OS requirement is inferred.",
+          "status": "unknown"
+        },
+        {
+          "basis": [
+            "docs/ship-deployment-profiles.md"
+          ],
+          "id": "app-store-readiness",
+          "label": "App Store readiness",
+          "statement": "No App Store review, package-size acceptance, or distribution-readiness conclusion is part of this evidence.",
+          "status": "unknown"
+        },
+        {
+          "basis": [
+            "docs/ship-deployment-profiles.md"
+          ],
+          "id": "privacy-compliance",
+          "label": "Privacy compliance",
+          "statement": "Local inference alone does not establish an app's data flows, disclosures, permissions, or privacy compliance.",
+          "status": "unknown"
+        }
+      ],
+      "evidence": {
+        "activePowerResultCount": 1,
+        "activePowerResultIDs": [
+          "1B0A18F0-2914-40CF-AFEE-A82CBECD97A4"
+        ],
+        "level": "maintainer-reference",
+        "sourceResultCount": 2,
+        "sourceResultIDs": [
+          "1B0A18F0-2914-40CF-AFEE-A82CBECD97A4",
+          "2C2F23B4-58FA-460E-9481-EB2D3837FDE2"
+        ]
+      },
+      "integrationRecipe": {
+        "path": "examples/mlx-swift/PinnedMLXModel.swift",
+        "readmePath": "examples/mlx-swift/README.md",
+        "runtime": "MLX Swift LM 3.31.4"
+      },
+      "limitations": [
+        "single-device-single-runtime-reference-profile",
+        "power-evidence-does-not-evaluate-response-quality",
+        "observed-memory-is-not-a-minimum-memory-requirement",
+        "offline-distribution-privacy-and-app-store-readiness-remain-unverified",
+        "license-metadata-requires-developer-review"
+      ],
+      "observedConstraints": {
+        "artifactRepositorySizeBytes": 682323786,
+        "maximumReportedMedianPeakMemoryMiB": 798.5325622558594,
+        "memoryDefinition": "maximum of eligible Power workload median TASK_VM_INFO.phys_footprint peaks; not a minimum-memory requirement",
+        "minimumSupportedDevice": null,
+        "testedDeviceOnly": true
+      },
+      "powerEvidence": [
+        {
+          "activeInOfficialRanking": true,
+          "primaryMetric": {
+            "eligible": true,
+            "id": "decode_tokens_per_second@1",
+            "reasonCodes": [],
+            "summaryField": "medianDecodeTokensPerSecond",
+            "value": 97.90016049365309
+          },
+          "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-11-49Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_1b0a18f0.json",
+          "rawSHA256": "f11dd3282daa10d4080b1a510c959baa53bf37c865ddfbdd04e2d73ee4685687",
+          "reasonCodes": [],
+          "resultID": "1B0A18F0-2914-40CF-AFEE-A82CBECD97A4",
+          "summary": {
+            "completedMeasuredAttempts": 5,
+            "decodeFirstToLastPercentChange": 3.0792965912211034,
+            "failedMeasuredAttempts": 0,
+            "finalThermalState": "fair",
+            "medianDecodeTokensPerSecond": 97.90016049365309,
+            "medianFirstRenderableProxyTTFTMilliseconds": null,
+            "medianPeakMemoryMiB": 798.5325622558594,
+            "medianPipelineTTFTMilliseconds": 463.9825,
+            "medianPrefillTokensPerSecond": 506.6860501607202,
+            "medianRequestCompletionMilliseconds": null,
+            "notRunMeasuredAttempts": 0
+          },
+          "workloadID": "b-pipe-001-sustained-generation"
+        },
+        {
+          "activeInOfficialRanking": false,
+          "primaryMetric": {
+            "eligible": false,
+            "id": "first_renderable_proxy_ttft_ms@1",
+            "reasonCodes": [
+              "insufficient_metric_eligible_attempts"
+            ],
+            "summaryField": "medianFirstRenderableProxyTTFTMilliseconds",
+            "value": null
+          },
+          "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-10-55Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_2c2f23b4.json",
+          "rawSHA256": "a930c344f4b4d408479957ebdc07ab51727e8e0ac2e8e987ec2eb04277edfcae",
+          "reasonCodes": [
+            "insufficient_metric_eligible_attempts"
+          ],
+          "resultID": "2C2F23B4-58FA-460E-9481-EB2D3837FDE2",
+          "summary": {
+            "completedMeasuredAttempts": 5,
+            "decodeFirstToLastPercentChange": null,
+            "failedMeasuredAttempts": 0,
+            "finalThermalState": "nominal",
+            "medianDecodeTokensPerSecond": null,
+            "medianFirstRenderableProxyTTFTMilliseconds": null,
+            "medianPeakMemoryMiB": null,
+            "medianPipelineTTFTMilliseconds": null,
+            "medianPrefillTokensPerSecond": null,
+            "medianRequestCompletionMilliseconds": null,
+            "notRunMeasuredAttempts": 0
+          },
+          "workloadID": "b-ux-001-short-interaction"
+        }
+      ],
+      "profileID": "ship-qwen3-0-6b-4bit-mlx-swift-lm-3.31.4-iphone15-3"
+    },
+    {
+      "configuration": {
+        "device": {
+          "appBuild": "10",
+          "appSourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
+          "appVersion": "0.8.0",
+          "displayName": "iPhone 14 Pro Max (iPhone15,3)",
+          "machineIdentifier": "iPhone15,3",
+          "physicalMemoryBytes": 5909987328,
+          "systemBuild": "23F77",
+          "systemName": "iOS",
+          "systemVersion": "26.5"
+        },
+        "model": {
+          "artifactContentHash": null,
+          "artifactID": "mlx-community/Qwen3-1.7B-4bit",
+          "artifactRepositorySizeBytes": 979502864,
+          "artifactRevision": "3b1b1768f8f8cf8351c712464f906e86c2b8269e",
+          "baseModelID": "Qwen/Qwen3-1.7B",
+          "displayName": "Qwen3 1.7B",
+          "licenseIdentifier": "apache-2.0",
+          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-1.7B/blob/70d244cc86ccca08cf5af4e1e306ecf908b1ad5e/LICENSE",
+          "modelFormat": "MLX Safetensors",
+          "parameterSizeClass": "small-1.7b",
+          "quantization": "4-bit",
+          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-1.7B-4bit/tree/3b1b1768f8f8cf8351c712464f906e86c2b8269e",
+          "tokenizerIdentity": "mlx-community/Qwen3-1.7B-4bit@3b1b1768f8f8cf8351c712464f906e86c2b8269e/tokenizer_config.json"
+        },
+        "runtime": {
+          "backend": "MLX/Metal",
+          "dependencyVersions": {
+            "mlx-swift": "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+            "swift-huggingface": "swift-huggingface 0.9.0",
+            "swift-transformers": "swift-transformers 1.3.0"
+          },
+          "name": "MLX Swift LM",
+          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+          "version": "3.31.4"
+        }
+      },
+      "deploymentClaims": [
+        {
+          "basis": [
+            "results/suite-b-power-1.0/normalized-results.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-16-23Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_f64ab629.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-20-48Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_99a70d26.json"
+          ],
+          "id": "physical-device-local-inference",
+          "label": "Physical-device local inference",
+          "statement": "The pinned artifact loaded and produced completed inference attempts on the tested physical iPhone configuration.",
+          "status": "verified"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-16-23Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_f64ab629.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-20-48Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_99a70d26.json"
+          ],
+          "id": "pinned-cached-artifact-load",
+          "label": "Pinned cached artifact load",
+          "statement": "The exact artifact revision loaded from a verified pre-existing cache; no model download occurred during a measurement session.",
+          "status": "verified"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-16-23Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_f64ab629.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-20-48Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_99a70d26.json"
+          ],
+          "id": "runtime-token-stream",
+          "label": "Runtime token stream",
+          "statement": "Completed attempts retained ordered per-token runtime events. This is adapter evidence, not proof of screen-render behavior.",
+          "status": "verified"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0/normalized-results.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-16-23Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_f64ab629.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-20-48Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_99a70d26.json"
+          ],
+          "id": "fresh-attempt-context",
+          "label": "Fresh attempt context",
+          "statement": "Power attempts completed with a fresh conversation and fresh KV cache per attempt.",
+          "status": "verified"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0/normalized-results.json"
+          ],
+          "id": "model-license-metadata",
+          "label": "Model license metadata",
+          "statement": "The pinned profile records the publisher-provided license identifier and source URL. This is metadata, not legal advice.",
+          "status": "verified"
+        },
+        {
+          "basis": [
+            "ios-app/BenchmarkApp/MLXSwiftRuntime.swift",
+            "examples/mlx-swift/PinnedMLXModel.swift"
+          ],
+          "id": "first-run-download-path",
+          "label": "First-run download path",
+          "statement": "The reference implementation contains a revision-pinned download and cache-verification path, but first-run download was excluded from Power measurements.",
+          "status": "implementation-supported"
+        },
+        {
+          "basis": [
+            "ios-app/BenchmarkApp/MLXSwiftRuntime.swift",
+            "examples/mlx-swift/PinnedMLXModel.swift"
+          ],
+          "id": "swift-integration-recipe",
+          "label": "Swift integration recipe",
+          "statement": "A focused recipe mirrors the pinned loader and token-stream boundary used by the tested reference App.",
+          "status": "implementation-supported"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-16-23Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_f64ab629.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-20-48Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_99a70d26.json"
+          ],
+          "id": "offline-execution",
+          "label": "Offline execution",
+          "statement": "Network state was not recorded during measured attempts, so fully offline operation is not claimed.",
+          "status": "unknown"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0/normalized-results.json"
+          ],
+          "id": "generation-cancellation",
+          "label": "Generation cancellation",
+          "statement": "The published Power evidence does not include a cancelled attempt or a cancellation conformance test.",
+          "status": "unknown"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-16-23Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_f64ab629.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-20-48Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_99a70d26.json"
+          ],
+          "id": "bundled-model-distribution",
+          "label": "Bundled model distribution",
+          "statement": "The published evidence used a Hugging Face cache and does not test bundling model files inside an App distribution.",
+          "status": "unknown"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0/normalized-results.json"
+          ],
+          "id": "minimum-supported-device",
+          "label": "Minimum supported device",
+          "statement": "Only the tested device is established; no minimum iPhone, iPad, RAM, or OS requirement is inferred.",
+          "status": "unknown"
+        },
+        {
+          "basis": [
+            "docs/ship-deployment-profiles.md"
+          ],
+          "id": "app-store-readiness",
+          "label": "App Store readiness",
+          "statement": "No App Store review, package-size acceptance, or distribution-readiness conclusion is part of this evidence.",
+          "status": "unknown"
+        },
+        {
+          "basis": [
+            "docs/ship-deployment-profiles.md"
+          ],
+          "id": "privacy-compliance",
+          "label": "Privacy compliance",
+          "statement": "Local inference alone does not establish an app's data flows, disclosures, permissions, or privacy compliance.",
+          "status": "unknown"
+        }
+      ],
+      "evidence": {
+        "activePowerResultCount": 2,
+        "activePowerResultIDs": [
+          "99A70D26-F1FC-49F4-A375-762FEDFE90AC",
+          "F64AB629-2AAE-4EE2-862F-957044A82323"
+        ],
+        "level": "maintainer-reference",
+        "sourceResultCount": 2,
+        "sourceResultIDs": [
+          "99A70D26-F1FC-49F4-A375-762FEDFE90AC",
+          "F64AB629-2AAE-4EE2-862F-957044A82323"
+        ]
+      },
+      "integrationRecipe": {
+        "path": "examples/mlx-swift/PinnedMLXModel.swift",
+        "readmePath": "examples/mlx-swift/README.md",
+        "runtime": "MLX Swift LM 3.31.4"
+      },
+      "limitations": [
+        "single-device-single-runtime-reference-profile",
+        "power-evidence-does-not-evaluate-response-quality",
+        "observed-memory-is-not-a-minimum-memory-requirement",
+        "offline-distribution-privacy-and-app-store-readiness-remain-unverified",
+        "license-metadata-requires-developer-review"
+      ],
+      "observedConstraints": {
+        "artifactRepositorySizeBytes": 979502864,
+        "maximumReportedMedianPeakMemoryMiB": 1791.470817565918,
+        "memoryDefinition": "maximum of eligible Power workload median TASK_VM_INFO.phys_footprint peaks; not a minimum-memory requirement",
+        "minimumSupportedDevice": null,
+        "testedDeviceOnly": true
+      },
+      "powerEvidence": [
+        {
+          "activeInOfficialRanking": true,
+          "primaryMetric": {
+            "eligible": true,
+            "id": "decode_tokens_per_second@1",
+            "reasonCodes": [],
+            "summaryField": "medianDecodeTokensPerSecond",
+            "value": 29.70885129512823
+          },
+          "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-16-23Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_f64ab629.json",
+          "rawSHA256": "ea1f59492705668b2e9525e5c7f17a4d81a8e1d2346da7d01beb381acf86a0da",
+          "reasonCodes": [],
+          "resultID": "F64AB629-2AAE-4EE2-862F-957044A82323",
+          "summary": {
+            "completedMeasuredAttempts": 5,
+            "decodeFirstToLastPercentChange": -45.75356214805646,
+            "failedMeasuredAttempts": 0,
+            "finalThermalState": "serious",
+            "medianDecodeTokensPerSecond": 29.70885129512823,
+            "medianFirstRenderableProxyTTFTMilliseconds": null,
+            "medianPeakMemoryMiB": 1755.5020217895508,
+            "medianPipelineTTFTMilliseconds": 1416.035417,
+            "medianPrefillTokensPerSecond": 165.9789656650798,
+            "medianRequestCompletionMilliseconds": null,
+            "notRunMeasuredAttempts": 0
+          },
+          "workloadID": "b-pipe-001-sustained-generation"
+        },
+        {
+          "activeInOfficialRanking": true,
+          "primaryMetric": {
+            "eligible": true,
+            "id": "first_renderable_proxy_ttft_ms@1",
+            "reasonCodes": [],
+            "summaryField": "medianFirstRenderableProxyTTFTMilliseconds",
+            "value": 494.403417
+          },
+          "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-20-48Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_99a70d26.json",
+          "rawSHA256": "be6d1613da47b7340cc6cf50b1f6fa9748fc2fd91b554783731b4e58f91d658a",
+          "reasonCodes": [],
+          "resultID": "99A70D26-F1FC-49F4-A375-762FEDFE90AC",
+          "summary": {
+            "completedMeasuredAttempts": 5,
+            "decodeFirstToLastPercentChange": null,
+            "failedMeasuredAttempts": 0,
+            "finalThermalState": "nominal",
+            "medianDecodeTokensPerSecond": 43.53266931275009,
+            "medianFirstRenderableProxyTTFTMilliseconds": 494.403417,
+            "medianPeakMemoryMiB": 1791.470817565918,
+            "medianPipelineTTFTMilliseconds": 492.027,
+            "medianPrefillTokensPerSecond": 142.32387794213142,
+            "medianRequestCompletionMilliseconds": 1262.601584,
+            "notRunMeasuredAttempts": 0
+          },
+          "workloadID": "b-ux-001-short-interaction"
+        }
+      ],
+      "profileID": "ship-qwen3-1-7b-4bit-mlx-swift-lm-3.31.4-iphone15-3"
+    },
+    {
+      "configuration": {
+        "device": {
+          "appBuild": "10",
+          "appSourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
+          "appVersion": "0.8.0",
+          "displayName": "iPhone 14 Pro Max (iPhone15,3)",
+          "machineIdentifier": "iPhone15,3",
+          "physicalMemoryBytes": 5909987328,
+          "systemBuild": "23F77",
+          "systemName": "iOS",
+          "systemVersion": "26.5"
+        },
+        "model": {
+          "artifactContentHash": null,
+          "artifactID": "mlx-community/Qwen3-4B-3bit",
+          "artifactRepositorySizeBytes": 1771660929,
+          "artifactRevision": "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
+          "baseModelID": "Qwen/Qwen3-4B",
+          "displayName": "Qwen3 4B",
+          "licenseIdentifier": "apache-2.0",
+          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-4B/blob/1cfa9a7208912126459214e8b04321603b3df60c/LICENSE",
+          "modelFormat": "MLX Safetensors",
+          "parameterSizeClass": "small-4b",
+          "quantization": "3-bit",
+          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-4B-3bit/tree/c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
+          "tokenizerIdentity": "mlx-community/Qwen3-4B-3bit@c4e8054c71facfa84f781cdb7c1ffab3f09f89bf/tokenizer_config.json"
+        },
+        "runtime": {
+          "backend": "MLX/Metal",
+          "dependencyVersions": {
+            "mlx-swift": "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+            "swift-huggingface": "swift-huggingface 0.9.0",
+            "swift-transformers": "swift-transformers 1.3.0"
+          },
+          "name": "MLX Swift LM",
+          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+          "version": "3.31.4"
+        }
+      },
+      "deploymentClaims": [
+        {
+          "basis": [
+            "results/suite-b-power-1.0/normalized-results.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-27-41Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_c4f133ed.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-32-28Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_ecb64a54.json"
+          ],
+          "id": "physical-device-local-inference",
+          "label": "Physical-device local inference",
+          "statement": "The pinned artifact loaded and produced completed inference attempts on the tested physical iPhone configuration.",
+          "status": "verified"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-27-41Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_c4f133ed.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-32-28Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_ecb64a54.json"
+          ],
+          "id": "pinned-cached-artifact-load",
+          "label": "Pinned cached artifact load",
+          "statement": "The exact artifact revision loaded from a verified pre-existing cache; no model download occurred during a measurement session.",
+          "status": "verified"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-27-41Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_c4f133ed.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-32-28Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_ecb64a54.json"
+          ],
+          "id": "runtime-token-stream",
+          "label": "Runtime token stream",
+          "statement": "Completed attempts retained ordered per-token runtime events. This is adapter evidence, not proof of screen-render behavior.",
+          "status": "verified"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0/normalized-results.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-27-41Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_c4f133ed.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-32-28Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_ecb64a54.json"
+          ],
+          "id": "fresh-attempt-context",
+          "label": "Fresh attempt context",
+          "statement": "Power attempts completed with a fresh conversation and fresh KV cache per attempt.",
+          "status": "verified"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0/normalized-results.json"
+          ],
+          "id": "model-license-metadata",
+          "label": "Model license metadata",
+          "statement": "The pinned profile records the publisher-provided license identifier and source URL. This is metadata, not legal advice.",
+          "status": "verified"
+        },
+        {
+          "basis": [
+            "ios-app/BenchmarkApp/MLXSwiftRuntime.swift",
+            "examples/mlx-swift/PinnedMLXModel.swift"
+          ],
+          "id": "first-run-download-path",
+          "label": "First-run download path",
+          "statement": "The reference implementation contains a revision-pinned download and cache-verification path, but first-run download was excluded from Power measurements.",
+          "status": "implementation-supported"
+        },
+        {
+          "basis": [
+            "ios-app/BenchmarkApp/MLXSwiftRuntime.swift",
+            "examples/mlx-swift/PinnedMLXModel.swift"
+          ],
+          "id": "swift-integration-recipe",
+          "label": "Swift integration recipe",
+          "statement": "A focused recipe mirrors the pinned loader and token-stream boundary used by the tested reference App.",
+          "status": "implementation-supported"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-27-41Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_c4f133ed.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-32-28Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_ecb64a54.json"
+          ],
+          "id": "offline-execution",
+          "label": "Offline execution",
+          "statement": "Network state was not recorded during measured attempts, so fully offline operation is not claimed.",
+          "status": "unknown"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0/normalized-results.json"
+          ],
+          "id": "generation-cancellation",
+          "label": "Generation cancellation",
+          "statement": "The published Power evidence does not include a cancelled attempt or a cancellation conformance test.",
+          "status": "unknown"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-27-41Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_c4f133ed.json",
+            "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-32-28Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_ecb64a54.json"
+          ],
+          "id": "bundled-model-distribution",
+          "label": "Bundled model distribution",
+          "statement": "The published evidence used a Hugging Face cache and does not test bundling model files inside an App distribution.",
+          "status": "unknown"
+        },
+        {
+          "basis": [
+            "results/suite-b-power-1.0/normalized-results.json"
+          ],
+          "id": "minimum-supported-device",
+          "label": "Minimum supported device",
+          "statement": "Only the tested device is established; no minimum iPhone, iPad, RAM, or OS requirement is inferred.",
+          "status": "unknown"
+        },
+        {
+          "basis": [
+            "docs/ship-deployment-profiles.md"
+          ],
+          "id": "app-store-readiness",
+          "label": "App Store readiness",
+          "statement": "No App Store review, package-size acceptance, or distribution-readiness conclusion is part of this evidence.",
+          "status": "unknown"
+        },
+        {
+          "basis": [
+            "docs/ship-deployment-profiles.md"
+          ],
+          "id": "privacy-compliance",
+          "label": "Privacy compliance",
+          "statement": "Local inference alone does not establish an app's data flows, disclosures, permissions, or privacy compliance.",
+          "status": "unknown"
+        }
+      ],
+      "evidence": {
+        "activePowerResultCount": 2,
+        "activePowerResultIDs": [
+          "C4F133ED-64F8-4019-9AB8-5322FBBDA217",
+          "ECB64A54-9791-463E-B92A-29983648F9AF"
+        ],
+        "level": "maintainer-reference",
+        "sourceResultCount": 2,
+        "sourceResultIDs": [
+          "C4F133ED-64F8-4019-9AB8-5322FBBDA217",
+          "ECB64A54-9791-463E-B92A-29983648F9AF"
+        ]
+      },
+      "integrationRecipe": {
+        "path": "examples/mlx-swift/PinnedMLXModel.swift",
+        "readmePath": "examples/mlx-swift/README.md",
+        "runtime": "MLX Swift LM 3.31.4"
+      },
+      "limitations": [
+        "single-device-single-runtime-reference-profile",
+        "power-evidence-does-not-evaluate-response-quality",
+        "observed-memory-is-not-a-minimum-memory-requirement",
+        "offline-distribution-privacy-and-app-store-readiness-remain-unverified",
+        "license-metadata-requires-developer-review"
+      ],
+      "observedConstraints": {
+        "artifactRepositorySizeBytes": 1771660929,
+        "maximumReportedMedianPeakMemoryMiB": 2370.4399795532227,
+        "memoryDefinition": "maximum of eligible Power workload median TASK_VM_INFO.phys_footprint peaks; not a minimum-memory requirement",
+        "minimumSupportedDevice": null,
+        "testedDeviceOnly": true
+      },
+      "powerEvidence": [
+        {
+          "activeInOfficialRanking": true,
+          "primaryMetric": {
+            "eligible": true,
+            "id": "decode_tokens_per_second@1",
+            "reasonCodes": [],
+            "summaryField": "medianDecodeTokensPerSecond",
+            "value": 10.231071477266088
+          },
+          "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-27-41Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_c4f133ed.json",
+          "rawSHA256": "026fde6bbb1f9d45524cc7c8f3e7558d0e6185bab4677cb327a3847b1169651e",
+          "reasonCodes": [],
+          "resultID": "C4F133ED-64F8-4019-9AB8-5322FBBDA217",
+          "summary": {
+            "completedMeasuredAttempts": 5,
+            "decodeFirstToLastPercentChange": -13.767108952400587,
+            "failedMeasuredAttempts": 0,
+            "finalThermalState": "serious",
+            "medianDecodeTokensPerSecond": 10.231071477266088,
+            "medianFirstRenderableProxyTTFTMilliseconds": null,
+            "medianPeakMemoryMiB": 2276.8773651123047,
+            "medianPipelineTTFTMilliseconds": 4858.103,
+            "medianPrefillTokensPerSecond": 48.3737958030803,
+            "medianRequestCompletionMilliseconds": null,
+            "notRunMeasuredAttempts": 0
+          },
+          "workloadID": "b-pipe-001-sustained-generation"
+        },
+        {
+          "activeInOfficialRanking": true,
+          "primaryMetric": {
+            "eligible": true,
+            "id": "first_renderable_proxy_ttft_ms@1",
+            "reasonCodes": [],
+            "summaryField": "medianFirstRenderableProxyTTFTMilliseconds",
+            "value": 1132.813042
+          },
+          "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-32-28Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_ecb64a54.json",
+          "rawSHA256": "64c7d6077156412fb1afe26e3c377d42e98706d65cd708f91f608727492c60dc",
+          "reasonCodes": [],
+          "resultID": "ECB64A54-9791-463E-B92A-29983648F9AF",
+          "summary": {
+            "completedMeasuredAttempts": 5,
+            "decodeFirstToLastPercentChange": null,
+            "failedMeasuredAttempts": 0,
+            "finalThermalState": "nominal",
+            "medianDecodeTokensPerSecond": 21.048323084959506,
+            "medianFirstRenderableProxyTTFTMilliseconds": 1132.813042,
+            "medianPeakMemoryMiB": 2370.4399795532227,
+            "medianPipelineTTFTMilliseconds": 1127.857208,
+            "medianPrefillTokensPerSecond": 62.07412731423199,
+            "medianRequestCompletionMilliseconds": 2810.886708,
+            "notRunMeasuredAttempts": 0
+          },
+          "workloadID": "b-ux-001-short-interaction"
+        }
+      ],
+      "profileID": "ship-qwen3-4b-3bit-mlx-swift-lm-3.31.4-iphone15-3"
+    }
+  ],
+  "schemaVersion": "1.0.0-rc.1",
+  "shipRelease": {
+    "id": "ship-deployment-profiles",
+    "status": "release-candidate",
+    "version": "1.0.0-rc.1"
+  },
+  "sourcePowerPublicationStatus": "published",
+  "sourcePowerRelease": {
+    "id": "suite-b-power",
+    "path": "results/suite-b-power-1.0/normalized-results.json",
+    "version": "1.0.0"
+  },
+  "statusVocabulary": {
+    "implementation-supported": "Present in the reviewed reference implementation or recipe, but not validated as a benchmark claim.",
+    "unknown": "The current evidence does not establish the claim.",
+    "verified": "Directly supported by consistency-checked Power evidence or source metadata bound to that evidence."
+  }
+}
