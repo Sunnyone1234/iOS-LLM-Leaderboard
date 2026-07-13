@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YizeSun/iOS-LLM-Leaderboard/schemas/suite-b-intake-report-0.1.schema.json",
+  "title": "Suite B Intake Report 0.1",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "trustLevelChanged", "defaultLeaderboardChanged", "valid", "entries"],
+  "properties": {
+    "schemaVersion": { "const": "suite-b-intake-report-0.1" },
+    "trustLevelChanged": { "const": false },
+    "defaultLeaderboardChanged": { "const": false },
+    "valid": { "type": "boolean" },
+    "entries": { "type": "array", "items": { "type": "object", "required": ["path", "submissionID", "resultID", "status", "errors"] } }
+  }
+}

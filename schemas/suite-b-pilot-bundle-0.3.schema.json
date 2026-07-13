@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YizeSun/iOS-LLM-Leaderboard/schemas/suite-b-pilot-bundle-0.3.schema.json",
+  "title": "Suite B Pilot Result Bundle 0.3",
+  "description": "Transitional non-official schema emitted by the physical-iPhone MLX pilot.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "resultID",
+    "createdAt",
+    "officialResultEligible",
+    "plan",
+    "model",
+    "runtime",
+    "device",
+    "eligibility",
+    "summary",
+    "attempts"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "suite-b-pilot-bundle-0.3" },
+    "resultID": { "type": "string", "minLength": 8 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "officialResultEligible": { "const": false },
+    "plan": {
+      "type": "object",
+      "required": ["id", "version", "promptSHA256", "warmupRuns", "measuredRuns", "outputTokenLimit"],
+      "properties": {
+        "id": { "const": "suite-b-pilot-001" },
+        "version": { "type": "string" },
+        "promptSHA256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "warmupRuns": { "const": 1 },
+        "measuredRuns": { "const": 5 },
+        "outputTokenLimit": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "model": {
+      "type": "object",
+      "required": ["displayName", "artifactID", "artifactRevision", "quantization"]
+    },
+    "runtime": {
+      "type": "object",
+      "required": ["name", "version", "resolvedRevision", "backend"]
+    },
+    "device": {
+      "type": "object",
+      "required": ["displayName", "machineIdentifier", "systemName", "systemVersion", "systemBuild", "debuggerAttached", "buildConfiguration", "appVersion", "appBuild"]
+    },
+    "eligibility": {
+      "type": "object",
+      "required": ["sessionValidity", "coldPerformance", "sustainedPerformance", "thermalStability", "officialLeaderboard"]
+    },
+    "summary": {
+      "type": "object",
+      "required": ["successfulMeasuredRuns", "failedMeasuredRuns", "finalThermalState", "degradation"]
+    },
+    "attempts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["runIndex", "role", "outcome", "thermalStateBefore", "thermalStateAfter", "memorySamplingIntervalMilliseconds", "metrics", "tokenEvents"],
+        "properties": {
+          "runIndex": { "type": "integer", "minimum": 0 },
+          "role": { "enum": ["warmup", "measured"] },
+          "outcome": { "enum": ["completed", "failed", "notRun"] },
+          "memorySamplingIntervalMilliseconds": { "type": "integer", "minimum": 1 },
+          "tokenEvents": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["index", "tokenID", "elapsedNanoseconds"],
+              "properties": {
+                "index": { "type": "integer", "minimum": 0 },
+                "tokenID": { "type": "integer" },
+                "elapsedNanoseconds": { "type": "integer", "minimum": 0 }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

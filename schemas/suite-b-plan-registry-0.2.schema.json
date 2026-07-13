@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YizeSun/iOS-LLM-Leaderboard/schemas/suite-b-plan-registry-0.2.schema.json",
+  "title": "Suite B Workload Plan Registry 0.2",
+  "type": "object",
+  "required": ["schema_version", "plans"],
+  "properties": {
+    "schema_version": { "const": "suite-b-plan-registry-0.2" },
+    "plans": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["plan_id", "plan_version", "workload_id", "workload_version", "category", "runner_kind", "thinking_mode", "user_visible_ttft_available", "required_power_source", "minimum_battery_level_percent", "warmup_runs", "measured_runs", "output_token_limit", "target_input_tokens", "fixture_sha256"],
+        "properties": {
+          "required_power_source": { "const": "unplugged" },
+          "minimum_battery_level_percent": { "const": 50 }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "schema_version": "suite-b-workload-0.1",
+  "workload_id": "b-pipe-001-sustained-generation",
+  "workload_version": "0.2.0-pilot",
+  "status": "pilot-validated",
+  "category": "pipeline",
+  "title": "Sustained Generation",
+  "scenario": "Repeated long generations expose decode stability and thermal degradation.",
+  "official_result_eligible": false,
+  "legacy_pilot_mapping": "suite-b-pilot-001",
+  "input": {
+    "fixture_path": "ios-app/workloads/suite-b-pilot-001-prompt.txt",
+    "sha256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
+    "observed_reference_model_input_tokens": 235,
+    "token_count_scope": "post-chat-template-model-input"
+  },
+  "output": {
+    "policy": "fixed-limit-or-model-stop",
+    "maximum_tokens": 512
+  },
+  "measurement_mode": "b-mode-sustained-no-rest-v1",
+  "metric_set": "suite-b-metrics-0.1",
+  "primary_metrics": [
+    "decode_tokens_per_second@1",
+    "first_to_last_percent_change@1",
+    "ios_thermal_state@1"
+  ],
+  "procedure": {
+    "warmup_runs": 1,
+    "measured_runs": 5,
+    "rest_interval_seconds": 0,
+    "minimum_successful_measured_runs": 3
+  },
+  "generation": {
+    "sampling": false,
+    "temperature": 0,
+    "reasoning_mode": "disabled-via-prompt-directive",
+    "context_policy": "new-context-for-each-generation",
+    "kv_cache_policy": "new-cache-for-each-generation"
+  },
+  "validation_evidence": {
+    "physical_device": "iPhone 14 Pro Max (iPhone15,3)",
+    "fixed_prompt_hash_confirmed": true,
+    "one_warmup_and_five_measured_runs_confirmed": true,
+    "raw_token_recalculation_confirmed": true
+  },
+  "limitations": [
+    "This pilot workload is non-official and must not be used for an official leaderboard.",
+    "The profile is pipeline evidence and must not be labeled short-interaction UX.",
+    "Five measured runs provide a sustained-generation signal, not a complete thermal-stability characterization."
+  ]
+}

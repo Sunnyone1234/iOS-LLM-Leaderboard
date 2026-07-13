@@ -1,0 +1,81 @@
+{
+  "schema_version": "suite-b-plan-registry-0.2",
+  "plans": [
+    {
+      "plan_id": "b-pipe-001-validation",
+      "plan_version": "0.2.0-pilot",
+      "workload_id": "b-pipe-001-sustained-generation",
+      "workload_version": "0.2.0-pilot",
+      "category": "pipeline",
+      "runner_kind": "single-session",
+      "thinking_mode": "disabled-via-prompt-directive",
+      "user_visible_ttft_available": false,
+      "required_power_source": "unplugged",
+      "minimum_battery_level_percent": 50,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "output_token_limit": 512,
+      "target_input_tokens": [],
+      "fixture_sha256": ["b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996"]
+    },
+    {
+      "plan_id": "b-ux-001-validation",
+      "plan_version": "0.2.0-pilot",
+      "workload_id": "b-ux-001-short-interaction",
+      "workload_version": "0.2.0-pilot",
+      "category": "user-experience",
+      "runner_kind": "single-session",
+      "thinking_mode": "disabled-via-chat-template",
+      "user_visible_ttft_available": true,
+      "required_power_source": "unplugged",
+      "minimum_battery_level_percent": 50,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "output_token_limit": 128,
+      "target_input_tokens": [],
+      "fixture_sha256": ["69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84"]
+    },
+    {
+      "plan_id": "b-pipe-002-validation",
+      "plan_version": "0.2.0-pilot",
+      "workload_id": "b-pipe-002-input-length-sweep",
+      "workload_version": "0.2.0-pilot",
+      "category": "pipeline",
+      "runner_kind": "token-exact-point-series",
+      "thinking_mode": "disabled-via-chat-template",
+      "user_visible_ttft_available": false,
+      "required_power_source": "unplugged",
+      "minimum_battery_level_percent": 50,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "output_token_limit": 32,
+      "target_input_tokens": [32, 128, 512, 2048],
+      "fixture_sha256": [
+        "28959bfb753447f7094cca07ad6d09dd4dabee48748d9394830dd10afc12740f",
+        "3d31c669aeab75ff7f93bd81ad5efa78a834dd72d70ffecb3fd9eb6653e07316",
+        "a04dfc559c2b7e1eccc223a6771c3d75ba8718c500cf060bf2a0298689b17d1e",
+        "9d93eb5d11a110ea9f5c71b9f866fe2fb87b726a6e92d9552dfc87f091f7e6a1"
+      ]
+    },
+    {
+      "plan_id": "b-ux-002-validation",
+      "plan_version": "0.2.0-pilot",
+      "workload_id": "b-ux-002-context-assistance",
+      "workload_version": "0.2.0-pilot",
+      "category": "user-experience",
+      "runner_kind": "token-exact-point-series-with-quality",
+      "thinking_mode": "disabled-via-chat-template",
+      "user_visible_ttft_available": true,
+      "required_power_source": "unplugged",
+      "minimum_battery_level_percent": 50,
+      "warmup_runs": 1,
+      "measured_runs": 5,
+      "output_token_limit": 128,
+      "target_input_tokens": [1024, 2048],
+      "fixture_sha256": [
+        "a31d6da2063892ab60e7b510e8b1721dbe0f71c7a1dc43f8a787336f20427987",
+        "44db8ce745be99713867619d0e18d2c0ab62148149c5ed49089053e31e27cccc"
+      ]
+    }
+  ]
+}

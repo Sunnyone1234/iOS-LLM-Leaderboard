@@ -2,6 +2,10 @@
 
 iOS-LLM-Leaderboard is organized around five independent benchmark suites.
 
+Suite A and Suite C belong to the Developer Assistance track. Suite B, Suite D,
+and Suite E belong to the Embedded Intelligence track. Track membership does
+not create a shared score.
+
 ## Suite A: Swift Code Generation
 
 Suite A evaluates whether an LLM can generate production-quality Swift and SwiftUI code.
@@ -37,7 +41,9 @@ Typical scoring:
 
 Suite B evaluates local model performance on Apple devices.
 
-Suite B is the first prioritized suite for Benchmark Framework v1 task design. Initial Suite B work should focus on durable measurement protocols, not benchmark runners or official rankings.
+Suite B is the first implementation priority. A physical-iPhone pilot runner
+exists, but it remains non-official while the workload-centric v2 protocol is
+designed and validated.
 
 Example metrics:
 
@@ -50,7 +56,10 @@ Example metrics:
 - token latency distribution
 - p50 / p95 / p99 token interval
 
-Suite B may contain measurement protocols rather than normal model prompts.
+Suite B v2 uses user-experience workloads and pipeline profiles. The listed
+metrics are collected together from compatible attempts rather than becoming
+independent future tasks. See
+[Suite B Protocol v2](../benchmarks/suite-b-on-device-performance/protocol-v2.md).
 
 ## Suite C: Xcode Integration
 

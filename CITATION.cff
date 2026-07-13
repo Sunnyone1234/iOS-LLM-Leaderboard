@@ -5,7 +5,7 @@ type: software
 authors:
   - family-names: "Sun"
     given-names: "Yize"
-repository-code: "https://github.com/yize-sun/iOS-LLM-Leaderboard"
+repository-code: "https://github.com/YizeSun/iOS-LLM-Leaderboard"
 license: "MIT"
 date-released: "2026-07-08"
 abstract: "An open benchmark project for evaluating large language models from an iOS developer perspective."

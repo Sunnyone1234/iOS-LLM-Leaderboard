@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YizeSun/iOS-LLM-Leaderboard/schemas/suite-b-pilot-bundle-0.6.schema.json",
+  "title": "Suite B Sustained Generation Pilot Bundle 0.6",
+  "description": "Non-official B-PIPE-001 physical-iPhone evidence with frozen workload identity.",
+  "type": "object",
+  "required": ["schemaVersion", "resultID", "createdAt", "officialResultEligible", "plan", "workload", "measurementMode", "generationConfiguration", "model", "runtime", "device", "modelPreparation", "eligibility", "summary", "attempts"],
+  "properties": {
+    "schemaVersion": { "const": "suite-b-pilot-bundle-0.6" },
+    "resultID": { "type": "string", "minLength": 8 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "officialResultEligible": { "const": false },
+    "plan": {
+      "type": "object",
+      "required": ["id", "version", "promptSHA256", "warmupRuns", "measuredRuns", "outputTokenLimit", "v2ProfileMapping"],
+      "properties": {
+        "id": { "const": "b-pipe-001-validation" },
+        "version": { "const": "0.2.0-pilot" },
+        "promptSHA256": { "const": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996" },
+        "warmupRuns": { "const": 1 },
+        "measuredRuns": { "const": 5 },
+        "outputTokenLimit": { "const": 512 },
+        "v2ProfileMapping": { "const": "b-pipe-001-sustained-generation@0.2.0-pilot" }
+      }
+    },
+    "workload": {
+      "type": "object",
+      "required": ["id", "version", "category", "promptSHA256"],
+      "properties": {
+        "id": { "const": "b-pipe-001-sustained-generation" },
+        "version": { "const": "0.2.0-pilot" },
+        "category": { "const": "pipeline" },
+        "promptSHA256": { "const": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996" }
+      }
+    },
+    "measurementMode": {
+      "type": "object",
+      "required": ["id", "timingBoundaryVersion", "pipelineTTFTStart", "pipelineTTFTEnd", "userVisibleTTFTAvailable", "prefillSource", "decodeFormula", "memoryMetric", "memorySamplingIntervalMilliseconds"]
+    },
+    "generationConfiguration": {
+      "type": "object",
+      "required": ["samplingEnabled", "temperature", "topP", "topK", "seed", "repetitionPenalty", "thinkingMode", "chatTemplateIdentity", "includeStopTokenInRawEvents", "outputTokenLimit", "contextPolicy", "modelLoadPolicy", "kvCachePolicy"]
+    },
+    "model": { "type": "object", "required": ["displayName", "baseModelID", "artifactID", "artifactRevision", "quantization", "modelFormat", "artifactContentHash"] },
+    "runtime": { "type": "object", "required": ["name", "version", "resolvedRevision", "backend", "mlxSwiftVersion", "mlxSwiftRevision", "downloaderPackage", "tokenizerPackage"] },
+    "device": { "type": "object", "required": ["displayName", "machineIdentifier", "systemName", "systemVersion", "systemBuild", "debuggerAttached", "buildConfiguration", "appVersion", "appBuild", "appSourceCommit", "lowPowerModeEnabled", "batteryLevelPercent", "batteryState"] },
+    "modelPreparation": {
+      "type": "object",
+      "required": ["artifactID", "artifactRevision", "cacheStateBeforePreparation", "downloadOccurredDuringSession", "preparationDurationMilliseconds", "preparationCompleted", "modelLoadCompleted", "eligibleForPerformanceMeasurement", "reasonCodes", "cacheVerificationMethod", "preparedAt"]
+    },
+    "eligibility": {
+      "type": "object",
+      "required": ["sessionValidity", "coldPerformance", "sustainedPerformance", "thermalStability", "officialLeaderboard"]
+    },
+    "summary": {
+      "type": "object",
+      "required": ["successfulMeasuredRuns", "failedMeasuredRuns", "finalThermalState", "degradation"]
+    },
+    "attempts": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["runIndex", "role", "outcome", "thermalStateBefore", "thermalStateAfter", "memorySamplingIntervalMilliseconds", "metrics", "tokenEvents"]
+      }
+    }
+  }
+}

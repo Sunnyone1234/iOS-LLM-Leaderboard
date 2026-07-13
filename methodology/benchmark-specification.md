@@ -1,5 +1,9 @@
 # Benchmark Task Specification
 
+> This document defines Framework v1 tasks. Framework v2 separates Suite B
+> workloads, measurement modes, metrics, model profiles, and result bundles;
+> see [Framework v2 Architecture](benchmark-framework-v2.md).
+
 Benchmark tasks are Markdown files with four logical layers:
 
 1. Metadata
@@ -237,6 +241,10 @@ Typical evaluation:
 - readability and architecture
 
 ### Suite B: On-device Performance
+
+The following requirements apply only to legacy Framework v1 measurement-task
+drafts. New Suite B design must use versioned workloads and the common metric
+set instead of creating one task per metric.
 
 Required:
 

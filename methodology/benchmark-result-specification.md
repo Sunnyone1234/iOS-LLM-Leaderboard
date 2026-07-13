@@ -1,5 +1,11 @@
 # Benchmark Result Specification
 
+> This is the Framework v1 result format. The current Benchmark App emits a
+> separate non-official pilot bundle. Suite B v2 will use workload identity,
+> explicit measurement boundaries, raw attempts, environment evidence, and
+> eligibility reason codes; see
+> [Framework v2 Architecture](benchmark-framework-v2.md).
+
 Benchmark results should be stored as JSON files under `results/raw/`.
 
 Official leaderboard generation should only use validated result files. Demo-placeholder results must not be used in official leaderboard generation.
@@ -67,7 +73,7 @@ Official leaderboard generation should only use validated result files. Demo-pla
   },
   "evaluation": {
     "score": null,
-    "max_score": 10,
+    "max_score": 100,
     "passed": null,
     "automatic_checks": [],
     "manual_review": [],
@@ -198,6 +204,11 @@ demo-placeholder
 ```
 
 Demo placeholder results must not be used in official leaderboard generation.
+
+The canonical example uses a 0–100 maximum for a general scored task. A
+suite-specific task may define another maximum. Suite B draft reproducibility
+rubrics currently use a 0–10 scale and must not be interpreted as performance
+scores.
 
 ## Suite-Specific Result Requirements
 

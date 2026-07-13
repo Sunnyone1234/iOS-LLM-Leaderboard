@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0",
+  "result_id": "demo-suite-b-pilot-001-placeholder",
+  "task": {
+    "task_id": "suite-b-on-device-performance-002",
+    "task_version": "1.0",
+    "suite": "Suite B: On-device Performance",
+    "category": "Local Inference",
+    "subcategory": "Decode-oriented Harness Pilot"
+  },
+  "model": {
+    "model_name": "Qwen3 0.6B",
+    "provider": "Qwen",
+    "model_version": "73e3e38d981303bc594367cd910ea6eb48349da8",
+    "access_type": "local",
+    "parameter_size": "0.6B",
+    "quantization": "4-bit"
+  },
+  "runtime": {
+    "runtime_name": "MLX Swift LM",
+    "runtime_version": "3.31.4",
+    "backend": "MLX/Metal",
+    "model_format": "MLX Safetensors"
+  },
+  "device": {
+    "device_name": "Demo Device - not measured",
+    "chip": null,
+    "memory_gb": null,
+    "os_name": "iOS",
+    "os_version": "demo-placeholder"
+  },
+  "execution": {
+    "date": "2026-07-10",
+    "evaluator": "demo-placeholder",
+    "run_type": "app-export",
+    "temperature": 0.0,
+    "seed": null,
+    "prompt_tokens": null,
+    "output_tokens": null,
+    "notes": "Schema fixture only. No benchmark was executed."
+  },
+  "suite_b_measurement": {
+    "prompt_token_band": "128-512",
+    "output_token_band": "256-512",
+    "warmup_procedure": "One planned placeholder warm-up; not executed.",
+    "measurement_procedure": "Five planned placeholder measured runs; not executed.",
+    "measured_run_count": null,
+    "aggregation_method": "median",
+    "cold_or_warm_start_state": "warm",
+    "timing_boundaries": "Defined by suite-b-pilot-001; no timings collected.",
+    "failed_or_interrupted_run_handling": "Retain every attempt; no attempts made.",
+    "per_run_metrics": []
+  },
+  "output": {
+    "raw_output_path": null,
+    "summary": "Demo placeholder for the Benchmark Harness MVP export mapping.",
+    "structured_output": null
+  },
+  "evaluation": {
+    "score": null,
+    "max_score": 10,
+    "passed": null,
+    "automatic_checks": [],
+    "manual_review": [],
+    "failure_reasons": [],
+    "reviewer_notes": "No real result or reproducibility score."
+  },
+  "metrics": {
+    "ttft_ms": null,
+    "prefill_tokens_per_second": null,
+    "decode_tokens_per_second": null,
+    "peak_memory_mb": null,
+    "energy_joules": null,
+    "thermal_state": null,
+    "p50_token_interval_ms": null,
+    "p95_token_interval_ms": null,
+    "p99_token_interval_ms": null
+  },
+  "provenance": {
+    "source": "demo-placeholder",
+    "commit_sha": null,
+    "raw_artifact_paths": [],
+    "reproduction_notes": "Not a real run and never eligible for leaderboard publication."
+  },
+  "license_confirmation": {
+    "contributor_agrees_to_repo_license": true
+  }
+}

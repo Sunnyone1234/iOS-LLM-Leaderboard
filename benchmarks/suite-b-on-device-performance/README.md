@@ -1,0 +1,51 @@
+# Suite B: On-device Performance
+
+Suite B measures a pinned model artifact and runtime on a physical Apple device.
+It is being redesigned around versioned workloads instead of one task per
+metric.
+
+## Status
+
+- Framework v1 remains the repository-wide accepted format.
+- Suite B Protocol v2 is a design draft.
+- [Power + Ship Pilot v0.1](../../docs/power-ship-pilot-v0.1.md) is the current
+  narrow, non-official release target.
+- `b-ux-001-short-interaction` and `b-pipe-001-sustained-generation` are the
+  only Pilot workload candidates.
+- `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` remain
+  Experimental and are excluded from Pilot eligibility and comparison.
+- `b-pipe-001-sustained-generation@0.2.0-pilot` is the frozen successor to
+  the legacy `suite-b-pilot-001` runner; it remains non-official evidence.
+- No Suite B result is currently eligible for the default leaderboard.
+
+## v2 Structure
+
+| Category | Purpose | Draft workloads |
+| --- | --- | --- |
+| User experience | Express performance in recognizable app interactions | Short Interaction, Context Assistance |
+| Pipeline | Diagnose scaling, sustained generation, memory, and thermal behavior | Sustained Generation, Input Length Sweep |
+
+Every workload collects one compatible metric set. TTFT, prefill, decode,
+memory, token intervals, thermal observations, and failures are measurements
+from a run rather than separate tasks.
+
+Read:
+
+- [Suite B Protocol v2](protocol-v2.md)
+- [Suite B Metric Definitions](metrics.md)
+- [Framework v2 Architecture](../../methodology/benchmark-framework-v2.md)
+
+Machine-readable workload manifests live in `workloads/`.
+
+Validate them with:
+
+```bash
+python3 scripts/validate_suite_b_workload.py \
+  benchmarks/suite-b-on-device-performance/workloads/*.json
+```
+
+## Legacy Drafts
+
+The five `suite-b-on-device-performance-00x-*.md` files are Framework v1 metric
+task drafts. They remain for migration history but are superseded by Protocol
+v2 for future Suite B design. They must not be used for official submissions.

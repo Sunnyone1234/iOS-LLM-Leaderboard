@@ -1,0 +1,1006 @@
+{
+  "eligibleResultCount": 6,
+  "ineligibleResultCount": 0,
+  "normalizedResultCount": 6,
+  "pipelineVersion": "suite-b-pilot-data-pipeline-0.1",
+  "results": [
+    {
+      "attemptEvidence": {
+        "allAttemptsRetained": true,
+        "measuredRuns": 5,
+        "outcomes": {
+          "completed": 5,
+          "failed": 0,
+          "notRun": 0
+        },
+        "warmupRuns": 1
+      },
+      "comparisonGroupID": "94ea71d9ee18cb1c6c4d5e371b971a8153ef0856920000665874c0e38c15cc1a",
+      "configuration": {
+        "device": {
+          "appBuild": "8",
+          "appSourceCommit": null,
+          "appVersion": "0.6.0",
+          "batteryLevelPercent": 50,
+          "batteryState": "unplugged",
+          "buildConfiguration": "Release",
+          "debuggerAttached": false,
+          "displayName": "iPhone 14 Pro Max (iPhone15,3)",
+          "lowPowerModeEnabled": false,
+          "machineIdentifier": "iPhone15,3",
+          "systemBuild": "23F77",
+          "systemName": "iOS",
+          "systemVersion": "26.5"
+        },
+        "generationConfiguration": {
+          "chatTemplateIdentity": "artifact-tokenizer-config",
+          "contextPolicy": "new-context-for-each-generation",
+          "includeStopTokenInRawEvents": false,
+          "kvCachePolicy": "new-cache-for-each-generation",
+          "modelLoadPolicy": "load-once-before-warmup",
+          "outputTokenLimit": 512,
+          "repetitionPenalty": null,
+          "samplingEnabled": false,
+          "seed": null,
+          "temperature": 0,
+          "thinkingMode": "disabled-via-prompt-directive",
+          "topK": null,
+          "topP": null
+        },
+        "measurementMode": {
+          "decodeFormula": "(raw_token_count-1)/(last_raw_token_time-first_raw_token_time)",
+          "id": "b-mode-sustained-no-rest-v1",
+          "memoryMetric": "TASK_VM_INFO.phys_footprint",
+          "memorySamplingIntervalMilliseconds": 50,
+          "pipelineTTFTEnd": "first-raw-token-received-by-adapter",
+          "pipelineTTFTStart": "after-chat-template-and-tokenization-immediately-before-generateTokensTask",
+          "prefillSource": "mlx-generate-completion-info-prompt-time",
+          "timingBoundaryVersion": "mlx-pilot-pipeline-boundaries-1",
+          "userVisibleTTFTAvailable": false
+        },
+        "model": {
+          "artifactID": "mlx-community/Qwen3-0.6B-4bit",
+          "artifactRepositorySizeBytes": 682323786,
+          "artifactRevision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+          "baseModelID": "Qwen/Qwen3-0.6B",
+          "compatibilityConstraints": [
+            "runtime:MLX-Swift-LM-3.31.4",
+            "backend:MLX/Metal",
+            "architecture:qwen3-dense",
+            "pilot-reference-device:iPhone15,3",
+            "physical-run-required-before-publication"
+          ],
+          "displayName": "Qwen3 0.6B",
+          "licenseIdentifier": "apache-2.0",
+          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-0.6B/blob/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE",
+          "modelFamily": "Qwen3 dense",
+          "modelFormat": "MLX Safetensors",
+          "parameterSizeClass": "small-0.6b",
+          "quantization": "4-bit",
+          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-0.6B-4bit/tree/73e3e38d981303bc594367cd910ea6eb48349da8",
+          "tokenizerIdentity": "mlx-community/Qwen3-0.6B-4bit@73e3e38d981303bc594367cd910ea6eb48349da8/tokenizer_config.json"
+        },
+        "plan": {
+          "id": "b-pipe-001-validation",
+          "measuredRuns": 5,
+          "minimumBatteryLevelPercent": 50,
+          "outputTokenLimit": 512,
+          "requiredPowerSource": "unplugged",
+          "runnerKind": "single-session",
+          "version": "0.2.0-pilot",
+          "warmupRuns": 1
+        },
+        "runtime": {
+          "backend": "MLX/Metal",
+          "downloaderPackage": "swift-huggingface 0.9.0",
+          "mlxSwiftRevision": "0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+          "mlxSwiftVersion": "0.31.6",
+          "name": "MLX Swift LM",
+          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+          "tokenizerPackage": "swift-transformers 1.3.0",
+          "version": "3.31.4"
+        }
+      },
+      "configurationID": "37098078284b847dcbad7db48663ed58b647042c6fb49c1f482d9dfa85fcc501",
+      "createdAt": "2026-07-12T23:08:09Z",
+      "degradation": {
+        "decodePercentChange": -1.1643796519318683,
+        "firstMeasuredRunIndex": 1,
+        "lastMeasuredRunIndex": 5,
+        "prefillPercentChange": -0.007769563993687001,
+        "ttftPercentChange": 0.010994838954681008
+      },
+      "limitations": [
+        "non-official-pilot-evidence",
+        "five-runs-are-not-a-general-thermal-stability-claim",
+        "b-pipe-001-output-length-has-no-pilot-eligibility-minimum",
+        "reference-runtime-only"
+      ],
+      "metricInterpretation": {
+        "label": "Median decode (tokens/s)",
+        "primarySummaryField": "medianDecodeTokensPerSecond",
+        "screenVisibleLatencyMeasured": null
+      },
+      "modelPreparation": {
+        "artifactID": "mlx-community/Qwen3-0.6B-4bit",
+        "artifactRevision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+        "cacheStateBeforePreparation": "cached",
+        "cacheVerificationMethod": "huggingface_revision_manifest_cached_file_size_v1",
+        "downloadOccurredDuringSession": false,
+        "eligibleForPerformanceMeasurement": true,
+        "modelLoadCompleted": true,
+        "preparationCompleted": true,
+        "preparationDurationMilliseconds": 829.543333,
+        "preparedAt": "2026-07-12T23:07:32Z",
+        "reasonCodes": []
+      },
+      "pilotEligibility": {
+        "eligible": true,
+        "reasonCodes": [],
+        "scope": "internal-pilot-v0.1-only",
+        "warningCodes": [
+          "runner_source_identity_missing"
+        ]
+      },
+      "pipelineVersion": "suite-b-pilot-data-pipeline-0.1",
+      "resultID": "c5431488-0556-4d67-bf77-10e3214b3dc1",
+      "shipConfigurationID": "f459667f0a4163752bbe165e47027f7c00f77621e559fed774f2c0aace8b3c8e",
+      "source": {
+        "path": "2026-07-12T23-08-09Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_c5431488.json",
+        "sha256": "2f08fd91c0244104c421b862d97db8db681966d59c1cf5d82c1c653bccd1ac35"
+      },
+      "summary": {
+        "failedMeasuredRuns": 0,
+        "finalThermalState": "nominal",
+        "medianDecodeTokensPerSecond": 98.16155273711412,
+        "medianPeakMemoryMegabytes": 737.1263809204102,
+        "medianPipelineTTFTMilliseconds": 463.522958,
+        "medianPrefillTokensPerSecond": 507.16288968093846,
+        "medianRequestCompletionMilliseconds": null,
+        "medianUserVisibleTTFTMilliseconds": null,
+        "modelInputTokens": 235,
+        "successfulMeasuredRuns": 5
+      },
+      "workload": {
+        "category": "pipeline",
+        "fixtureSHA256": [
+          "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996"
+        ],
+        "id": "b-pipe-001-sustained-generation",
+        "version": "0.2.0-pilot"
+      }
+    },
+    {
+      "attemptEvidence": {
+        "allAttemptsRetained": true,
+        "measuredRuns": 5,
+        "outcomes": {
+          "completed": 5,
+          "failed": 0,
+          "notRun": 0
+        },
+        "warmupRuns": 1
+      },
+      "comparisonGroupID": "05c4c08fa209cc19e3fee6675198bafb5f6e92194b4b7a077639ae5915fb9505",
+      "configuration": {
+        "device": {
+          "appBuild": "8",
+          "appSourceCommit": null,
+          "appVersion": "0.6.0",
+          "batteryLevelPercent": 50,
+          "batteryState": "unplugged",
+          "buildConfiguration": "Release",
+          "debuggerAttached": false,
+          "displayName": "iPhone 14 Pro Max (iPhone15,3)",
+          "lowPowerModeEnabled": false,
+          "machineIdentifier": "iPhone15,3",
+          "systemBuild": "23F77",
+          "systemName": "iOS",
+          "systemVersion": "26.5"
+        },
+        "generationConfiguration": {
+          "chatTemplateIdentity": "artifact-tokenizer-config-enable-thinking-false",
+          "contextPolicy": "new-context-for-each-generation",
+          "includeStopTokenInRawEvents": false,
+          "kvCachePolicy": "new-cache-for-each-generation",
+          "modelLoadPolicy": "load-once-before-warmup",
+          "outputTokenLimit": 128,
+          "repetitionPenalty": null,
+          "samplingEnabled": false,
+          "seed": 0,
+          "temperature": 0,
+          "thinkingMode": "disabled-via-chat-template",
+          "topK": 0,
+          "topP": 1
+        },
+        "measurementMode": {
+          "decodeFormula": "(raw_token_count-1)/(last_raw_token_time-first_raw_token_time)",
+          "id": "b-mode-warm-resident-ux-v1",
+          "memoryMetric": "TASK_VM_INFO.phys_footprint",
+          "memorySamplingIntervalMilliseconds": 50,
+          "pipelineTTFTEnd": "first-raw-token-received-by-adapter",
+          "pipelineTTFTStart": "after-chat-template-and-tokenization-immediately-before-generateTokensTask",
+          "prefillSource": "mlx-generate-completion-info-prompt-time",
+          "timingBoundaryVersion": "mlx-ux-visible-boundaries-1",
+          "userVisibleTTFTAvailable": true
+        },
+        "model": {
+          "artifactID": "mlx-community/Qwen3-0.6B-4bit",
+          "artifactRepositorySizeBytes": 682323786,
+          "artifactRevision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+          "baseModelID": "Qwen/Qwen3-0.6B",
+          "compatibilityConstraints": [
+            "runtime:MLX-Swift-LM-3.31.4",
+            "backend:MLX/Metal",
+            "architecture:qwen3-dense",
+            "pilot-reference-device:iPhone15,3",
+            "physical-run-required-before-publication"
+          ],
+          "displayName": "Qwen3 0.6B",
+          "licenseIdentifier": "apache-2.0",
+          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-0.6B/blob/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE",
+          "modelFamily": "Qwen3 dense",
+          "modelFormat": "MLX Safetensors",
+          "parameterSizeClass": "small-0.6b",
+          "quantization": "4-bit",
+          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-0.6B-4bit/tree/73e3e38d981303bc594367cd910ea6eb48349da8",
+          "tokenizerIdentity": "mlx-community/Qwen3-0.6B-4bit@73e3e38d981303bc594367cd910ea6eb48349da8/tokenizer_config.json"
+        },
+        "plan": {
+          "id": "b-ux-001-validation",
+          "measuredRuns": 5,
+          "minimumBatteryLevelPercent": 50,
+          "outputTokenLimit": 128,
+          "requiredPowerSource": "unplugged",
+          "runnerKind": "single-session",
+          "version": "0.2.0-pilot",
+          "warmupRuns": 1
+        },
+        "runtime": {
+          "backend": "MLX/Metal",
+          "downloaderPackage": "swift-huggingface 0.9.0",
+          "mlxSwiftRevision": "0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+          "mlxSwiftVersion": "0.31.6",
+          "name": "MLX Swift LM",
+          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+          "tokenizerPackage": "swift-transformers 1.3.0",
+          "version": "3.31.4"
+        }
+      },
+      "configurationID": "cdfa3291ba47b3f79446e650112d6d69176eaf7fdd9f687dbe24de44032904da",
+      "createdAt": "2026-07-12T23:08:54Z",
+      "degradation": {
+        "decodePercentChange": -1.226712725571688,
+        "firstMeasuredRunIndex": 1,
+        "lastMeasuredRunIndex": 5,
+        "prefillPercentChange": -0.2630003069761022,
+        "ttftPercentChange": 0.2477425554647139
+      },
+      "limitations": [
+        "non-official-pilot-evidence",
+        "b-ux-001-adapter-first-renderable-proxy-not-screen-visible-ttft",
+        "b-ux-001-response-quality-not-evaluated",
+        "b-ux-001-adapter-proxy-not-independently-recalculable-from-token-events"
+      ],
+      "metricInterpretation": {
+        "label": "Median First-renderable proxy TTFT (ms)",
+        "primarySummaryField": "medianUserVisibleTTFTMilliseconds",
+        "screenVisibleLatencyMeasured": false
+      },
+      "modelPreparation": {
+        "artifactID": "mlx-community/Qwen3-0.6B-4bit",
+        "artifactRevision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+        "cacheStateBeforePreparation": "cached",
+        "cacheVerificationMethod": "huggingface_revision_manifest_cached_file_size_v1",
+        "downloadOccurredDuringSession": false,
+        "eligibleForPerformanceMeasurement": true,
+        "modelLoadCompleted": true,
+        "preparationCompleted": true,
+        "preparationDurationMilliseconds": 291.138041,
+        "preparedAt": "2026-07-12T23:08:49Z",
+        "reasonCodes": []
+      },
+      "pilotEligibility": {
+        "eligible": true,
+        "reasonCodes": [],
+        "scope": "internal-pilot-v0.1-only",
+        "warningCodes": [
+          "runner_source_identity_missing"
+        ]
+      },
+      "pipelineVersion": "suite-b-pilot-data-pipeline-0.1",
+      "resultID": "ba496540-a56a-4ea2-9e63-a4f8dc0828ef",
+      "shipConfigurationID": "f459667f0a4163752bbe165e47027f7c00f77621e559fed774f2c0aace8b3c8e",
+      "source": {
+        "path": "2026-07-12T23-08-54Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_ba496540.json",
+        "sha256": "13e1120b53b0b62de3fb73748fbbaf48c0b120b7a62f7395364b07427a0b03f4"
+      },
+      "summary": {
+        "failedMeasuredRuns": 0,
+        "finalThermalState": "nominal",
+        "medianDecodeTokensPerSecond": 107.51865552056604,
+        "medianPeakMemoryMegabytes": 804.1420516967773,
+        "medianPipelineTTFTMilliseconds": 181.382042,
+        "medianPrefillTokensPerSecond": 385.9896364337921,
+        "medianRequestCompletionMilliseconds": 438.559,
+        "medianUserVisibleTTFTMilliseconds": 182.352833,
+        "modelInputTokens": 70,
+        "successfulMeasuredRuns": 5
+      },
+      "workload": {
+        "category": "user-experience",
+        "fixtureSHA256": [
+          "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84"
+        ],
+        "id": "b-ux-001-short-interaction",
+        "version": "0.2.0-pilot"
+      }
+    },
+    {
+      "attemptEvidence": {
+        "allAttemptsRetained": true,
+        "measuredRuns": 5,
+        "outcomes": {
+          "completed": 5,
+          "failed": 0,
+          "notRun": 0
+        },
+        "warmupRuns": 1
+      },
+      "comparisonGroupID": "94ea71d9ee18cb1c6c4d5e371b971a8153ef0856920000665874c0e38c15cc1a",
+      "configuration": {
+        "device": {
+          "appBuild": "8",
+          "appSourceCommit": null,
+          "appVersion": "0.6.0",
+          "batteryLevelPercent": 50,
+          "batteryState": "unplugged",
+          "buildConfiguration": "Release",
+          "debuggerAttached": false,
+          "displayName": "iPhone 14 Pro Max (iPhone15,3)",
+          "lowPowerModeEnabled": false,
+          "machineIdentifier": "iPhone15,3",
+          "systemBuild": "23F77",
+          "systemName": "iOS",
+          "systemVersion": "26.5"
+        },
+        "generationConfiguration": {
+          "chatTemplateIdentity": "artifact-tokenizer-config",
+          "contextPolicy": "new-context-for-each-generation",
+          "includeStopTokenInRawEvents": false,
+          "kvCachePolicy": "new-cache-for-each-generation",
+          "modelLoadPolicy": "load-once-before-warmup",
+          "outputTokenLimit": 512,
+          "repetitionPenalty": null,
+          "samplingEnabled": false,
+          "seed": null,
+          "temperature": 0,
+          "thinkingMode": "disabled-via-prompt-directive",
+          "topK": null,
+          "topP": null
+        },
+        "measurementMode": {
+          "decodeFormula": "(raw_token_count-1)/(last_raw_token_time-first_raw_token_time)",
+          "id": "b-mode-sustained-no-rest-v1",
+          "memoryMetric": "TASK_VM_INFO.phys_footprint",
+          "memorySamplingIntervalMilliseconds": 50,
+          "pipelineTTFTEnd": "first-raw-token-received-by-adapter",
+          "pipelineTTFTStart": "after-chat-template-and-tokenization-immediately-before-generateTokensTask",
+          "prefillSource": "mlx-generate-completion-info-prompt-time",
+          "timingBoundaryVersion": "mlx-pilot-pipeline-boundaries-1",
+          "userVisibleTTFTAvailable": false
+        },
+        "model": {
+          "artifactID": "mlx-community/Qwen3-1.7B-4bit",
+          "artifactRepositorySizeBytes": 979502864,
+          "artifactRevision": "3b1b1768f8f8cf8351c712464f906e86c2b8269e",
+          "baseModelID": "Qwen/Qwen3-1.7B",
+          "compatibilityConstraints": [
+            "runtime:MLX-Swift-LM-3.31.4",
+            "backend:MLX/Metal",
+            "architecture:qwen3-dense",
+            "pilot-reference-device:iPhone15,3",
+            "physical-run-required-before-publication"
+          ],
+          "displayName": "Qwen3 1.7B",
+          "licenseIdentifier": "apache-2.0",
+          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-1.7B/blob/70d244cc86ccca08cf5af4e1e306ecf908b1ad5e/LICENSE",
+          "modelFamily": "Qwen3 dense",
+          "modelFormat": "MLX Safetensors",
+          "parameterSizeClass": "medium-1.7b",
+          "quantization": "4-bit",
+          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-1.7B-4bit/tree/3b1b1768f8f8cf8351c712464f906e86c2b8269e",
+          "tokenizerIdentity": "mlx-community/Qwen3-1.7B-4bit@3b1b1768f8f8cf8351c712464f906e86c2b8269e/tokenizer_config.json"
+        },
+        "plan": {
+          "id": "b-pipe-001-validation",
+          "measuredRuns": 5,
+          "minimumBatteryLevelPercent": 50,
+          "outputTokenLimit": 512,
+          "requiredPowerSource": "unplugged",
+          "runnerKind": "single-session",
+          "version": "0.2.0-pilot",
+          "warmupRuns": 1
+        },
+        "runtime": {
+          "backend": "MLX/Metal",
+          "downloaderPackage": "swift-huggingface 0.9.0",
+          "mlxSwiftRevision": "0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+          "mlxSwiftVersion": "0.31.6",
+          "name": "MLX Swift LM",
+          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+          "tokenizerPackage": "swift-transformers 1.3.0",
+          "version": "3.31.4"
+        }
+      },
+      "configurationID": "32f9dde5f9d89b1f2d998db12024aa54a362fde2609eef1043360a01b1ecec99",
+      "createdAt": "2026-07-12T23:14:51Z",
+      "degradation": {
+        "decodePercentChange": -35.86610825236445,
+        "firstMeasuredRunIndex": 1,
+        "lastMeasuredRunIndex": 5,
+        "prefillPercentChange": -42.41837135503573,
+        "ttftPercentChange": 73.66296521255693
+      },
+      "limitations": [
+        "non-official-pilot-evidence",
+        "five-runs-are-not-a-general-thermal-stability-claim",
+        "b-pipe-001-output-length-has-no-pilot-eligibility-minimum",
+        "reference-runtime-only"
+      ],
+      "metricInterpretation": {
+        "label": "Median decode (tokens/s)",
+        "primarySummaryField": "medianDecodeTokensPerSecond",
+        "screenVisibleLatencyMeasured": null
+      },
+      "modelPreparation": {
+        "artifactID": "mlx-community/Qwen3-1.7B-4bit",
+        "artifactRevision": "3b1b1768f8f8cf8351c712464f906e86c2b8269e",
+        "cacheStateBeforePreparation": "cached",
+        "cacheVerificationMethod": "huggingface_revision_manifest_cached_file_size_v1",
+        "downloadOccurredDuringSession": false,
+        "eligibleForPerformanceMeasurement": true,
+        "modelLoadCompleted": true,
+        "preparationCompleted": true,
+        "preparationDurationMilliseconds": 1101.000417,
+        "preparedAt": "2026-07-12T23:13:13Z",
+        "reasonCodes": []
+      },
+      "pilotEligibility": {
+        "eligible": true,
+        "reasonCodes": [],
+        "scope": "internal-pilot-v0.1-only",
+        "warningCodes": [
+          "runner_source_identity_missing"
+        ]
+      },
+      "pipelineVersion": "suite-b-pilot-data-pipeline-0.1",
+      "resultID": "17c24892-c14e-4e5e-82f7-667eafc2f5d1",
+      "shipConfigurationID": "ca479d62e8275d2782ea2f2d973dc8e652bcbf67926ed8be8e1367e4fc64c870",
+      "source": {
+        "path": "2026-07-12T23-14-51Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_17c24892.json",
+        "sha256": "87ada974aa55d04e763668a5e56d5c71767d5007a75ccab88914bb33b126d8d4"
+      },
+      "summary": {
+        "failedMeasuredRuns": 0,
+        "finalThermalState": "serious",
+        "medianDecodeTokensPerSecond": 39.88848280847861,
+        "medianPeakMemoryMegabytes": 1389.3143157958984,
+        "medianPipelineTTFTMilliseconds": 1243.340166,
+        "medianPrefillTokensPerSecond": 189.03546428318342,
+        "medianRequestCompletionMilliseconds": null,
+        "medianUserVisibleTTFTMilliseconds": null,
+        "modelInputTokens": 235,
+        "successfulMeasuredRuns": 5
+      },
+      "workload": {
+        "category": "pipeline",
+        "fixtureSHA256": [
+          "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996"
+        ],
+        "id": "b-pipe-001-sustained-generation",
+        "version": "0.2.0-pilot"
+      }
+    },
+    {
+      "attemptEvidence": {
+        "allAttemptsRetained": true,
+        "measuredRuns": 5,
+        "outcomes": {
+          "completed": 5,
+          "failed": 0,
+          "notRun": 0
+        },
+        "warmupRuns": 1
+      },
+      "comparisonGroupID": "05c4c08fa209cc19e3fee6675198bafb5f6e92194b4b7a077639ae5915fb9505",
+      "configuration": {
+        "device": {
+          "appBuild": "8",
+          "appSourceCommit": null,
+          "appVersion": "0.6.0",
+          "batteryLevelPercent": 50,
+          "batteryState": "unplugged",
+          "buildConfiguration": "Release",
+          "debuggerAttached": false,
+          "displayName": "iPhone 14 Pro Max (iPhone15,3)",
+          "lowPowerModeEnabled": false,
+          "machineIdentifier": "iPhone15,3",
+          "systemBuild": "23F77",
+          "systemName": "iOS",
+          "systemVersion": "26.5"
+        },
+        "generationConfiguration": {
+          "chatTemplateIdentity": "artifact-tokenizer-config-enable-thinking-false",
+          "contextPolicy": "new-context-for-each-generation",
+          "includeStopTokenInRawEvents": false,
+          "kvCachePolicy": "new-cache-for-each-generation",
+          "modelLoadPolicy": "load-once-before-warmup",
+          "outputTokenLimit": 128,
+          "repetitionPenalty": null,
+          "samplingEnabled": false,
+          "seed": 0,
+          "temperature": 0,
+          "thinkingMode": "disabled-via-chat-template",
+          "topK": 0,
+          "topP": 1
+        },
+        "measurementMode": {
+          "decodeFormula": "(raw_token_count-1)/(last_raw_token_time-first_raw_token_time)",
+          "id": "b-mode-warm-resident-ux-v1",
+          "memoryMetric": "TASK_VM_INFO.phys_footprint",
+          "memorySamplingIntervalMilliseconds": 50,
+          "pipelineTTFTEnd": "first-raw-token-received-by-adapter",
+          "pipelineTTFTStart": "after-chat-template-and-tokenization-immediately-before-generateTokensTask",
+          "prefillSource": "mlx-generate-completion-info-prompt-time",
+          "timingBoundaryVersion": "mlx-ux-visible-boundaries-1",
+          "userVisibleTTFTAvailable": true
+        },
+        "model": {
+          "artifactID": "mlx-community/Qwen3-1.7B-4bit",
+          "artifactRepositorySizeBytes": 979502864,
+          "artifactRevision": "3b1b1768f8f8cf8351c712464f906e86c2b8269e",
+          "baseModelID": "Qwen/Qwen3-1.7B",
+          "compatibilityConstraints": [
+            "runtime:MLX-Swift-LM-3.31.4",
+            "backend:MLX/Metal",
+            "architecture:qwen3-dense",
+            "pilot-reference-device:iPhone15,3",
+            "physical-run-required-before-publication"
+          ],
+          "displayName": "Qwen3 1.7B",
+          "licenseIdentifier": "apache-2.0",
+          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-1.7B/blob/70d244cc86ccca08cf5af4e1e306ecf908b1ad5e/LICENSE",
+          "modelFamily": "Qwen3 dense",
+          "modelFormat": "MLX Safetensors",
+          "parameterSizeClass": "medium-1.7b",
+          "quantization": "4-bit",
+          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-1.7B-4bit/tree/3b1b1768f8f8cf8351c712464f906e86c2b8269e",
+          "tokenizerIdentity": "mlx-community/Qwen3-1.7B-4bit@3b1b1768f8f8cf8351c712464f906e86c2b8269e/tokenizer_config.json"
+        },
+        "plan": {
+          "id": "b-ux-001-validation",
+          "measuredRuns": 5,
+          "minimumBatteryLevelPercent": 50,
+          "outputTokenLimit": 128,
+          "requiredPowerSource": "unplugged",
+          "runnerKind": "single-session",
+          "version": "0.2.0-pilot",
+          "warmupRuns": 1
+        },
+        "runtime": {
+          "backend": "MLX/Metal",
+          "downloaderPackage": "swift-huggingface 0.9.0",
+          "mlxSwiftRevision": "0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+          "mlxSwiftVersion": "0.31.6",
+          "name": "MLX Swift LM",
+          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+          "tokenizerPackage": "swift-transformers 1.3.0",
+          "version": "3.31.4"
+        }
+      },
+      "configurationID": "e81e7f47f2155d6c5bfbe5a08b368f2ad89df2f762d26495cd5f51011361bcda",
+      "createdAt": "2026-07-12T23:22:34Z",
+      "degradation": {
+        "decodePercentChange": -0.7093918137406452,
+        "firstMeasuredRunIndex": 1,
+        "lastMeasuredRunIndex": 5,
+        "prefillPercentChange": 0.011482545312180292,
+        "ttftPercentChange": -0.011301836841393076
+      },
+      "limitations": [
+        "non-official-pilot-evidence",
+        "b-ux-001-adapter-first-renderable-proxy-not-screen-visible-ttft",
+        "b-ux-001-response-quality-not-evaluated",
+        "b-ux-001-adapter-proxy-not-independently-recalculable-from-token-events"
+      ],
+      "metricInterpretation": {
+        "label": "Median First-renderable proxy TTFT (ms)",
+        "primarySummaryField": "medianUserVisibleTTFTMilliseconds",
+        "screenVisibleLatencyMeasured": false
+      },
+      "modelPreparation": {
+        "artifactID": "mlx-community/Qwen3-1.7B-4bit",
+        "artifactRevision": "3b1b1768f8f8cf8351c712464f906e86c2b8269e",
+        "cacheStateBeforePreparation": "cached",
+        "cacheVerificationMethod": "huggingface_revision_manifest_cached_file_size_v1",
+        "downloadOccurredDuringSession": false,
+        "eligibleForPerformanceMeasurement": true,
+        "modelLoadCompleted": true,
+        "preparationCompleted": true,
+        "preparationDurationMilliseconds": 1041.21925,
+        "preparedAt": "2026-07-12T23:22:22Z",
+        "reasonCodes": []
+      },
+      "pilotEligibility": {
+        "eligible": true,
+        "reasonCodes": [],
+        "scope": "internal-pilot-v0.1-only",
+        "warningCodes": [
+          "runner_source_identity_missing"
+        ]
+      },
+      "pipelineVersion": "suite-b-pilot-data-pipeline-0.1",
+      "resultID": "897b896a-4fb2-4374-98ec-acca57e3cdc7",
+      "shipConfigurationID": "ca479d62e8275d2782ea2f2d973dc8e652bcbf67926ed8be8e1367e4fc64c870",
+      "source": {
+        "path": "2026-07-12T23-22-34Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_897b896a.json",
+        "sha256": "459b2797f9a64d2c770ebf2472fec002ae5db57a268675875bacc9ed1f2267f9"
+      },
+      "summary": {
+        "failedMeasuredRuns": 0,
+        "finalThermalState": "nominal",
+        "medianDecodeTokensPerSecond": 42.45731440455701,
+        "medianPeakMemoryMegabytes": 1107.0798721313477,
+        "medianPipelineTTFTMilliseconds": 489.083625,
+        "medianPrefillTokensPerSecond": 143.1797319634435,
+        "medianRequestCompletionMilliseconds": 1284.533875,
+        "medianUserVisibleTTFTMilliseconds": 496.453625,
+        "modelInputTokens": 70,
+        "successfulMeasuredRuns": 5
+      },
+      "workload": {
+        "category": "user-experience",
+        "fixtureSHA256": [
+          "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84"
+        ],
+        "id": "b-ux-001-short-interaction",
+        "version": "0.2.0-pilot"
+      }
+    },
+    {
+      "attemptEvidence": {
+        "allAttemptsRetained": true,
+        "measuredRuns": 5,
+        "outcomes": {
+          "completed": 5,
+          "failed": 0,
+          "notRun": 0
+        },
+        "warmupRuns": 1
+      },
+      "comparisonGroupID": "94ea71d9ee18cb1c6c4d5e371b971a8153ef0856920000665874c0e38c15cc1a",
+      "configuration": {
+        "device": {
+          "appBuild": "8",
+          "appSourceCommit": null,
+          "appVersion": "0.6.0",
+          "batteryLevelPercent": 55.000001192092896,
+          "batteryState": "unplugged",
+          "buildConfiguration": "Release",
+          "debuggerAttached": false,
+          "displayName": "iPhone 14 Pro Max (iPhone15,3)",
+          "lowPowerModeEnabled": false,
+          "machineIdentifier": "iPhone15,3",
+          "systemBuild": "23F77",
+          "systemName": "iOS",
+          "systemVersion": "26.5"
+        },
+        "generationConfiguration": {
+          "chatTemplateIdentity": "artifact-tokenizer-config",
+          "contextPolicy": "new-context-for-each-generation",
+          "includeStopTokenInRawEvents": false,
+          "kvCachePolicy": "new-cache-for-each-generation",
+          "modelLoadPolicy": "load-once-before-warmup",
+          "outputTokenLimit": 512,
+          "repetitionPenalty": null,
+          "samplingEnabled": false,
+          "seed": null,
+          "temperature": 0,
+          "thinkingMode": "disabled-via-prompt-directive",
+          "topK": null,
+          "topP": null
+        },
+        "measurementMode": {
+          "decodeFormula": "(raw_token_count-1)/(last_raw_token_time-first_raw_token_time)",
+          "id": "b-mode-sustained-no-rest-v1",
+          "memoryMetric": "TASK_VM_INFO.phys_footprint",
+          "memorySamplingIntervalMilliseconds": 50,
+          "pipelineTTFTEnd": "first-raw-token-received-by-adapter",
+          "pipelineTTFTStart": "after-chat-template-and-tokenization-immediately-before-generateTokensTask",
+          "prefillSource": "mlx-generate-completion-info-prompt-time",
+          "timingBoundaryVersion": "mlx-pilot-pipeline-boundaries-1",
+          "userVisibleTTFTAvailable": false
+        },
+        "model": {
+          "artifactID": "mlx-community/Qwen3-4B-3bit",
+          "artifactRepositorySizeBytes": 1771660929,
+          "artifactRevision": "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
+          "baseModelID": "Qwen/Qwen3-4B",
+          "compatibilityConstraints": [
+            "runtime:MLX-Swift-LM-3.31.4",
+            "backend:MLX/Metal",
+            "architecture:qwen3-dense",
+            "pilot-reference-device:iPhone15,3",
+            "physical-run-required-before-publication",
+            "large-profile-memory-headroom-must-be-validated-on-iPhone15,3"
+          ],
+          "displayName": "Qwen3 4B",
+          "licenseIdentifier": "apache-2.0",
+          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-4B/blob/1cfa9a7208912126459214e8b04321603b3df60c/LICENSE",
+          "modelFamily": "Qwen3 dense",
+          "modelFormat": "MLX Safetensors",
+          "parameterSizeClass": "large-4b",
+          "quantization": "3-bit",
+          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-4B-3bit/tree/c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
+          "tokenizerIdentity": "mlx-community/Qwen3-4B-3bit@c4e8054c71facfa84f781cdb7c1ffab3f09f89bf/tokenizer_config.json"
+        },
+        "plan": {
+          "id": "b-pipe-001-validation",
+          "measuredRuns": 5,
+          "minimumBatteryLevelPercent": 50,
+          "outputTokenLimit": 512,
+          "requiredPowerSource": "unplugged",
+          "runnerKind": "single-session",
+          "version": "0.2.0-pilot",
+          "warmupRuns": 1
+        },
+        "runtime": {
+          "backend": "MLX/Metal",
+          "downloaderPackage": "swift-huggingface 0.9.0",
+          "mlxSwiftRevision": "0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+          "mlxSwiftVersion": "0.31.6",
+          "name": "MLX Swift LM",
+          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+          "tokenizerPackage": "swift-transformers 1.3.0",
+          "version": "3.31.4"
+        }
+      },
+      "configurationID": "7741fa731d2e1489e20227caa491c50afaaef46bbf17410fa7289e45c86a6e89",
+      "createdAt": "2026-07-12T23:30:22Z",
+      "degradation": {
+        "decodePercentChange": -15.049701742928878,
+        "firstMeasuredRunIndex": 1,
+        "lastMeasuredRunIndex": 5,
+        "prefillPercentChange": -37.10000447650357,
+        "ttftPercentChange": 58.98295683307284
+      },
+      "limitations": [
+        "non-official-pilot-evidence",
+        "five-runs-are-not-a-general-thermal-stability-claim",
+        "b-pipe-001-output-length-has-no-pilot-eligibility-minimum",
+        "reference-runtime-only"
+      ],
+      "metricInterpretation": {
+        "label": "Median decode (tokens/s)",
+        "primarySummaryField": "medianDecodeTokensPerSecond",
+        "screenVisibleLatencyMeasured": null
+      },
+      "modelPreparation": {
+        "artifactID": "mlx-community/Qwen3-4B-3bit",
+        "artifactRevision": "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
+        "cacheStateBeforePreparation": "cached",
+        "cacheVerificationMethod": "huggingface_revision_manifest_cached_file_size_v1",
+        "downloadOccurredDuringSession": false,
+        "eligibleForPerformanceMeasurement": true,
+        "modelLoadCompleted": true,
+        "preparationCompleted": true,
+        "preparationDurationMilliseconds": 2239.053292,
+        "preparedAt": "2026-07-12T23:25:36Z",
+        "reasonCodes": []
+      },
+      "pilotEligibility": {
+        "eligible": true,
+        "reasonCodes": [],
+        "scope": "internal-pilot-v0.1-only",
+        "warningCodes": [
+          "runner_source_identity_missing"
+        ]
+      },
+      "pipelineVersion": "suite-b-pilot-data-pipeline-0.1",
+      "resultID": "124ac922-3340-407c-8336-4695e59a3e47",
+      "shipConfigurationID": "4a86f216b9d4a46bdeb0060d7865216b9d299df9c18bef484d70ee38e5e5433e",
+      "source": {
+        "path": "2026-07-12T23-30-22Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_124ac922.json",
+        "sha256": "ffaac2c50701f015ba1d1c03a1fb5972b6b96c889ee5902786251735a64aa1ea"
+      },
+      "summary": {
+        "failedMeasuredRuns": 0,
+        "finalThermalState": "serious",
+        "medianDecodeTokensPerSecond": 10.832371806576589,
+        "medianPeakMemoryMegabytes": 2288.4711380004883,
+        "medianPipelineTTFTMilliseconds": 4680.216875,
+        "medianPrefillTokensPerSecond": 50.21248501258902,
+        "medianRequestCompletionMilliseconds": null,
+        "medianUserVisibleTTFTMilliseconds": null,
+        "modelInputTokens": 235,
+        "successfulMeasuredRuns": 5
+      },
+      "workload": {
+        "category": "pipeline",
+        "fixtureSHA256": [
+          "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996"
+        ],
+        "id": "b-pipe-001-sustained-generation",
+        "version": "0.2.0-pilot"
+      }
+    },
+    {
+      "attemptEvidence": {
+        "allAttemptsRetained": true,
+        "measuredRuns": 5,
+        "outcomes": {
+          "completed": 5,
+          "failed": 0,
+          "notRun": 0
+        },
+        "warmupRuns": 1
+      },
+      "comparisonGroupID": "05c4c08fa209cc19e3fee6675198bafb5f6e92194b4b7a077639ae5915fb9505",
+      "configuration": {
+        "device": {
+          "appBuild": "8",
+          "appSourceCommit": null,
+          "appVersion": "0.6.0",
+          "batteryLevelPercent": 50,
+          "batteryState": "unplugged",
+          "buildConfiguration": "Release",
+          "debuggerAttached": false,
+          "displayName": "iPhone 14 Pro Max (iPhone15,3)",
+          "lowPowerModeEnabled": false,
+          "machineIdentifier": "iPhone15,3",
+          "systemBuild": "23F77",
+          "systemName": "iOS",
+          "systemVersion": "26.5"
+        },
+        "generationConfiguration": {
+          "chatTemplateIdentity": "artifact-tokenizer-config-enable-thinking-false",
+          "contextPolicy": "new-context-for-each-generation",
+          "includeStopTokenInRawEvents": false,
+          "kvCachePolicy": "new-cache-for-each-generation",
+          "modelLoadPolicy": "load-once-before-warmup",
+          "outputTokenLimit": 128,
+          "repetitionPenalty": null,
+          "samplingEnabled": false,
+          "seed": 0,
+          "temperature": 0,
+          "thinkingMode": "disabled-via-chat-template",
+          "topK": 0,
+          "topP": 1
+        },
+        "measurementMode": {
+          "decodeFormula": "(raw_token_count-1)/(last_raw_token_time-first_raw_token_time)",
+          "id": "b-mode-warm-resident-ux-v1",
+          "memoryMetric": "TASK_VM_INFO.phys_footprint",
+          "memorySamplingIntervalMilliseconds": 50,
+          "pipelineTTFTEnd": "first-raw-token-received-by-adapter",
+          "pipelineTTFTStart": "after-chat-template-and-tokenization-immediately-before-generateTokensTask",
+          "prefillSource": "mlx-generate-completion-info-prompt-time",
+          "timingBoundaryVersion": "mlx-ux-visible-boundaries-1",
+          "userVisibleTTFTAvailable": true
+        },
+        "model": {
+          "artifactID": "mlx-community/Qwen3-4B-3bit",
+          "artifactRepositorySizeBytes": 1771660929,
+          "artifactRevision": "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
+          "baseModelID": "Qwen/Qwen3-4B",
+          "compatibilityConstraints": [
+            "runtime:MLX-Swift-LM-3.31.4",
+            "backend:MLX/Metal",
+            "architecture:qwen3-dense",
+            "pilot-reference-device:iPhone15,3",
+            "physical-run-required-before-publication",
+            "large-profile-memory-headroom-must-be-validated-on-iPhone15,3"
+          ],
+          "displayName": "Qwen3 4B",
+          "licenseIdentifier": "apache-2.0",
+          "licenseSourceURL": "https://huggingface.co/Qwen/Qwen3-4B/blob/1cfa9a7208912126459214e8b04321603b3df60c/LICENSE",
+          "modelFamily": "Qwen3 dense",
+          "modelFormat": "MLX Safetensors",
+          "parameterSizeClass": "large-4b",
+          "quantization": "3-bit",
+          "sourceURL": "https://huggingface.co/mlx-community/Qwen3-4B-3bit/tree/c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
+          "tokenizerIdentity": "mlx-community/Qwen3-4B-3bit@c4e8054c71facfa84f781cdb7c1ffab3f09f89bf/tokenizer_config.json"
+        },
+        "plan": {
+          "id": "b-ux-001-validation",
+          "measuredRuns": 5,
+          "minimumBatteryLevelPercent": 50,
+          "outputTokenLimit": 128,
+          "requiredPowerSource": "unplugged",
+          "runnerKind": "single-session",
+          "version": "0.2.0-pilot",
+          "warmupRuns": 1
+        },
+        "runtime": {
+          "backend": "MLX/Metal",
+          "downloaderPackage": "swift-huggingface 0.9.0",
+          "mlxSwiftRevision": "0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+          "mlxSwiftVersion": "0.31.6",
+          "name": "MLX Swift LM",
+          "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+          "tokenizerPackage": "swift-transformers 1.3.0",
+          "version": "3.31.4"
+        }
+      },
+      "configurationID": "cbe6698e9b39399b9242fb0aea152357016d00b2e15220ccadac2fb6fa2b8292",
+      "createdAt": "2026-07-12T23:37:49Z",
+      "degradation": {
+        "decodePercentChange": -0.05453092073213206,
+        "firstMeasuredRunIndex": 1,
+        "lastMeasuredRunIndex": 5,
+        "prefillPercentChange": 0.5350843881856582,
+        "ttftPercentChange": -0.5341378404786212
+      },
+      "limitations": [
+        "non-official-pilot-evidence",
+        "b-ux-001-adapter-first-renderable-proxy-not-screen-visible-ttft",
+        "b-ux-001-response-quality-not-evaluated",
+        "b-ux-001-adapter-proxy-not-independently-recalculable-from-token-events"
+      ],
+      "metricInterpretation": {
+        "label": "Median First-renderable proxy TTFT (ms)",
+        "primarySummaryField": "medianUserVisibleTTFTMilliseconds",
+        "screenVisibleLatencyMeasured": false
+      },
+      "modelPreparation": {
+        "artifactID": "mlx-community/Qwen3-4B-3bit",
+        "artifactRevision": "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
+        "cacheStateBeforePreparation": "cached",
+        "cacheVerificationMethod": "huggingface_revision_manifest_cached_file_size_v1",
+        "downloadOccurredDuringSession": false,
+        "eligibleForPerformanceMeasurement": true,
+        "modelLoadCompleted": true,
+        "preparationCompleted": true,
+        "preparationDurationMilliseconds": 2108.967541,
+        "preparedAt": "2026-07-12T23:37:27Z",
+        "reasonCodes": []
+      },
+      "pilotEligibility": {
+        "eligible": true,
+        "reasonCodes": [],
+        "scope": "internal-pilot-v0.1-only",
+        "warningCodes": [
+          "runner_source_identity_missing"
+        ]
+      },
+      "pipelineVersion": "suite-b-pilot-data-pipeline-0.1",
+      "resultID": "b5a84431-f2fc-4095-b743-dde5e741da5a",
+      "shipConfigurationID": "4a86f216b9d4a46bdeb0060d7865216b9d299df9c18bef484d70ee38e5e5433e",
+      "source": {
+        "path": "2026-07-12T23-37-49Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_b5a84431.json",
+        "sha256": "8c76e3acd8ee1f830af282b407d97a769950fcfd7f246664060d9db302d5b7d3"
+      },
+      "summary": {
+        "failedMeasuredRuns": 0,
+        "finalThermalState": "nominal",
+        "medianDecodeTokensPerSecond": 20.92054285956143,
+        "medianPeakMemoryMegabytes": 1878.9241485595703,
+        "medianPipelineTTFTMilliseconds": 1131.023,
+        "medianPrefillTokensPerSecond": 61.90340328078173,
+        "medianRequestCompletionMilliseconds": 2832.811666,
+        "medianUserVisibleTTFTMilliseconds": 1142.769291,
+        "modelInputTokens": 70,
+        "successfulMeasuredRuns": 5
+      },
+      "workload": {
+        "category": "user-experience",
+        "fixtureSHA256": [
+          "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84"
+        ],
+        "id": "b-ux-001-short-interaction",
+        "version": "0.2.0-pilot"
+      }
+    }
+  ]
+}

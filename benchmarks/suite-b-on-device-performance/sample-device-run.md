@@ -1,5 +1,8 @@
 # Sample Device Run
 
+> **Historical Framework v1 sample:** this is not an executable Suite B v2
+> workload. Use the versioned manifests in `workloads/` for new runner work.
+
 ## Scenario
 
 A contributor records an on-device local model run.

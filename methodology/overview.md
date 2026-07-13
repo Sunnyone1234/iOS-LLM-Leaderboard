@@ -2,6 +2,14 @@
 
 iOS-LLM-Leaderboard is organized around five independent benchmark suites. Each suite evaluates a different part of the iOS developer experience and may produce separate scores, reports, and leaderboards.
 
+The suites are grouped into two product tracks:
+
+- Developer Assistance: Suite A and Suite C.
+- Embedded Intelligence: Suite B, Suite D, and Suite E.
+
+The public leaderboard may emphasize model names for readability, while the
+underlying evidence must retain the full evaluation-unit configuration.
+
 Benchmark Framework v1 is defined in:
 
 - [Benchmark Framework](benchmark-framework.md)

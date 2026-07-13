@@ -2,6 +2,10 @@
 
 This directory documents how iPhone, iPad, and Mac metadata are recorded for device benchmark submissions.
 
+Future machine-readable device profiles should use stable public hardware
+identifiers. They must not contain device serial numbers, UDIDs, Apple IDs, or
+other contributor-specific identifiers.
+
 Device metadata should include:
 
 - device name

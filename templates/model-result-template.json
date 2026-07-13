@@ -46,7 +46,7 @@
   },
   "evaluation": {
     "score": null,
-    "max_score": 10,
+    "max_score": 100,
     "passed": null,
     "automatic_checks": [],
     "manual_review": [],

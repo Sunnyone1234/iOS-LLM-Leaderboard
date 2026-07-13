@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YizeSun/iOS-LLM-Leaderboard/schemas/suite-b-community-submission-0.1.schema.json",
+  "title": "Suite B Community Submission 0.1",
+  "type": "object",
+  "required": ["schemaVersion", "submissionID", "createdAt", "currentTrustLevel", "requestedTrustLevel", "validationStatus", "contributor", "declarations", "privacy", "result"],
+  "properties": {
+    "schemaVersion": { "const": "suite-b-community-submission-0.1" },
+    "currentTrustLevel": { "const": "draft" },
+    "requestedTrustLevel": { "const": "community-submitted" },
+    "validationStatus": { "const": "unvalidated" },
+    "contributor": { "type": "object", "required": ["displayName"] },
+    "declarations": { "type": "object", "required": ["reviewedResult", "confirmsNoPersonalData", "agreesToRepositoryLicense"] },
+    "privacy": { "type": "object", "required": ["excludedIdentifiers", "includedPublicDeviceFields"] },
+    "result": { "type": "object", "required": ["schemaVersion", "resultID", "workloadID", "artifactID", "machineIdentifier", "encoding", "digestAlgorithm", "sha256", "bundleBase64"] }
+  }
+}

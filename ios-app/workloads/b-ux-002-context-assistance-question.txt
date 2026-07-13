@@ -1,0 +1,1 @@
+A user says a note shows “Awaiting Upload,” the iPhone is offline, and its battery is at 15 percent. Based only on the support guide, explain what will happen and what the user should avoid. Answer in no more than three short sentences and include the required reference code.

@@ -1,0 +1,74 @@
+{
+  "schema_version": "suite-b-workload-0.1",
+  "workload_id": "b-ux-002-context-assistance",
+  "workload_version": "0.2.0-pilot",
+  "status": "pilot-validated",
+  "category": "user-experience",
+  "title": "Context Assistance",
+  "scenario": "A user asks for a concise answer grounded in a fixed local document.",
+  "official_result_eligible": false,
+  "input": {
+    "fixture_path": "benchmarks/suite-b-on-device-performance/workloads/fixtures/b-ux-002-context-assistance-document.txt",
+    "sha256": "e13b4b66f137ac415bf525898f0b111d5d493d47a0a227164bba6e08f38674b4",
+    "question_path": "benchmarks/suite-b-on-device-performance/workloads/fixtures/b-ux-002-context-assistance-question.txt",
+    "question_sha256": "86aecb086f2f2d9097b9464825249359bf08d6dc413c059756d2f850ba05f84b",
+    "target_model_input_tokens": {
+      "values": [1024, 2048]
+    },
+    "token_count_scope": "post-chat-template-model-input"
+  },
+  "output": {
+    "policy": "natural-stop-with-limit",
+    "maximum_tokens": 128,
+    "maximum_sentences": 3
+  },
+  "measurement_mode": "b-mode-warm-resident-ux-v1",
+  "metric_set": "suite-b-metrics-0.1",
+  "primary_metrics": [
+    "prefill_tokens_per_second@1",
+    "pipeline_ttft_ms@1",
+    "request_completion_ms@1"
+  ],
+  "variants": [
+    { "id": "context-1024", "target_model_input_tokens": 1024 },
+    { "id": "context-2048", "target_model_input_tokens": 2048 }
+  ],
+  "generation": {
+    "sampling": false,
+    "temperature": 0,
+    "reasoning_mode": "disabled",
+    "chat_template_context": { "enable_thinking": false }
+  },
+  "minimum_answer_contract": {
+    "required_reference_code": "ORCHID-47",
+    "required_facts": [
+      "the note is safe in the local vault",
+      "network connectivity must remain stable for 30 seconds",
+      "battery below 20 percent defers sync until connected to power",
+      "the user should not delete or reinstall the app, sign out, or delete the note"
+    ],
+    "evaluation": "deterministic contract checks plus retained visible output for review",
+    "quality_failure_behavior": "retain timing evidence but mark the UX attempt answer-ineligible"
+  },
+  "context_extension": {
+    "section": "background records appendix",
+    "semantic_rule": "padding must not add, remove, or contradict answer-bearing facts",
+    "token_rule": "prepared post-chat-template input must exactly match the variant target",
+    "reference_profile": {
+      "artifact_id": "mlx-community/Qwen3-0.6B-4bit",
+      "artifact_revision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+      "validated_device": "iPhone15,3",
+      "validated_on": "2026-07-11",
+      "variants": [
+        { "target_tokens": 1024, "padding_repetitions": 751, "prompt_sha256": "a31d6da2063892ab60e7b510e8b1721dbe0f71c7a1dc43f8a787336f20427987" },
+        { "target_tokens": 2048, "padding_repetitions": 1775, "prompt_sha256": "44db8ce745be99713867619d0e18d2c0ab62148149c5ed49089053e31e27cccc" }
+      ]
+    }
+  },
+  "validation_evidence": {
+    "physical_device": "iPhone 14 Pro Max (iPhone15,3)",
+    "token_exact_variants_confirmed": true,
+    "answer_contract_behavior_confirmed": true,
+    "quality_failure_rule": "timing evidence is retained, but a point requires 5 of 5 measured answers to pass before UX performance comparison"
+  }
+}

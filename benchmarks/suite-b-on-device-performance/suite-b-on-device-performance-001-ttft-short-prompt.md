@@ -1,5 +1,8 @@
 # TTFT Short Prompt
 
+> **Superseded draft:** TTFT is now a versioned metric collected within Suite B
+> workloads. See [Protocol v2](protocol-v2.md) and [Metric Definitions](metrics.md).
+
 ## Task Metadata
 
 | Field | Value |
@@ -12,7 +15,7 @@
 | task_type | measurement |
 | evaluation_mode | measurement |
 | version | 1.0 |
-| status | draft |
+| status | deprecated |
 | author | project-maintainers |
 | created | 2026-07-09 |
 | last_updated | 2026-07-09 |

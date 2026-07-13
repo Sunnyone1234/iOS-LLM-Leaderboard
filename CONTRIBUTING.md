@@ -17,6 +17,27 @@ By submitting a pull request, you agree that your contribution will be licensed 
 - Add example integrations for iOS developers.
 - Improve validation and leaderboard tooling.
 
+The long-term contribution path is the official iOS benchmark app described in
+[Community Contribution Model](docs/community-contribution-model.md). The app
+will run a locked benchmark release, export a reviewable result bundle, and
+reduce the need for contributors to construct result JSON manually.
+
+## Current Contribution Stage
+
+The repository does not yet accept any result as an official or verified
+ranking entry.
+
+During the current documentation-first stage:
+
+- benchmark and methodology proposals are welcome;
+- integration and validation tooling is welcome;
+- result files may be used to test the Framework v1 format;
+- Suite B performance numbers must remain explicitly non-official until
+  workloads, runner, and evidence rules are frozen.
+
+Future community results will use evidence levels. Passing structural
+validation alone will not immediately place a result in the default ranking.
+
 ## Benchmark Task Contributions
 
 New benchmark tasks must follow [Benchmark Task Specification](methodology/benchmark-specification.md).
@@ -45,6 +66,12 @@ Do not mix Swift code generation tasks, app feature intelligence tasks, Xcode wo
 
 Do not add tasks that depend on private data, undisclosed model access, or unverifiable scoring.
 
+Suite B is transitioning to the workload-centric v2 draft. Do not propose new
+Suite B tasks that merely isolate one metric such as TTFT or memory. Propose a
+versioned user-experience workload or pipeline profile and identify the common
+metrics it collects. See
+[Suite B Protocol v2](benchmarks/suite-b-on-device-performance/protocol-v2.md).
+
 ## Result Contributions
 
 New benchmark results must follow [Benchmark Result Specification](methodology/benchmark-result-specification.md).
@@ -64,6 +91,21 @@ Submitted results must include enough reproducibility metadata for independent r
 For Suite B result submissions, include prompt token band, output token band, warm-up procedure, measurement procedure, measured run count, aggregation method, cold or warm start state, timing boundaries, failed or interrupted run handling, and per-run metrics when available.
 
 Demo or placeholder data must be clearly marked and must not be used for official leaderboard results.
+
+When the official benchmark app is available, app-generated result bundles
+will be the preferred Suite B submission route. Manual submissions will need
+to demonstrate equivalent workload, runner, and raw-evidence compatibility.
+
+The current Benchmark App can generate an offline Draft submission after the
+contributor reviews a unified Suite B result. Validate it with
+`scripts/validate_suite_b_submission.py`. A passing package may be reviewed as
+Community Submitted, but it is never accepted as official, verified, or added
+to the default leaderboard automatically.
+
+For repository placement, rename the untouched App export to
+`<submissionID>.json` and add it under `submissions/suite-b/draft/`. See
+[Community Submissions](submissions/README.md) for CI and maintainer review
+commands.
 
 ## Data Integrity
 

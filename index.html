@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Sortable, reproducible on-device language model results from physical iPhones.">
+  <meta name="theme-color" content="#ffffff">
+  <title>iOS LLM Leaderboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site/styles.css?v=3">
+</head>
+<body>
+  <a class="skip-link" href="#leaderboard">Skip to leaderboard</a>
+
+  <header class="site-header">
+    <nav class="nav-shell page-shell" aria-label="Primary navigation">
+      <a class="brand" href="#leaderboard">iOS LLM Leaderboard</a>
+      <div class="nav-links">
+        <a href="docs/power-ship-pilot-v0.1.md">Methodology</a>
+        <a href="results/suite-b-pilot-v0.1/normalized-results.json">Data</a>
+        <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard" target="_blank" rel="noreferrer">GitHub ↗</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-shell" id="leaderboard">
+    <section class="leaderboard-header" aria-labelledby="leaderboard-title">
+      <h1 id="leaderboard-title">Power benchmark</h1>
+      <p>On-device LLM performance measured on physical iPhones.</p>
+      <div class="benchmark-meta" aria-label="Benchmark release metadata">
+        <span>Pilot v0.1</span>
+        <span><strong id="summary-configurations">—</strong> configurations</span>
+        <span><strong id="summary-results">—</strong> results</span>
+        <span id="summary-device">Loading device</span>
+        <a href="results/suite-b-pilot-v0.1/RELEASE-NOTES.md">Release notes</a>
+      </div>
+    </section>
+
+    <section class="leaderboard-shell" aria-label="Sortable benchmark results">
+      <div class="board-toolbar">
+        <div class="mode-tabs" role="tablist" aria-label="Leaderboard view">
+          <button class="mode-tab is-active" type="button" role="tab" aria-selected="true" data-mode="ux">Responsiveness</button>
+          <button class="mode-tab" type="button" role="tab" aria-selected="false" data-mode="pipe">Sustained generation</button>
+          <button class="mode-tab" type="button" role="tab" aria-selected="false" data-mode="ship">Deployment facts</button>
+        </div>
+
+        <div class="board-filters">
+          <label class="search-control">
+            <span class="sr-only">Search models</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+            <input id="model-search" type="search" placeholder="Search model" autocomplete="off">
+          </label>
+          <label>
+            <span class="sr-only">Filter by device</span>
+            <select id="device-filter" aria-label="Filter by device"><option value="all">All devices</option></select>
+          </label>
+          <label>
+            <span class="sr-only">Filter by runtime</span>
+            <select id="runtime-filter" aria-label="Filter by runtime"><option value="all">All runtimes</option></select>
+          </label>
+        </div>
+      </div>
+
+      <div class="board-context">
+        <div>
+          <strong id="context-label">First-renderable proxy TTFT</strong>
+          <span id="context-description">Adapter boundary, not screen-render latency. Lower is better.</span>
+        </div>
+        <span class="row-count" id="row-count" aria-live="polite">Loading results</span>
+      </div>
+
+      <div class="table-scroll">
+        <table class="ranking-table">
+          <thead id="ranking-head"></thead>
+          <tbody id="ranking-body"></tbody>
+        </table>
+      </div>
+
+      <div class="empty-state" id="empty-state" hidden>
+        <strong>No matching evidence</strong>
+        <span>Clear the filters to return to the complete Pilot matrix.</span>
+      </div>
+      <div class="load-error" id="load-error" hidden>
+        <strong>The evidence could not be loaded.</strong>
+        <span>Serve the repository root over HTTP so the page can read the normalized result file.</span>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer page-shell">
+    <span>Pilot evidence only · Rankings apply within each workload.</span>
+    <div>
+      <a href="results/suite-b-pilot-v0.1/SHA256SUMS">Checksums</a>
+      <a href="results/suite-b-pilot-v0.1/SHIP-EVIDENCE.md">Ship evidence</a>
+    </div>
+  </footer>
+
+  <dialog class="detail-dialog" id="detail-dialog">
+    <div class="dialog-inner">
+      <button class="dialog-close" type="button" aria-label="Close configuration details">×</button>
+      <div id="dialog-content"></div>
+    </div>
+  </dialog>
+
+  <script type="module" src="site/app.js?v=3"></script>
+</body>
+</html>

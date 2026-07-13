@@ -1,0 +1,129 @@
+{
+  "plan_schema_version": "0.3",
+  "plan_id": "b-pipe-001-validation",
+  "plan_version": "0.2.0-pilot",
+  "status": "pilot-validated",
+  "suite": "Suite B: On-device Performance",
+  "framework_version": "v2-design-draft",
+  "official_result_eligible": false,
+  "purpose": "Measure sustained generation, decode stability, and first-to-last degradation on a physical iPhone.",
+  "model_profile": {
+    "display_name": "Qwen3 0.6B",
+    "base_model_id": "Qwen/Qwen3-0.6B",
+    "artifact_id": "mlx-community/Qwen3-0.6B-4bit",
+    "artifact_revision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+    "model_family": "Qwen3 dense",
+    "parameter_size_class": "small-0.6b",
+    "quantization": "4-bit",
+    "model_format": "MLX Safetensors",
+    "tokenizer_identity": "mlx-community/Qwen3-0.6B-4bit@73e3e38d981303bc594367cd910ea6eb48349da8/tokenizer_config.json",
+    "source_url": "https://huggingface.co/mlx-community/Qwen3-0.6B-4bit/tree/73e3e38d981303bc594367cd910ea6eb48349da8",
+    "license_identifier": "apache-2.0",
+    "license_source_url": "https://huggingface.co/Qwen/Qwen3-0.6B/blob/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE",
+    "artifact_repository_size_bytes": 682323786,
+    "compatibility_constraints": [
+      "runtime:MLX-Swift-LM-3.31.4",
+      "backend:MLX/Metal",
+      "architecture:qwen3-dense",
+      "pilot-reference-device:iPhone15,3",
+      "physical-run-required-before-publication"
+    ],
+    "artifact_content_hash": null
+  },
+  "runtime_profile": {
+    "runtime_name": "MLX Swift LM",
+    "package_url": "https://github.com/ml-explore/mlx-swift-lm",
+    "package_version": "3.31.4",
+    "package_revision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+    "mlx_swift_version": "0.31.6",
+    "mlx_swift_revision": "0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+    "backend": "MLX/Metal",
+    "products": ["MLXLLM", "MLXLMCommon"],
+    "downloader_package": "swift-huggingface 0.9.0",
+    "tokenizer_package": "swift-transformers 1.3.0"
+  },
+  "workload": {
+    "workload_id": "b-pipe-001-sustained-generation",
+    "workload_version": "0.2.0-pilot",
+    "v2_profile_mapping": "b-pipe-001-sustained-generation@0.2.0-pilot",
+    "category": "pipeline",
+    "prompt_path": "ios-app/workloads/suite-b-pilot-001-prompt.txt",
+    "prompt_sha256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
+    "prompt_token_band": "128-512",
+    "output_token_limit": 512,
+    "output_token_band": "256-512",
+    "actual_prompt_tokens_source": "runtime-tokenizer",
+    "actual_output_tokens_source": "runtime-tokenizer"
+  },
+  "generation": {
+    "sampling_enabled": false,
+    "temperature": 0.0,
+    "top_p": null,
+    "top_k": null,
+    "seed": null,
+    "repetition_penalty": null,
+    "thinking_mode": "disabled-via-prompt-directive",
+    "chat_template_identity": "artifact-tokenizer-config",
+    "include_stop_token_in_raw_events": false,
+    "stop_conditions": ["model-eos", "output-token-limit", "cancellation", "error"],
+    "context_policy": "new-context-for-each-generation",
+    "model_load_policy": "load-once-before-warmup",
+    "kv_cache_policy": "new-cache-for-each-generation",
+    "network_policy_during_measurement": "offline"
+  },
+  "measurement_mode": {
+    "measurement_mode_id": "b-mode-sustained-no-rest-v1",
+    "timing_boundary_version": "mlx-pilot-pipeline-boundaries-1",
+    "pipeline_ttft_start": "after-chat-template-and-tokenization-immediately-before-generateTokensTask",
+    "pipeline_ttft_end": "first-raw-token-received-by-adapter",
+    "user_visible_ttft_available": false,
+    "prefill_source": "mlx-generate-completion-info-prompt-time",
+    "decode_formula": "(raw_token_count-1)/(last_raw_token_time-first_raw_token_time)",
+    "memory_metric": "TASK_VM_INFO.phys_footprint",
+    "memory_sampling_interval_milliseconds": 50,
+    "thermal_source": "ProcessInfo.thermalState"
+  },
+  "procedure": {
+    "warmup_runs": 1,
+    "measured_runs": 5,
+    "aggregation": "median-of-successful-measured-runs",
+    "minimum_successful_runs_for_summary": 3,
+    "rest_interval_seconds": 0,
+    "retain_all_attempts": true,
+    "exclude_warmup_from_summary": true
+  },
+  "measurements": {
+    "primary_metric": "decode_tokens_per_second",
+    "secondary_metrics": [
+      "ttft_ms",
+      "prefill_tokens_per_second",
+      "peak_memory_mb",
+      "thermal_state",
+      "p50_token_interval_ms",
+      "p95_token_interval_ms",
+      "p99_token_interval_ms"
+    ],
+    "clock": "monotonic",
+    "memory_scope": "sampled-current-process-physical-footprint",
+    "thermal_source": "ProcessInfo.thermalState"
+  },
+  "environment_requirements": {
+    "physical_device_required": true,
+    "release_build_required": true,
+    "debugger_detached_required": true,
+    "initial_thermal_state": "nominal",
+    "low_power_mode": "off",
+    "required_power_source": "unplugged",
+    "minimum_battery_level_percent": 50,
+    "record_battery_level": true,
+    "record_charging_state": true
+  },
+  "limitations": [
+    "This pilot workload is not an official benchmark release or leaderboard result.",
+    "Its prefill measurement is not the long-context Suite B prefill task.",
+    "Thermal observations from five runs are not a thermal-stability claim.",
+    "Sampled process footprint is not an exact system-wide memory peak.",
+    "The current result bundle does not yet report user-visible TTFT.",
+    "A network connection is required during Prepare Model to verify the pinned revision manifest against the local cache."
+  ]
+}

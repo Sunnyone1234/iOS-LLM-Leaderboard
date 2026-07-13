@@ -1,0 +1,63 @@
+{
+  "schema_version": "suite-b-workload-0.1",
+  "workload_id": "b-ux-001-short-interaction",
+  "workload_version": "0.2.0-pilot",
+  "status": "pilot-validated",
+  "category": "user-experience",
+  "title": "Short Interaction",
+  "scenario": "A user makes a short in-app request and expects a concise visible response.",
+  "official_result_eligible": false,
+  "input": {
+    "fixture_path": "benchmarks/suite-b-on-device-performance/workloads/fixtures/b-ux-001-short-interaction-prompt.txt",
+    "sha256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84",
+    "target_model_input_tokens": {
+      "minimum": 64,
+      "maximum": 256
+    },
+    "token_count_scope": "post-chat-template-model-input"
+  },
+  "output": {
+    "policy": "natural-stop-with-limit",
+    "maximum_tokens": 128,
+    "response_requirement": "No more than two short sentences; explain that the note is safe locally and will sync when connectivity returns."
+  },
+  "measurement_mode": "b-mode-warm-resident-ux-v1",
+  "metric_set": "suite-b-metrics-0.1",
+  "generation": {
+    "sampling": false,
+    "temperature": 0,
+    "top_p": 1,
+    "top_k": 0,
+    "seed": 0,
+    "reasoning_mode": "disabled",
+    "chat_template_context": {
+      "enable_thinking": false
+    }
+  },
+  "visible_content_policy": {
+    "version": "first-renderable-decoded-content-v1",
+    "clock_start": "canonical-request-accepted-at-app-layer",
+    "clock_end": "first-non-whitespace-non-special decoded content available to the app render path",
+    "decode_strategy": "decode the cumulative raw-token prefix with special tokens skipped after every token event",
+    "reasoning_tokens_visible": false,
+    "unobservable_behavior": "report user_visible_ttft_ms as null and mark measurement boundary unverified"
+  },
+  "primary_metrics": [
+    "user_visible_ttft_ms@1",
+    "pipeline_ttft_ms@1",
+    "request_completion_ms@1"
+  ],
+  "pilot_validation": {
+    "validated_on": "2026-07-11",
+    "reference_device": "iPhone15,3",
+    "reference_model_input_tokens": 70,
+    "thinking_disabled_verified": true,
+    "special_token_leakage_observed": false,
+    "natural_stop_verified": true,
+    "result_location": "private-local-evidence-not-committed"
+  },
+  "activation_checks": [
+    "freeze the UX result bundle schema and validator",
+    "collect an independently reviewable local pilot bundle"
+  ]
+}

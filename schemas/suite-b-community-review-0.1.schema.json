@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YizeSun/iOS-LLM-Leaderboard/schemas/suite-b-community-review-0.1.schema.json",
+  "title": "Suite B Community Submitted Review 0.1",
+  "type": "object",
+  "required": ["schemaVersion", "submissionID", "submissionSHA256", "resultID", "reviewer", "reviewedAt", "previousTrustLevel", "trustLevel", "structuralValidationPassed", "reproduced", "verified", "maintainerReference", "defaultLeaderboardEligible"],
+  "properties": {
+    "schemaVersion": { "const": "suite-b-community-review-0.1" },
+    "previousTrustLevel": { "const": "draft" },
+    "trustLevel": { "const": "community-submitted" },
+    "structuralValidationPassed": { "const": true },
+    "reproduced": { "const": false },
+    "verified": { "const": false },
+    "maintainerReference": { "const": false },
+    "defaultLeaderboardEligible": { "const": false }
+  }
+}

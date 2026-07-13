@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YizeSun/iOS-LLM-Leaderboard/schemas/suite-b-result-bundle-0.2.schema.json",
+  "title": "Unified Suite B Result Bundle 0.2",
+  "type": "object",
+  "required": ["schemaVersion", "resultID", "createdAt", "officialResultEligible", "plan", "workload", "measurementMode", "generationConfiguration", "model", "runtime", "device", "modelPreparation", "eligibility", "sessions"],
+  "properties": {
+    "schemaVersion": { "const": "suite-b-result-bundle-0.2" },
+    "officialResultEligible": { "const": false },
+    "plan": {
+      "type": "object",
+      "required": ["id", "version", "runnerKind", "warmupRuns", "measuredRuns", "outputTokenLimit", "requiredPowerSource", "minimumBatteryLevelPercent"],
+      "properties": {
+        "requiredPowerSource": { "const": "unplugged" },
+        "minimumBatteryLevelPercent": { "const": 50 }
+      }
+    },
+    "device": { "type": "object", "required": ["batteryState", "batteryLevelPercent", "lowPowerModeEnabled"] },
+    "eligibility": { "type": "object", "required": ["sessionValid", "officialLeaderboardEligible", "reasonCodes"] },
+    "sessions": { "type": "array", "minItems": 1 }
+  }
+}

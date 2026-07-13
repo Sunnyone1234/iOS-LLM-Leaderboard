@@ -1,8 +1,14 @@
 # Benchmark Framework v1
 
+> Framework v1 remains the accepted result format during migration. The
+> workload-centric [Framework v2 Architecture](benchmark-framework-v2.md) is
+> now the design target for Suite B.
+
 Benchmark Framework v1 defines the canonical structure for iOS-LLM-Leaderboard benchmark tasks, results, validation rules, and documentation conventions.
 
-This framework is documentation-first. It does not define benchmark runners, evaluation engines, or official result automation.
+This framework is documentation-first. A non-official physical-iPhone Suite B
+pilot runner now exists, but it does not make Framework v1 an automated or
+official benchmark standard.
 
 ## Goals
 

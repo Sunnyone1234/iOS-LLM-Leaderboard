@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YizeSun/iOS-LLM-Leaderboard/schemas/suite-b-context-assistance-bundle-0.1.schema.json",
+  "title": "Suite B Context Assistance Bundle 0.1",
+  "type": "object",
+  "required": ["schemaVersion", "resultID", "createdAt", "officialResultEligible", "workloadID", "workloadVersion", "documentSHA256", "questionSHA256", "pointOrder", "outputTokenLimit", "model", "runtime", "device", "modelPreparation", "points"],
+  "properties": {
+    "schemaVersion": { "const": "suite-b-context-assistance-bundle-0.1" },
+    "resultID": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "officialResultEligible": { "const": false },
+    "workloadID": { "const": "b-ux-002-context-assistance" },
+    "workloadVersion": { "const": "0.2.0-pilot" },
+    "documentSHA256": { "const": "e13b4b66f137ac415bf525898f0b111d5d493d47a0a227164bba6e08f38674b4" },
+    "questionSHA256": { "const": "86aecb086f2f2d9097b9464825249359bf08d6dc413c059756d2f850ba05f84b" },
+    "pointOrder": { "const": [1024, 2048] },
+    "outputTokenLimit": { "const": 128 },
+    "model": { "type": "object" },
+    "runtime": { "type": "object" },
+    "device": { "type": "object" },
+    "modelPreparation": { "type": "object" },
+    "points": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["targetInputTokens", "fixtureSHA256", "paddingRepetitions", "successfulMeasuredRuns", "answerContractPassingRuns", "uxPerformanceEligible", "timingEvidenceRetained", "medianPipelineTTFTMilliseconds", "medianUserVisibleTTFTMilliseconds", "medianRequestCompletionMilliseconds", "medianPeakMemoryMegabytes", "finalThermalState", "attempts"],
+        "properties": {
+          "timingEvidenceRetained": { "const": true },
+          "attempts": {
+            "type": "array",
+            "minItems": 6,
+            "maxItems": 6,
+            "items": {
+              "type": "object",
+              "required": ["runIndex", "role", "outcome", "promptTokenCount", "outputTokenCount", "stopReason", "visibleText", "answerContract", "answerEligible", "thermalStateBefore", "thermalStateAfter", "metrics", "tokenEvents"]
+            }
+          }
+        }
+      }
+    }
+  }
+}

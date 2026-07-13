@@ -2,6 +2,15 @@
 
 Use this guide when submitting a local model or runtime result from iPhone, iPad, or Mac.
 
+This is a Framework v1 draft workflow. Results collected before Suite B
+workloads, runner, and evidence rules are frozen must remain non-official and
+must not enter a performance ranking.
+
+For current App-generated pilot bundles, use
+`python3 scripts/validate_suite_b_bundle.py <bundle.json>`. A passing pilot
+validation confirms structure and supported metric recalculation only; it does
+not confer official or verified status.
+
 ## Steps
 
 1. Choose a fixed model, runtime, prompt, and device.
@@ -13,6 +22,11 @@ Use this guide when submitting a local model or runtime result from iPhone, iPad
 7. Add notes for unavailable metrics instead of inventing values.
 8. Confirm the JSON parses and follows `methodology/benchmark-result-specification.md`.
 9. Open a pull request with the completed JSON and reproduction notes.
+
+The physical-iPhone Benchmark App pilot now replaces these manual steps for its
+single MLX sustained-generation experiment. App-generated result bundles will
+be preferred after an official release because they can lock the
+benchmark release, workload, timing, and environment-capture behavior.
 
 ## Measurement Notes
 

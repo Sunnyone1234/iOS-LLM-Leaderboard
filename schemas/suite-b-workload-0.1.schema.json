@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YizeSun/iOS-LLM-Leaderboard/schemas/suite-b-workload-0.1.schema.json",
+  "title": "Suite B Workload Manifest 0.1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "workload_id",
+    "workload_version",
+    "status",
+    "category",
+    "title",
+    "scenario",
+    "official_result_eligible",
+    "input",
+    "output",
+    "measurement_mode",
+    "metric_set",
+    "primary_metrics"
+  ],
+  "properties": {
+    "schema_version": { "const": "suite-b-workload-0.1" },
+    "workload_id": { "type": "string", "pattern": "^b-(ux|pipe)-[0-9]{3}-[a-z0-9-]+$" },
+    "workload_version": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["design-draft", "validation-candidate", "pilot-validated", "pilot-mapped", "active", "deprecated"] },
+    "category": { "enum": ["user-experience", "pipeline"] },
+    "title": { "type": "string", "minLength": 1 },
+    "scenario": { "type": "string", "minLength": 1 },
+    "official_result_eligible": { "type": "boolean" },
+    "input": {
+      "type": "object",
+      "required": ["fixture_path", "sha256", "token_count_scope"],
+      "properties": {
+        "fixture_path": { "type": ["string", "null"] },
+        "sha256": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+        "token_count_scope": { "const": "post-chat-template-model-input" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "required": ["policy", "maximum_tokens"],
+      "properties": {
+        "policy": { "enum": ["natural-stop-with-limit", "fixed-limit-or-model-stop"] },
+        "maximum_tokens": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "measurement_mode": { "type": "string", "minLength": 1 },
+    "metric_set": { "const": "suite-b-metrics-0.1" },
+    "primary_metrics": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YizeSun/iOS-LLM-Leaderboard/schemas/suite-b-ux-bundle-0.1.schema.json",
+  "title": "Suite B User Experience Result Bundle 0.1",
+  "type": "object",
+  "required": ["schemaVersion", "resultID", "createdAt", "officialResultEligible", "plan", "workload", "measurementMode", "generationConfiguration", "model", "runtime", "device", "modelPreparation", "eligibility", "summary", "attempts"],
+  "properties": {
+    "schemaVersion": { "const": "suite-b-ux-bundle-0.1" },
+    "resultID": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "officialResultEligible": { "const": false },
+    "plan": {
+      "type": "object",
+      "required": ["id", "version", "promptSHA256", "warmupRuns", "measuredRuns", "outputTokenLimit", "v2ProfileMapping"]
+    },
+    "workload": {
+      "type": "object",
+      "required": ["id", "version", "category", "promptSHA256"]
+    },
+    "measurementMode": {
+      "type": "object",
+      "required": ["id", "timingBoundaryVersion", "pipelineTTFTStart", "pipelineTTFTEnd", "userVisibleTTFTAvailable"]
+    },
+    "generationConfiguration": {
+      "type": "object",
+      "required": ["samplingEnabled", "temperature", "thinkingMode", "chatTemplateIdentity", "outputTokenLimit"]
+    },
+    "model": { "type": "object" },
+    "runtime": { "type": "object" },
+    "device": { "type": "object" },
+    "modelPreparation": { "type": "object" },
+    "eligibility": { "type": "object" },
+    "summary": {
+      "type": "object",
+      "required": ["successfulMeasuredRuns", "failedMeasuredRuns", "modelInputTokens", "medianPipelineTTFTMilliseconds", "medianUserVisibleTTFTMilliseconds", "medianRequestCompletionMilliseconds", "finalThermalState"]
+    },
+    "attempts": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["runIndex", "role", "outcome", "promptTokenCount", "outputTokenCount", "stopReason", "visibleText", "thermalStateBefore", "thermalStateAfter", "metrics", "tokenEvents"]
+      }
+    }
+  }
+}

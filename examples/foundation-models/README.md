@@ -1,7 +1,17 @@
-# Apple Foundation Models Example
+# Apple Foundation Models Integration Recipes
 
-This directory is reserved for a future Apple Foundation Models starter integration.
+This directory is reserved for focused examples using public Apple Foundation
+Models APIs.
 
-The long-term goal is to document how Apple-provided model APIs can be evaluated for iOS app workflows when public APIs and platform support are available.
+Planned recipes should document:
 
-No implementation is included in this MVP.
+- platform and availability checks;
+- a minimal generation call;
+- streaming and cancellation where supported;
+- capability and device requirements;
+- the limits of comparing a closed system with open-weight runtimes;
+- app-visible measurements when token-level access is unavailable.
+
+The goal is to provide short integration recipes, not a complete starter app.
+
+No implementation is included yet.
