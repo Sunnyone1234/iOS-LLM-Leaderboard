@@ -1,4 +1,8 @@
-# Ship Deployment Profiles 1.0 RC1
+# Ship Deployment Profiles 1.0
+
+- Status: **Published**
+- Release: `ship-deployment-profiles@1.0.0`
+- Tag: `ship-1.0.0`
 
 ## Purpose
 
@@ -18,7 +22,7 @@ Power metric or infer support on an untested device.
 
 ## Status vocabulary
 
-Ship RC1 uses three evidence states:
+Ship 1.0 uses three evidence states:
 
 - **Verified**: directly supported by consistency-checked Power evidence or
   source metadata bound to that evidence.
@@ -30,9 +34,9 @@ Ship RC1 uses three evidence states:
 Absence of evidence is never reported as support. `Unknown` is not equivalent
 to unsupported; an unsupported claim would require explicit negative evidence.
 
-## RC1 evidence rules
+## 1.0 evidence rules
 
-A profile can enter RC1 only when:
+A profile can enter Ship 1.0 only when:
 
 1. its source is the published Power Benchmark 1.0 normalized dataset;
 2. every source row is Maintainer Reference evidence;
@@ -90,3 +94,6 @@ shasum -a 256 -c results/ship-1.0/SHA256SUMS
 The generator fails closed if the Power release is not official, source hashes
 change, evidence levels regress, the six-result/three-artifact identity changes,
 or the verified loader and token-event conditions are absent.
+
+Ship 1.0 was promoted from `1.0.0-rc.1` without changing the evidence matrix,
+claim states, integration recipe boundary, or any Power benchmark contract.

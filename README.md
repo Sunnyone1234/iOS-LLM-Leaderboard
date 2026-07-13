@@ -53,7 +53,7 @@ priority.
 | Track | Status | Question | Current benchmark-namespace relationship |
 | --- | --- | --- | --- |
 | Power | Phase 1 product | Which embedded configurations provide useful, acceptable on-device intelligence? | Suite B measurements now; Suite D may add a later quality gate |
-| Ship | Phase 1 product | Which tested configurations are practical to integrate and deploy? | Ship 1.0 RC1 profiles reuse published Power 1.0 evidence; Suite E may add later integration evidence |
+| Ship | Phase 1 product | Which tested configurations are practical to integrate and deploy? | Published Ship 1.0 profiles reuse Power 1.0 evidence; Suite E may add later integration evidence |
 | Build | Phase 2 Research Track | Can an AI system deliver a complete iOS application? | Suite A and Suite C retained for compatibility, not Phase 1 priority |
 
 Phase 1 success is based entirely on trustworthy Power + Ship evidence. No
@@ -88,9 +88,9 @@ Maintainer Reference evidence; the five primary-metric-eligible rows are active
 in the official workload-specific ranking. See the
 [`1.0.0` GitHub Release](https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/1.0.0).
 
-## Current Ship Candidate: Deployment Profiles 1.0 RC1
+## Current Ship Release: Deployment Profiles 1.0
 
-Ship RC1 converts the three exact tested Power configurations into versioned,
+Ship 1.0 converts the three exact tested Power configurations into versioned,
 machine-readable deployment profiles. It reuses all six Maintainer Reference
 results, changes no benchmark result or App code, and defines no deployment
 score. Claims not established by current evidence remain `Unknown`.
@@ -98,7 +98,8 @@ score. Claims not established by current evidence remain `Unknown`.
 See the [Ship evidence method](docs/ship-deployment-profiles.md),
 [deployment profile table](results/ship-1.0/PROFILES.md),
 [machine-readable data](results/ship-1.0/deployment-profiles.json), and
-[MLX Swift integration recipe](examples/mlx-swift/README.md).
+[MLX Swift integration recipe](examples/mlx-swift/README.md). The formal
+release is tagged [`ship-1.0.0`](https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/ship-1.0.0).
 
 The completed Power + Ship Pilot v0.1 matrix is retained as historical
 foundation evidence. It will not be published as a tagged release and its

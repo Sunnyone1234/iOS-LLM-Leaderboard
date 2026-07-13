@@ -1,9 +1,10 @@
 # MLX Swift Integration Recipe
 
 [`PinnedMLXModel.swift`](PinnedMLXModel.swift) is the focused integration recipe
-for the three Ship 1.0 RC1 reference profiles. It mirrors the revision-pinned
-loader, tokenizer adapter, and token-stream boundary used by the tested
-benchmark App without requiring an app to adopt the benchmark runner.
+for the three published Ship 1.0 reference profiles. It mirrors the
+revision-pinned loader, tokenizer adapter, and token-stream boundary used by
+the tested benchmark App without requiring an app to adopt the benchmark
+runner.
 
 ## Exact package versions
 

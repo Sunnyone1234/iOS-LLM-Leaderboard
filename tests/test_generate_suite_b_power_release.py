@@ -107,6 +107,7 @@ class PowerReleaseGenerationTests(unittest.TestCase):
         self.assertIn("No Ship score", app)
         self.assertIn('results/ship-1.0/SHA256SUMS', app)
         self.assertIn('results/ship-1.0/PROFILES.md', app)
+        self.assertIn("Ship 1.0 · Published evidence profiles", app)
         self.assertIn('<span id="release-label">Power 1.0</span>', page)
 
 

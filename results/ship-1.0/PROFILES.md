@@ -1,4 +1,4 @@
-# Ship Deployment Profiles 1.0 RC1
+# Ship Deployment Profiles 1.0
 
 These profiles translate published Power 1.0 evidence into deployment guidance. They define no Ship score and make no App Store, privacy, offline, minimum-device, or legal conclusion.
 

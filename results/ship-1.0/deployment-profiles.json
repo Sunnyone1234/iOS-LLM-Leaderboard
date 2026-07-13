@@ -789,11 +789,19 @@
       "profileID": "ship-qwen3-4b-3bit-mlx-swift-lm-3.31.4-iphone15-3"
     }
   ],
-  "schemaVersion": "1.0.0-rc.1",
+  "publication": {
+    "authorized": true,
+    "authorizedAt": "2026-07-13T14:18:16Z",
+    "maintainer": "YizeSun",
+    "promotionMethod": "exact-rc1-promotion-without-evidence-change",
+    "sourceCandidateVersion": "1.0.0-rc.1",
+    "tag": "ship-1.0.0"
+  },
+  "schemaVersion": "1.0.0",
   "shipRelease": {
     "id": "ship-deployment-profiles",
-    "status": "release-candidate",
-    "version": "1.0.0-rc.1"
+    "status": "published",
+    "version": "1.0.0"
   },
   "sourcePowerPublicationStatus": "published",
   "sourcePowerRelease": {

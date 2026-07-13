@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate Ship RC1 deployment profiles from published Power 1.0 evidence."""
+"""Generate published Ship 1.0 deployment profiles from Power 1.0 evidence."""
 
 from __future__ import annotations
 
@@ -15,8 +15,16 @@ DEFAULT_POWER = ROOT / "results/suite-b-power-1.0/normalized-results.json"
 DEFAULT_OUTPUT = ROOT / "results/ship-1.0"
 SHIP_RELEASE = {
     "id": "ship-deployment-profiles",
-    "version": "1.0.0-rc.1",
-    "status": "release-candidate",
+    "version": "1.0.0",
+    "status": "published",
+}
+SHIP_PUBLICATION = {
+    "authorized": True,
+    "authorizedAt": "2026-07-13T14:18:16Z",
+    "maintainer": "YizeSun",
+    "tag": "ship-1.0.0",
+    "promotionMethod": "exact-rc1-promotion-without-evidence-change",
+    "sourceCandidateVersion": "1.0.0-rc.1",
 }
 RECIPE_PATH = "examples/mlx-swift/PinnedMLXModel.swift"
 METHOD_PATH = "docs/ship-deployment-profiles.md"
@@ -231,14 +239,14 @@ def profile_id(model: dict[str, Any], runtime: dict[str, Any], device: dict[str,
 
 def build_dataset(power_path: Path = DEFAULT_POWER) -> dict[str, Any]:
     power = load_json(power_path)
-    require(power.get("benchmarkRelease") == {"id": "suite-b-power", "version": "1.0.0"}, "Ship RC1 requires Power 1.0")
+    require(power.get("benchmarkRelease") == {"id": "suite-b-power", "version": "1.0.0"}, "Ship 1.0 requires Power 1.0")
     publication = power.get("publication", {})
     require(publication.get("officialResultEligible") is True, "Power results are not official")
     require(publication.get("rankingAuthorized") is True, "Power ranking is not authorized")
     require(publication.get("publicationAuthorized") is True, "Power publication is not authorized")
     rows = power.get("results")
     require(isinstance(rows, list) and len(rows) == 6, "expected the six-result Power 1.0 matrix")
-    require(all(row.get("evidence", {}).get("level") == "maintainer-reference" for row in rows), "Ship RC1 requires Maintainer Reference evidence")
+    require(all(row.get("evidence", {}).get("level") == "maintainer-reference" for row in rows), "Ship 1.0 requires Maintainer Reference evidence")
 
     grouped: dict[str, list[dict[str, Any]]] = {}
     for row in rows:
@@ -302,8 +310,9 @@ def build_dataset(power_path: Path = DEFAULT_POWER) -> dict[str, Any]:
         )
 
     return {
-        "schemaVersion": "1.0.0-rc.1",
+        "schemaVersion": "1.0.0",
         "shipRelease": SHIP_RELEASE,
+        "publication": SHIP_PUBLICATION,
         "sourcePowerRelease": {
             "id": power["benchmarkRelease"]["id"],
             "version": power["benchmarkRelease"]["version"],
@@ -331,7 +340,7 @@ def format_bytes(value: int) -> str:
 
 def render_profiles(dataset: dict[str, Any]) -> str:
     lines = [
-        "# Ship Deployment Profiles 1.0 RC1",
+        "# Ship Deployment Profiles 1.0",
         "",
         "These profiles translate published Power 1.0 evidence into deployment guidance. They define no Ship score and make no App Store, privacy, offline, minimum-device, or legal conclusion.",
         "",
@@ -370,6 +379,40 @@ def render_profiles(dataset: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def render_release_notes(dataset: dict[str, Any]) -> str:
+    publication = dataset["publication"]
+    return "\n".join(
+        [
+            "# Ship Deployment Profiles 1.0 Release Notes",
+            "",
+            "Ship Deployment Profiles 1.0 is the published deployment-guidance layer for the three exact configurations represented by Power Benchmark 1.0.",
+            "",
+            "## Release identity",
+            "",
+            f"- Release: `{dataset['shipRelease']['id']}@{dataset['shipRelease']['version']}`",
+            f"- Status: `{dataset['shipRelease']['status']}`",
+            f"- Tag: `{publication['tag']}`",
+            f"- Authorized at: `{publication['authorizedAt']}` by `{publication['maintainer']}`",
+            f"- Promotion: `{publication['promotionMethod']}` from `{publication['sourceCandidateVersion']}`",
+            "",
+            "## Published scope",
+            "",
+            "- three exact model, runtime, device, and OS deployment profiles;",
+            "- six Maintainer Reference Power results, including five active ranked results;",
+            "- deterministic machine-readable profiles and SHA-256 integrity manifest;",
+            "- one revision-pinned MLX Swift integration recipe; and",
+            "- a sortable public Ship profile view.",
+            "",
+            "The final promotion changes release identity and publication status only. It does not change Power evidence, model artifacts, measurements, claim states, the benchmark App, protocols, schemas, workloads, or rankings.",
+            "",
+            "## Evidence boundary",
+            "",
+            "Ship 1.0 defines no deployment score. Offline operation, cancellation, bundled distribution, minimum supported hardware, App Store readiness, and privacy compliance remain `Unknown` until direct evidence exists.",
+            "",
+        ]
+    )
+
+
 def write_outputs(
     output: Path = DEFAULT_OUTPUT,
     power_path: Path = DEFAULT_POWER,
@@ -378,13 +421,16 @@ def write_outputs(
     output.mkdir(parents=True, exist_ok=True)
     profiles = output / "deployment-profiles.json"
     table = output / "PROFILES.md"
+    notes = output / "RELEASE-NOTES.md"
     readme = output / "README.md"
     profiles.write_text(json.dumps(dataset, indent=2, sort_keys=True) + "\n")
     table.write_text(render_profiles(dataset))
+    notes.write_text(render_release_notes(dataset))
     readme.write_text(
-        "# Ship Deployment Profiles 1.0 RC1\n\n"
-        "This release candidate is generated from the published, immutable Power 1.0 evidence matrix. It adds deployment guidance and a tested-runtime integration recipe without changing Power results, protocols, schemas, workloads, rankings, or the benchmark App.\n\n"
+        "# Ship Deployment Profiles 1.0\n\n"
+        "This published release is generated from the immutable Power 1.0 evidence matrix. It adds deployment guidance and a tested-runtime integration recipe without changing Power results, protocols, schemas, workloads, rankings, or the benchmark App.\n\n"
         "Ship is profile-based and has no aggregate score. `Unknown` is preserved wherever the current evidence cannot support a claim.\n\n"
+        "Release tag: `ship-1.0.0`.\n\n"
         "Regenerate and verify from the repository root:\n\n"
         "```bash\n"
         "python3 scripts/generate_ship_profiles.py\n"
@@ -394,6 +440,7 @@ def write_outputs(
     checksum_paths = [
         ("results/ship-1.0/deployment-profiles.json", profiles),
         ("results/ship-1.0/PROFILES.md", table),
+        ("results/ship-1.0/RELEASE-NOTES.md", notes),
         ("results/ship-1.0/README.md", readme),
         ("docs/ship-deployment-profiles.md", ROOT / METHOD_PATH),
         (RECIPE_PATH, ROOT / RECIPE_PATH),

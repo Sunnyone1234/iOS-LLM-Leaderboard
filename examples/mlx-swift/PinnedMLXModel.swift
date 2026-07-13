@@ -4,7 +4,7 @@ import MLXLLM
 import MLXLMCommon
 import Tokenizers
 
-/// Exact model artifacts represented by the Ship 1.0 RC1 reference profiles.
+/// Exact model artifacts represented by the published Ship 1.0 profiles.
 enum TestedShipProfile: String, CaseIterable, Sendable {
     case qwen3_0_6B
     case qwen3_1_7B

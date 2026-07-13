@@ -18,7 +18,15 @@ ROOT = Path(__file__).resolve().parents[1]
 class ShipProfileGenerationTests(unittest.TestCase):
     def test_profiles_reuse_published_power_without_a_score(self) -> None:
         dataset = build_dataset()
-        self.assertEqual(dataset["shipRelease"]["version"], "1.0.0-rc.1")
+        self.assertEqual(dataset["schemaVersion"], "1.0.0")
+        self.assertEqual(dataset["shipRelease"]["version"], "1.0.0")
+        self.assertEqual(dataset["shipRelease"]["status"], "published")
+        self.assertTrue(dataset["publication"]["authorized"])
+        self.assertEqual(dataset["publication"]["tag"], "ship-1.0.0")
+        self.assertEqual(
+            dataset["publication"]["promotionMethod"],
+            "exact-rc1-promotion-without-evidence-change",
+        )
         self.assertEqual(dataset["sourcePowerRelease"]["version"], "1.0.0")
         self.assertEqual(dataset["profileCount"], 3)
         self.assertFalse(dataset["hasDeploymentScore"])
@@ -51,7 +59,13 @@ class ShipProfileGenerationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary) / "ship"
             write_outputs(output)
-            for name in ("deployment-profiles.json", "PROFILES.md", "README.md", "SHA256SUMS"):
+            for name in (
+                "deployment-profiles.json",
+                "PROFILES.md",
+                "RELEASE-NOTES.md",
+                "README.md",
+                "SHA256SUMS",
+            ):
                 self.assertEqual((output / name).read_bytes(), (DEFAULT_OUTPUT / name).read_bytes(), name)
 
     def test_tampered_power_publication_is_rejected(self) -> None:

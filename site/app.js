@@ -163,7 +163,7 @@ function renderBoard() {
   elements.contextDescription.textContent = config.description;
   elements.rowCount.textContent = `${rows.length} tested configuration${rows.length === 1 ? "" : "s"}`;
   elements.footerStatus.textContent = config.kind === "ship"
-    ? "Ship 1.0 RC1 · Evidence profiles · No deployment score"
+    ? "Ship 1.0 · Published evidence profiles · No deployment score"
     : "Power 1.0 · Official rankings within each workload";
   elements.footerChecksums.href = config.kind === "ship"
     ? "results/ship-1.0/SHA256SUMS"
