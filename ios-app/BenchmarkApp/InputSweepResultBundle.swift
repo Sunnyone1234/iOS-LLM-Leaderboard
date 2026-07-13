@@ -42,8 +42,12 @@ struct InputSweepResultBundle: Codable, Sendable {
                 switch attempt.outcome {
                 case .completed(let value):
                     generation = value; outcome = "completed"; error = nil
-                case .failed(let message):
+                case .failed(let message, _):
                     generation = nil; outcome = "failed"; error = message
+                case .cancelled(_, let partial):
+                    generation = partial; outcome = "cancelled"; error = "cancelled"
+                case .outOfMemory(_, let partial):
+                    generation = partial; outcome = "outOfMemory"; error = "outOfMemory"
                 case .notRun(let reason):
                     generation = nil; outcome = "notRun"; error = reason
                 }

@@ -1,6 +1,39 @@
 import Foundation
 
 actor ResultStore {
+    func save(_ result: PowerResultBundle) throws -> URL {
+        try result.validateForExport()
+        let directory = try FileManager.default.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        ).appending(path: "PowerBenchmarkResults", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(
+            at: directory,
+            withIntermediateDirectories: true
+        )
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        let timestamp = formatter.string(from: result.createdAt)
+            .replacingOccurrences(of: ":", with: "-")
+        let artifact = result.model.artifactID.lowercased()
+            .replacingOccurrences(of: "/", with: "-")
+            .replacingOccurrences(of: " ", with: "-")
+        let device = result.device.machineIdentifier.lowercased()
+            .replacingOccurrences(of: ",", with: "-")
+        let url = directory.appending(
+            path: "\(timestamp)_\(result.execution.workloadID)_\(artifact)_\(device)_\(result.resultID.uuidString.lowercased().prefix(8)).json"
+        )
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = [
+            .prettyPrinted, .sortedKeys, .withoutEscapingSlashes,
+        ]
+        try encoder.encode(result).write(to: url, options: .atomic)
+        return url
+    }
+
     func save(_ submission: CommunitySubmissionBundle) throws -> URL {
         let directory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
             .appending(path: "BenchmarkSubmissions", directoryHint: .isDirectory)

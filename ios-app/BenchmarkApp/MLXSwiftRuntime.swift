@@ -397,6 +397,11 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
             stopReason: completionInfo.stopReason.runtimeStopReason,
             promptTimeSeconds: completionInfo.promptTime,
             generateTimeSeconds: completionInfo.generateTime,
+            generationStartNanoseconds: requestStart.duration(to: generationStart)
+                .nanoseconds,
+            promptEvaluationNanoseconds: Self.nanoseconds(
+                completionInfo.promptTime
+            ),
             userVisibleTTFTNanoseconds: preparedPlan.measurementMode
                 .userVisibleTtftAvailable
                 ? renderabilityTrace?.firstRenderableDecodedAtNanoseconds
@@ -410,6 +415,13 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
                 : nil,
             renderabilityTrace: renderabilityTrace
         )
+    }
+
+    private static func nanoseconds(_ seconds: Double) -> UInt64? {
+        guard seconds.isFinite, seconds > 0 else { return nil }
+        let value = seconds * 1_000_000_000
+        guard value <= Double(UInt64.max) else { return nil }
+        return UInt64(value.rounded())
     }
 }
 

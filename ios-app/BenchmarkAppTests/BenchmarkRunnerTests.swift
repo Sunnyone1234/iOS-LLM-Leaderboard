@@ -79,16 +79,16 @@ final class BenchmarkRunnerTests: XCTestCase {
     }
 
     func testCriticalThermalStatePreventsRemainingGenerations() async {
-        let runtime = FixtureRuntime()
-        let states = ThermalSequence([
-            "nominal", "nominal", // warm-up
-            "nominal", "critical", // first measured run reaches critical
-            "critical", "nominal", "nominal", "nominal",
-        ])
+        let thermalState = ThermalStateBox("nominal")
+        let runtime = FixtureRuntime { generation in
+            if generation == 1 {
+                thermalState.set("critical")
+            }
+        }
         let session = await BenchmarkRunner(
             runtime: runtime,
             procedure: pilotProcedure,
-            thermalState: { states.next() }
+            thermalState: { thermalState.value }
         ).run(prompt: "fixed")
 
         XCTAssertEqual(session.attempts.count, 6)
@@ -388,19 +388,24 @@ final class BenchmarkRunnerTests: XCTestCase {
     }
 }
 
-private final class ThermalSequence: @unchecked Sendable {
+private final class ThermalStateBox: @unchecked Sendable {
     private let lock = NSLock()
-    private var states: [String]
+    private var state: String
 
-    init(_ states: [String]) {
-        self.states = states
+    init(_ state: String) {
+        self.state = state
     }
 
-    func next() -> String {
+    var value: String {
         lock.lock()
         defer { lock.unlock() }
-        guard !states.isEmpty else { return "critical" }
-        return states.removeFirst()
+        return state
+    }
+
+    func set(_ value: String) {
+        lock.lock()
+        state = value
+        lock.unlock()
     }
 }
 
@@ -412,9 +417,14 @@ private actor FixtureRuntime: LanguageModelRuntime {
     nonisolated let identity = "fixture-runtime"
     private(set) var generateCount = 0
     private let failingGeneration: Int?
+    private let afterGeneration: @Sendable (Int) -> Void
 
-    init(failingGeneration: Int? = nil) {
+    init(
+        failingGeneration: Int? = nil,
+        afterGeneration: @escaping @Sendable (Int) -> Void = { _ in }
+    ) {
         self.failingGeneration = failingGeneration
+        self.afterGeneration = afterGeneration
     }
 
     func generate(
@@ -435,6 +445,7 @@ private actor FixtureRuntime: LanguageModelRuntime {
         await onToken(
             RuntimeToken(index: 1, tokenID: 2, elapsedNanoseconds: 2_000)
         )
+        afterGeneration(generation)
         return RuntimeGenerationResult(
             promptTokenCount: 1,
             outputTokenCount: 2,

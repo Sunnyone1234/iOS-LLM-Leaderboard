@@ -1,8 +1,8 @@
 {
   "plan_schema_version": "0.3",
   "plan_id": "b-pipe-001-validation",
-  "plan_version": "0.2.0-pilot",
-  "status": "pilot-validated",
+  "plan_version": "1.0.0-rc.1",
+  "status": "f4-reference-app-candidate",
   "suite": "Suite B: On-device Performance",
   "framework_version": "v2-design-draft",
   "official_result_eligible": false,
@@ -44,8 +44,8 @@
   },
   "workload": {
     "workload_id": "b-pipe-001-sustained-generation",
-    "workload_version": "0.2.0-pilot",
-    "v2_profile_mapping": "b-pipe-001-sustained-generation@0.2.0-pilot",
+    "workload_version": "1.0.0-rc.1",
+    "v2_profile_mapping": "b-pipe-001-sustained-generation@1.0.0-rc.1",
     "category": "pipeline",
     "prompt_path": "ios-app/workloads/suite-b-pilot-001-prompt.txt",
     "prompt_sha256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
@@ -66,9 +66,9 @@
     "chat_template_identity": "artifact-tokenizer-config",
     "include_stop_token_in_raw_events": false,
     "stop_conditions": ["model-eos", "output-token-limit", "cancellation", "error"],
-    "context_policy": "new-context-for-each-generation",
+    "context_policy": "fresh-conversation-per-attempt",
     "model_load_policy": "load-once-before-warmup",
-    "kv_cache_policy": "new-cache-for-each-generation",
+    "kv_cache_policy": "fresh-kv-cache-per-attempt",
     "network_policy_during_measurement": "offline"
   },
   "measurement_mode": {

@@ -228,7 +228,9 @@ struct SuiteBResultBundle: Codable, Sendable {
             let error: String?
             switch attempt.outcome {
             case .completed(let value): generation = value; outcome = "completed"; error = nil
-            case .failed(let message): generation = nil; outcome = "failed"; error = message
+            case .failed(let message, _): generation = nil; outcome = "failed"; error = message
+            case .cancelled(_, let partial): generation = partial; outcome = "cancelled"; error = "cancelled"
+            case .outOfMemory(_, let partial): generation = partial; outcome = "outOfMemory"; error = "outOfMemory"
             case .notRun(let reason): generation = nil; outcome = "notRun"; error = reason
             }
             let contract = includeQuality && generation != nil
