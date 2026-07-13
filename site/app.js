@@ -1,5 +1,4 @@
 const DATA_URL = "results/suite-b-pilot-v0.1/normalized-results.json";
-const REPORT_URL = "results/suite-b-pilot-v0.1/pipeline-report.json";
 
 const state = {
   data: null,
@@ -91,17 +90,13 @@ const elements = {
 
 async function loadEvidence() {
   try {
-    const [evidenceResponse, reportResponse] = await Promise.all([
-      fetch(DATA_URL, { cache: "no-store" }),
-      fetch(REPORT_URL, { cache: "no-store" }),
-    ]);
+    const evidenceResponse = await fetch(DATA_URL, { cache: "no-store" });
     if (!evidenceResponse.ok) throw new Error(`Evidence request failed: ${evidenceResponse.status}`);
-    if (!reportResponse.ok) throw new Error(`Pipeline report request failed: ${reportResponse.status}`);
-    const [data, report] = await Promise.all([evidenceResponse.json(), reportResponse.json()]);
+    const data = await evidenceResponse.json();
     if (!Array.isArray(data.results) || data.results.length === 0) throw new Error("Evidence is empty");
     state.data = data;
     populateFilters(data.results);
-    renderReleaseSummary(data, report);
+    renderReleaseSummary(data);
     renderBoard();
   } catch (error) {
     console.error(error);
@@ -121,13 +116,12 @@ function uniqueBy(items, key) {
   return [...new Map(items.map(item => [key(item), item])).values()];
 }
 
-function renderReleaseSummary(data, report) {
+function renderReleaseSummary(data) {
   const eligibleRows = data.results.filter(row => row.pilotEligibility.eligible);
   const configurations = new Set(eligibleRows.map(row => row.configuration.model.artifactID));
   const devices = uniqueBy(eligibleRows.map(row => row.configuration.device), item => item.machineIdentifier);
   document.querySelector("#summary-configurations").textContent = String(configurations.size);
   document.querySelector("#summary-results").textContent = String(data.eligibleResultCount ?? eligibleRows.length);
-  document.querySelector("#summary-rejected").textContent = String(report.rejectedResultCount ?? "—");
   document.querySelector("#summary-device").textContent = devices.map(device => device.displayName).join(", ");
 }
 

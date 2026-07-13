@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="site/styles.css?v=2">
+  <link rel="stylesheet" href="site/styles.css?v=3">
 </head>
 <body>
   <a class="skip-link" href="#leaderboard">Skip to leaderboard</a>
@@ -26,20 +26,15 @@
   </header>
 
   <main class="page-shell" id="leaderboard">
-    <section class="page-intro" aria-labelledby="leaderboard-title">
-      <div>
-        <div class="release-line">
-          <span class="release-label">Power + Ship Pilot v0.1</span>
-          <span>Physical-device results</span>
-        </div>
-        <h1 id="leaderboard-title">Power leaderboard</h1>
-        <p>Compare on-device model configurations tested under the same workloads. Select a view and sort any measured column.</p>
-      </div>
-      <div class="release-summary" aria-label="Release summary">
+    <section class="leaderboard-header" aria-labelledby="leaderboard-title">
+      <h1 id="leaderboard-title">Power benchmark</h1>
+      <p>On-device LLM performance measured on physical iPhones.</p>
+      <div class="benchmark-meta" aria-label="Benchmark release metadata">
+        <span>Pilot v0.1</span>
         <span><strong id="summary-configurations">—</strong> configurations</span>
-        <span><strong id="summary-results">—</strong> eligible results</span>
-        <span><strong id="summary-rejected">—</strong> rejected</span>
+        <span><strong id="summary-results">—</strong> results</span>
         <span id="summary-device">Loading device</span>
+        <a href="results/suite-b-pilot-v0.1/RELEASE-NOTES.md">Release notes</a>
       </div>
     </section>
 
@@ -93,20 +88,14 @@
       </div>
     </section>
 
-    <aside class="scope-note" aria-label="How to read this leaderboard">
-      <strong>How to read this leaderboard</strong>
-      <p>Ranks apply only within the selected workload. They do not combine responsiveness, generation, memory, thermal behavior, or deployment facts into a universal score.</p>
-      <div>
-        <a href="results/suite-b-pilot-v0.1/RELEASE-NOTES.md">Release notes</a>
-        <a href="results/suite-b-pilot-v0.1/SHA256SUMS">Checksums</a>
-        <a href="results/suite-b-pilot-v0.1/SHIP-EVIDENCE.md">Ship evidence</a>
-      </div>
-    </aside>
   </main>
 
   <footer class="site-footer page-shell">
-    <span>Pilot evidence only · Not an official Suite B ranking</span>
-    <span>Every row links to its raw physical-device result.</span>
+    <span>Pilot evidence only · Rankings apply within each workload.</span>
+    <div>
+      <a href="results/suite-b-pilot-v0.1/SHA256SUMS">Checksums</a>
+      <a href="results/suite-b-pilot-v0.1/SHIP-EVIDENCE.md">Ship evidence</a>
+    </div>
   </footer>
 
   <dialog class="detail-dialog" id="detail-dialog">
@@ -116,6 +105,6 @@
     </div>
   </dialog>
 
-  <script type="module" src="site/app.js?v=2"></script>
+  <script type="module" src="site/app.js?v=3"></script>
 </body>
 </html>
