@@ -3,10 +3,8 @@
 ## Status
 
 Power Benchmark 1.0 Foundation is complete. Its frozen contracts, physical
-device matrix, and governance package now support a Power 1.0 final review
-candidate. The candidate is not yet an official benchmark release, does not
-authorize official results, and must not be tagged or published until the
-maintainer approves the final package.
+device matrix, and governance package support the published Power Benchmark
+1.0 release and workload-specific official ranking.
 
 The completed Power + Ship Pilot v0.1 matrix is retained as historical
 foundation evidence. The Pilot proved that the App, raw-result, validation,
@@ -183,13 +181,14 @@ Complete and merged.
 - Define acceptance, review, reproduction, correction, withdrawal,
   deprecation, and release-history rules.
 - Produce Power Benchmark 1.0 RC1 for review.
-- Publish and tag 1.0 only after explicit maintainer approval.
+- Publish and tag 1.0 only after explicit maintainer approval. Complete.
 
 F6 adds a strict two-file submission package, explicit
 contributor declarations and conflict disclosure, semantic intake validation,
 hash-bound evidence transitions, independent reproduction checks, maintainer
 authority, conduct, correction, withdrawal, deprecation, and release-history
-rules. The merged RC publication and ranking flags remain false.
+rules. The immutable RC publication and ranking flags remain false; Power 1.0
+records its later authorization in a distinct final manifest.
 
 The complete RC gate and its original approval decisions are recorded in
 [`power-benchmark-1.0-rc1-review.md`](power-benchmark-1.0-rc1-review.md).
@@ -233,8 +232,9 @@ Power Benchmark 1.0 is publishable only when all of the following are true:
 - the final package passes integrity, privacy, documentation, validator, App,
   and reproducibility review.
 
-Until every gate passes, repository results and the interactive leaderboard
-remain explicitly non-official evidence.
+Every listed gate passed for Power 1.0. Historical Pilot and RC results retain
+their non-official source identities; the final adoption manifest records which
+immutable RC evidence is active in the Power 1.0 official ranking.
 
 ## Change Control
 

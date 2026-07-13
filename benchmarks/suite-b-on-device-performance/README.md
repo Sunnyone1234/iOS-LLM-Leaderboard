@@ -9,7 +9,7 @@ metric.
 - Framework v1 remains the repository-wide accepted format.
 - Suite B Protocol v2 remains the design umbrella.
 - `suite-b-power@1.0.0-rc.1` is the frozen, non-official source candidate.
-- `suite-b-power@1.0.0` is assembled as a final review candidate through exact,
+- `suite-b-power@1.0.0` is the published Power release. It uses exact,
   hash-bound RC adoption without rerunning or mutating raw evidence.
 - `b-ux-001-short-interaction` and `b-pipe-001-sustained-generation` are the
   only Power 1.0 workload candidates.
@@ -20,9 +20,9 @@ metric.
 - F5 physical-device verification is complete for the declared three-model,
   one-runtime, one-device matrix.
 - F6 submission and governance contracts are complete and merged.
-- Five of the six adopted physical-device results have a candidate-eligible
-  primary metric; official results, default ranking, release, and tagging
-  remain unauthorized until final maintainer approval.
+- All six adopted physical-device results are Maintainer Reference evidence;
+  five have an eligible primary metric and are active in the default
+  workload-specific ranking.
 
 ## v2 Structure
 
@@ -44,7 +44,7 @@ Read:
 - [Power 1.0 RC1 submission guide](../../docs/power-benchmark-1.0-submission.md)
 - [Power 1.0 governance](../../docs/power-benchmark-1.0-governance.md)
 - [Power 1.0 finalization](../../docs/power-benchmark-1.0-finalization.md)
-- [Power 1.0 final review leaderboard](../../results/suite-b-power-1.0/LEADERBOARD.md)
+- [Power 1.0 official leaderboard](../../results/suite-b-power-1.0/LEADERBOARD.md)
 - [Release history](releases/RELEASE-HISTORY.md)
 - [Suite B Metric Definitions](metrics.md)
 - [Framework v2 Architecture](../../methodology/benchmark-framework-v2.md)

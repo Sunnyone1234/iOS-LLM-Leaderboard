@@ -1,9 +1,7 @@
-# Power Benchmark 1.0 Final Review Candidate
+# Power Benchmark 1.0
 
 This leaderboard is generated only from the six immutable F5 physical-device results.
 The source JSON remains `suite-b-power@1.0.0-rc.1`; Power 1.0 adopts it by hash because the App and protocol semantics are unchanged.
-
-> Final publication and ranking are not active until the maintainer approves the complete package.
 
 ## Responsiveness
 

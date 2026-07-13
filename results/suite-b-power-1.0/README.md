@@ -2,7 +2,7 @@
 
 This directory is generated from immutable F5 RC1 evidence through the hash-bound no-rerun adoption manifest.
 
-Until the final publication flags are approved, these files are a review candidate and do not activate an official ranking or release tag.
+These files form the published Power Benchmark 1.0 package and activate the workload-specific official ranking.
 
 Regenerate and verify from the repository root:
 

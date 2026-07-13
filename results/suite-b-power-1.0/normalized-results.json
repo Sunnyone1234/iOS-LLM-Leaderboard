@@ -1,5 +1,5 @@
 {
-  "activeRankedResultCount": 0,
+  "activeRankedResultCount": 5,
   "benchmarkRelease": {
     "id": "suite-b-power",
     "version": "1.0.0"
@@ -8,11 +8,11 @@
   "configurationCount": 3,
   "generatedAt": "2026-07-13T13:26:36Z",
   "publication": {
-    "officialResultEligible": false,
-    "publicationAuthorized": false,
-    "rankingAuthorized": false,
-    "status": "final-review-candidate",
-    "tagAuthorized": false
+    "officialResultEligible": true,
+    "publicationAuthorized": true,
+    "rankingAuthorized": true,
+    "status": "published",
+    "tagAuthorized": true
   },
   "resultCount": 6,
   "results": [
@@ -86,8 +86,8 @@
       },
       "createdAt": "2026-07-13T12:11:49Z",
       "evidence": {
-        "adoptionStatus": "proposed-maintainer-reference",
-        "level": "unreviewed",
+        "adoptionStatus": "maintainer-reference",
+        "level": "maintainer-reference",
         "proposedLevel": "maintainer-reference",
         "sourceResultUnmodified": true
       },
@@ -132,12 +132,9 @@
         "value": 97.90016049365309
       },
       "rankingEligibility": {
-        "active": false,
+        "active": true,
         "candidateEligible": true,
-        "reasonCodes": [
-          "final_publication_approval_pending",
-          "contributor_declarations_pending"
-        ]
+        "reasonCodes": []
       },
       "resultID": "1B0A18F0-2914-40CF-AFEE-A82CBECD97A4",
       "source": {
@@ -244,7 +241,7 @@
       "createdAt": "2026-07-13T12:10:55Z",
       "evidence": {
         "adoptionStatus": "retained-ineligible-evidence",
-        "level": "unreviewed",
+        "level": "maintainer-reference",
         "proposedLevel": "maintainer-reference",
         "sourceResultUnmodified": true
       },
@@ -313,9 +310,7 @@
         "active": false,
         "candidateEligible": false,
         "reasonCodes": [
-          "insufficient_metric_eligible_attempts",
-          "final_publication_approval_pending",
-          "contributor_declarations_pending"
+          "insufficient_metric_eligible_attempts"
         ]
       },
       "resultID": "2C2F23B4-58FA-460E-9481-EB2D3837FDE2",
@@ -422,8 +417,8 @@
       },
       "createdAt": "2026-07-13T12:16:23Z",
       "evidence": {
-        "adoptionStatus": "proposed-maintainer-reference",
-        "level": "unreviewed",
+        "adoptionStatus": "maintainer-reference",
+        "level": "maintainer-reference",
         "proposedLevel": "maintainer-reference",
         "sourceResultUnmodified": true
       },
@@ -468,12 +463,9 @@
         "value": 29.70885129512823
       },
       "rankingEligibility": {
-        "active": false,
+        "active": true,
         "candidateEligible": true,
-        "reasonCodes": [
-          "final_publication_approval_pending",
-          "contributor_declarations_pending"
-        ]
+        "reasonCodes": []
       },
       "resultID": "F64AB629-2AAE-4EE2-862F-957044A82323",
       "source": {
@@ -579,8 +571,8 @@
       },
       "createdAt": "2026-07-13T12:20:48Z",
       "evidence": {
-        "adoptionStatus": "proposed-maintainer-reference",
-        "level": "unreviewed",
+        "adoptionStatus": "maintainer-reference",
+        "level": "maintainer-reference",
         "proposedLevel": "maintainer-reference",
         "sourceResultUnmodified": true
       },
@@ -631,12 +623,9 @@
         "value": 494.403417
       },
       "rankingEligibility": {
-        "active": false,
+        "active": true,
         "candidateEligible": true,
-        "reasonCodes": [
-          "final_publication_approval_pending",
-          "contributor_declarations_pending"
-        ]
+        "reasonCodes": []
       },
       "resultID": "99A70D26-F1FC-49F4-A375-762FEDFE90AC",
       "source": {
@@ -742,8 +731,8 @@
       },
       "createdAt": "2026-07-13T12:27:41Z",
       "evidence": {
-        "adoptionStatus": "proposed-maintainer-reference",
-        "level": "unreviewed",
+        "adoptionStatus": "maintainer-reference",
+        "level": "maintainer-reference",
         "proposedLevel": "maintainer-reference",
         "sourceResultUnmodified": true
       },
@@ -788,12 +777,9 @@
         "value": 10.231071477266088
       },
       "rankingEligibility": {
-        "active": false,
+        "active": true,
         "candidateEligible": true,
-        "reasonCodes": [
-          "final_publication_approval_pending",
-          "contributor_declarations_pending"
-        ]
+        "reasonCodes": []
       },
       "resultID": "C4F133ED-64F8-4019-9AB8-5322FBBDA217",
       "source": {
@@ -899,8 +885,8 @@
       },
       "createdAt": "2026-07-13T12:32:28Z",
       "evidence": {
-        "adoptionStatus": "proposed-maintainer-reference",
-        "level": "unreviewed",
+        "adoptionStatus": "maintainer-reference",
+        "level": "maintainer-reference",
         "proposedLevel": "maintainer-reference",
         "sourceResultUnmodified": true
       },
@@ -951,12 +937,9 @@
         "value": 1132.813042
       },
       "rankingEligibility": {
-        "active": false,
+        "active": true,
         "candidateEligible": true,
-        "reasonCodes": [
-          "final_publication_approval_pending",
-          "contributor_declarations_pending"
-        ]
+        "reasonCodes": []
       },
       "resultID": "ECB64A54-9791-463E-B92A-29983648F9AF",
       "source": {

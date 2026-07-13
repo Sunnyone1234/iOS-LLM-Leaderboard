@@ -57,12 +57,11 @@ Ship translates tested Power evidence into deployment guidance.
 - Developer recipes link deployment claims to tested reference profiles.
 - Suite B remains the canonical owner of device performance measurements.
 
-The current delivery target is the
-[Power Benchmark 1.0 final review package](power-benchmark-1.0-finalization.md).
-It freezes only B-UX-001 and B-PIPE-001, adopts the completed physical-device
-matrix without rewriting its RC1 source identity, and keeps publication and
-the default ranking disabled until explicit final approval. It does not add a
-Suite D or Suite E task.
+The current Power release is
+[Power Benchmark 1.0](power-benchmark-1.0-finalization.md). It freezes only
+B-UX-001 and B-PIPE-001, adopts the completed physical-device matrix without
+rewriting its RC1 source identity, and activates five eligible rows in the
+workload-specific official ranking. It does not add a Suite D or Suite E task.
 
 ### Phase 2 Research Track: Build
 

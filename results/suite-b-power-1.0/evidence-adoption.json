@@ -10,19 +10,35 @@
   },
   "decision": {
     "method": "exact-release-candidate-adoption-without-rerun",
-    "status": "approved-for-final-package-preparation",
+    "status": "approved-for-publication",
     "recordedAt": "2026-07-13T13:26:36Z",
+    "approvedAt": "2026-07-13T13:49:59Z",
     "maintainer": "YizeSun",
     "referenceAppChanged": false,
     "protocolSemanticsChanged": false,
     "newExecutionRequired": false,
     "rawEvidenceMutationAllowed": false,
-    "finalPublicationApprovalRequired": true
+    "finalPublicationApprovalRequired": false
   },
   "contributor": {
     "githubHandle": "YizeSun",
     "proposedEvidenceLevel": "maintainer-reference",
-    "declarationsStatus": "pending-final-package-confirmation"
+    "evidenceLevel": "maintainer-reference",
+    "declarationsStatus": "confirmed",
+    "declarationsConfirmedAt": "2026-07-13T13:49:59Z",
+    "conflictOfInterest": {
+      "category": "none",
+      "statement": "No conflict of interest disclosed."
+    },
+    "declarations": {
+      "physicalDeviceRun": true,
+      "authorizedToSubmit": true,
+      "publicMetadataReviewed": true,
+      "unmodifiedAppExport": true,
+      "containsNoPersonalData": true,
+      "ccBy4Contribution": true,
+      "acceptanceVerificationRankingNotGuaranteed": true
+    }
   },
   "entries": [
     {
@@ -51,7 +67,7 @@
       "validationSHA256": "4170d9e19ce7b9ed04ea97a97c86a0b78677c9ac6fa55a325f0867dfcec7dfab",
       "primaryMetricID": "decode_tokens_per_second@1",
       "primaryMetricEligible": true,
-      "adoptionStatus": "proposed-maintainer-reference"
+      "adoptionStatus": "maintainer-reference"
     },
     {
       "resultID": "F64AB629-2AAE-4EE2-862F-957044A82323",
@@ -65,7 +81,7 @@
       "validationSHA256": "6422a34cc658791c0cef677eee848846ab000eee78c51289bf899b9dbfa0f2c5",
       "primaryMetricID": "decode_tokens_per_second@1",
       "primaryMetricEligible": true,
-      "adoptionStatus": "proposed-maintainer-reference"
+      "adoptionStatus": "maintainer-reference"
     },
     {
       "resultID": "99A70D26-F1FC-49F4-A375-762FEDFE90AC",
@@ -79,7 +95,7 @@
       "validationSHA256": "692f0effaaeb741197420a001336f44b389d244c9f3843743837e718ec1d1311",
       "primaryMetricID": "first_renderable_proxy_ttft_ms@1",
       "primaryMetricEligible": true,
-      "adoptionStatus": "proposed-maintainer-reference"
+      "adoptionStatus": "maintainer-reference"
     },
     {
       "resultID": "C4F133ED-64F8-4019-9AB8-5322FBBDA217",
@@ -93,7 +109,7 @@
       "validationSHA256": "e18b97185b9b6e620cb9bf19373da4846b7d68fde4e958551df8ab83c56394a5",
       "primaryMetricID": "decode_tokens_per_second@1",
       "primaryMetricEligible": true,
-      "adoptionStatus": "proposed-maintainer-reference"
+      "adoptionStatus": "maintainer-reference"
     },
     {
       "resultID": "ECB64A54-9791-463E-B92A-29983648F9AF",
@@ -107,7 +123,7 @@
       "validationSHA256": "e3de1007369340213278844145049b7ac9e13674a357af19bad5b08e1859e984",
       "primaryMetricID": "first_renderable_proxy_ttft_ms@1",
       "primaryMetricEligible": true,
-      "adoptionStatus": "proposed-maintainer-reference"
+      "adoptionStatus": "maintainer-reference"
     }
   ]
 }

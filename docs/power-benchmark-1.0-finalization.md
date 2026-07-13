@@ -2,10 +2,9 @@
 
 ## Status
 
-The complete Power Benchmark 1.0 package is prepared for final maintainer
-review. Publication, official-result status, the default ranking, the
-`1.0.0` tag, and the GitHub Release remain disabled until that review is
-approved.
+Power Benchmark 1.0 is approved for publication. Official-result status, the
+five eligible default-ranking rows, and the `1.0.0` GitHub Release and tag were
+authorized by the maintainer on 2026-07-13.
 
 This finalization does not change a workload, benchmark rule, model, result
 schema, validator, or App implementation.
@@ -45,10 +44,10 @@ visible and immutable.
 - [release notes](../results/suite-b-power-1.0/RELEASE-NOTES.md); and
 - [SHA-256 manifest](../results/suite-b-power-1.0/SHA256SUMS).
 
-The package contains six physical-device results. Five have an eligible
-primary metric and form the candidate ranking. The Qwen3 0.6B Short Interaction
-result is preserved but unranked because all five responses failed the frozen
-response-conformance gate.
+The package contains six physical-device Maintainer Reference results. Five
+have an eligible primary metric and form the official workload-specific
+ranking. The Qwen3 0.6B Short Interaction result is preserved but unranked
+because all five responses failed the frozen response-conformance gate.
 
 ## Release checklist
 
@@ -77,11 +76,11 @@ response-conformance gate.
 
 ### Final maintainer authorization
 
-- [ ] Confirm all seven contributor declarations below.
-- [ ] Approve the final release manifest and complete generated package.
-- [ ] Authorize official-result status for the six adopted results.
-- [ ] Authorize the five eligible rows for the default ranking.
-- [ ] Authorize the `1.0.0` GitHub Release and tag.
+- [x] Confirm all seven contributor declarations below.
+- [x] Approve the final release manifest and complete generated package.
+- [x] Authorize official-result status for the six adopted results.
+- [x] Authorize the five eligible rows for the default ranking.
+- [x] Authorize the `1.0.0` GitHub Release and tag.
 
 ## Contributor declarations to confirm
 
@@ -96,8 +95,10 @@ For the six maintainer-run F5 results, the maintainer must confirm that:
 7. submission does not by itself guarantee acceptance, verification, or
    ranking.
 
-The public contributor identity is `YizeSun`. The final approval must also
-state the applicable conflict-of-interest category and statement.
+The public contributor identity is `YizeSun`. All seven declarations were
+confirmed at `2026-07-13T13:49:59Z`. The conflict-of-interest category is
+`none`, with the statement: “No conflict of interest disclosed.” The
+machine-readable confirmation is stored in `evidence-adoption.json`.
 
 ## Known limitations
 
@@ -111,10 +112,11 @@ state the applicable conflict-of-interest category and statement.
   with untested runtimes, or App Store approval.
 - License metadata is informational and not legal advice.
 
-## After approval
+## Publication record
 
-Final publication is a mechanical activation step: record confirmed
-declarations, set the final manifest publication/result/ranking/tag flags,
-regenerate and verify the same package, merge it, create the `1.0.0` tag and
-GitHub Release, and verify the deployed leaderboard. Only then does the project
-begin the separate Ship implementation phase.
+The confirmed declarations and publication/result/ranking/tag flags are
+recorded in the final manifests. The deterministic generator produces the
+official leaderboard from the same six hash-bound source files. Publication is
+completed by merging the authorized manifest, creating the `1.0.0` tag and
+GitHub Release, and verifying the deployed leaderboard. Ship begins as a
+separate implementation phase after that publication succeeds.

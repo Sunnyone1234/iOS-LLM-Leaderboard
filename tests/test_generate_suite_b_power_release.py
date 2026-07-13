@@ -13,6 +13,7 @@ from scripts.generate_suite_b_power_release import build_dataset
 from scripts.generate_suite_b_power_release import load_json
 from scripts.generate_suite_b_power_release import render_leaderboard
 from scripts.generate_suite_b_power_release import render_release_notes
+from scripts.generate_suite_b_power_release import verify_activation
 from scripts.generate_suite_b_power_release import verify_entries
 from scripts.generate_suite_b_power_release import write_outputs
 
@@ -27,7 +28,7 @@ class PowerReleaseGenerationTests(unittest.TestCase):
         self.assertEqual(dataset["sourceEvidenceRelease"]["version"], "1.0.0-rc.1")
         self.assertEqual(dataset["resultCount"], 6)
         self.assertEqual(dataset["candidateRankedResultCount"], 5)
-        self.assertEqual(dataset["activeRankedResultCount"], 0)
+        self.assertEqual(dataset["activeRankedResultCount"], 5)
         self.assertEqual(adoption["decision"]["method"], "exact-release-candidate-adoption-without-rerun")
         self.assertFalse(adoption["decision"]["referenceAppChanged"])
         self.assertFalse(adoption["decision"]["protocolSemanticsChanged"])
@@ -36,9 +37,12 @@ class PowerReleaseGenerationTests(unittest.TestCase):
         for row in dataset["results"]:
             self.assertEqual(row["sourceEvidenceRelease"]["version"], "1.0.0-rc.1")
             self.assertTrue(row["evidence"]["sourceResultUnmodified"])
-            self.assertEqual(row["evidence"]["level"], "unreviewed")
+            self.assertEqual(row["evidence"]["level"], "maintainer-reference")
             self.assertEqual(row["evidence"]["proposedLevel"], "maintainer-reference")
-            self.assertFalse(row["rankingEligibility"]["active"])
+            self.assertEqual(
+                row["rankingEligibility"]["active"],
+                row["rankingEligibility"]["candidateEligible"],
+            )
 
     def test_ineligible_short_interaction_is_retained_not_ranked(self) -> None:
         dataset, _ = build_dataset(DEFAULT_RELEASE, DEFAULT_ADOPTION)
@@ -70,6 +74,13 @@ class PowerReleaseGenerationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "result ID mismatch"):
             verify_entries(adoption)
 
+    def test_active_release_requires_all_seven_declarations(self) -> None:
+        release = load_json(DEFAULT_RELEASE)
+        adoption = copy.deepcopy(load_json(DEFAULT_ADOPTION))
+        adoption["contributor"]["declarations"]["containsNoPersonalData"] = False
+        with self.assertRaisesRegex(ValueError, "all seven contributor declarations"):
+            verify_activation(release, adoption)
+
     def test_approved_package_renders_as_official_not_candidate(self) -> None:
         dataset, adoption = build_dataset(DEFAULT_RELEASE, DEFAULT_ADOPTION)
         dataset["publication"].update(
@@ -92,7 +103,7 @@ class PowerReleaseGenerationTests(unittest.TestCase):
         self.assertIn('results/suite-b-power-1.0/normalized-results.json', app)
         self.assertNotIn("suite-b-pilot-v0.1/normalized-results.json", app)
         self.assertNotIn('data-mode="ship"', page)
-        self.assertIn("Power 1.0 final candidate", page)
+        self.assertIn('<span id="release-label">Power 1.0</span>', page)
 
 
 if __name__ == "__main__":

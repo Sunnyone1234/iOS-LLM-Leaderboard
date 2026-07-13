@@ -40,6 +40,16 @@ SIZE_CLASSES = {
     "Qwen/Qwen3-4B": "small-4b",
 }
 
+DECLARATION_KEYS = (
+    "physicalDeviceRun",
+    "authorizedToSubmit",
+    "publicMetadataReviewed",
+    "unmodifiedAppExport",
+    "containsNoPersonalData",
+    "ccBy4Contribution",
+    "acceptanceVerificationRankingNotGuaranteed",
+)
+
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -148,6 +158,52 @@ def verify_entries(adoption: dict[str, Any]) -> list[tuple[dict[str, Any], dict[
         sessions.add(session_id)
         verified.append((entry, raw, recalculated))
     return verified
+
+
+def verify_activation(release: dict[str, Any], adoption: dict[str, Any]) -> None:
+    flags = (
+        release.get("officialResultEligible"),
+        release.get("rankingAuthorized"),
+        release.get("publicationAuthorized"),
+        release.get("tagAuthorized"),
+    )
+    if not any(flags):
+        return
+    require(all(flag is True for flag in flags), "publication flags must activate together")
+    require(release.get("status") == "published", "active release status must be published")
+    decision = adoption.get("decision", {})
+    contributor = adoption.get("contributor", {})
+    require(decision.get("status") == "approved-for-publication", "adoption is not approved")
+    require(
+        decision.get("finalPublicationApprovalRequired") is False,
+        "final publication approval is still required",
+    )
+    require(
+        decision.get("approvedAt") == release.get("approvedAt"),
+        "release and adoption approval timestamps differ",
+    )
+    require(contributor.get("declarationsStatus") == "confirmed", "declarations are not confirmed")
+    require(
+        contributor.get("evidenceLevel") == "maintainer-reference"
+        and contributor.get("proposedEvidenceLevel") == "maintainer-reference",
+        "maintainer-reference evidence level is not confirmed",
+    )
+    conflict = contributor.get("conflictOfInterest", {})
+    require(conflict.get("category") == "none", "unexpected conflict-of-interest category")
+    require(
+        conflict.get("statement") == "No conflict of interest disclosed.",
+        "conflict-of-interest statement mismatch",
+    )
+    declarations = contributor.get("declarations", {})
+    require(
+        all(declarations.get(key) is True for key in DECLARATION_KEYS),
+        "all seven contributor declarations must be true",
+    )
+    activation = release.get("activationRecord", {})
+    require(activation.get("contributorDeclarationsConfirmed") is True, "activation record is incomplete")
+    require(activation.get("officialResultCount") == 6, "official result count mismatch")
+    require(activation.get("defaultRankedResultCount") == 5, "ranked result count mismatch")
+    require(release.get("activationRequirements") == [], "activation requirements remain open")
 
 
 def normalize_row(
@@ -366,6 +422,7 @@ def render_release_notes(dataset: dict[str, Any], adoption: dict[str, Any]) -> s
         if active
         else "This is a final review candidate. Publishing, tagging, and official ranking remain disabled until explicit final approval."
     )
+    coverage_heading = "Official ranking coverage" if active else "Candidate ranking coverage"
     decision_lines = (
         [
             "## Activation record",
@@ -397,7 +454,7 @@ def render_release_notes(dataset: dict[str, Any], adoption: dict[str, Any]) -> s
         "The App, workload prompts, timing boundaries, metric formulas, eligibility rules, result schema, and validator are unchanged from RC1.",
         "Raw result identities and bytes remain `1.0.0-rc.1`; the final publication layer binds them by result ID and SHA-256 instead of rewriting them.",
         "",
-        "## Candidate ranking coverage",
+        f"## {coverage_heading}",
         "",
         f"- {dataset['resultCount']} retained physical-device results;",
         f"- {dataset['candidateRankedResultCount']} primary-metric-eligible result rows;",
@@ -414,6 +471,7 @@ def render_release_notes(dataset: dict[str, Any], adoption: dict[str, Any]) -> s
 def build_dataset(release_path: Path, adoption_path: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     release = verify_release(release_path, adoption_path)
     adoption = load_json(adoption_path)
+    verify_activation(release, adoption)
     verified = verify_entries(adoption)
     rows = [normalize_row(entry, raw, report, release, adoption) for entry, raw, report in verified]
     rows.sort(key=lambda row: (row["configuration"]["model"]["artifactID"], row["workload"]["id"]))

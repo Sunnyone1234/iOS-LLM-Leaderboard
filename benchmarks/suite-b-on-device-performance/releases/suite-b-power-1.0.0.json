@@ -3,11 +3,12 @@
   "releaseID": "suite-b-power",
   "releaseVersion": "1.0.0",
   "preparedAt": "2026-07-13T13:26:36Z",
-  "status": "final-review-candidate",
-  "officialResultEligible": false,
-  "rankingAuthorized": false,
-  "publicationAuthorized": false,
-  "tagAuthorized": false,
+  "approvedAt": "2026-07-13T13:49:59Z",
+  "status": "published",
+  "officialResultEligible": true,
+  "rankingAuthorized": true,
+  "publicationAuthorized": true,
+  "tagAuthorized": true,
   "contractAdoption": {
     "method": "exact-release-candidate-adoption-without-rerun",
     "sourceRelease": {
@@ -56,7 +57,7 @@
   },
   "evidenceAdoption": {
     "path": "results/suite-b-power-1.0/evidence-adoption.json",
-    "sha256": "9cfded734fd59dc77ef59ca12e9d0a232a8a7ecc2aaa508fa9bc411d3951e8d2",
+    "sha256": "071a96a13b661f97ae2b8f90a4428d201b0450c58c20ba5924614c281fe162f8",
     "resultCount": 6,
     "candidatePrimaryMetricEligibleCount": 5,
     "retainedPrimaryMetricIneligibleCount": 1
@@ -72,13 +73,16 @@
     "globalScoreDefined": false,
     "shipScoreDefined": false
   },
-  "activationRequirements": [
-    "confirm-contributor-declarations",
-    "approve-final-publication-manifest",
-    "authorize-official-result-status",
-    "authorize-default-ranking",
-    "authorize-github-release-and-tag"
-  ],
+  "activationRequirements": [],
+  "activationRecord": {
+    "authorizedAt": "2026-07-13T13:49:59Z",
+    "maintainer": "YizeSun",
+    "contributorDeclarationsConfirmed": true,
+    "conflictOfInterestCategory": "none",
+    "officialResultCount": 6,
+    "defaultRankedResultCount": 5,
+    "githubReleaseAndTagAuthorized": true
+  },
   "pinnedAssets": [
     {
       "role": "source-release-manifest",
@@ -98,7 +102,7 @@
     {
       "role": "leaderboard-generator",
       "path": "scripts/generate_suite_b_power_release.py",
-      "sha256": "b4408c42b8677ca8d2ca32b89b363e34fcae6836845cb8377d8cbe1fb08357e2"
+      "sha256": "137785f39975aaddb07fc345d0e2f8c32b2a9d2e45e2f7cbef6e9d1c543049cb"
     }
   ]
 }

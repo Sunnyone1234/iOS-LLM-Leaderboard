@@ -22,10 +22,9 @@ The Phase 1 product helps developers answer:
 3. Which models and runtimes fit practical integration, distribution,
    privacy-review, and deployment constraints?
 
-This repository currently contains historical Pilot evidence, the completed
-Power RC verification matrix, and a Power Benchmark 1.0 final review package.
-The 1.0 publication and default ranking remain disabled until the maintainer
-approves the complete final package.
+This repository publishes Power Benchmark 1.0 and its workload-specific
+official ranking. Historical Pilot and RC evidence remains available with its
+original non-official identity.
 
 ## Interactive Leaderboard
 
@@ -40,10 +39,9 @@ To preview the site locally from the repository root:
 python3 -m http.server 4173
 ```
 
-Then open `http://localhost:4173/`. Until final approval, the site labels its
-five eligible rows as a Power 1.0 candidate ranking and retains the sixth
-response-ineligible result outside the ranking. It does not introduce a global
-score or change any benchmark rule.
+Then open `http://localhost:4173/`. The site ranks five eligible Power 1.0 rows
+and retains the sixth response-ineligible result outside the ranking. It does
+not introduce a global score or change any benchmark rule.
 
 ## Product Strategy
 
@@ -71,11 +69,11 @@ success.
 See [Project Vision](docs/project-vision.md) and
 [Product Architecture](docs/product-architecture.md).
 
-## Current Release Target: Power Benchmark 1.0
+## Current Release: Power Benchmark 1.0
 
-F2–F6 have frozen and reviewed the Power protocol, result schema, semantic
+F2–F6 froze and reviewed the Power protocol, result schema, semantic
 validator, reference App, physical-device verification matrix, submission
-package, and evidence governance. The final review package adopts the exact six
+package, and evidence governance. The published release adopts the exact six
 F5 RC1 result files without rerunning them because the App and every benchmark
 semantic contract remain unchanged. Their original bytes and RC1 identities
 remain visible and are bound into Power 1.0 by result ID and SHA-256.
@@ -83,10 +81,10 @@ remain visible and are bound into Power 1.0 by result ID and SHA-256.
 See the [Power 1.0 finalization decision](docs/power-benchmark-1.0-finalization.md),
 [generated leaderboard](results/suite-b-power-1.0/LEADERBOARD.md),
 [release notes](results/suite-b-power-1.0/RELEASE-NOTES.md), and
-[checksums](results/suite-b-power-1.0/SHA256SUMS). Publication, official-result
-status, the default ranking, the `1.0.0` tag, and the GitHub Release remain
-disabled until the maintainer approves the final package and contributor
-declarations.
+[checksums](results/suite-b-power-1.0/SHA256SUMS). The six adopted results are
+Maintainer Reference evidence; the five primary-metric-eligible rows are active
+in the official workload-specific ranking. See the
+[`1.0.0` GitHub Release](https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/1.0.0).
 
 The completed Power + Ship Pilot v0.1 matrix is retained as historical
 foundation evidence. It will not be published as a tagged release and its
@@ -227,12 +225,11 @@ draft [Suite B Protocol v2](benchmarks/suite-b-on-device-performance/protocol-v2
 - Framework v1 result templates and demo placeholders;
 - contributor guidance;
 - Framework v1 and Suite B pilot validation tooling;
-- a real physical-iPhone MLX Benchmark App and six-result Power 1.0 final
-  review dataset with immutable raw evidence.
+- a real physical-iPhone MLX Benchmark App and six-result Power 1.0 dataset
+  with immutable raw evidence.
 
-The Power 1.0 final review package is included, but it is not yet a published
-official release. Its candidate ranking is intentionally inactive until final
-maintainer authorization; historical Pilot evidence remains non-official.
+Power 1.0 is the first official benchmark release. Historical Pilot evidence
+remains non-official and separate from the official ranking.
 
 ## Result Integrity
 
@@ -260,8 +257,9 @@ Community contributions are central to the project. During the current
 documentation-first stage, contributions may propose tasks, methodology,
 schemas, integrations, and tooling.
 
-Official device-result submission will open only after the Suite B workloads,
-runner, schema validation, and evidence rules are frozen.
+Official Power result submission uses the frozen App/result contract and the
+hash-bound review process documented below. Passing intake does not
+automatically grant a ranking-eligible evidence level.
 
 Start with [CONTRIBUTING.md](CONTRIBUTING.md) and the
 [Contributor Kit](contributor-kit/README.md).

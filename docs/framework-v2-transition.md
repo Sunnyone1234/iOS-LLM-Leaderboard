@@ -92,8 +92,8 @@ Suite A may store generated files, compile results, tests, and rubric scores.
 - F6 added hash-bound community submission, evidence-transition, correction,
   withdrawal, privacy-removal, and release-review contracts without changing
   the frozen benchmark or App.
-- The Power 1.0 final package is prepared but not yet official. Contributor
-  declarations, publication, ranking, and tag authorization still require
-  explicit maintainer approval.
+- Power 1.0 is published. Contributor declarations, publication, ranking, and
+  tag authorization are recorded in the final release and evidence-adoption
+  manifests.
 - Framework v2 outside this bounded Suite B Power slice remains a design and
   migration target; other suites continue to use their existing contracts.
