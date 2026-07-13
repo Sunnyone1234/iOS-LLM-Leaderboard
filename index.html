@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="site/styles.css?v=4">
+  <link rel="stylesheet" href="site/styles.css?v=5">
 </head>
 <body>
   <a class="skip-link" href="#leaderboard">Skip to leaderboard</a>
@@ -27,8 +27,8 @@
 
   <main class="page-shell" id="leaderboard">
     <section class="leaderboard-header" aria-labelledby="leaderboard-title">
-      <h1 id="leaderboard-title">Power benchmark</h1>
-      <p>On-device LLM performance measured on physical iPhones.</p>
+      <h1 id="leaderboard-title">Power + Ship</h1>
+      <p>Physical-device performance rankings and evidence-backed deployment profiles.</p>
       <div class="benchmark-meta" aria-label="Benchmark release metadata">
         <span id="release-label">Power 1.0</span>
         <span><strong id="summary-configurations">—</strong> configurations</span>
@@ -43,6 +43,7 @@
         <div class="mode-tabs" role="tablist" aria-label="Leaderboard view">
           <button class="mode-tab is-active" type="button" role="tab" aria-selected="true" data-mode="ux">Responsiveness</button>
           <button class="mode-tab" type="button" role="tab" aria-selected="false" data-mode="pipe">Sustained generation</button>
+          <button class="mode-tab" type="button" role="tab" aria-selected="false" data-mode="ship">Ship profiles</button>
         </div>
 
         <div class="board-filters">
@@ -92,8 +93,8 @@
   <footer class="site-footer page-shell">
     <span id="footer-status">Power 1.0 · Official rankings within each workload</span>
     <div>
-      <a href="results/suite-b-power-1.0/SHA256SUMS">Checksums</a>
-      <a href="results/suite-b-power-1.0/LEADERBOARD.md">Evidence table</a>
+      <a id="footer-checksums" href="results/suite-b-power-1.0/SHA256SUMS">Checksums</a>
+      <a id="footer-table" href="results/suite-b-power-1.0/LEADERBOARD.md">Evidence table</a>
     </div>
   </footer>
 
@@ -104,6 +105,6 @@
     </div>
   </dialog>
 
-  <script type="module" src="site/app.js?v=4"></script>
+  <script type="module" src="site/app.js?v=5"></script>
 </body>
 </html>
