@@ -5,7 +5,7 @@
   "referenceApp": {
     "version": "0.9.0",
     "build": "11",
-    "sourceCommit": null
+    "sourceCommit": "002c76ccbfed7b1c8b7c13313b887aaebf610a3e"
   },
   "runtime": {
     "name": "MLX Swift LM",

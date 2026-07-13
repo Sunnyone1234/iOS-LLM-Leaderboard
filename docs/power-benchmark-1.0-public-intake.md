@@ -14,11 +14,23 @@ This document remains the complete operational and trust-boundary reference.
 - Submission source contract: `suite-b-power@1.0.0-rc.1`
 - Reference App: `0.8.0` build `10`
 
+Two exact App sources are authorized for public intake:
+
+| Purpose | App identity | Exact source |
+| --- | --- | --- |
+| Reproduce the existing Qwen comparison cells | `0.8.0` build `10` | `2f105ff463bc9b281b19655ba711b1ca7dee8759` |
+| Test the four pinned candidates in the non-ranking model catalog | `0.9.0` build `11` | `002c76ccbfed7b1c8b7c13313b887aaebf610a3e` |
+
+App 0.9.0 is an additional community-testing source, not a rewrite of the
+published Reference App or its six-result matrix. Its candidate guide is
+[Test a Recommended Power Model](../contributor-kit/test-recommended-model.md).
+
 Power 1.0 adopted the RC1 protocol, workloads, result schema, validator, and
-reference App without changing their semantics. New submissions therefore keep
-the exact RC1 source identity emitted by the App. They are reviewed as evidence
-for the published Power 1.0 standard; their source bytes and identities are
-never relabeled.
+Reference App without changing their semantics. New submissions keep the exact
+source identity emitted by whichever authorized App source they build. They
+are reviewed as evidence for the published Power 1.0 standard; their source
+bytes and identities are never relabeled or silently grouped across App
+versions.
 
 The original [RC1 submission guide](power-benchmark-1.0-submission.md) and
 [governance policy](power-benchmark-1.0-governance.md) are SHA-256-pinned
@@ -104,10 +116,17 @@ Public intake does not change:
 
 - B-UX-001 or B-PIPE-001;
 - the Power protocol, result schema, semantic validator, or reason codes;
-- App 0.8.0 build 10;
-- model profiles, runtime settings, measurement counts, or eligibility rules;
+- App 0.8.0 build 10 or any existing exact comparison identity;
+- the existing Qwen model profiles, runtime settings, measurement counts, or
+  eligibility rules;
 - the published Power 1.0 evidence set or rankings; or
 - Ship Deployment Profiles 1.0.
+
+Public intake now additionally permits App 0.9.0 build 11 at the exact source
+listed above for four pinned candidate artifacts. Each accepted candidate run
+creates a new exact comparison cell. This operational expansion adds no
+placeholder result, changes no existing rank, and does not imply physical
+iPhone compatibility before evidence is submitted.
 
 The existing `power-1.0.0-rc.1` path remains deliberate compatibility and
 provenance, not an indication that Power 1.0 itself is unpublished.

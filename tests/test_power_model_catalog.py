@@ -72,11 +72,14 @@ class PowerModelCatalogTests(unittest.TestCase):
         self.assertIn("These are not rankings", app)
         self.assertIn("No performance claims", app)
 
-    def test_candidate_source_is_null_only_until_the_feature_commit_is_pinned(self) -> None:
-        source_commit = self.catalog["referenceApp"]["sourceCommit"]
-        self.assertTrue(
-            source_commit is None or re.fullmatch(r"[0-9a-f]{40}", source_commit)
-        )
+    def test_candidate_source_and_contributor_guide_are_pinned(self) -> None:
+        source_commit = "002c76ccbfed7b1c8b7c13313b887aaebf610a3e"
+        self.assertEqual(self.catalog["referenceApp"]["sourceCommit"], source_commit)
+        guide = (ROOT / "contributor-kit" / "test-recommended-model.md").read_text()
+        self.assertIn(source_commit, guide)
+        self.assertIn("Export Raw JSON", guide)
+        self.assertIn("create_suite_b_power_submission.py", guide)
+        self.assertIn("do not manufacture JSON", guide)
 
 
 if __name__ == "__main__":
