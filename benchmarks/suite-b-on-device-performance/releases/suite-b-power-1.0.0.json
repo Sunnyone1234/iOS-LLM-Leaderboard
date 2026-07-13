@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "suite-b-power-release-manifest-1.0",
+  "releaseID": "suite-b-power",
+  "releaseVersion": "1.0.0",
+  "preparedAt": "2026-07-13T13:26:36Z",
+  "approvedAt": "2026-07-13T13:49:59Z",
+  "status": "published",
+  "officialResultEligible": true,
+  "rankingAuthorized": true,
+  "publicationAuthorized": true,
+  "tagAuthorized": true,
+  "contractAdoption": {
+    "method": "exact-release-candidate-adoption-without-rerun",
+    "sourceRelease": {
+      "id": "suite-b-power",
+      "version": "1.0.0-rc.1"
+    },
+    "referenceAppChanged": false,
+    "protocolSemanticsChanged": false,
+    "resultSchemaChanged": false,
+    "validatorChanged": false,
+    "newExecutionRequired": false,
+    "rawEvidenceMutationAllowed": false,
+    "sourceIdentitiesRemainVisible": true
+  },
+  "protocol": {
+    "id": "suite-b-power",
+    "adoptedVersion": "1.0.0-rc.1"
+  },
+  "workloads": [
+    {
+      "id": "b-ux-001-short-interaction",
+      "adoptedVersion": "1.0.0-rc.1",
+      "measurementMode": "b-mode-warm-resident-ux-v1",
+      "primaryRankingMetric": "first_renderable_proxy_ttft_ms@1",
+      "rankingDirection": "ascending"
+    },
+    {
+      "id": "b-pipe-001-sustained-generation",
+      "adoptedVersion": "1.0.0-rc.1",
+      "measurementMode": "b-mode-sustained-no-rest-v1",
+      "primaryRankingMetric": "decode_tokens_per_second@1",
+      "rankingDirection": "descending"
+    }
+  ],
+  "resultContract": {
+    "schemaID": "suite-b-power-result-1.0.0-rc.1",
+    "validatorID": "suite-b-power-validator",
+    "validatorVersion": "1.0.0-rc.1",
+    "validationReportSchemaID": "suite-b-power-validation-report-1.0.0-rc.1"
+  },
+  "referenceApp": {
+    "id": "ios-reference-benchmark-app",
+    "version": "0.8.0",
+    "build": "10",
+    "sourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759"
+  },
+  "evidenceAdoption": {
+    "path": "results/suite-b-power-1.0/evidence-adoption.json",
+    "sha256": "071a96a13b661f97ae2b8f90a4428d201b0450c58c20ba5924614c281fe162f8",
+    "resultCount": 6,
+    "candidatePrimaryMetricEligibleCount": 5,
+    "retainedPrimaryMetricIneligibleCount": 1
+  },
+  "rankingPolicy": {
+    "configurationSpecific": true,
+    "individuallyEligibleMetricsOnly": true,
+    "allowedEvidenceLevels": [
+      "verified",
+      "maintainer-reference"
+    ],
+    "primaryMetricPerWorkload": true,
+    "globalScoreDefined": false,
+    "shipScoreDefined": false
+  },
+  "activationRequirements": [],
+  "activationRecord": {
+    "authorizedAt": "2026-07-13T13:49:59Z",
+    "maintainer": "YizeSun",
+    "contributorDeclarationsConfirmed": true,
+    "conflictOfInterestCategory": "none",
+    "officialResultCount": 6,
+    "defaultRankedResultCount": 5,
+    "githubReleaseAndTagAuthorized": true
+  },
+  "pinnedAssets": [
+    {
+      "role": "source-release-manifest",
+      "path": "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.0.0-rc.1.json",
+      "sha256": "5611b5d122dadb3cb9c8aca89f86b30f1e860bdc6cced2446d118e3e0a9fab90"
+    },
+    {
+      "role": "source-publication-candidate",
+      "path": "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.0.0-rc.1-publication-candidate.json",
+      "sha256": "00225701d96b7ab707dbdddd84761919dfd52481520e53263d2f6cc154f61278"
+    },
+    {
+      "role": "source-evidence-checksums",
+      "path": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/SHA256SUMS",
+      "sha256": "56238a9987ba613d99537cc9bd7029308ed1f6ff9cbd1ce9d15c84aa98563257"
+    },
+    {
+      "role": "leaderboard-generator",
+      "path": "scripts/generate_suite_b_power_release.py",
+      "sha256": "137785f39975aaddb07fc345d0e2f8c32b2a9d2e45e2f7cbef6e9d1c543049cb"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-const DATA_URL = "results/suite-b-pilot-v0.1/normalized-results.json";
+const DATA_URL = "results/suite-b-power-1.0/normalized-results.json";
 
 const state = {
   data: null,
@@ -21,11 +21,11 @@ const modeConfig = {
       column("rank", "Rank", () => 0, value => value, false),
       column("model", "Model", row => row.configuration.model.displayName, value => value),
       column("quantization", "Quant", row => row.configuration.model.quantization, value => value),
-      column("response", "Proxy TTFT", row => row.summary.medianUserVisibleTTFTMilliseconds, value => formatMs(value), true, true),
+      column("response", "Proxy TTFT", row => row.summary.medianFirstRenderableProxyTTFTMilliseconds, value => formatMs(value), true, true),
       column("pipeline", "Pipeline TTFT", row => row.summary.medianPipelineTTFTMilliseconds, value => formatMs(value), true),
       column("prefill", "Prefill", row => row.summary.medianPrefillTokensPerSecond, value => formatRate(value), true),
       column("decode", "Decode", row => row.summary.medianDecodeTokensPerSecond, value => formatRate(value), true),
-      column("memory", "Peak memory", row => row.summary.medianPeakMemoryMegabytes, value => formatMemory(value), true),
+      column("memory", "Peak memory", row => row.summary.medianPeakMemoryMiB, value => formatMemory(value), true),
       column("thermal", "Thermal", row => thermalOrder(row.summary.finalThermalState), (_, row) => thermalMarkup(row.summary.finalThermalState), true),
       column("details", "Evidence", () => 0, () => "", false),
     ],
@@ -43,27 +43,9 @@ const modeConfig = {
       column("decode", "Decode", row => row.summary.medianDecodeTokensPerSecond, value => formatRate(value), true, true),
       column("pipeline", "Pipeline TTFT", row => row.summary.medianPipelineTTFTMilliseconds, value => formatMs(value), true),
       column("prefill", "Prefill", row => row.summary.medianPrefillTokensPerSecond, value => formatRate(value), true),
-      column("memory", "Peak memory", row => row.summary.medianPeakMemoryMegabytes, value => formatMemory(value), true),
-      column("degradation", "Decode change", row => row.degradation?.decodePercentChange, value => formatPercent(value), true),
+      column("memory", "Peak memory", row => row.summary.medianPeakMemoryMiB, value => formatMemory(value), true),
+      column("degradation", "Decode change", row => row.summary.decodeFirstToLastPercentChange, value => formatPercent(value), true),
       column("thermal", "Thermal", row => thermalOrder(row.summary.finalThermalState), (_, row) => thermalMarkup(row.summary.finalThermalState), true),
-      column("details", "Evidence", () => 0, () => "", false),
-    ],
-  },
-  ship: {
-    workload: null,
-    label: "Deployment facts",
-    description: "Source-backed facts from the same tested configurations. No Ship score.",
-    defaultSort: "size",
-    defaultDirection: "asc",
-    columns: [
-      column("rank", "Rank", () => 0, value => value, false),
-      column("model", "Model", row => row.configuration.model.displayName, value => value),
-      column("quantization", "Quant", row => row.configuration.model.quantization, value => value),
-      column("size", "Artifact size", row => row.configuration.model.artifactRepositorySizeBytes, value => formatBytes(value), true),
-      column("memory", "Max peak", row => row.shipMaximumMemory, value => formatMemory(value), true),
-      column("runtime", "Runtime", row => row.configuration.runtime.name, (value, row) => `${escapeHtml(value)} ${escapeHtml(row.configuration.runtime.version)}`),
-      column("device", "Tested device", row => row.configuration.device.machineIdentifier, value => escapeHtml(value)),
-      column("license", "License", row => row.configuration.model.licenseIdentifier, value => escapeHtml(value)),
       column("details", "Evidence", () => 0, () => "", false),
     ],
   },
@@ -86,6 +68,8 @@ const elements = {
   contextDescription: document.querySelector("#context-description"),
   dialog: document.querySelector("#detail-dialog"),
   dialogContent: document.querySelector("#dialog-content"),
+  releaseLabel: document.querySelector("#release-label"),
+  footerStatus: document.querySelector("#footer-status"),
 };
 
 async function loadEvidence() {
@@ -117,34 +101,30 @@ function uniqueBy(items, key) {
 }
 
 function renderReleaseSummary(data) {
-  const eligibleRows = data.results.filter(row => row.pilotEligibility.eligible);
+  const eligibleRows = data.results.filter(row => row.rankingEligibility.candidateEligible);
   const configurations = new Set(eligibleRows.map(row => row.configuration.model.artifactID));
-  const devices = uniqueBy(eligibleRows.map(row => row.configuration.device), item => item.machineIdentifier);
+  const devices = uniqueBy(data.results.map(row => row.configuration.device), item => item.machineIdentifier);
   document.querySelector("#summary-configurations").textContent = String(configurations.size);
-  document.querySelector("#summary-results").textContent = String(data.eligibleResultCount ?? eligibleRows.length);
+  document.querySelector("#summary-results").textContent = String(data.resultCount);
   document.querySelector("#summary-device").textContent = devices.map(device => device.displayName).join(", ");
+  const active = data.publication.officialResultEligible
+    && data.publication.publicationAuthorized
+    && data.publication.rankingAuthorized
+    && data.activeRankedResultCount > 0;
+  elements.releaseLabel.textContent = active ? "Power 1.0" : "Power 1.0 final candidate";
+  elements.footerStatus.textContent = active
+    ? "Power 1.0 · Official rankings within each workload"
+    : "Power 1.0 final review candidate · Official ranking not yet active";
 }
 
 function workloadRows(rows, workload) {
-  return rows.filter(row => row.workload.id === workload && row.pilotEligibility.eligible);
-}
-
-function shipRows(rows) {
-  const grouped = new Map();
-  rows.filter(row => row.pilotEligibility.eligible).forEach(row => {
-    const key = row.configuration.model.artifactID;
-    const current = grouped.get(key) ?? { ...row, shipRows: [], shipMaximumMemory: 0 };
-    current.shipRows.push(row);
-    current.shipMaximumMemory = Math.max(current.shipMaximumMemory, row.summary.medianPeakMemoryMegabytes ?? 0);
-    grouped.set(key, current);
-  });
-  return [...grouped.values()];
+  return rows.filter(row => row.workload.id === workload && row.rankingEligibility.candidateEligible);
 }
 
 function renderBoard() {
   if (!state.data) return;
   const config = modeConfig[state.mode];
-  let rows = state.mode === "ship" ? shipRows(state.data.results) : workloadRows(state.data.results, config.workload);
+  let rows = workloadRows(state.data.results, config.workload);
   rows = filterRows(rows);
   rows = sortRows(rows, config);
   elements.contextLabel.textContent = config.label;
@@ -225,14 +205,12 @@ function defaultDirection(key) {
 }
 
 function openDetails(resultID) {
-  const baseRows = state.mode === "ship" ? shipRows(state.data.results) : state.data.results;
-  const row = baseRows.find(item => item.resultID === resultID);
+  const row = state.data.results.find(item => item.resultID === resultID);
   if (!row) return;
   const model = row.configuration.model;
   const runtime = row.configuration.runtime;
   const device = row.configuration.device;
-  const workload = state.mode === "ship" ? "Power + Ship profile" : row.workload.id;
-  const rawLinks = state.mode === "ship" ? row.shipRows.map(item => rawLink(item)).join("") : rawLink(row);
+  const workload = row.workload.id;
   elements.dialogContent.innerHTML = `
     <p class="dialog-kicker">Exact tested configuration</p>
     <h2 class="dialog-title">${escapeHtml(model.displayName)} · ${escapeHtml(model.quantization)}</h2>
@@ -245,17 +223,19 @@ function openDetails(resultID) {
       ${detailItem("Repository size", formatBytes(model.artifactRepositorySizeBytes))}
       ${detailItem("License metadata", model.licenseIdentifier)}
       ${detailItem("App identity", `${device.appVersion} build ${device.appBuild}`)}
+      ${detailItem("Evidence level", row.evidence.level)}
+      ${detailItem("Source release", row.sourceEvidenceRelease.version)}
     </div>
     <div class="dialog-links">
       <a class="button button-primary" href="${escapeAttribute(model.sourceURL)}" target="_blank" rel="noreferrer">Model source</a>
       <a class="button button-secondary" href="${escapeAttribute(model.licenseSourceURL)}" target="_blank" rel="noreferrer">License source</a>
-      ${rawLinks}
+      ${rawLink(row)}
     </div>`;
   elements.dialog.showModal();
 }
 
 function rawLink(row) {
-  return `<a class="button button-secondary" href="results/suite-b-pilot-v0.1/raw/${escapeAttribute(row.source.path)}">Raw ${escapeHtml(shortWorkload(row.workload.id))}</a>`;
+  return `<a class="button button-secondary" href="${escapeAttribute(row.source.rawPath)}">Raw ${escapeHtml(shortWorkload(row.workload.id))}</a>`;
 }
 
 function detailItem(label, value) {
@@ -290,10 +270,6 @@ function thermalMarkup(value) {
 
 function thermalOrder(value) {
   return ({ nominal: 0, fair: 1, serious: 2, critical: 3 })[value] ?? 4;
-}
-
-function profileLabel(row) {
-  return `${row.configuration.model.displayName} ${row.configuration.model.quantization}`;
 }
 
 function shortWorkload(value) {

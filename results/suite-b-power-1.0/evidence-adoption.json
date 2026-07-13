@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "suite-b-power-evidence-adoption-1.0",
+  "publicationRelease": {
+    "id": "suite-b-power",
+    "version": "1.0.0"
+  },
+  "sourceEvidenceRelease": {
+    "id": "suite-b-power",
+    "version": "1.0.0-rc.1"
+  },
+  "decision": {
+    "method": "exact-release-candidate-adoption-without-rerun",
+    "status": "approved-for-publication",
+    "recordedAt": "2026-07-13T13:26:36Z",
+    "approvedAt": "2026-07-13T13:49:59Z",
+    "maintainer": "YizeSun",
+    "referenceAppChanged": false,
+    "protocolSemanticsChanged": false,
+    "newExecutionRequired": false,
+    "rawEvidenceMutationAllowed": false,
+    "finalPublicationApprovalRequired": false
+  },
+  "contributor": {
+    "githubHandle": "YizeSun",
+    "proposedEvidenceLevel": "maintainer-reference",
+    "evidenceLevel": "maintainer-reference",
+    "declarationsStatus": "confirmed",
+    "declarationsConfirmedAt": "2026-07-13T13:49:59Z",
+    "conflictOfInterest": {
+      "category": "none",
+      "statement": "No conflict of interest disclosed."
+    },
+    "declarations": {
+      "physicalDeviceRun": true,
+      "authorizedToSubmit": true,
+      "publicMetadataReviewed": true,
+      "unmodifiedAppExport": true,
+      "containsNoPersonalData": true,
+      "ccBy4Contribution": true,
+      "acceptanceVerificationRankingNotGuaranteed": true
+    }
+  },
+  "entries": [
+    {
+      "resultID": "2C2F23B4-58FA-460E-9481-EB2D3837FDE2",
+      "sessionID": "E2F16565-C476-4290-8E26-777EED71FD3B",
+      "workloadID": "b-ux-001-short-interaction",
+      "artifactID": "mlx-community/Qwen3-0.6B-4bit",
+      "artifactRevision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+      "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-10-55Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_2c2f23b4.json",
+      "rawSHA256": "a930c344f4b4d408479957ebdc07ab51727e8e0ac2e8e987ec2eb04277edfcae",
+      "validationPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/validation/2026-07-13T12-10-55Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_2c2f23b4.validation.json",
+      "validationSHA256": "b1559c8271cdeeecd23cb5dc006b18c33f0d428f8f9c525d45b1968d9b49c571",
+      "primaryMetricID": "first_renderable_proxy_ttft_ms@1",
+      "primaryMetricEligible": false,
+      "adoptionStatus": "retained-ineligible-evidence"
+    },
+    {
+      "resultID": "1B0A18F0-2914-40CF-AFEE-A82CBECD97A4",
+      "sessionID": "DD912FD6-6B27-4A9E-9D59-BE5C78BBA135",
+      "workloadID": "b-pipe-001-sustained-generation",
+      "artifactID": "mlx-community/Qwen3-0.6B-4bit",
+      "artifactRevision": "73e3e38d981303bc594367cd910ea6eb48349da8",
+      "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-11-49Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_1b0a18f0.json",
+      "rawSHA256": "f11dd3282daa10d4080b1a510c959baa53bf37c865ddfbdd04e2d73ee4685687",
+      "validationPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/validation/2026-07-13T12-11-49Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_1b0a18f0.validation.json",
+      "validationSHA256": "4170d9e19ce7b9ed04ea97a97c86a0b78677c9ac6fa55a325f0867dfcec7dfab",
+      "primaryMetricID": "decode_tokens_per_second@1",
+      "primaryMetricEligible": true,
+      "adoptionStatus": "maintainer-reference"
+    },
+    {
+      "resultID": "F64AB629-2AAE-4EE2-862F-957044A82323",
+      "sessionID": "AEC32337-403C-4E18-A86B-72FD7BE3D705",
+      "workloadID": "b-pipe-001-sustained-generation",
+      "artifactID": "mlx-community/Qwen3-1.7B-4bit",
+      "artifactRevision": "3b1b1768f8f8cf8351c712464f906e86c2b8269e",
+      "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-16-23Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_f64ab629.json",
+      "rawSHA256": "ea1f59492705668b2e9525e5c7f17a4d81a8e1d2346da7d01beb381acf86a0da",
+      "validationPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/validation/2026-07-13T12-16-23Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_f64ab629.validation.json",
+      "validationSHA256": "6422a34cc658791c0cef677eee848846ab000eee78c51289bf899b9dbfa0f2c5",
+      "primaryMetricID": "decode_tokens_per_second@1",
+      "primaryMetricEligible": true,
+      "adoptionStatus": "maintainer-reference"
+    },
+    {
+      "resultID": "99A70D26-F1FC-49F4-A375-762FEDFE90AC",
+      "sessionID": "6E56765F-52F7-4F44-BE51-17489701298A",
+      "workloadID": "b-ux-001-short-interaction",
+      "artifactID": "mlx-community/Qwen3-1.7B-4bit",
+      "artifactRevision": "3b1b1768f8f8cf8351c712464f906e86c2b8269e",
+      "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-20-48Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_99a70d26.json",
+      "rawSHA256": "be6d1613da47b7340cc6cf50b1f6fa9748fc2fd91b554783731b4e58f91d658a",
+      "validationPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/validation/2026-07-13T12-20-48Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_99a70d26.validation.json",
+      "validationSHA256": "692f0effaaeb741197420a001336f44b389d244c9f3843743837e718ec1d1311",
+      "primaryMetricID": "first_renderable_proxy_ttft_ms@1",
+      "primaryMetricEligible": true,
+      "adoptionStatus": "maintainer-reference"
+    },
+    {
+      "resultID": "C4F133ED-64F8-4019-9AB8-5322FBBDA217",
+      "sessionID": "D0837D01-C44A-42D8-B5F0-D87F16917D43",
+      "workloadID": "b-pipe-001-sustained-generation",
+      "artifactID": "mlx-community/Qwen3-4B-3bit",
+      "artifactRevision": "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
+      "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-27-41Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_c4f133ed.json",
+      "rawSHA256": "026fde6bbb1f9d45524cc7c8f3e7558d0e6185bab4677cb327a3847b1169651e",
+      "validationPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/validation/2026-07-13T12-27-41Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_c4f133ed.validation.json",
+      "validationSHA256": "e18b97185b9b6e620cb9bf19373da4846b7d68fde4e958551df8ab83c56394a5",
+      "primaryMetricID": "decode_tokens_per_second@1",
+      "primaryMetricEligible": true,
+      "adoptionStatus": "maintainer-reference"
+    },
+    {
+      "resultID": "ECB64A54-9791-463E-B92A-29983648F9AF",
+      "sessionID": "A69A11D5-5FC1-42D6-8BA9-AF8B5C61F048",
+      "workloadID": "b-ux-001-short-interaction",
+      "artifactID": "mlx-community/Qwen3-4B-3bit",
+      "artifactRevision": "c4e8054c71facfa84f781cdb7c1ffab3f09f89bf",
+      "rawPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/raw/2026-07-13T12-32-28Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_ecb64a54.json",
+      "rawSHA256": "64c7d6077156412fb1afe26e3c377d42e98706d65cd708f91f608727492c60dc",
+      "validationPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/validation/2026-07-13T12-32-28Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_ecb64a54.validation.json",
+      "validationSHA256": "e3de1007369340213278844145049b7ac9e13674a357af19bad5b08e1859e984",
+      "primaryMetricID": "first_renderable_proxy_ttft_ms@1",
+      "primaryMetricEligible": true,
+      "adoptionStatus": "maintainer-reference"
+    }
+  ]
+}
