@@ -133,7 +133,7 @@ final class ModelPreparationTests: XCTestCase {
         )
     }
 
-    func testProductionModelPickerContainsExactlyThreeFixedProfiles() {
+    func testProductionModelPickerContainsReferenceAndCandidateProfiles() {
         XCTAssertEqual(
             ProductionModelProfile.allCases.map {
                 $0.planModelProfile.artifactId
@@ -142,13 +142,27 @@ final class ModelPreparationTests: XCTestCase {
                 "mlx-community/Qwen3-0.6B-4bit",
                 "mlx-community/Qwen3-1.7B-4bit",
                 "mlx-community/Qwen3-4B-3bit",
+                "mlx-community/Llama-3.2-1B-Instruct-4bit",
+                "mlx-community/gemma-3-1b-it-qat-4bit",
+                "mlx-community/granite-3.3-2b-instruct-4bit",
+                "mlx-community/SmolLM3-3B-4bit",
             ]
         )
         XCTAssertEqual(
             Set(ProductionModelProfile.allCases.map {
                 $0.planModelProfile.artifactRevision
             }).count,
-            3
+            7
+        )
+        XCTAssertEqual(
+            ProductionModelProfile.allCases.filter {
+                $0.evidenceStatus == .untestedCandidate
+            }.count,
+            4
+        )
+        XCTAssertEqual(
+            ProductionModelProfile.gemma3OneB.extraEOSTokens,
+            ["<end_of_turn>"]
         )
     }
 

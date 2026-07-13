@@ -27,9 +27,11 @@ class CommunityOnboardingTests(unittest.TestCase):
         self.assertIn("contributor-kit/power-1.0-quickstart.md", index)
         self.assertIn("github.com/YizeSun/iOS-LLM-Leaderboard/blob/main", index)
         self.assertIn('data-mode="coverage"', index)
+        self.assertIn('data-mode="catalog"', index)
         self.assertIn("buildCoverageRows", app)
         self.assertIn("eligibleContributorCount", app)
         self.assertIn("COVERAGE.md", app)
+        self.assertIn("power-test-catalog.json", app)
 
     def test_quickstart_pins_app_identity_and_raw_export(self) -> None:
         guide = (ROOT / "contributor-kit/power-1.0-quickstart.md").read_text()

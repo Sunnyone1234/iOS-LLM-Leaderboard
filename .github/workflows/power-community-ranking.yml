@@ -8,19 +8,24 @@ on:
       - "scripts/validate_power_pr_contributor.py"
       - "tests/test_power_community_ranking.py"
       - "tests/test_community_onboarding.py"
+      - "tests/test_power_model_catalog.py"
       - "results/suite-b-power-community/**"
+      - "models/power-test-catalog.json"
       - "index.html"
       - "site/**"
       - "contributor-kit/power-1.0-quickstart.md"
+      - "contributor-kit/test-recommended-model.md"
   push:
     branches: [main]
     paths:
       - "submissions/suite-b/power-1.0.0-rc.1/**"
       - "scripts/generate_power_community_ranking.py"
       - "results/suite-b-power-community/**"
+      - "models/power-test-catalog.json"
       - "index.html"
       - "site/**"
       - "contributor-kit/power-1.0-quickstart.md"
+      - "contributor-kit/test-recommended-model.md"
   workflow_dispatch:
 
 permissions:
@@ -46,7 +51,7 @@ jobs:
           git diff --name-only --diff-filter=AM "$BASE_SHA" "$HEAD_SHA" -- 'submissions/suite-b/power-1.0.0-rc.1/draft/*/submission.json' > /tmp/power-submission-manifests.txt
           python3 scripts/validate_power_pr_contributor.py --expected-contributor "$PR_AUTHOR" --paths-file /tmp/power-submission-manifests.txt
       - name: Test community ranking rules
-        run: python3 -m unittest tests.test_power_community_ranking tests.test_community_onboarding -v
+        run: python3 -m unittest tests.test_power_community_ranking tests.test_community_onboarding tests.test_power_model_catalog -v
       - name: Generate community ranking preview
         run: python3 scripts/generate_power_community_ranking.py --output /tmp/power-community-ranking
       - name: Upload ranking preview

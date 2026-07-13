@@ -145,7 +145,7 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
     }
 
     nonisolated let identity =
-        "MLX Swift LM 3.31.4 · fixed Power + Ship Pilot profiles"
+        "MLX Swift LM 3.31.4 · Power 1.0 reference and candidate profiles"
 
     private static let cacheVerificationMethod =
         "huggingface_revision_manifest_cached_file_size_v1"
@@ -268,9 +268,11 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
         modelContainer = nil
         loadedModelIdentity = nil
         preparedPlan = nil
+        let profile = ProductionModelProfile.matching(plan.modelProfile)
         let configuration = ModelConfiguration(
             id: plan.modelProfile.artifactId,
-            revision: plan.modelProfile.artifactRevision
+            revision: plan.modelProfile.artifactRevision,
+            extraEOSTokens: profile?.extraEOSTokens ?? []
         )
         let loaded = try await loadModelContainer(
             from: HuggingFaceDownloader(localFilesOnly: localFilesOnly),

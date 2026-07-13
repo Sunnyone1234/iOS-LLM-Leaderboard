@@ -6,14 +6,21 @@ an inference framework.
 
 ## Current status
 
-App `0.8.0` build `10` is the F4 reference-App candidate for
-`suite-b-power@1.0.0-rc.1`.
+App `0.9.0` build `11` is the current Power 1.0 community-testing App. It keeps
+the adopted Power 1.0 workload, measurement, result, and validation contracts
+unchanged while adding four explicitly untested model artifacts to the model
+picker.
 
-It emits the frozen F3 result contract
-`suite-b-power-result-1.0.0-rc.1`, but the benchmark release is still a release
-candidate. Every export sets `officialResultEligible` to `false`. F5 physical
-device verification, independent evidence review, ranking authorization, and
-publication have not started.
+App `0.8.0` build `10` remains the exact reference source for the published
+six-result Maintainer Reference matrix and for reproducing its three existing
+Qwen comparison cells. App 0.9.0 must not be substituted when an exact
+App-0.8.0 reproduction is intended.
+
+Both versions emit the adopted source result contract
+`suite-b-power-result-1.0.0-rc.1`. Every raw App export sets
+`officialResultEligible` to `false`; acceptance into the separate live
+community ranking occurs only after package validation, contributor review,
+and merge. A picker entry is never evidence by itself.
 
 ## Frozen execution scope
 
@@ -27,12 +34,27 @@ The loader rejects any other plan identity or version. Experimental
 retained for repository history and compatibility, but App 0.8.0 cannot
 execute them through its production controls.
 
-The selectable model artifacts remain the three pinned Qwen3 profiles already
-declared by the Foundation:
+The three pinned Qwen3 profiles have Maintainer Reference evidence:
 
 - `mlx-community/Qwen3-0.6B-4bit`;
 - `mlx-community/Qwen3-1.7B-4bit`;
 - `mlx-community/Qwen3-4B-3bit`.
+
+App 0.9.0 also exposes four pinned candidates recommended for physical-iPhone
+testing:
+
+- `mlx-community/Llama-3.2-1B-Instruct-4bit`;
+- `mlx-community/gemma-3-1b-it-qat-4bit`;
+- `mlx-community/granite-3.3-2b-instruct-4bit`;
+- `mlx-community/SmolLM3-3B-4bit`.
+
+Their exact revisions, artifact sizes, licenses, runtime-registry basis, and
+evidence state are recorded in
+[`models/power-test-catalog.json`](../models/power-test-catalog.json). They are
+marked `untested`: registration in the locked MLX Swift LM model factory does
+not prove that an artifact loads, fits memory, completes a workload, or
+performs well on a physical iPhone. Failed and OOM runs are useful evidence and
+must be preserved.
 
 Selecting a different workload or model clears preparation and result state.
 The exact artifact must be prepared again before measurement is admitted.
@@ -102,9 +124,9 @@ Validate an exported file from the repository root with:
 python3 scripts/validate_suite_b_power_result.py /path/to/result.json
 ```
 
-During the release-candidate stage, a conforming result is expected to be
-`validWithWarnings`: evidence remains unreviewed and ranking remains
-unauthorized until later release gates.
+A conforming raw result is expected to be `validWithWarnings`: evidence remains
+unreviewed and ranking remains unauthorized until the contribution package is
+reviewed and merged under the public-intake policy.
 
 ## Privacy boundary
 
@@ -126,7 +148,7 @@ Edit Scheme → Run → Info**, turn off **Debug executable** before measuring.
 A simulator can compile the App and run contract tests, but it is intentionally
 rejected as benchmark evidence.
 
-Build and test commands used for F4 are:
+Build and test commands for the reference App are:
 
 ```sh
 xcodebuild -project ios-app/BenchmarkApp.xcodeproj \
@@ -144,11 +166,9 @@ xcodebuild -project ios-app/BenchmarkApp.xcodeproj \
 The contract tests encode both frozen workload shapes. Those Swift-produced
 JSON files are also checked with the frozen F3 Python validator.
 
-## Known F4 boundaries
+## Known boundaries
 
-- F4 does not produce or approve physical-device benchmark results; that is
-  F5.
-- MLX Swift LM is the only reference runtime adapter in this candidate.
+- MLX Swift LM is the only reference runtime adapter.
 - First-renderable proxy TTFT is a bounded adapter/decode measurement, not a
   screen-render timestamp or a claim of user-visible latency.
 - Five no-rest measured generations expose observed degradation and thermal
@@ -156,9 +176,9 @@ JSON files are also checked with the frozen F3 Python validator.
   efficiency.
 - Jetsam or other unexplained process loss is preserved conservatively as
   unclassified failure unless trusted evidence identifies OOM.
-- Submission review, reproduction, governance, and publication remain F6
-  work.
+- App 0.9.0 candidate entries have no accepted physical-device evidence until
+  contributors submit genuine exports through the public-intake process.
 
 Historical App 0.6.0/0.7.0 bundle formats remain supported by historical
-ingestion and validation paths, but they are not the default App 0.8.0 export
+ingestion and validation paths, but they are not the current App 0.9.0 export
 and cannot be promoted into Power 1.0 evidence.

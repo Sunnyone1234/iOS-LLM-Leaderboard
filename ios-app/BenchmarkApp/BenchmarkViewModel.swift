@@ -151,7 +151,7 @@ final class BenchmarkViewModel {
     }
 
     // Experimental registry entries remain for historical compatibility, but
-    // App 0.8.0 cannot execute them through the production control surface.
+    // App 0.9.0 cannot execute them through the production control surface.
     var canCalibrateInputLengths: Bool {
         false
     }

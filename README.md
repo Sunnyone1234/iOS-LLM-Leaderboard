@@ -34,6 +34,9 @@ The website combines the immutable Power 1.0 Maintainer Reference evidence
 with valid merged community packages. It provides Power workload rankings,
 per-cell contributor and variation evidence, plus a sortable Ship deployment
 profile view linked to exact tested configurations and Swift integration code.
+Its separate **Models to test** view lists pinned, untested artifacts that the
+community can run next. Those catalog entries have no rank or performance
+claim and never appear in a leaderboard until genuine evidence is accepted.
 To preview the site locally from the repository root:
 
 ```bash

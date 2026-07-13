@@ -5,6 +5,15 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
     case small = "qwen3-0.6b-4bit"
     case medium = "qwen3-1.7b-4bit"
     case large = "qwen3-4b-3bit"
+    case llama32OneB = "llama-3.2-1b-instruct-4bit"
+    case gemma3OneB = "gemma-3-1b-it-qat-4bit"
+    case granite33TwoB = "granite-3.3-2b-instruct-4bit"
+    case smolLM3ThreeB = "smollm3-3b-4bit"
+
+    enum EvidenceStatus: String, Sendable {
+        case maintainerReference = "Maintainer reference"
+        case untestedCandidate = "Untested candidate"
+    }
 
     var id: String { rawValue }
 
@@ -13,6 +22,26 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
         case .small: "Qwen3 0.6B · 4-bit · Small"
         case .medium: "Qwen3 1.7B · 4-bit · Medium"
         case .large: "Qwen3 4B · 3-bit · Larger"
+        case .llama32OneB: "Llama 3.2 1B · 4-bit · Untested"
+        case .gemma3OneB: "Gemma 3 1B · 4-bit · Untested"
+        case .granite33TwoB: "Granite 3.3 2B · 4-bit · Untested"
+        case .smolLM3ThreeB: "SmolLM3 3B · 4-bit · Untested"
+        }
+    }
+
+    var evidenceStatus: EvidenceStatus {
+        switch self {
+        case .small, .medium, .large: .maintainerReference
+        case .llama32OneB, .gemma3OneB, .granite33TwoB, .smolLM3ThreeB:
+            .untestedCandidate
+        }
+    }
+
+    var extraEOSTokens: Set<String> {
+        switch self {
+        case .llama32OneB: ["<|eot_id|>"]
+        case .gemma3OneB: ["<end_of_turn>"]
+        default: []
         }
     }
 
@@ -81,6 +110,86 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
                 ],
                 artifactContentHash: nil
             )
+        case .llama32OneB:
+            .init(
+                displayName: "Llama 3.2 1B Instruct",
+                baseModelId: "meta-llama/Llama-3.2-1B-Instruct",
+                artifactId: "mlx-community/Llama-3.2-1B-Instruct-4bit",
+                artifactRevision: "08231374eeacb049a0eade7922910865b8fce912",
+                modelFamily: "Llama 3.2",
+                parameterSizeClass: "small-1b",
+                quantization: "4-bit",
+                modelFormat: "MLX Safetensors",
+                tokenizerIdentity: "mlx-community/Llama-3.2-1B-Instruct-4bit@08231374eeacb049a0eade7922910865b8fce912/tokenizer_config.json",
+                sourceUrl: "https://huggingface.co/mlx-community/Llama-3.2-1B-Instruct-4bit/tree/08231374eeacb049a0eade7922910865b8fce912",
+                licenseIdentifier: "llama3.2",
+                licenseSourceUrl: "https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct/blob/9213176726f574b556790deb65791e0c5aa438b6/LICENSE.txt",
+                artifactRepositorySizeBytes: 712_593_855,
+                compatibilityConstraints: Self.candidateConstraints(
+                    modelType: "llama"
+                ),
+                artifactContentHash: nil
+            )
+        case .gemma3OneB:
+            .init(
+                displayName: "Gemma 3 1B IT",
+                baseModelId: "google/gemma-3-1b-it",
+                artifactId: "mlx-community/gemma-3-1b-it-qat-4bit",
+                artifactRevision: "15fed4eafb456c6fcb2a1165f19ac609670ed14b",
+                modelFamily: "Gemma 3 text",
+                parameterSizeClass: "small-1b",
+                quantization: "4-bit",
+                modelFormat: "MLX Safetensors",
+                tokenizerIdentity: "mlx-community/gemma-3-1b-it-qat-4bit@15fed4eafb456c6fcb2a1165f19ac609670ed14b/tokenizer_config.json",
+                sourceUrl: "https://huggingface.co/mlx-community/gemma-3-1b-it-qat-4bit/tree/15fed4eafb456c6fcb2a1165f19ac609670ed14b",
+                licenseIdentifier: "gemma",
+                licenseSourceUrl: "https://huggingface.co/google/gemma-3-1b-it/blob/dcc83ea841ab6100d6b47a070329e1ba4cf78752/README.md",
+                artifactRepositorySizeBytes: 771_863_021,
+                compatibilityConstraints: Self.candidateConstraints(
+                    modelType: "gemma3_text"
+                ),
+                artifactContentHash: nil
+            )
+        case .granite33TwoB:
+            .init(
+                displayName: "Granite 3.3 2B Instruct",
+                baseModelId: "ibm-granite/granite-3.3-2b-instruct",
+                artifactId: "mlx-community/granite-3.3-2b-instruct-4bit",
+                artifactRevision: "58246c5498495c14599525c852cfadb66c9f3084",
+                modelFamily: "Granite 3.3",
+                parameterSizeClass: "medium-2b",
+                quantization: "4-bit",
+                modelFormat: "MLX Safetensors",
+                tokenizerIdentity: "mlx-community/granite-3.3-2b-instruct-4bit@58246c5498495c14599525c852cfadb66c9f3084/tokenizer_config.json",
+                sourceUrl: "https://huggingface.co/mlx-community/granite-3.3-2b-instruct-4bit/tree/58246c5498495c14599525c852cfadb66c9f3084",
+                licenseIdentifier: "apache-2.0",
+                licenseSourceUrl: "https://huggingface.co/ibm-granite/granite-3.3-2b-instruct/blob/707f574c62054322f6b5b04b6d075f0a8f05e0f0/README.md",
+                artifactRepositorySizeBytes: 1_430_233_125,
+                compatibilityConstraints: Self.candidateConstraints(
+                    modelType: "granite"
+                ),
+                artifactContentHash: nil
+            )
+        case .smolLM3ThreeB:
+            .init(
+                displayName: "SmolLM3 3B",
+                baseModelId: "HuggingFaceTB/SmolLM3-3B",
+                artifactId: "mlx-community/SmolLM3-3B-4bit",
+                artifactRevision: "d3a7e0594d6642dbcfb7d149bed8b0bdf49f95ce",
+                modelFamily: "SmolLM3",
+                parameterSizeClass: "medium-3b",
+                quantization: "4-bit",
+                modelFormat: "MLX Safetensors",
+                tokenizerIdentity: "mlx-community/SmolLM3-3B-4bit@d3a7e0594d6642dbcfb7d149bed8b0bdf49f95ce/tokenizer_config.json",
+                sourceUrl: "https://huggingface.co/mlx-community/SmolLM3-3B-4bit/tree/d3a7e0594d6642dbcfb7d149bed8b0bdf49f95ce",
+                licenseIdentifier: "apache-2.0",
+                licenseSourceUrl: "https://huggingface.co/HuggingFaceTB/SmolLM3-3B/blob/a07cc9a04f16550a088caea529712d1d335b0ac1/README.md",
+                artifactRepositorySizeBytes: 1_747_380_812,
+                compatibilityConstraints: Self.candidateConstraints(
+                    modelType: "smollm3"
+                ),
+                artifactContentHash: nil
+            )
         }
     }
 
@@ -91,6 +200,17 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
         "pilot-reference-device:iPhone15,3",
         "physical-run-required-before-publication",
     ]
+
+    private static func candidateConstraints(modelType: String) -> [String] {
+        [
+            "runtime:MLX-Swift-LM-3.31.4",
+            "backend:MLX/Metal",
+            "model-type:\(modelType)",
+            "runtime-registry-confirmed",
+            "physical-iphone-compatibility:untested",
+            "physical-run-required-before-ranking",
+        ]
+    }
 }
 
 enum ProductionBenchmarkPlan: String, CaseIterable, Identifiable, Sendable {

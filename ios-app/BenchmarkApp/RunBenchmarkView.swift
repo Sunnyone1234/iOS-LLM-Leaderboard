@@ -39,14 +39,24 @@ struct RunBenchmarkView: View {
                             ?? "Unavailable"
                     )
                     LabeledContent("Model", value: modelDescription)
+                    LabeledContent(
+                        "Evidence status",
+                        value: viewModel.selectedModelProfile.evidenceStatus.rawValue
+                    )
+                    if viewModel.selectedModelProfile.evidenceStatus
+                        == .untestedCandidate {
+                        Text("This artifact is recommended for testing but has no accepted physical-iPhone evidence yet. It is not a leaderboard result.")
+                            .font(.footnote)
+                            .foregroundStyle(.orange)
+                    }
                     LabeledContent("Procedure", value: procedureDescription)
                     Text(timingBoundaryDescription)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 } header: {
-                    Text("Power Benchmark 1.0 RC · Non-official")
+                    Text("Power Benchmark 1.0 · Reference App")
                 } footer: {
-                    Text("suite-b-power@1.0.0-rc.1 · Reference App 0.8.0")
+                    Text("Adopted RC1 result contract · Reference App 0.9.0")
                 }
 
                 Section {
@@ -178,7 +188,7 @@ struct RunBenchmarkView: View {
                             Label("Export Raw JSON", systemImage: "square.and.arrow.up")
                         }
                     } footer: {
-                        Text("Frozen RC result contract. Non-official and not ranking-eligible; review locally before sharing.")
+                        Text("Frozen Power result contract. Candidate profiles remain unranked until physical evidence is accepted.")
                     }
                 }
 

@@ -275,6 +275,10 @@ def parameter_size_class(model: dict[str, Any]) -> str:
         "Qwen/Qwen3-0.6B": "small-0.6b",
         "Qwen/Qwen3-1.7B": "small-1.7b",
         "Qwen/Qwen3-4B": "small-4b",
+        "meta-llama/Llama-3.2-1B-Instruct": "small-1b",
+        "google/gemma-3-1b-it": "small-1b",
+        "ibm-granite/granite-3.3-2b-instruct": "medium-2b",
+        "HuggingFaceTB/SmolLM3-3B": "medium-3b",
     }
     return known.get(model.get("baseModelID"), "unclassified")
 
