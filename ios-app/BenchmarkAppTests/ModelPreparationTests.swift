@@ -239,8 +239,8 @@ final class ModelPreparationTests: XCTestCase {
                 thermalState: "nominal",
                 debuggerAttached: false,
                 buildConfiguration: "Release",
-                appVersion: "0.6.0",
-                appBuild: "8",
+                appVersion: "0.7.0",
+                appBuild: "9",
                 appSourceCommit: nil,
                 lowPowerModeEnabled: false,
                 batteryLevelPercent: 75,
@@ -250,7 +250,7 @@ final class ModelPreparationTests: XCTestCase {
             sessions: []
         )
 
-        XCTAssertEqual(bundle.schemaVersion, "suite-b-result-bundle-0.3")
+        XCTAssertEqual(bundle.schemaVersion, "suite-b-result-bundle-0.4")
         XCTAssertEqual(bundle.model.artifactID, profile.artifactId)
         XCTAssertEqual(bundle.model.artifactRevision, profile.artifactRevision)
         XCTAssertEqual(bundle.model.modelFamily, "Qwen3 dense")

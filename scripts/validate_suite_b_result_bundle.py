@@ -32,6 +32,13 @@ SUPPORTED_SCHEMAS = {
     "suite-b-result-bundle-0.1",
     "suite-b-result-bundle-0.2",
     "suite-b-result-bundle-0.3",
+    "suite-b-result-bundle-0.4",
+}
+TRACE_POLICY = {
+    "policyVersion": "first-renderable-decoded-prefix-v1",
+    "clockOrigin": "adapter-request-accepted",
+    "scope": "through-first-renderable-inclusive",
+    "captureLimit": 32,
 }
 
 
@@ -43,13 +50,139 @@ def close(actual: Any, expected: float) -> bool:
     return number(actual) and math.isclose(float(actual), expected, rel_tol=1e-6, abs_tol=1e-6)
 
 
+def nonnegative_integer(value: Any) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool) and value >= 0
+
+
+def is_policy_whitespace(character: str) -> bool:
+    value = ord(character)
+    return (
+        0x0009 <= value <= 0x000D
+        or value in {0x0020, 0x0085, 0x00A0, 0x1680, 0x202F, 0x205F, 0x3000}
+        or 0x2000 <= value <= 0x200A
+        or 0x2028 <= value <= 0x2029
+    )
+
+
+def is_renderable(decoded_prefix: str) -> bool:
+    return any(not is_policy_whitespace(character) for character in decoded_prefix)
+
+
+def validate_renderability_trace(
+    attempt: dict[str, Any],
+    events: list[dict[str, Any]],
+    visible_available: bool,
+    label: str,
+) -> list[str]:
+    errors: list[str] = []
+    trace = attempt.get("renderabilityTrace")
+    metric = attempt.get("metrics", {}).get("userVisibleTTFTMilliseconds")
+
+    if not visible_available:
+        if trace is not None:
+            errors.append(f"{label} unexpected renderability trace")
+        if metric is not None:
+            errors.append(f"{label} First-renderable proxy TTFT must be null")
+        return errors
+
+    if attempt.get("outcome") != "completed":
+        if trace is not None:
+            errors.append(f"{label} non-completed attempt cannot contain a renderability trace")
+        if metric is not None:
+            errors.append(f"{label} non-completed First-renderable proxy TTFT must be null")
+        return errors
+
+    if not isinstance(trace, dict):
+        return [f"{label} completed user-experience attempt requires a renderability trace"]
+    for field, expected in TRACE_POLICY.items():
+        if trace.get(field) != expected:
+            errors.append(f"{label} renderability trace {field} mismatch")
+
+    generation_start = trace.get("generationStartNanoseconds")
+    if not nonnegative_integer(generation_start):
+        errors.append(f"{label} renderability trace generation start is invalid")
+        generation_start = None
+    entries = trace.get("entries")
+    if not isinstance(entries, list):
+        return errors + [f"{label} renderability trace entries must be an array"]
+    if len(entries) > TRACE_POLICY["captureLimit"]:
+        errors.append(f"{label} renderability trace exceeds capture limit")
+
+    first_renderable_position: int | None = None
+    previous_decoded_at: int | None = None
+    for position, entry in enumerate(entries):
+        entry_label = f"{label}.renderabilityTrace.entries[{position}]"
+        if not isinstance(entry, dict):
+            errors.append(f"{entry_label} must be an object")
+            continue
+        if position >= len(events):
+            errors.append(f"{entry_label} has no corresponding token event")
+            continue
+        event = events[position]
+        if entry.get("tokenIndex") != event.get("index") or entry.get("tokenID") != event.get("tokenID"):
+            errors.append(f"{entry_label} token identity mismatch")
+
+        received = entry.get("tokenReceivedNanoseconds")
+        decoded_at = entry.get("decodedAtNanoseconds")
+        if not nonnegative_integer(received) or not nonnegative_integer(decoded_at):
+            errors.append(f"{entry_label} timing must use non-negative integers")
+        else:
+            if decoded_at < received:
+                errors.append(f"{entry_label} decode completed before token receipt")
+            if previous_decoded_at is not None and decoded_at < previous_decoded_at:
+                errors.append(f"{entry_label} decode time is not monotonic")
+            previous_decoded_at = decoded_at
+            elapsed = event.get("elapsedNanoseconds")
+            if generation_start is not None and nonnegative_integer(elapsed):
+                if abs(received - (generation_start + elapsed)) > 1:
+                    errors.append(f"{entry_label} clock relationship mismatch")
+
+        decoded_prefix = entry.get("decodedPrefix")
+        if not isinstance(decoded_prefix, str):
+            errors.append(f"{entry_label} decodedPrefix must be a string")
+            renderable = False
+        else:
+            renderable = is_renderable(decoded_prefix)
+        if entry.get("isRenderable") is not renderable:
+            errors.append(f"{entry_label} renderability decision mismatch")
+        if renderable and first_renderable_position is None:
+            first_renderable_position = position
+
+    first_token_index = trace.get("firstRenderableTokenIndex")
+    outcome = trace.get("outcome")
+    if first_renderable_position is not None:
+        entry = entries[first_renderable_position]
+        if first_renderable_position != len(entries) - 1:
+            errors.append(f"{label} renderability trace must stop at the first renderable prefix")
+        if first_token_index != entry.get("tokenIndex"):
+            errors.append(f"{label} first renderable token index mismatch")
+        if outcome != "firstRenderableFound":
+            errors.append(f"{label} renderability trace outcome mismatch")
+        decoded_at = entry.get("decodedAtNanoseconds")
+        if nonnegative_integer(decoded_at) and not close(metric, decoded_at / 1_000_000):
+            errors.append(f"{label} First-renderable proxy TTFT mismatch")
+    else:
+        if first_token_index is not None:
+            errors.append(f"{label} first renderable token index must be null")
+        if metric is not None:
+            errors.append(f"{label} First-renderable proxy TTFT must be null without renderable evidence")
+        if len(events) > len(entries):
+            if len(entries) != TRACE_POLICY["captureLimit"]:
+                errors.append(f"{label} incomplete renderability trace before capture limit")
+            if outcome != "captureLimitReached":
+                errors.append(f"{label} renderability trace outcome mismatch")
+        elif outcome != "noRenderableContent":
+            errors.append(f"{label} renderability trace outcome mismatch")
+    return errors
+
+
 def validate(data: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     if not isinstance(data, dict):
         return ["result bundle must be an object"]
     schema = data.get("schemaVersion")
     if schema not in SUPPORTED_SCHEMAS: errors.append("unsupported schemaVersion")
-    if schema == "suite-b-result-bundle-0.3":
+    if schema in {"suite-b-result-bundle-0.3", "suite-b-result-bundle-0.4"}:
         try:
             uuid.UUID(str(data.get("resultID")))
         except (ValueError, AttributeError, TypeError):
@@ -78,7 +211,7 @@ def validate(data: dict[str, Any]) -> list[str]:
     if data.get("officialResultEligible") is not data.get("eligibility", {}).get("officialLeaderboardEligible"): errors.append("official eligibility mismatch")
     prep = data.get("modelPreparation", {})
     if prep.get("eligibleForPerformanceMeasurement") is not True or prep.get("cacheStateBeforePreparation") != "cached" or prep.get("downloadOccurredDuringSession") is not False: errors.append("model preparation is ineligible")
-    if schema in {"suite-b-result-bundle-0.2", "suite-b-result-bundle-0.3"}:
+    if schema in {"suite-b-result-bundle-0.2", "suite-b-result-bundle-0.3", "suite-b-result-bundle-0.4"}:
         if plan.get("requiredPowerSource") != "unplugged" or plan.get("minimumBatteryLevelPercent") != 50: errors.append("power admission plan mismatch")
         device = data.get("device", {})
         power_reasons: list[str] = []
@@ -92,7 +225,7 @@ def validate(data: dict[str, Any]) -> list[str]:
             if eligibility.get("sessionValid") is not False: errors.append("ineligible power state cannot produce a valid session")
             for reason in power_reasons:
                 if reason not in eligibility.get("reasonCodes", []): errors.append(f"missing power reason code: {reason}")
-    if schema == "suite-b-result-bundle-0.3":
+    if schema in {"suite-b-result-bundle-0.3", "suite-b-result-bundle-0.4"}:
         model = data.get("model", {})
         required_model_strings = (
             "displayName", "baseModelID", "artifactID", "artifactRevision",
@@ -152,6 +285,15 @@ def validate(data: dict[str, Any]) -> list[str]:
             for event_index, event in enumerate(events):
                 if event.get("index") != event_index: errors.append(f"{label}.attempts[{attempt_index}] token index mismatch")
             if events and not close(attempt.get("metrics", {}).get("ttftMilliseconds"), events[0]["elapsedNanoseconds"] / 1_000_000): errors.append(f"{label}.attempts[{attempt_index}] Pipeline TTFT mismatch")
+            if schema == "suite-b-result-bundle-0.4":
+                errors.extend(
+                    validate_renderability_trace(
+                        attempt,
+                        events,
+                        expected_visible,
+                        f"{label}.attempts[{attempt_index}]",
+                    )
+                )
         summary = session.get("summary", {})
         if summary.get("successfulMeasuredRuns") != len(successful) or summary.get("failedMeasuredRuns") != 5 - len(successful): errors.append(f"{label} run counts mismatch")
         quality = passing == 5 if workload_id == "b-ux-002-context-assistance" else None

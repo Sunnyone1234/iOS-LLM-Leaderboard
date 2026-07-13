@@ -170,14 +170,33 @@ final class BenchmarkRunnerTests: XCTestCase {
                     promptTimeSeconds: 0.5,
                     generateTimeSeconds: 0.15,
                     userVisibleTTFTNanoseconds: 125_000_000,
-                    requestCompletionNanoseconds: 275_000_000
+                    requestCompletionNanoseconds: 275_000_000,
+                    renderabilityTrace: FirstRenderableTrace(
+                        policyVersion: FirstRenderableTrace.currentPolicyVersion,
+                        clockOrigin: FirstRenderableTrace.traceClockOrigin,
+                        scope: FirstRenderableTrace.traceScope,
+                        captureLimit: FirstRenderableTrace.maximumCaptureEntries,
+                        generationStartNanoseconds: 20_000_000,
+                        outcome: .firstRenderableFound,
+                        firstRenderableTokenIndex: 0,
+                        entries: [
+                            .init(
+                                tokenIndex: 0,
+                                tokenID: 10,
+                                tokenReceivedNanoseconds: 120_000_000,
+                                decodedAtNanoseconds: 130_000_000,
+                                decodedPrefix: "Hello",
+                                isRenderable: true
+                            )
+                        ]
+                    )
                 )
             )
         )
 
         let metrics = AttemptMetrics.calculate(for: attempt)
         XCTAssertEqual(metrics.ttftMilliseconds, 100)
-        XCTAssertEqual(metrics.userVisibleTTFTMilliseconds, 125)
+        XCTAssertEqual(metrics.userVisibleTTFTMilliseconds, 130)
         XCTAssertEqual(metrics.requestCompletionMilliseconds, 275)
         XCTAssertEqual(metrics.prefillTokensPerSecond, 400)
         XCTAssertNotNil(metrics.decodeTokensPerSecond)
@@ -189,6 +208,73 @@ final class BenchmarkRunnerTests: XCTestCase {
         XCTAssertEqual(metrics.peakMemoryMegabytes, 256)
         XCTAssertEqual(metrics.p50TokenIntervalMilliseconds, 75)
         XCTAssertEqual(metrics.p95TokenIntervalMilliseconds, 97.5)
+    }
+
+    func testFirstRenderableTraceStopsAfterFirstRenderablePrefix() {
+        var recorder = FirstRenderableTraceRecorder(
+            generationStartNanoseconds: 90_000_000
+        )
+        recorder.record(
+            tokenIndex: 0,
+            tokenID: 10,
+            tokenReceivedNanoseconds: 100_000_000,
+            decodedAtNanoseconds: 101_000_000,
+            decodedPrefix: " \n"
+        )
+        recorder.record(
+            tokenIndex: 1,
+            tokenID: 11,
+            tokenReceivedNanoseconds: 110_000_000,
+            decodedAtNanoseconds: 111_000_000,
+            decodedPrefix: " \nHello"
+        )
+        recorder.record(
+            tokenIndex: 2,
+            tokenID: 12,
+            tokenReceivedNanoseconds: 120_000_000,
+            decodedAtNanoseconds: 121_000_000,
+            decodedPrefix: " \nHello world"
+        )
+
+        let trace = recorder.finalize(outputTokenCount: 3)
+        XCTAssertEqual(trace.outcome, .firstRenderableFound)
+        XCTAssertEqual(trace.firstRenderableTokenIndex, 1)
+        XCTAssertEqual(trace.firstRenderableDecodedAtNanoseconds, 111_000_000)
+        XCTAssertEqual(trace.entries.count, 2)
+        XCTAssertFalse(trace.entries[0].isRenderable)
+        XCTAssertTrue(trace.entries[1].isRenderable)
+    }
+
+    func testFirstRenderablePolicyUsesTheFrozenUnicodeScalarSet() {
+        XCTAssertFalse(FirstRenderableTrace.isRenderable(" \n\u{00A0}\u{3000}"))
+        XCTAssertTrue(FirstRenderableTrace.isRenderable(" \n\u{001C}"))
+    }
+
+    func testFirstRenderableTraceCapsNonRenderableEvidenceAt32Tokens() {
+        var recorder = FirstRenderableTraceRecorder(
+            generationStartNanoseconds: 90_000_000
+        )
+        for index in 0..<FirstRenderableTrace.maximumCaptureEntries {
+            recorder.record(
+                tokenIndex: index,
+                tokenID: index,
+                tokenReceivedNanoseconds: UInt64(100_000_000 + index),
+                decodedAtNanoseconds: UInt64(101_000_000 + index),
+                decodedPrefix: String(repeating: " ", count: index + 1)
+            )
+        }
+
+        XCTAssertFalse(recorder.shouldDecodeNextToken)
+        let trace = recorder.finalize(
+            outputTokenCount: FirstRenderableTrace.maximumCaptureEntries + 1
+        )
+        XCTAssertEqual(trace.outcome, .captureLimitReached)
+        XCTAssertNil(trace.firstRenderableTokenIndex)
+        XCTAssertNil(trace.firstRenderableDecodedAtNanoseconds)
+        XCTAssertEqual(
+            trace.entries.count,
+            FirstRenderableTrace.maximumCaptureEntries
+        )
     }
 
     func testDegradationUsesFirstAndLastSuccessfulMeasuredRuns() {

@@ -1,0 +1,479 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YizeSun/iOS-LLM-Leaderboard/schemas/suite-b-result-bundle-0.4.schema.json",
+  "title": "Unified Suite B Result Bundle 0.4 (Foundation Evidence Candidate)",
+  "description": "Defines the non-official App 0.7.0 Foundation export with bounded First-renderable proxy TTFT evidence. Conformance does not make a result eligible for Power Benchmark 1.0.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "resultID",
+    "createdAt",
+    "officialResultEligible",
+    "plan",
+    "workload",
+    "measurementMode",
+    "generationConfiguration",
+    "model",
+    "runtime",
+    "device",
+    "modelPreparation",
+    "eligibility",
+    "sessions"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "suite-b-result-bundle-0.4" },
+    "resultID": { "type": "string", "format": "uuid" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "officialResultEligible": { "const": false },
+    "plan": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "runnerKind",
+        "warmupRuns",
+        "measuredRuns",
+        "outputTokenLimit",
+        "requiredPowerSource",
+        "minimumBatteryLevelPercent"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "runnerKind": { "type": "string", "minLength": 1 },
+        "warmupRuns": { "const": 1 },
+        "measuredRuns": { "const": 5 },
+        "outputTokenLimit": { "type": "integer", "minimum": 1 },
+        "requiredPowerSource": { "const": "unplugged" },
+        "minimumBatteryLevelPercent": { "const": 50 }
+      }
+    },
+    "workload": {
+      "type": "object",
+      "required": ["id", "version", "category", "fixtureSHA256"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "category": { "enum": ["pipeline", "user-experience"] },
+        "fixtureSHA256": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/sha256" }
+        }
+      }
+    },
+    "measurementMode": {
+      "type": "object",
+      "required": [
+        "id",
+        "timingBoundaryVersion",
+        "pipelineTTFTStart",
+        "pipelineTTFTEnd",
+        "userVisibleTTFTAvailable",
+        "prefillSource",
+        "decodeFormula",
+        "memoryMetric",
+        "memorySamplingIntervalMilliseconds"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "timingBoundaryVersion": { "type": "string", "minLength": 1 },
+        "pipelineTTFTStart": { "type": "string", "minLength": 1 },
+        "pipelineTTFTEnd": { "type": "string", "minLength": 1 },
+        "userVisibleTTFTAvailable": { "type": "boolean" },
+        "prefillSource": { "type": "string", "minLength": 1 },
+        "decodeFormula": { "type": "string", "minLength": 1 },
+        "memoryMetric": { "type": "string", "minLength": 1 },
+        "memorySamplingIntervalMilliseconds": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "generationConfiguration": {
+      "type": "object",
+      "required": [
+        "samplingEnabled",
+        "temperature",
+        "topP",
+        "topK",
+        "seed",
+        "repetitionPenalty",
+        "thinkingMode",
+        "chatTemplateIdentity",
+        "includeStopTokenInRawEvents",
+        "outputTokenLimit",
+        "contextPolicy",
+        "modelLoadPolicy",
+        "kvCachePolicy"
+      ],
+      "properties": {
+        "samplingEnabled": { "type": "boolean" },
+        "temperature": { "$ref": "#/$defs/nullableNumber" },
+        "topP": { "$ref": "#/$defs/nullableNumber" },
+        "topK": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "seed": { "type": ["integer", "null"] },
+        "repetitionPenalty": { "$ref": "#/$defs/nullableNumber" },
+        "thinkingMode": { "type": "string", "minLength": 1 },
+        "chatTemplateIdentity": { "type": "string", "minLength": 1 },
+        "includeStopTokenInRawEvents": { "type": "boolean" },
+        "outputTokenLimit": { "type": "integer", "minimum": 1 },
+        "contextPolicy": { "type": "string", "minLength": 1 },
+        "modelLoadPolicy": { "type": "string", "minLength": 1 },
+        "kvCachePolicy": { "type": "string", "minLength": 1 }
+      }
+    },
+    "model": {
+      "type": "object",
+      "required": [
+        "displayName",
+        "baseModelID",
+        "artifactID",
+        "artifactRevision",
+        "modelFamily",
+        "parameterSizeClass",
+        "quantization",
+        "modelFormat",
+        "tokenizerIdentity",
+        "sourceURL",
+        "licenseIdentifier",
+        "licenseSourceURL",
+        "artifactRepositorySizeBytes",
+        "compatibilityConstraints"
+      ],
+      "properties": {
+        "displayName": { "type": "string", "minLength": 1 },
+        "baseModelID": { "type": "string", "minLength": 1 },
+        "artifactID": { "type": "string", "minLength": 1 },
+        "artifactRevision": { "type": "string", "minLength": 1 },
+        "modelFamily": { "type": "string", "minLength": 1 },
+        "parameterSizeClass": { "type": "string", "minLength": 1 },
+        "quantization": { "type": "string", "minLength": 1 },
+        "modelFormat": { "type": "string", "minLength": 1 },
+        "tokenizerIdentity": { "type": "string", "minLength": 1 },
+        "sourceURL": { "type": "string", "format": "uri" },
+        "licenseIdentifier": { "type": "string", "minLength": 1 },
+        "licenseSourceURL": { "type": "string", "format": "uri" },
+        "artifactRepositorySizeBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "compatibilityConstraints": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "artifactContentHash": {
+          "type": ["string", "null"],
+          "minLength": 1
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "required": [
+        "name",
+        "version",
+        "resolvedRevision",
+        "backend",
+        "mlxSwiftVersion",
+        "mlxSwiftRevision",
+        "downloaderPackage",
+        "tokenizerPackage"
+      ],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "resolvedRevision": { "type": "string", "minLength": 1 },
+        "backend": { "type": "string", "minLength": 1 },
+        "mlxSwiftVersion": { "type": "string", "minLength": 1 },
+        "mlxSwiftRevision": { "type": "string", "minLength": 1 },
+        "downloaderPackage": { "type": "string", "minLength": 1 },
+        "tokenizerPackage": { "type": "string", "minLength": 1 }
+      }
+    },
+    "device": {
+      "type": "object",
+      "required": [
+        "displayName",
+        "machineIdentifier",
+        "systemName",
+        "systemVersion",
+        "systemBuild",
+        "debuggerAttached",
+        "buildConfiguration",
+        "appVersion",
+        "appBuild",
+        "appSourceCommit",
+        "lowPowerModeEnabled",
+        "batteryLevelPercent",
+        "batteryState"
+      ],
+      "properties": {
+        "displayName": { "type": "string", "minLength": 1 },
+        "machineIdentifier": { "type": "string", "pattern": "^iPhone[0-9]+,[0-9]+$" },
+        "systemName": { "type": "string", "minLength": 1 },
+        "systemVersion": { "type": "string", "minLength": 1 },
+        "systemBuild": { "type": "string", "minLength": 1 },
+        "debuggerAttached": { "type": "boolean" },
+        "buildConfiguration": { "type": "string", "minLength": 1 },
+        "appVersion": { "type": "string", "minLength": 1 },
+        "appBuild": { "type": "string", "minLength": 1 },
+        "appSourceCommit": { "type": ["string", "null"] },
+        "lowPowerModeEnabled": { "type": "boolean" },
+        "batteryLevelPercent": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "batteryState": {
+          "enum": ["unknown", "unplugged", "charging", "full"]
+        }
+      }
+    },
+    "modelPreparation": {
+      "type": "object",
+      "required": [
+        "artifactID",
+        "artifactRevision",
+        "cacheStateBeforePreparation",
+        "downloadOccurredDuringSession",
+        "preparationDurationMilliseconds",
+        "preparationCompleted",
+        "modelLoadCompleted",
+        "eligibleForPerformanceMeasurement",
+        "reasonCodes",
+        "cacheVerificationMethod",
+        "preparedAt"
+      ],
+      "properties": {
+        "artifactID": { "type": "string", "minLength": 1 },
+        "artifactRevision": { "type": "string", "minLength": 1 },
+        "cacheStateBeforePreparation": { "type": "string", "minLength": 1 },
+        "downloadOccurredDuringSession": { "type": "boolean" },
+        "preparationDurationMilliseconds": { "type": "number", "minimum": 0 },
+        "preparationCompleted": { "type": "boolean" },
+        "modelLoadCompleted": { "type": "boolean" },
+        "eligibleForPerformanceMeasurement": { "type": "boolean" },
+        "reasonCodes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "cacheVerificationMethod": { "type": "string", "minLength": 1 },
+        "preparedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "eligibility": {
+      "type": "object",
+      "required": [
+        "sessionValid",
+        "officialLeaderboardEligible",
+        "reasonCodes"
+      ],
+      "properties": {
+        "sessionValid": { "type": "boolean" },
+        "officialLeaderboardEligible": { "const": false },
+        "reasonCodes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "bundleSummary": {
+      "type": ["object", "null"],
+      "properties": {
+        "firstMeasuredRunIndex": { "type": ["integer", "null"] },
+        "lastMeasuredRunIndex": { "type": ["integer", "null"] },
+        "decodePercentChange": { "$ref": "#/$defs/nullableNumber" },
+        "ttftPercentChange": { "$ref": "#/$defs/nullableNumber" },
+        "prefillPercentChange": { "$ref": "#/$defs/nullableNumber" }
+      }
+    },
+    "sessions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/session" }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nullableNumber": {
+      "type": ["number", "null"]
+    },
+    "metricValue": {
+      "type": ["number", "null"],
+      "minimum": 0
+    },
+    "renderabilityTrace": {
+      "type": "object",
+      "required": [
+        "policyVersion",
+        "clockOrigin",
+        "scope",
+        "captureLimit",
+        "generationStartNanoseconds",
+        "outcome",
+        "firstRenderableTokenIndex",
+        "entries"
+      ],
+      "properties": {
+        "policyVersion": { "const": "first-renderable-decoded-prefix-v1" },
+        "clockOrigin": { "const": "adapter-request-accepted" },
+        "scope": { "const": "through-first-renderable-inclusive" },
+        "captureLimit": { "const": 32 },
+        "generationStartNanoseconds": { "type": "integer", "minimum": 0 },
+        "outcome": {
+          "enum": [
+            "firstRenderableFound",
+            "noRenderableContent",
+            "captureLimitReached"
+          ]
+        },
+        "firstRenderableTokenIndex": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "entries": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "required": [
+              "tokenIndex",
+              "tokenID",
+              "tokenReceivedNanoseconds",
+              "decodedAtNanoseconds",
+              "decodedPrefix",
+              "isRenderable"
+            ],
+            "properties": {
+              "tokenIndex": { "type": "integer", "minimum": 0 },
+              "tokenID": { "type": "integer" },
+              "tokenReceivedNanoseconds": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "decodedAtNanoseconds": { "type": "integer", "minimum": 0 },
+              "decodedPrefix": { "type": "string" },
+              "isRenderable": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "session": {
+      "type": "object",
+      "required": [
+        "id",
+        "fixtureSHA256",
+        "performanceEligible",
+        "timingEvidenceRetained",
+        "summary",
+        "attempts"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "targetInputTokens": { "type": ["integer", "null"], "minimum": 1 },
+        "fixtureSHA256": { "$ref": "#/$defs/sha256" },
+        "paddingRepetitions": { "type": ["integer", "null"], "minimum": 0 },
+        "performanceEligible": { "type": "boolean" },
+        "qualityEligible": { "type": ["boolean", "null"] },
+        "timingEvidenceRetained": { "const": true },
+        "summary": { "$ref": "#/$defs/sessionSummary" },
+        "attempts": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "items": { "$ref": "#/$defs/attempt" }
+        }
+      }
+    },
+    "sessionSummary": {
+      "type": "object",
+      "required": [
+        "successfulMeasuredRuns",
+        "failedMeasuredRuns",
+        "finalThermalState"
+      ],
+      "properties": {
+        "successfulMeasuredRuns": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "failedMeasuredRuns": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "answerContractPassingRuns": { "type": ["integer", "null"], "minimum": 0, "maximum": 5 },
+        "modelInputTokens": { "type": ["integer", "null"], "minimum": 0 },
+        "medianPipelineTTFTMilliseconds": { "$ref": "#/$defs/metricValue" },
+        "medianUserVisibleTTFTMilliseconds": { "$ref": "#/$defs/metricValue" },
+        "medianRequestCompletionMilliseconds": { "$ref": "#/$defs/metricValue" },
+        "medianPrefillTokensPerSecond": { "$ref": "#/$defs/metricValue" },
+        "medianDecodeTokensPerSecond": { "$ref": "#/$defs/metricValue" },
+        "medianPeakMemoryMegabytes": { "$ref": "#/$defs/metricValue" },
+        "finalThermalState": { "type": "string", "minLength": 1 }
+      }
+    },
+    "attempt": {
+      "type": "object",
+      "required": [
+        "runIndex",
+        "role",
+        "outcome",
+        "thermalStateBefore",
+        "thermalStateAfter",
+        "memorySamplingIntervalMilliseconds",
+        "metrics",
+        "tokenEvents"
+      ],
+      "properties": {
+        "runIndex": { "type": "integer", "minimum": 0 },
+        "role": { "enum": ["warmup", "measured"] },
+        "outcome": { "enum": ["completed", "failed", "notRun"] },
+        "errorMessage": { "type": ["string", "null"] },
+        "promptTokenCount": { "type": ["integer", "null"], "minimum": 0 },
+        "outputTokenCount": { "type": ["integer", "null"], "minimum": 0 },
+        "stopReason": { "type": ["string", "null"] },
+        "visibleText": { "type": ["string", "null"] },
+        "answerContract": { "type": ["object", "null"] },
+        "answerEligible": { "type": ["boolean", "null"] },
+        "thermalStateBefore": { "type": "string", "minLength": 1 },
+        "thermalStateAfter": { "type": "string", "minLength": 1 },
+        "memorySamplingIntervalMilliseconds": { "type": "integer", "minimum": 1 },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "ttftMilliseconds": { "$ref": "#/$defs/metricValue" },
+            "userVisibleTTFTMilliseconds": { "$ref": "#/$defs/metricValue" },
+            "requestCompletionMilliseconds": { "$ref": "#/$defs/metricValue" },
+            "prefillTokensPerSecond": { "$ref": "#/$defs/metricValue" },
+            "decodeTokensPerSecond": { "$ref": "#/$defs/metricValue" },
+            "p50TokenIntervalMilliseconds": { "$ref": "#/$defs/metricValue" },
+            "p95TokenIntervalMilliseconds": { "$ref": "#/$defs/metricValue" },
+            "p99TokenIntervalMilliseconds": { "$ref": "#/$defs/metricValue" },
+            "peakMemoryMegabytes": { "$ref": "#/$defs/metricValue" }
+          }
+        },
+        "tokenEvents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["index", "tokenID", "elapsedNanoseconds"],
+            "properties": {
+              "index": { "type": "integer", "minimum": 0 },
+              "tokenID": { "type": "integer" },
+              "elapsedNanoseconds": { "type": "integer", "minimum": 0 }
+            }
+          }
+        },
+        "renderabilityTrace": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/renderabilityTrace" }
+          ]
+        }
+      }
+    }
+  }
+}

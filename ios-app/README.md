@@ -101,14 +101,15 @@ launch-time value. A run can start only from the system-reported `nominal`
 state. If the state reaches `critical`, the current generation is retained and
 remaining generations are recorded as `notRun` instead of being started.
 
-App version `0.6.0` build `8` exposes two directly selectable pilot workloads
-and exactly three fixed model profiles: Qwen3 0.6B 4-bit, Qwen3 1.7B 4-bit,
-and Qwen3 4B 3-bit. Selecting a workload or model clears prior preparation and
-result state, so the exact artifact must be prepared again with that workload's
-generation and measurement plan before Run Benchmark is enabled. The App
-rejects a run when either identity is outside the fixed Pilot registry.
+Historical Pilot App version `0.6.0` build `8` exposes two directly selectable
+pilot workloads and exactly three fixed model profiles: Qwen3 0.6B 4-bit,
+Qwen3 1.7B 4-bit, and Qwen3 4B 3-bit. Selecting a workload or model clears
+prior preparation and result state, so the exact artifact must be prepared
+again with that workload's generation and measurement plan before Run
+Benchmark is enabled. The App rejects a run when either identity is outside
+the fixed Pilot registry.
 
-The App exports raw bundle schema
+That App exported raw bundle schema
 `suite-b-result-bundle-0.3`. The additive model identity records the exact
 artifact source, revision, tokenizer identity, repository size, license source,
 and compatibility constraints. The Pilot ingestion path retains support for
@@ -124,6 +125,21 @@ and official leaderboard eligibility. A transition from `nominal` through
 `fair` to `serious` is valid thermal evidence; it is not filtered out for
 being slower. Official eligibility remains false while the protocol is a
 non-official pilot.
+
+Foundation App version `0.7.0` build `9` preserves the same workload, model,
+and execution identities and exports non-official
+`suite-b-result-bundle-0.4`. For workloads that expose the First-renderable
+proxy TTFT, every completed attempt now retains a bounded cumulative-decoding
+trace through the first renderable prefix, with a hard cap of 32 entries. The
+trace stops immediately after that boundary and lets the validator recompute
+the metric from token identity, request-relative receipt, decode completion,
+decoded prefix, and the versioned whitespace rule. A cap outcome or completed
+generation with no renderable content produces a `null` proxy TTFT.
+
+The trace contains only early decoded prefixes from the fixed benchmark
+workload and duplicates content already represented in the final visible
+output. It does not collect personal prompts, user documents, device account
+identifiers, or unrelated App data.
 
 The bundled `suite-b-plan-registry-0.2` is the execution source of truth for
 workload identity, runner kind, run counts, output limit, token-exact points,
@@ -181,7 +197,9 @@ infer screen-visible TTFT. B-UX-001 retains the historical
 `userVisibleTTFTMilliseconds` field, but Pilot v0.1 labels it **First-renderable
 proxy TTFT**: it starts at adapter request acceptance and ends when cumulative
 decoding first produces non-whitespace content. It is not measured at the
-screen. Pipeline TTFT remains a separate diagnostic measurement.
+screen. Foundation App 0.7.0 retains the bounded per-prefix evidence needed to
+recalculate that value; Pipeline TTFT remains a separate diagnostic
+measurement.
 
 Release builds may inject the exact source revision with the
 `GIT_COMMIT_SHA=<40-character-commit>` Xcode build setting. If that value is not

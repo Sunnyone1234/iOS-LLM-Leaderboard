@@ -1,18 +1,23 @@
 from __future__ import annotations
 import json, statistics, unittest
 from pathlib import Path
+from scripts.validate_suite_b_bundle import validate as validate_any_suite_b_bundle
 from scripts.validate_suite_b_context_assistance_bundle import evaluate_contract
-from scripts.validate_suite_b_result_bundle import PLANS, THINKING_MODES, validate
+from scripts.validate_suite_b_result_bundle import PLANS, THINKING_MODES, is_renderable, validate
 
 PASSING = "The note is safe in the local vault. Network must be stable for 30 seconds; below 20 percent wait for power. Avoid deleting or reinstalling. ORCHID-47."
 FAILING = "The note is safe locally. ORCHID-47."
 ROOT = Path(__file__).resolve().parents[1]
 
-def attempt(target: int | None, index: int, role: str, quality: bool) -> dict:
+def attempt(target: int | None, index: int, role: str, quality: bool, visible: bool, schema: str) -> dict:
     first = 100_000_000 + index * 1_000_000
     text = PASSING if quality else FAILING
     contract = evaluate_contract(text) if quality else None
-    return {"runIndex": index, "role": role, "outcome": "completed", "errorMessage": None, "promptTokenCount": target or 235, "outputTokenCount": 2, "stopReason": "outputTokenLimit", "visibleText": text, "answerContract": contract, "answerEligible": all(contract.values()) if contract is not None else None, "thermalStateBefore": "nominal", "thermalStateAfter": "nominal", "memorySamplingIntervalMilliseconds": 50, "metrics": {"ttftMilliseconds": first / 1_000_000, "userVisibleTTFTMilliseconds": first / 1_000_000 + 1, "requestCompletionMilliseconds": first / 1_000_000 + 10, "prefillTokensPerSecond": 500.0, "decodeTokensPerSecond": 95.0, "peakMemoryMegabytes": 700.0}, "tokenEvents": [{"index": 0, "tokenID": 1, "elapsedNanoseconds": first}, {"index": 1, "tokenID": 2, "elapsedNanoseconds": first + 10_000_000}]}
+    proxy = first / 1_000_000 + (21 if schema == "suite-b-result-bundle-0.4" else 1) if visible else None
+    value = {"runIndex": index, "role": role, "outcome": "completed", "errorMessage": None, "promptTokenCount": target or 235, "outputTokenCount": 2, "stopReason": "outputTokenLimit", "visibleText": text, "answerContract": contract, "answerEligible": all(contract.values()) if contract is not None else None, "thermalStateBefore": "nominal", "thermalStateAfter": "nominal", "memorySamplingIntervalMilliseconds": 50, "metrics": {"ttftMilliseconds": first / 1_000_000, "userVisibleTTFTMilliseconds": proxy, "requestCompletionMilliseconds": first / 1_000_000 + 30, "prefillTokensPerSecond": 500.0, "decodeTokensPerSecond": 95.0, "peakMemoryMegabytes": 700.0}, "tokenEvents": [{"index": 0, "tokenID": 1, "elapsedNanoseconds": first}, {"index": 1, "tokenID": 2, "elapsedNanoseconds": first + 10_000_000}]}
+    if schema == "suite-b-result-bundle-0.4" and visible:
+        value["renderabilityTrace"] = {"policyVersion": "first-renderable-decoded-prefix-v1", "clockOrigin": "adapter-request-accepted", "scope": "through-first-renderable-inclusive", "captureLimit": 32, "generationStartNanoseconds": 20_000_000, "outcome": "firstRenderableFound", "firstRenderableTokenIndex": 0, "entries": [{"tokenIndex": 0, "tokenID": 1, "tokenReceivedNanoseconds": first + 20_000_000, "decodedAtNanoseconds": first + 21_000_000, "decodedPrefix": "Hello", "isRenderable": True}]}
+    return value
 
 def bundle(workload_id: str, schema: str = "suite-b-result-bundle-0.1") -> dict:
     plan_id, version, category, output_limit, targets, digests = PLANS[workload_id]
@@ -20,12 +25,17 @@ def bundle(workload_id: str, schema: str = "suite-b-result-bundle-0.1") -> dict:
     sessions = []
     for position, target in enumerate(targets or [None]):
         quality = workload_id == "b-ux-002-context-assistance"
-        attempts = [attempt(target, 0, "warmup", quality)] + [attempt(target, i, "measured", quality) for i in range(1, 6)]
+        attempts = [attempt(target, 0, "warmup", quality, visible, schema)] + [attempt(target, i, "measured", quality, visible, schema) for i in range(1, 6)]
         measured = attempts[1:]
-        sessions.append({"id": "default" if target is None else f"point-{target}", "targetInputTokens": target, "fixtureSHA256": digests[position], "paddingRepetitions": None, "performanceEligible": True, "qualityEligible": True if quality else None, "timingEvidenceRetained": True, "summary": {"successfulMeasuredRuns": 5, "failedMeasuredRuns": 0, "answerContractPassingRuns": 5 if quality else None, "modelInputTokens": target or 235, "medianPipelineTTFTMilliseconds": statistics.median(a["metrics"]["ttftMilliseconds"] for a in measured), "medianUserVisibleTTFTMilliseconds": statistics.median(a["metrics"]["userVisibleTTFTMilliseconds"] for a in measured), "medianRequestCompletionMilliseconds": statistics.median(a["metrics"]["requestCompletionMilliseconds"] for a in measured), "medianPrefillTokensPerSecond": 500.0, "medianDecodeTokensPerSecond": 95.0, "medianPeakMemoryMegabytes": 700.0, "finalThermalState": "nominal"}, "attempts": attempts})
+        visible_values = [a["metrics"]["userVisibleTTFTMilliseconds"] for a in measured if a["metrics"]["userVisibleTTFTMilliseconds"] is not None]
+        sessions.append({"id": "default" if target is None else f"point-{target}", "targetInputTokens": target, "fixtureSHA256": digests[position], "paddingRepetitions": None, "performanceEligible": True, "qualityEligible": True if quality else None, "timingEvidenceRetained": True, "summary": {"successfulMeasuredRuns": 5, "failedMeasuredRuns": 0, "answerContractPassingRuns": 5 if quality else None, "modelInputTokens": target or 235, "medianPipelineTTFTMilliseconds": statistics.median(a["metrics"]["ttftMilliseconds"] for a in measured), "medianUserVisibleTTFTMilliseconds": statistics.median(visible_values) if visible_values else None, "medianRequestCompletionMilliseconds": statistics.median(a["metrics"]["requestCompletionMilliseconds"] for a in measured), "medianPrefillTokensPerSecond": 500.0, "medianDecodeTokensPerSecond": 95.0, "medianPeakMemoryMegabytes": 700.0, "finalThermalState": "nominal"}, "attempts": attempts})
     return {"schemaVersion": schema, "resultID": "11111111-1111-4111-8111-111111111111", "createdAt": "2026-07-13T00:00:00Z", "officialResultEligible": False, "plan": {"id": plan_id, "version": version, "runnerKind": "test", "warmupRuns": 1, "measuredRuns": 5, "outputTokenLimit": output_limit, "requiredPowerSource": "unplugged", "minimumBatteryLevelPercent": 50}, "workload": {"id": workload_id, "version": version, "category": category, "fixtureSHA256": digests}, "measurementMode": {"userVisibleTTFTAvailable": visible}, "generationConfiguration": {"outputTokenLimit": output_limit, "thinkingMode": thinking}, "model": {"displayName": "Test Model", "baseModelID": "example/base", "artifactID": "example/artifact", "artifactRevision": "0123456789abcdef0123456789abcdef01234567", "modelFamily": "Test", "parameterSizeClass": "test", "quantization": "4-bit", "modelFormat": "test", "tokenizerIdentity": "example/tokenizer", "sourceURL": "https://example.com/model", "licenseIdentifier": "test", "licenseSourceURL": "https://example.com/license", "artifactRepositorySizeBytes": 1, "compatibilityConstraints": ["test-only"]}, "modelPreparation": {"eligibleForPerformanceMeasurement": True, "cacheStateBeforePreparation": "cached", "downloadOccurredDuringSession": False}, "device": {"batteryState": "unplugged", "batteryLevelPercent": 70}, "eligibility": {"officialLeaderboardEligible": False, "sessionValid": True, "reasonCodes": ["pilot_protocol_not_official"]}, "sessions": sessions}
 
 class UnifiedSuiteBBundleTests(unittest.TestCase):
+    def test_first_renderable_policy_uses_the_frozen_unicode_scalar_set(self):
+        self.assertFalse(is_renderable(" \n\u00a0\u3000"))
+        self.assertTrue(is_renderable(" \n\u001c"))
+
     def test_all_four_workloads_share_one_valid_envelope(self):
         for workload_id in PLANS:
             with self.subTest(workload_id=workload_id): self.assertEqual(validate(bundle(workload_id)), [])
@@ -70,6 +80,90 @@ class UnifiedSuiteBBundleTests(unittest.TestCase):
             validate(value),
         )
 
+    def test_0_4_recalculates_first_renderable_proxy_ttft_from_trace(self):
+        value = bundle(
+            "b-ux-001-short-interaction",
+            "suite-b-result-bundle-0.4",
+        )
+        self.assertEqual(validate(value), [])
+        value["sessions"][0]["attempts"][1]["metrics"]["userVisibleTTFTMilliseconds"] += 1
+        self.assertTrue(
+            any("First-renderable proxy TTFT mismatch" in error for error in validate(value))
+        )
+
+    def test_0_4_is_routed_through_the_general_suite_b_validator(self):
+        value = bundle(
+            "b-ux-001-short-interaction",
+            "suite-b-result-bundle-0.4",
+        )
+        self.assertEqual(validate_any_suite_b_bundle(value), [])
+
+    def test_0_4_requires_trace_and_cross_checks_the_clock_origin(self):
+        value = bundle(
+            "b-ux-001-short-interaction",
+            "suite-b-result-bundle-0.4",
+        )
+        del value["sessions"][0]["attempts"][0]["renderabilityTrace"]
+        self.assertTrue(
+            any("requires a renderability trace" in error for error in validate(value))
+        )
+
+        value = bundle(
+            "b-ux-001-short-interaction",
+            "suite-b-result-bundle-0.4",
+        )
+        value["sessions"][0]["attempts"][0]["renderabilityTrace"]["entries"][0]["tokenReceivedNanoseconds"] += 2
+        self.assertTrue(
+            any("clock relationship mismatch" in error for error in validate(value))
+        )
+
+    def test_0_4_rejects_a_self_reported_renderability_decision(self):
+        value = bundle(
+            "b-ux-001-short-interaction",
+            "suite-b-result-bundle-0.4",
+        )
+        entry = value["sessions"][0]["attempts"][1]["renderabilityTrace"]["entries"][0]
+        entry["decodedPrefix"] = " \n"
+        self.assertTrue(
+            any("renderability decision mismatch" in error for error in validate(value))
+        )
+
+    def test_0_4_accepts_bounded_trace_when_renderability_is_not_found(self):
+        value = bundle(
+            "b-ux-001-short-interaction",
+            "suite-b-result-bundle-0.4",
+        )
+        for candidate in value["sessions"][0]["attempts"]:
+            first = candidate["tokenEvents"][0]["elapsedNanoseconds"]
+            candidate["tokenEvents"] = [
+                {"index": index, "tokenID": index, "elapsedNanoseconds": first + index * 1_000_000}
+                for index in range(33)
+            ]
+            candidate["outputTokenCount"] = 33
+            candidate["metrics"]["userVisibleTTFTMilliseconds"] = None
+            candidate["renderabilityTrace"] = {
+                "policyVersion": "first-renderable-decoded-prefix-v1",
+                "clockOrigin": "adapter-request-accepted",
+                "scope": "through-first-renderable-inclusive",
+                "captureLimit": 32,
+                "generationStartNanoseconds": 20_000_000,
+                "outcome": "captureLimitReached",
+                "firstRenderableTokenIndex": None,
+                "entries": [
+                    {
+                        "tokenIndex": index,
+                        "tokenID": index,
+                        "tokenReceivedNanoseconds": first + 20_000_000 + index * 1_000_000,
+                        "decodedAtNanoseconds": first + 20_500_000 + index * 1_000_000,
+                        "decodedPrefix": " " * (index + 1),
+                        "isRenderable": False,
+                    }
+                    for index in range(32)
+                ],
+            }
+        value["sessions"][0]["summary"]["medianUserVisibleTTFTMilliseconds"] = None
+        self.assertEqual(validate(value), [])
+
     def test_all_retained_app_0_6_exports_pass_unified_validation(self):
         raw = ROOT / "results" / "suite-b-pilot-v0.1" / "raw"
         paths = sorted(raw.glob("*.json"))
@@ -98,6 +192,23 @@ class UnifiedSuiteBBundleTests(unittest.TestCase):
         self.assertEqual(
             schema["properties"]["officialResultEligible"]["const"],
             False,
+        )
+
+    def test_0_4_public_schema_defines_bounded_renderability_evidence(self):
+        schema = json.loads(
+            (
+                ROOT
+                / "schemas"
+                / "suite-b-result-bundle-0.4.schema.json"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            schema["properties"]["schemaVersion"]["const"],
+            "suite-b-result-bundle-0.4",
+        )
+        self.assertEqual(
+            schema["$defs"]["renderabilityTrace"]["properties"]["captureLimit"]["const"],
+            32,
         )
 
 if __name__ == "__main__": unittest.main()

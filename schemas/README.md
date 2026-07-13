@@ -35,6 +35,11 @@ transition.
   Pilot envelope with the additive fixed-profile model, source, license, and
   compatibility metadata. It remains non-official and is not the Power
   Benchmark 1.0 result schema.
+- `suite-b-result-bundle-0.4.schema.json` defines the non-official Foundation
+  App 0.7.0 envelope. It adds a bounded, versioned cumulative-decoding trace
+  that permits independent recalculation of the First-renderable proxy TTFT.
+  It remains a development candidate and is not the frozen Power Benchmark
+  1.0 result schema.
 - `suite-b-community-submission-0.1.schema.json` wraps exact result bytes,
   integrity evidence, contributor declarations, and a Draft trust request for
   offline repository submission.

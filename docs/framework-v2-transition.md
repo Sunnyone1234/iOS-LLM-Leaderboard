@@ -93,6 +93,9 @@ Suite A may store generated files, compile results, tests, and rubric scores.
   recalculating validators now exist. The App 0.6.0
   `suite-b-result-bundle-0.3` envelope is publicly documented and remains
   non-official.
+- Foundation App 0.7.0 and `suite-b-result-bundle-0.4` add bounded,
+  independently recalculable First-renderable proxy TTFT evidence. They are
+  development candidates, not an official Power 1.0 release contract.
 - Immutable benchmark-release identity, normative edge cases, fully
   independently recalculable evidence for every official metric, and the
   official Power 1.0 result envelope remain open work.

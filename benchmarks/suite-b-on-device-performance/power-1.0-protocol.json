@@ -1,0 +1,112 @@
+{
+  "schema_version": "suite-b-power-protocol-1.0",
+  "protocol_id": "suite-b-power",
+  "protocol_version": "1.0.0-rc.1",
+  "status": "frozen-release-candidate",
+  "official_result_eligible": false,
+  "workloads": [
+    {
+      "workload_id": "b-ux-001-short-interaction",
+      "workload_version": "1.0.0-rc.1",
+      "category": "user-experience",
+      "fixture_sha256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84",
+      "measurement_mode": "b-mode-warm-resident-ux-v1",
+      "output_policy": "natural-stop-with-128-token-limit",
+      "generation_configuration": {
+        "top_p": 1,
+        "top_k": 0,
+        "seed": 0,
+        "repetition_penalty": null,
+        "thinking_mode": "disabled-via-chat-template",
+        "chat_template_identity": "artifact-tokenizer-config-enable-thinking-false"
+      },
+      "response_conformance": {
+        "policy_version": "short-interaction-response-v1",
+        "normalization": "unicode-nfkc-casefold-collapse-whitespace",
+        "language": "English",
+        "maximum_sentences": 2,
+        "sentence_terminators": [".", "!", "?"],
+        "local_safety": {
+          "all_substrings": ["safe"],
+          "any_substrings": ["iphone", "device", "local"]
+        },
+        "sync_return": {
+          "all_substrings": ["sync"],
+          "any_connectivity_substrings": ["connect", "network", "online"],
+          "any_return_substrings": ["return", "restore", "available", "back", "again"]
+        }
+      },
+      "ranked_metrics": [
+        "first_renderable_proxy_ttft_ms@1",
+        "pipeline_ttft_ms@1",
+        "request_completion_ms@1",
+        "prefill_tokens_per_second@1",
+        "decode_tokens_per_second@1",
+        "process_physical_footprint_mib@1"
+      ]
+    },
+    {
+      "workload_id": "b-pipe-001-sustained-generation",
+      "workload_version": "1.0.0-rc.1",
+      "category": "pipeline",
+      "fixture_sha256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996",
+      "measurement_mode": "b-mode-sustained-no-rest-v1",
+      "output_policy": "512-token-limit-or-earlier-model-eos",
+      "generation_configuration": {
+        "top_p": null,
+        "top_k": null,
+        "seed": null,
+        "repetition_penalty": null,
+        "thinking_mode": "disabled-via-prompt-directive",
+        "chat_template_identity": "artifact-tokenizer-config"
+      },
+      "ranked_metrics": [
+        "pipeline_ttft_ms@1",
+        "prefill_tokens_per_second@1",
+        "decode_tokens_per_second@1",
+        "process_physical_footprint_mib@1",
+        "decode_first_to_last_percent_change@1"
+      ]
+    }
+  ],
+  "procedure": {
+    "warmup_attempts": 1,
+    "measured_attempts": 5,
+    "minimum_metric_eligible_measured_attempts": 3,
+    "automatic_retries": 0,
+    "aggregation": "median",
+    "percentile_method": "linear-interpolation-r7",
+    "rest_interval_seconds": 0
+  },
+  "generation": {
+    "sampling_enabled": false,
+    "temperature": 0,
+    "include_stop_token_in_raw_events": false,
+    "model_load_policy": "load-once-before-warmup",
+    "context_policy": "fresh-conversation-per-attempt",
+    "kv_cache_policy": "fresh-kv-cache-per-attempt"
+  },
+  "environment": {
+    "physical_iphone_required": true,
+    "release_build_required": true,
+    "debugger_detached_required": true,
+    "initial_thermal_state": "nominal",
+    "low_power_mode": "off",
+    "power_source": "unplugged",
+    "minimum_starting_battery_percent": 50
+  },
+  "attempt_outcomes": [
+    "completed",
+    "failed",
+    "cancelled",
+    "outOfMemory",
+    "notRun"
+  ],
+  "evidence": {
+    "clock": "monotonic-nanoseconds",
+    "memory_sampling_interval_milliseconds": 50,
+    "memory_metric": "TASK_VM_INFO.phys_footprint",
+    "thermal_source": "ProcessInfo.thermalState",
+    "first_renderable_policy": "first-renderable-decoded-prefix-v1"
+  }
+}

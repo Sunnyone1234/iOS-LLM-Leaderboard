@@ -66,11 +66,18 @@ struct AttemptMetrics: Codable, Sendable, Equatable {
             prefill = nil
         }
 
+        let firstRenderableNanoseconds: UInt64?
+        if let trace = generation?.renderabilityTrace {
+            firstRenderableNanoseconds = trace.firstRenderableDecodedAtNanoseconds
+        } else {
+            firstRenderableNanoseconds = generation?.userVisibleTTFTNanoseconds
+        }
+
         return AttemptMetrics(
             ttftMilliseconds: attempt.tokens.first.map {
                 Double($0.elapsedNanoseconds) / 1_000_000
             },
-            userVisibleTTFTMilliseconds: generation?.userVisibleTTFTNanoseconds.map {
+            userVisibleTTFTMilliseconds: firstRenderableNanoseconds.map {
                 Double($0) / 1_000_000
             },
             requestCompletionMilliseconds: generation?.requestCompletionNanoseconds.map {

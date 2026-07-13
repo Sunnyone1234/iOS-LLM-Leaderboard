@@ -109,6 +109,7 @@ struct SuiteBResultBundle: Codable, Sendable {
         let memorySamplingIntervalMilliseconds: Int
         let metrics: AttemptMetrics
         let tokenEvents: [RuntimeToken]
+        let renderabilityTrace: FirstRenderableTrace?
     }
 
     static func executionIdentityMatches(
@@ -156,7 +157,7 @@ struct SuiteBResultBundle: Codable, Sendable {
         if environment.batteryLevelPercent == nil { reasonCodes.append("battery_level_unknown") }
         else if environment.batteryLevelPercent! < registryPlan.minimumBatteryLevelPercent { reasonCodes.append("battery_level_below_minimum") }
         return SuiteBResultBundle(
-            schemaVersion: "suite-b-result-bundle-0.3",
+            schemaVersion: "suite-b-result-bundle-0.4",
             resultID: UUID().uuidString.lowercased(),
             createdAt: Date(),
             officialResultEligible: false,
@@ -247,7 +248,8 @@ struct SuiteBResultBundle: Codable, Sendable {
                 thermalStateAfter: attempt.thermalStateAfter,
                 memorySamplingIntervalMilliseconds: memoryInterval,
                 metrics: .calculate(for: attempt),
-                tokenEvents: attempt.tokens
+                tokenEvents: attempt.tokens,
+                renderabilityTrace: generation?.renderabilityTrace
             )
         }
     }

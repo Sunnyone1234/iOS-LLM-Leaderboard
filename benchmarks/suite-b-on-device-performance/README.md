@@ -7,15 +7,14 @@ metric.
 ## Status
 
 - Framework v1 remains the repository-wide accepted format.
-- Suite B Protocol v2 is a design draft.
-- [Power + Ship Pilot v0.1](../../docs/power-ship-pilot-v0.1.md) is the current
-  narrow, non-official release target.
+- Suite B Protocol v2 remains the design umbrella.
+- `suite-b-power@1.0.0-rc.1` is the frozen, non-official F2 protocol candidate.
 - `b-ux-001-short-interaction` and `b-pipe-001-sustained-generation` are the
-  only Pilot workload candidates.
+  only Power 1.0 workload candidates.
 - `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` remain
-  Experimental and are excluded from Pilot eligibility and comparison.
-- `b-pipe-001-sustained-generation@0.2.0-pilot` is the frozen successor to
-  the legacy `suite-b-pilot-001` runner; it remains non-official evidence.
+  Experimental and are excluded from Power 1.0 eligibility and comparison.
+- Historical `0.2.0-pilot` results remain non-official and require a new run
+  against the F3/F4 contract; they are never promoted in place.
 - No Suite B result is currently eligible for the default leaderboard.
 
 ## v2 Structure
@@ -32,6 +31,8 @@ from a run rather than separate tasks.
 Read:
 
 - [Suite B Protocol v2](protocol-v2.md)
+- [Power 1.0 frozen protocol candidate](power-1.0-protocol.md)
+- [Power 1.0 migration rules](power-1.0-migration.md)
 - [Suite B Metric Definitions](metrics.md)
 - [Framework v2 Architecture](../../methodology/benchmark-framework-v2.md)
 

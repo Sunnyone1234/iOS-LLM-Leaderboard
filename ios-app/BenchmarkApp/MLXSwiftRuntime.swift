@@ -339,24 +339,36 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
 
         var tokenIndex = 0
         var tokenIDs: [Int] = []
-        var userVisibleTTFTNanoseconds: UInt64?
+        var renderabilityRecorder = preparedPlan.measurementMode
+            .userVisibleTtftAvailable
+            ? FirstRenderableTraceRecorder(
+                generationStartNanoseconds: requestStart.duration(to: generationStart)
+                    .nanoseconds
+            )
+            : nil
         var completionInfo: GenerateCompletionInfo?
         let tokenizer = await modelContainer.tokenizer
 
         for await event in stream {
             switch event {
             case .token(let tokenID):
-                let elapsed = generationStart.duration(to: clock.now)
+                let tokenReceived = clock.now
+                let elapsed = generationStart.duration(to: tokenReceived)
+                let requestElapsed = requestStart.duration(to: tokenReceived)
                 tokenIDs.append(tokenID)
-                if userVisibleTTFTNanoseconds == nil {
+                if renderabilityRecorder?.shouldDecodeNextToken == true {
                     let decoded = tokenizer.decode(
                         tokenIds: tokenIDs,
                         skipSpecialTokens: true
                     )
-                    if !decoded.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        userVisibleTTFTNanoseconds = requestStart.duration(to: clock.now)
-                            .nanoseconds
-                    }
+                    renderabilityRecorder?.record(
+                        tokenIndex: tokenIndex,
+                        tokenID: tokenID,
+                        tokenReceivedNanoseconds: requestElapsed.nanoseconds,
+                        decodedAtNanoseconds: requestStart.duration(to: clock.now)
+                            .nanoseconds,
+                        decodedPrefix: decoded
+                    )
                 }
                 await onToken(
                     RuntimeToken(
@@ -375,6 +387,9 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
         guard let completionInfo else {
             throw RuntimeError.missingCompletionInfo
         }
+        let renderabilityTrace = renderabilityRecorder?.finalize(
+            outputTokenCount: tokenIDs.count
+        )
 
         return RuntimeGenerationResult(
             promptTokenCount: completionInfo.promptTokenCount,
@@ -383,14 +398,17 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
             promptTimeSeconds: completionInfo.promptTime,
             generateTimeSeconds: completionInfo.generateTime,
             userVisibleTTFTNanoseconds: preparedPlan.measurementMode
-                .userVisibleTtftAvailable ? userVisibleTTFTNanoseconds : nil,
+                .userVisibleTtftAvailable
+                ? renderabilityTrace?.firstRenderableDecodedAtNanoseconds
+                : nil,
             requestCompletionNanoseconds: preparedPlan.measurementMode
                 .userVisibleTtftAvailable
                 ? requestStart.duration(to: clock.now).nanoseconds
                 : nil,
             generatedText: preparedPlan.measurementMode.userVisibleTtftAvailable
                 ? tokenizer.decode(tokenIds: tokenIDs, skipSpecialTokens: true)
-                : nil
+                : nil,
+            renderabilityTrace: renderabilityTrace
         )
     }
 }

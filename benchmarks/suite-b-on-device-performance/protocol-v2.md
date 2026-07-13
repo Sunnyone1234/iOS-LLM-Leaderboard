@@ -2,9 +2,11 @@
 
 ## Status
 
-Design draft under the
-[Power Benchmark 1.0 Foundation](../../docs/power-benchmark-1.0-foundation.md)
-work order. This protocol does not yet authorize official results.
+The v2 architecture remains a design umbrella. The two Power 1.0 candidate
+workloads now have a frozen F2 execution contract in
+[`power-1.0-protocol.md`](power-1.0-protocol.md) and explicit
+[`migration rules`](power-1.0-migration.md). Neither document authorizes
+official results; the F3 schema and validator are still required.
 
 ## Benchmark Question
 
@@ -37,6 +39,46 @@ first produces non-whitespace content that is available to the render path.
 An adapter that cannot observe and prove that boundary reports the metric as
 `null`; it must not substitute Pipeline TTFT.
 
+#### First-renderable proxy TTFT evidence
+
+Foundation adapter policy `first-renderable-decoded-prefix-v1` makes this
+proxy independently recalculable without retaining a full per-token text
+trace:
+
+1. `adapter-request-accepted` is the monotonic-clock origin.
+2. The adapter records generation start relative to that origin. Existing raw
+   token events remain relative to generation start.
+3. Beginning with raw token event zero, the adapter cumulatively decodes the
+   observed token IDs with special tokens skipped. For each evaluated prefix,
+   it records token index and ID, request-relative token receipt, decoded
+   prefix, request-relative decode completion, and the renderability decision.
+4. A prefix is renderable when it contains a Unicode scalar outside this
+   frozen whitespace set: `U+0009...U+000D`, `U+0020`, `U+0085`, `U+00A0`,
+   `U+1680`, `U+2000...U+200A`, `U+2028...U+2029`, `U+202F`, `U+205F`, and
+   `U+3000`. This preserves the reference App's Foundation
+   `whitespacesAndNewlines` behavior while giving non-Swift validators an
+   explicit cross-language rule.
+5. The proxy ends at decode completion for the first renderable prefix. That
+   inclusive entry is retained and no later prefix is evaluated or stored.
+6. At most 32 prefix entries are evaluated and retained. If the generation
+   continues beyond 32 non-renderable prefixes, the trace outcome is
+   `captureLimitReached` and the proxy TTFT is `null`. If generation ends
+   within the retained prefix without renderable content, the outcome is
+   `noRenderableContent` and the metric is also `null`.
+
+The trace and raw token events use the same monotonic clock. A validator must
+check token identity and the relation
+`request-relative receipt = generation start + token-event elapsed`, recompute
+each renderability decision from the decoded prefix, and derive the metric
+from the first qualifying entry. A submitted aggregate or final output string
+is not a substitute for this evidence.
+
+This bounded trace is intentionally scoped to the first-renderable boundary.
+It avoids repeated cumulative decoding and prefix storage after the metric is
+known, while the 32-entry cap bounds the exceptional no-content path. It does
+not observe SwiftUI rendering, display presentation, or human perception and
+must never be labeled screen-visible TTFT.
+
 ### Pipeline profiles
 
 These intentionally isolate or stress inference behavior. They must not be
@@ -65,9 +107,10 @@ presented as a complete thermal-stability characterization.
 ## Standard Session Rules
 
 The Benchmark App loads the four current workload execution identities from
-the versioned `suite-b-plan-registry-0.1`. New evidence from every workload is
-written using `suite-b-result-bundle-0.1`; the common `sessions` array contains
-one entry for a single-session workload or one entry per token-exact point.
+the versioned plan registry. Foundation App 0.7.0 evidence is written using
+the non-official `suite-b-result-bundle-0.4`; the common `sessions` array
+contains one entry for a single-session workload or one entry per token-exact
+point.
 Workload-specific quality evidence is optional inside the common attempt shape
 and does not change the timing formulas.
 
