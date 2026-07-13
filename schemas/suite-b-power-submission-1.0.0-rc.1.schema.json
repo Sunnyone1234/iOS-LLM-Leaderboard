@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YizeSun/iOS-LLM-Leaderboard/schemas/suite-b-power-submission-1.0.0-rc.1.schema.json",
+  "title": "Suite B Power Submission 1.0.0 RC.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "submissionID",
+    "createdAt",
+    "benchmarkRelease",
+    "state",
+    "requestedEvidenceLevel",
+    "contributor",
+    "conflictOfInterest",
+    "declarations",
+    "result"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "suite-b-power-submission-1.0.0-rc.1"
+    },
+    "submissionID": {
+      "$ref": "#/$defs/uuid"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "benchmarkRelease": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "const": "suite-b-power" },
+        "version": { "const": "1.0.0-rc.1" }
+      }
+    },
+    "state": {
+      "const": "draft"
+    },
+    "requestedEvidenceLevel": {
+      "const": "community-submitted"
+    },
+    "contributor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["githubHandle"],
+      "properties": {
+        "githubHandle": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "conflictOfInterest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["category", "statement"],
+      "properties": {
+        "category": {
+          "enum": [
+            "none",
+            "model-affiliated",
+            "runtime-affiliated",
+            "hardware-affiliated",
+            "other-disclosed"
+          ]
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "declarations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ranOnPhysicalDevice",
+        "authorizedToSubmit",
+        "reviewedPublicMetadata",
+        "rawResultUnmodified",
+        "containsNoPersonalData",
+        "acceptsCCBY40",
+        "understandsNoRankingGuarantee"
+      ],
+      "properties": {
+        "ranOnPhysicalDevice": { "const": true },
+        "authorizedToSubmit": { "const": true },
+        "reviewedPublicMetadata": { "const": true },
+        "rawResultUnmodified": { "const": true },
+        "containsNoPersonalData": { "const": true },
+        "acceptsCCBY40": { "const": true },
+        "understandsNoRankingGuarantee": { "const": true }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "schemaVersion",
+        "resultID",
+        "workloadID",
+        "artifactID",
+        "artifactRevision",
+        "runtimeName",
+        "runtimeVersion",
+        "machineIdentifier"
+      ],
+      "properties": {
+        "path": { "const": "result.json" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "schemaVersion": {
+          "const": "suite-b-power-result-1.0.0-rc.1"
+        },
+        "resultID": { "$ref": "#/$defs/uuid" },
+        "workloadID": {
+          "enum": [
+            "b-ux-001-short-interaction",
+            "b-pipe-001-sustained-generation"
+          ]
+        },
+        "artifactID": { "type": "string", "minLength": 1 },
+        "artifactRevision": { "type": "string", "minLength": 1 },
+        "runtimeName": { "type": "string", "minLength": 1 },
+        "runtimeVersion": { "type": "string", "minLength": 1 },
+        "machineIdentifier": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[1-5][0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

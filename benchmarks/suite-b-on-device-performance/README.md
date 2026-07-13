@@ -8,13 +8,17 @@ metric.
 
 - Framework v1 remains the repository-wide accepted format.
 - Suite B Protocol v2 remains the design umbrella.
-- `suite-b-power@1.0.0-rc.1` is the frozen, non-official F2 protocol candidate.
+- `suite-b-power@1.0.0-rc.1` is the frozen, non-official release candidate.
 - `b-ux-001-short-interaction` and `b-pipe-001-sustained-generation` are the
   only Power 1.0 workload candidates.
 - `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` remain
   Experimental and are excluded from Power 1.0 eligibility and comparison.
 - Historical `0.2.0-pilot` results remain non-official and require a new run
   against the F3/F4 contract; they are never promoted in place.
+- F5 physical-device verification is complete for the declared three-model,
+  one-runtime, one-device matrix.
+- F6 submission and governance contracts are review candidates; public intake,
+  official results, ranking, release, and tagging remain unauthorized.
 - No Suite B result is currently eligible for the default leaderboard.
 
 ## v2 Structure
@@ -34,6 +38,9 @@ Read:
 - [Power 1.0 frozen protocol candidate](power-1.0-protocol.md)
 - [Power 1.0 migration rules](power-1.0-migration.md)
 - [Power 1.0 schema and validator freeze](power-1.0-schema-validator.md)
+- [Power 1.0 RC1 submission guide](../../docs/power-benchmark-1.0-submission.md)
+- [Power 1.0 governance](../../docs/power-benchmark-1.0-governance.md)
+- [Release history](releases/RELEASE-HISTORY.md)
 - [Suite B Metric Definitions](metrics.md)
 - [Framework v2 Architecture](../../methodology/benchmark-framework-v2.md)
 

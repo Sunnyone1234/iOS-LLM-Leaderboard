@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "suite-b-power-publication-candidate-1.0.0-rc.1",
+  "candidateID": "suite-b-power-1.0.0-rc.1-publication-candidate",
+  "benchmarkRelease": {
+    "id": "suite-b-power",
+    "version": "1.0.0-rc.1"
+  },
+  "status": "maintainer-review-required",
+  "officialResultEligible": false,
+  "rankingAuthorized": false,
+  "publicationAuthorized": false,
+  "tagAuthorized": false,
+  "frozenReleaseManifest": {
+    "path": "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.0.0-rc.1.json",
+    "sha256": "5611b5d122dadb3cb9c8aca89f86b30f1e860bdc6cced2446d118e3e0a9fab90"
+  },
+  "referenceApp": {
+    "id": "ios-reference-benchmark-app",
+    "version": "0.8.0",
+    "build": "10",
+    "sourceCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
+    "implementationStatus": "f4-reviewed"
+  },
+  "physicalDeviceVerification": {
+    "status": "f5-complete",
+    "checksumManifestPath": "results/suite-b-power-1.0.0-rc.1/f5-device-verification/SHA256SUMS",
+    "checksumManifestSHA256": "56238a9987ba613d99537cc9bd7029308ed1f6ff9cbd1ce9d15c84aa98563257",
+    "declaredMatrixCells": 6,
+    "structurallyValid": 6,
+    "protocolConformant": 6,
+    "metricEligibleCells": 5,
+    "retainedMetricIneligibleCells": 1
+  },
+  "pinnedAssets": [
+    {
+      "role": "submission-guide",
+      "path": "docs/power-benchmark-1.0-submission.md",
+      "sha256": "6ea38fd25b09ef338ffb0a7387a85e09821f70d99d11cdf2e532f782c948b739"
+    },
+    {
+      "role": "governance-policy",
+      "path": "docs/power-benchmark-1.0-governance.md",
+      "sha256": "7981b7faf5f77b3dc11846d23b98b887e6fb4feb73332a9f81d9b99792c094f9"
+    },
+    {
+      "role": "rc1-review-checklist",
+      "path": "docs/power-benchmark-1.0-rc1-review.md",
+      "sha256": "67e1801fbb2c15cca1111edc9272265cb26df05b3ba582ee515907bcf27317bc"
+    },
+    {
+      "role": "submission-schema",
+      "path": "schemas/suite-b-power-submission-1.0.0-rc.1.schema.json",
+      "sha256": "22e5e59ef290bbdd1f341b831f9a98d3e224b60f13875e9e46f1e1043ebb33d3"
+    },
+    {
+      "role": "review-schema",
+      "path": "schemas/suite-b-power-review-1.0.0-rc.1.schema.json",
+      "sha256": "f8369a69faadfc67e3b6e27d541405300bd414dfdce5f6109f94b8cebd599d27"
+    },
+    {
+      "role": "submission-package-creator",
+      "path": "scripts/create_suite_b_power_submission.py",
+      "sha256": "ce8cdb29fecf10d08e705b80d63529d7a3281ff79f13500b7b5dabacf3a7dcda"
+    },
+    {
+      "role": "submission-validator",
+      "path": "scripts/validate_suite_b_power_submission.py",
+      "sha256": "a543b54e2b5d4498650b9792b11cfee211aaa2ebd409e3a7d5332e70f29bed69"
+    },
+    {
+      "role": "review-history-validator",
+      "path": "scripts/validate_suite_b_power_reviews.py",
+      "sha256": "9866227c8e8d7c0348bb310531eae59a9cbc26495d9f4bffcba34d540f2fa4f6"
+    },
+    {
+      "role": "maintainer-authority",
+      "path": "MAINTAINERS.md",
+      "sha256": "420cef9022087c0822409caa01b7b511d34f2a34f4d1cef62e5f9a9c8aaf92fe"
+    },
+    {
+      "role": "code-of-conduct",
+      "path": "CODE_OF_CONDUCT.md",
+      "sha256": "9b6f84bf37c50623488bd0d197c55123b8e1264d72d4847354308acab111a3ef"
+    },
+    {
+      "role": "release-history",
+      "path": "benchmarks/suite-b-on-device-performance/releases/RELEASE-HISTORY.md",
+      "sha256": "b9d6a1b7be20555824332fcbd180b50d74356eab87f26181e9af3db04b337f0e"
+    },
+    {
+      "role": "submission-ci",
+      "path": ".github/workflows/suite-b-submissions.yml",
+      "sha256": "9ad36964dcdc1196315b37961fcb1d0c8517e23da6c2d9f6837c4c5a7e9f5cfe"
+    },
+    {
+      "role": "governance-regression-tests",
+      "path": "tests/test_suite_b_power_submission.py",
+      "sha256": "31d5da2b9875e0c135b669991703b0330e3a473bb1f89bc70bf256d2924c1cae"
+    }
+  ],
+  "knownLimitations": [
+    "single-device-single-runtime-f5-verification",
+    "qwen3-0.6b-short-interaction-metric-ineligible",
+    "first-renderable-proxy-is-not-screen-render-boundary",
+    "five-measured-attempts-are-not-general-thermal-proof",
+    "f5-evidence-has-no-contributor-governance-transition",
+    "release-candidate-is-not-final-1.0-identity",
+    "no-ranking-or-ship-score-authorized"
+  ],
+  "requiredMaintainerDecisions": [
+    "approve-or-reject-rc1-review-package",
+    "choose-non-official-rc1-publication-or-final-1.0-identity-preparation",
+    "approve-evidence-levels-separately-from-release",
+    "authorize-github-release-tag-and-ranking-separately"
+  ]
+}

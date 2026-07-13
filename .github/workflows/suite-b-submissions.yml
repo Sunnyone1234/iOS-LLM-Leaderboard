@@ -29,10 +29,16 @@ jobs:
         run: python3 scripts/validate_suite_b_intake.py submissions/suite-b/draft --report /tmp/suite-b-intake-report.json
       - name: Validate review records
         run: python3 scripts/validate_suite_b_reviews.py --submissions submissions/suite-b/draft --reviews submissions/suite-b/reviews/community-submitted
+      - name: Validate Power RC1 Draft intake
+        run: python3 scripts/validate_suite_b_power_submission.py submissions/suite-b/power-1.0.0-rc.1/draft --output /tmp/suite-b-power-intake-report.json
+      - name: Validate Power RC1 review history
+        run: python3 scripts/validate_suite_b_power_reviews.py --submissions submissions/suite-b/power-1.0.0-rc.1/draft --reviews submissions/suite-b/power-1.0.0-rc.1/reviews --output /tmp/suite-b-power-review-report.json
       - name: Upload intake report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: suite-b-intake-report
-          path: /tmp/suite-b-intake-report.json
-
+          path: |
+            /tmp/suite-b-intake-report.json
+            /tmp/suite-b-power-intake-report.json
+            /tmp/suite-b-power-review-report.json

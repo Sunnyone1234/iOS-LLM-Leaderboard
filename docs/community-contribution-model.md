@@ -54,7 +54,7 @@ A submission service or GitHub App should:
 4. attach validation findings;
 5. allow public review.
 
-The current offline MVP exports `suite-b-community-submission-0.1`. It embeds
+The historical offline MVP exports `suite-b-community-submission-0.1`. It embeds
 the exact unified result bytes as Base64, records their SHA-256 digest, and
 requires review, a no-personal-data confirmation, and license acceptance. It
 does not upload or create a pull request. Every App-generated package starts as
@@ -64,6 +64,12 @@ review control transitions.
 ```bash
 python3 scripts/validate_suite_b_submission.py path/to/submission.json
 ```
+
+Power 1.0 RC1 instead preserves the App result as a standalone, byte-exact
+`result.json` and adds a contributor-owned `submission.json`. This avoids
+Base64 duplication and lets repository validation run the frozen Power
+semantic validator directly without changing the App export. See the
+[Power submission guide](power-benchmark-1.0-submission.md).
 
 ## Evidence Levels
 
@@ -77,10 +83,11 @@ python3 scripts/validate_suite_b_submission.py path/to/submission.json
 
 The App cannot assign Reproduced, Verified, or Maintainer Reference status.
 
-Repository intake stores immutable Draft packages under
-`submissions/suite-b/draft/`. CI emits a structural report but does not alter
-trust. A maintainer may then use `promote_suite_b_submission.py` to create a
-separate, hash-bound Community Submitted review record. See
+Power RC1 intake stores immutable two-file packages under
+`submissions/suite-b/power-1.0.0-rc.1/draft/`. CI emits structural, semantic,
+integrity, and declaration findings but does not alter trust. Separate review
+records control evidence transitions. Historical Pilot packages remain under
+`submissions/suite-b/draft/`. See
 [Community Submissions](../submissions/README.md).
 
 Evidence level describes the submission process, not permanent truth.
@@ -99,10 +106,11 @@ Evidence level describes the submission process, not permanent truth.
 
 Before public result intake:
 
-- define maintainers and review authority;
-- publish a code of conduct;
-- publish benchmark proposal and release rules;
-- add issue and pull-request templates;
-- add automated schema and semantic validation;
-- define conflict-of-interest disclosure;
-- define correction, withdrawal, and deprecation procedures.
+- [x] define maintainers and review authority;
+- [x] publish a code of conduct;
+- [x] publish benchmark proposal and release rules;
+- [x] add pull-request submission and review checklists;
+- [x] add automated schema and semantic validation;
+- [x] define conflict-of-interest disclosure;
+- [x] define correction, withdrawal, and deprecation procedures;
+- [ ] receive explicit maintainer approval to open public Power intake.

@@ -81,21 +81,18 @@ Suite A may store generated files, compile results, tests, and rubric scores.
 
 ## Current Progress
 
-- Power Benchmark 1.0 Foundation is now the active standardization track; the
-  completed Pilot matrix remains untagged, non-official historical evidence.
-- The physical-iPhone MLX pilot has completed the execution and raw-evidence
-  feasibility step.
-- Its current TTFT clock starts after MLX prompt preparation, so it is Pipeline
-  TTFT rather than user-visible TTFT.
-- The pilot maps to `b-pipe-001-sustained-generation`, not to a
-  short-interaction user-experience workload.
-- Four draft workload manifests, metric definitions, historical schemas, and
-  recalculating validators now exist. The App 0.6.0
-  `suite-b-result-bundle-0.3` envelope is publicly documented and remains
-  non-official.
-- Foundation App 0.7.0 and `suite-b-result-bundle-0.4` add bounded,
-  independently recalculable First-renderable proxy TTFT evidence. They are
-  development candidates, not an official Power 1.0 release contract.
-- Immutable benchmark-release identity, normative edge cases, fully
-  independently recalculable evidence for every official metric, and the
-  official Power 1.0 result envelope remain open work.
+- The Suite B Power 1.0 RC1 slice now has frozen release, workload, protocol,
+  metric, result-schema, validator, and App identities for B-UX-001 and
+  B-PIPE-001.
+- App 0.8.0 exports the frozen RC1 envelope, including bounded cumulative token
+  evidence for independent First-renderable proxy TTFT recalculation.
+- The F5 physical-iPhone matrix verifies three pinned model artifacts across
+  both workloads. It remains review evidence and is not ranking-eligible.
+- F6 adds hash-bound community submission, evidence-transition, correction,
+  withdrawal, privacy-removal, and release-review contracts without changing
+  the frozen benchmark or App.
+- The RC1 package still requires explicit maintainer decisions. It is not an
+  official Power 1.0 publication and must not be tagged or ranked before that
+  approval.
+- Framework v2 outside this bounded Suite B Power slice remains a design and
+  migration target; other suites continue to use their existing contracts.

@@ -43,8 +43,8 @@ transition.
 - `suite-b-power-result-1.0.0-rc.1.schema.json` is the frozen F3
   release-candidate result contract for exactly B-UX-001 and B-PIPE-001. It
   retains the raw timing, token, memory, thermal, outcome, and response evidence
-  required by the Power 1.0 protocol. It is not emitted by the App until F4 and
-  does not authorize official results.
+  required by the Power 1.0 protocol. App 0.8.0 implements this contract, but
+  the contract alone does not authorize official results.
 - `suite-b-power-validation-report-1.0.0-rc.1.schema.json` keeps structural
   validity, protocol conformance, per-metric eligibility, evidence review, and
   ranking eligibility as separate validator decisions.
@@ -55,9 +55,16 @@ transition.
   changing trust or leaderboard state.
 - `suite-b-community-review-0.1.schema.json` records an explicit maintainer
   promotion from Draft to Community Submitted only.
+- `suite-b-power-submission-1.0.0-rc.1.schema.json` defines the strict
+  two-file Power RC1 package manifest, contributor declarations, conflict
+  disclosure, immutable result digest, and exact public identity references.
+- `suite-b-power-review-1.0.0-rc.1.schema.json` defines append-only,
+  hash-bound evidence transitions while forcing release and ranking
+  authorization to remain false during RC1.
 
-The earlier workload-specific schemas remain supported for existing evidence.
+The earlier workload-specific and Community Submission 0.1 schemas remain
+supported for historical evidence but are not Power RC1 submission contracts.
 The F3 schemas and validator are pinned by the non-official
-`suite-b-power@1.0.0-rc.1` release manifest. They become executable reference
-App output only after F4 implements the same identities; official publication
-still requires all later release gates.
+`suite-b-power@1.0.0-rc.1` release manifest. App 0.8.0 and the completed F5
+device matrix provide the matching execution evidence; official publication
+still requires explicit maintainer approval after the F6 review.

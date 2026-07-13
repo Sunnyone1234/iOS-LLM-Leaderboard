@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YizeSun/iOS-LLM-Leaderboard/schemas/suite-b-power-review-1.0.0-rc.1.schema.json",
+  "title": "Suite B Power Evidence Review 1.0.0 RC.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "reviewID",
+    "reviewedAt",
+    "reviewer",
+    "reviewType",
+    "submissionID",
+    "submissionManifestSHA256",
+    "resultID",
+    "resultSHA256",
+    "previousEvidenceLevel",
+    "assignedEvidenceLevel",
+    "supportingSubmissionIDs",
+    "checks",
+    "publication"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "suite-b-power-review-1.0.0-rc.1"
+    },
+    "reviewID": { "$ref": "#/$defs/uuid" },
+    "reviewedAt": { "type": "string", "format": "date-time" },
+    "reviewer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["githubHandle"],
+      "properties": {
+        "githubHandle": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$"
+        }
+      }
+    },
+    "reviewType": {
+      "enum": [
+        "initial-review",
+        "reproduction-review",
+        "verification-review",
+        "maintainer-reference-review"
+      ]
+    },
+    "submissionID": { "$ref": "#/$defs/uuid" },
+    "submissionManifestSHA256": { "$ref": "#/$defs/sha256" },
+    "resultID": { "$ref": "#/$defs/uuid" },
+    "resultSHA256": { "$ref": "#/$defs/sha256" },
+    "previousEvidenceLevel": {
+      "enum": ["unreviewed", "community-submitted", "reproduced"]
+    },
+    "assignedEvidenceLevel": {
+      "enum": [
+        "community-submitted",
+        "reproduced",
+        "verified",
+        "maintainer-reference"
+      ]
+    },
+    "supportingSubmissionIDs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/uuid" }
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "packageIntegrity",
+        "resultStructuralValidity",
+        "resultProtocolConformance",
+        "contributorDeclarations",
+        "privacyReview",
+        "conflictDisclosureReview"
+      ],
+      "properties": {
+        "packageIntegrity": { "const": true },
+        "resultStructuralValidity": { "const": true },
+        "resultProtocolConformance": { "const": true },
+        "contributorDeclarations": { "const": true },
+        "privacyReview": { "const": true },
+        "conflictDisclosureReview": { "const": true }
+      }
+    },
+    "publication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "releaseOfficial",
+        "rankingAuthorized",
+        "defaultLeaderboardEligible",
+        "reasonCodes"
+      ],
+      "properties": {
+        "releaseOfficial": { "const": false },
+        "rankingAuthorized": { "const": false },
+        "defaultLeaderboardEligible": { "const": false },
+        "reasonCodes": {
+          "const": [
+            "release_candidate_not_official",
+            "ranking_not_authorized"
+          ]
+        }
+      }
+    },
+    "notes": { "type": "string" }
+  },
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[1-5][0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

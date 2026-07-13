@@ -176,13 +176,22 @@ review is recorded in
 
 ### F6 — Governance and publication
 
-Next.
+Implementation candidate complete; awaiting maintainer review.
 
 - Freeze the submission bundle and contributor declarations.
 - Define acceptance, review, reproduction, correction, withdrawal,
   deprecation, and release-history rules.
 - Produce Power Benchmark 1.0 RC1 for review.
 - Publish and tag 1.0 only after explicit maintainer approval.
+
+The F6 candidate adds a strict two-file submission package, explicit
+contributor declarations and conflict disclosure, semantic intake validation,
+hash-bound evidence transitions, independent reproduction checks, maintainer
+authority, conduct, correction, withdrawal, deprecation, and release-history
+rules. All RC publication and ranking flags remain false.
+
+Review the complete gate and unresolved approval decisions in
+[`power-benchmark-1.0-rc1-review.md`](power-benchmark-1.0-rc1-review.md).
 
 ## Power Benchmark 1.0 Release Gate
 

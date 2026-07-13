@@ -22,8 +22,9 @@ The Phase 1 product helps developers answer:
 3. Which models and runtimes fit practical integration, distribution,
    privacy-review, and deployment constraints?
 
-This repository currently publishes non-official Pilot evidence. It does not
-yet publish an official Suite B benchmark release or verified default ranking.
+This repository currently publishes non-official historical Pilot and Power
+RC verification evidence. It does not yet publish an official Suite B
+benchmark release or verified default ranking.
 
 ## Interactive Leaderboard
 
@@ -67,13 +68,17 @@ success.
 See [Project Vision](docs/project-vision.md) and
 [Product Architecture](docs/product-architecture.md).
 
-## Current Standardization Target: Power Benchmark 1.0 Foundation
+## Current Standardization Target: Power Benchmark 1.0 RC1
 
-The active target is now
-[Power Benchmark 1.0 Foundation](docs/power-benchmark-1.0-foundation.md).
-Foundation work turns the proven physical-device evidence path into a frozen,
-reviewable benchmark contract. It does not yet authorize official results,
-ranking, a version 1.0 tag, or a GitHub Release.
+F2–F5 have frozen the Power protocol, result schema, semantic validator,
+reference App, and physical-device verification matrix. F6 is preparing the
+submission, review, reproduction, correction, withdrawal, deprecation, and
+release-history governance needed for a Power Benchmark 1.0 RC1 review.
+
+See the [Foundation work order](docs/power-benchmark-1.0-foundation.md),
+[submission guide](docs/power-benchmark-1.0-submission.md), and
+[governance policy](docs/power-benchmark-1.0-governance.md). RC1 does not yet
+authorize official results, ranking, a version 1.0 tag, or a GitHub Release.
 
 The completed Power + Ship Pilot v0.1 matrix is retained as historical
 foundation evidence. It will not be published as a tagged release and its

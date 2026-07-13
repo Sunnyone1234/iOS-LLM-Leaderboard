@@ -57,10 +57,12 @@ Ship translates tested Power evidence into deployment guidance.
 - Developer recipes link deployment claims to tested reference profiles.
 - Suite B remains the canonical owner of device performance measurements.
 
-The current delivery target is
-[Power + Ship Pilot v0.1](power-ship-pilot-v0.1.md). It uses only B-UX-001 and
-B-PIPE-001 as non-official Pilot workload candidates and produces a Ship profile
-for the same tested configuration. It does not add a Suite D or Suite E task.
+The current delivery target is the
+[Power Benchmark 1.0 RC1 review candidate](power-benchmark-1.0-rc1-review.md).
+It freezes only B-UX-001 and B-PIPE-001, preserves the completed physical-device
+matrix as non-ranking evidence, and adds the submission and governance controls
+needed for maintainer review. It does not add a Suite D or Suite E task, and it
+does not authorize publication or ranking before explicit approval.
 
 ### Phase 2 Research Track: Build
 

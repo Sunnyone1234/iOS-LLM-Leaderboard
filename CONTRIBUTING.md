@@ -25,7 +25,8 @@ reduce the need for contributors to construct result JSON manually.
 ## Current Contribution Stage
 
 The repository does not yet accept any result as an official or verified
-ranking entry.
+ranking entry. Power 1.0 RC1 submission and governance contracts are under
+review; public intake begins only after explicit release approval.
 
 During the current documentation-first stage:
 
@@ -96,7 +97,7 @@ When the official benchmark app is available, app-generated result bundles
 will be the preferred Suite B submission route. Manual submissions will need
 to demonstrate equivalent workload, runner, and raw-evidence compatibility.
 
-The current Benchmark App can generate an offline Draft submission after the
+The historical Benchmark App can generate an offline Pilot Draft submission after the
 contributor reviews a unified Suite B result. Validate it with
 `scripts/validate_suite_b_submission.py`. A passing package may be reviewed as
 Community Submitted, but it is never accepted as official, verified, or added
@@ -106,6 +107,23 @@ For repository placement, rename the untouched App export to
 `<submissionID>.json` and add it under `submissions/suite-b/draft/`. See
 [Community Submissions](submissions/README.md) for CI and maintainer review
 commands.
+
+Power 1.0 RC1 uses the App's unmodified Power result plus a separate contributor
+manifest. Create and validate a proposed package with:
+
+```bash
+python3 scripts/create_suite_b_power_submission.py \
+  /path/to/app-export.json \
+  --output-root submissions/suite-b/power-1.0.0-rc.1/draft \
+  --contributor YOUR_GITHUB_HANDLE \
+  --conflict-category none \
+  --conflict-statement "No conflict of interest disclosed." \
+  --accept-declarations
+```
+
+Read the complete [Power submission guide](docs/power-benchmark-1.0-submission.md)
+before accepting the declarations. Valid Draft evidence remains unreviewed and
+ranking-ineligible.
 
 ## Data Integrity
 
