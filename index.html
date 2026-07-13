@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A reproducible, physical-iPhone leaderboard for on-device language models.">
+  <meta name="theme-color" content="#090a0c">
+  <title>iOS LLM Leaderboard — Power on iPhone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site/styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <nav class="nav-shell" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="iOS LLM Leaderboard home">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <span>iOS LLM</span>
+      </a>
+      <div class="nav-links">
+        <a href="#leaderboard">Leaderboard</a>
+        <a href="#evidence">Evidence</a>
+        <a href="docs/power-ship-pilot-v0.1.md">Methodology</a>
+      </div>
+      <a class="nav-action" href="https://github.com/YizeSun/iOS-LLM-Leaderboard" target="_blank" rel="noreferrer">
+        View repository
+        <span aria-hidden="true">↗</span>
+      </a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero page-shell">
+      <div class="hero-copy">
+        <p class="eyebrow">Physical iPhone evidence · Pilot v0.1</p>
+        <h1>The on-device AI leaderboard for iPhone.</h1>
+        <p class="hero-deck">Compare exact models, quantizations, runtimes, and device conditions. Every number links back to an unmodified physical-device run.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#leaderboard">Explore the ranking</a>
+          <a class="button button-secondary" href="results/suite-b-pilot-v0.1/RELEASE-NOTES.md">Read the release notes</a>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-label="Live benchmark overview">
+        <div class="signal-field" aria-hidden="true">
+          <span class="signal-ring ring-one"></span>
+          <span class="signal-ring ring-two"></span>
+          <span class="signal-ring ring-three"></span>
+          <span class="signal-core"></span>
+        </div>
+        <div class="device-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="panel-kicker">Reference device</span>
+              <strong id="hero-device">Loading evidence</strong>
+            </div>
+            <span class="live-indicator"><i></i> Physical run</span>
+          </div>
+          <div class="model-race" id="hero-race" aria-live="polite">
+            <div class="race-placeholder"></div>
+            <div class="race-placeholder"></div>
+            <div class="race-placeholder"></div>
+          </div>
+          <div class="panel-foot">
+            <span>Lower response time is better</span>
+            <span>First-renderable proxy TTFT</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="metric-chapter page-shell" aria-labelledby="snapshot-title">
+      <div class="chapter-heading">
+        <p class="eyebrow">The current field</p>
+        <h2 id="snapshot-title">A small matrix with complete evidence.</h2>
+        <p>Six genuine results. No simulated rows, global score, or cross-device comparison.</p>
+      </div>
+      <div class="metric-grid" id="metric-grid">
+        <article class="metric-card metric-primary">
+          <p>Fastest response</p>
+          <strong id="fastest-response">—</strong>
+          <span id="fastest-response-model">Loading</span>
+        </article>
+        <article class="metric-card metric-secondary">
+          <p>Fastest sustained decode</p>
+          <strong id="fastest-decode">—</strong>
+          <span id="fastest-decode-model">Loading</span>
+        </article>
+        <article class="metric-card metric-compact">
+          <p>Evidence</p>
+          <strong id="evidence-count">—</strong>
+          <span>eligible runs</span>
+        </article>
+        <article class="metric-card metric-compact metric-inverse">
+          <p>Rejected</p>
+          <strong id="rejected-count">—</strong>
+          <span>input files</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="leaderboard-section page-shell" id="leaderboard" aria-labelledby="leaderboard-title">
+      <div class="leaderboard-heading">
+        <div>
+          <p class="eyebrow">Power benchmark</p>
+          <h2 id="leaderboard-title">Rank the evidence your way.</h2>
+        </div>
+        <p>Choose a workload, filter the tested configuration, then sort any measured column. Rankings never mix incompatible workloads.</p>
+      </div>
+
+      <div class="leaderboard-shell">
+        <div class="board-toolbar">
+          <div class="mode-tabs" role="tablist" aria-label="Leaderboard view">
+            <button class="mode-tab is-active" type="button" role="tab" aria-selected="true" data-mode="ux">Responsiveness</button>
+            <button class="mode-tab" type="button" role="tab" aria-selected="false" data-mode="pipe">Sustained generation</button>
+            <button class="mode-tab" type="button" role="tab" aria-selected="false" data-mode="ship">Deployment facts</button>
+          </div>
+
+          <div class="board-filters">
+            <label class="search-control">
+              <span class="sr-only">Search models</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+              <input id="model-search" type="search" placeholder="Search model" autocomplete="off">
+            </label>
+            <label>
+              <span class="sr-only">Filter by device</span>
+              <select id="device-filter" aria-label="Filter by device"><option value="all">All devices</option></select>
+            </label>
+            <label>
+              <span class="sr-only">Filter by runtime</span>
+              <select id="runtime-filter" aria-label="Filter by runtime"><option value="all">All runtimes</option></select>
+            </label>
+          </div>
+        </div>
+
+        <div class="board-context">
+          <div>
+            <span class="context-label" id="context-label">First-renderable proxy TTFT</span>
+            <span id="context-description">Adapter boundary, not screen-render latency. Lower is better.</span>
+          </div>
+          <span class="row-count" id="row-count" aria-live="polite">Loading results</span>
+        </div>
+
+        <div class="table-scroll">
+          <table class="ranking-table">
+            <thead id="ranking-head"></thead>
+            <tbody id="ranking-body"></tbody>
+          </table>
+        </div>
+
+        <div class="empty-state" id="empty-state" hidden>
+          <strong>No matching evidence</strong>
+          <span>Clear the filters to return to the complete Pilot matrix.</span>
+        </div>
+        <div class="load-error" id="load-error" hidden>
+          <strong>The evidence could not be loaded.</strong>
+          <span>Serve the repository root over HTTP so the page can read the normalized result file.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="evidence-section" id="evidence" aria-labelledby="evidence-title">
+      <div class="page-shell evidence-layout">
+        <div class="evidence-statement">
+          <p class="eyebrow">Evidence before opinion</p>
+          <h2 id="evidence-title">Every rank should survive inspection.</h2>
+        </div>
+        <div class="evidence-notes">
+          <article>
+            <span class="evidence-bar" aria-hidden="true"></span>
+            <div>
+              <h3>Exact configuration</h3>
+              <p>Artifact revision, quantization, runtime, backend, device, OS, App build, and generation policy travel with every row.</p>
+            </div>
+          </article>
+          <article>
+            <span class="evidence-bar" aria-hidden="true"></span>
+            <div>
+              <h3>Unfavorable runs stay visible</h3>
+              <p>Serious thermal state, failed attempts, OOM, cancellation, and not-run outcomes are evidence—not data to discard.</p>
+            </div>
+          </article>
+          <article>
+            <span class="evidence-bar" aria-hidden="true"></span>
+            <div>
+              <h3>No universal score</h3>
+              <p>Responsiveness, sustained generation, memory, and deployment facts remain separate so developers can choose for their product.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing page-shell">
+      <div>
+        <p class="eyebrow">Inspect the complete package</p>
+        <h2>Trust the ranking because the evidence is open.</h2>
+      </div>
+      <div class="closing-actions">
+        <a class="button button-light" href="results/suite-b-pilot-v0.1/normalized-results.json">Open normalized data</a>
+        <a class="text-link" href="results/suite-b-pilot-v0.1/SHA256SUMS">Verify checksums <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer page-shell">
+    <span>iOS LLM Leaderboard</span>
+    <span>Power + Ship Pilot v0.1 · Non-official evidence</span>
+    <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard" target="_blank" rel="noreferrer">GitHub ↗</a>
+  </footer>
+
+  <dialog class="detail-dialog" id="detail-dialog">
+    <div class="dialog-inner">
+      <button class="dialog-close" type="button" aria-label="Close configuration details">×</button>
+      <div id="dialog-content"></div>
+    </div>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script type="module" src="site/app.js"></script>
+</body>
+</html>

@@ -25,6 +25,22 @@ The Phase 1 product helps developers answer:
 This repository is currently a documentation-first framework. It does not yet
 publish official rankings or verified performance results.
 
+## Interactive Leaderboard
+
+[**Open the interactive Power leaderboard →**](https://yizesun.github.io/iOS-LLM-Leaderboard/)
+
+The website reads the same checked-in `normalized-results.json` used by the
+auditable Markdown reports. It provides workload tabs, configuration filters,
+sortable metric columns, deployment facts, and direct links to raw evidence.
+Until GitHub Pages is enabled, preview it locally from the repository root:
+
+```bash
+python3 -m http.server 4173
+```
+
+Then open `http://localhost:4173/`. The site remains explicitly Pilot evidence;
+it does not introduce a global score or change any benchmark rule.
+
 ## Product Strategy
 
 The long-term architecture is Build, Power, and Ship, with an explicit delivery

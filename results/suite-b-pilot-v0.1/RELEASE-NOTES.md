@@ -120,3 +120,17 @@ shasum -a 256 -c results/suite-b-pilot-v0.1/SHA256SUMS
 The first command regenerates the normalized dataset, leaderboard, pipeline
 report, and Ship evidence from the six raw App exports. The second verifies the
 release evidence and generated outputs.
+
+## Interactive presentation
+
+The repository root also contains a static, responsive leaderboard that reads
+`normalized-results.json` and `pipeline-report.json` directly. It provides
+separate Responsiveness, Sustained Generation, and Deployment Facts views;
+sortable measured columns; model, device, and runtime filters; and links back
+to exact raw evidence. The website does not add a metric, global score, or
+second source of benchmark truth.
+
+The page was validated at desktop and mobile viewports. Data loading, all three
+views, ascending and descending sorting, search filtering, configuration
+details, raw-evidence links, responsive overflow, and browser console output
+were checked locally before updating the Draft PR.
