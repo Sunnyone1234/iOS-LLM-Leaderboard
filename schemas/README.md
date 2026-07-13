@@ -40,6 +40,14 @@ transition.
   that permits independent recalculation of the First-renderable proxy TTFT.
   It remains a development candidate and is not the frozen Power Benchmark
   1.0 result schema.
+- `suite-b-power-result-1.0.0-rc.1.schema.json` is the frozen F3
+  release-candidate result contract for exactly B-UX-001 and B-PIPE-001. It
+  retains the raw timing, token, memory, thermal, outcome, and response evidence
+  required by the Power 1.0 protocol. It is not emitted by the App until F4 and
+  does not authorize official results.
+- `suite-b-power-validation-report-1.0.0-rc.1.schema.json` keeps structural
+  validity, protocol conformance, per-metric eligibility, evidence review, and
+  ranking eligibility as separate validator decisions.
 - `suite-b-community-submission-0.1.schema.json` wraps exact result bytes,
   integrity evidence, contributor declarations, and a Draft trust request for
   offline repository submission.
@@ -49,7 +57,7 @@ transition.
   promotion from Draft to Community Submitted only.
 
 The earlier workload-specific schemas remain supported for existing evidence.
-An official Power Benchmark 1.0 result schema will be frozen only after
-immutable benchmark-release identity, normative edge cases, independently
-recalculable official metrics, migration rules, and App/validator compatibility
-are frozen together.
+The F3 schemas and validator are pinned by the non-official
+`suite-b-power@1.0.0-rc.1` release manifest. They become executable reference
+App output only after F4 implements the same identities; official publication
+still requires all later release gates.

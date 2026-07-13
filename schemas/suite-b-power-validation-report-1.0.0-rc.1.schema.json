@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ios-llm-leaderboard:schema:suite-b-power-validation-report:1.0.0-rc.1",
+  "title": "Suite B Power validation report 1.0.0-rc.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "resultID",
+    "benchmarkRelease",
+    "validator",
+    "overallStatus",
+    "structuralValidity",
+    "protocolConformance",
+    "metricEligibility",
+    "evidenceLevel",
+    "rankingEligibility",
+    "errors",
+    "warnings"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "suite-b-power-validation-report-1.0.0-rc.1" },
+    "resultID": { "type": ["string", "null"] },
+    "benchmarkRelease": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "const": "suite-b-power" },
+        "version": { "const": "1.0.0-rc.1" }
+      }
+    },
+    "validator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "const": "suite-b-power-validator" },
+        "version": { "const": "1.0.0-rc.1" }
+      }
+    },
+    "overallStatus": { "enum": ["valid", "validWithWarnings", "invalid"] },
+    "structuralValidity": { "$ref": "#/$defs/decision" },
+    "protocolConformance": { "$ref": "#/$defs/decision" },
+    "metricEligibility": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/metricDecision" }
+    },
+    "evidenceLevel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "reasonCodes"],
+      "properties": {
+        "level": { "const": "unreviewed" },
+        "reasonCodes": { "$ref": "#/$defs/reasons" }
+      }
+    },
+    "rankingEligibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eligible", "reasonCodes"],
+      "properties": {
+        "eligible": { "const": false },
+        "reasonCodes": { "$ref": "#/$defs/reasons" }
+      }
+    },
+    "errors": { "type": "array", "items": { "type": "string" } },
+    "warnings": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "reasons": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["valid", "reasonCodes"],
+      "properties": {
+        "valid": { "type": "boolean" },
+        "reasonCodes": { "$ref": "#/$defs/reasons" }
+      }
+    },
+    "metricDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eligible", "eligibleMeasuredAttempts", "reasonCodes"],
+      "properties": {
+        "eligible": { "type": "boolean" },
+        "eligibleMeasuredAttempts": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "reasonCodes": { "$ref": "#/$defs/reasons" }
+      }
+    }
+  }
+}

@@ -2,9 +2,12 @@
 
 ## Status
 
-Framework v2 is a design draft. Framework v1 remains the accepted repository
-format until the v2 schemas, runner, validator, and migration rules are
-implemented together. Draft v2 results are never official leaderboard results.
+Framework v2 remains a repository-wide design draft and Framework v1 remains
+the accepted format outside the Power Foundation track. For Suite B Power,
+F2 and F3 now freeze the non-official `suite-b-power@1.0.0-rc.1` protocol,
+migration, schema, release-manifest, and validator contracts. The reference App
+does not emit that contract until F4. Release-candidate results are never
+official leaderboard results.
 
 ## Why v2 Exists
 
@@ -91,4 +94,3 @@ not define a single aggregate score.
   to the draft sustained-generation pipeline profile.
 - Framework v1 validators continue to validate v1 results during transition.
 - A separate v2 validator handles workload manifests and Suite B result bundles.
-

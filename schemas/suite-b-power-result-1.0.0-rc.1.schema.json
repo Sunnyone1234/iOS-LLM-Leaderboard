@@ -1,0 +1,461 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ios-llm-leaderboard:schema:suite-b-power-result:1.0.0-rc.1",
+  "title": "Suite B Power result 1.0.0-rc.1",
+  "description": "Frozen F3 release-candidate result contract. It never authorizes official ranking.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "resultID",
+    "createdAt",
+    "benchmarkRelease",
+    "officialResultEligible",
+    "execution",
+    "configuration",
+    "model",
+    "runtime",
+    "device",
+    "environment",
+    "modelPreparation",
+    "attempts",
+    "summary"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "suite-b-power-result-1.0.0-rc.1" },
+    "resultID": { "$ref": "#/$defs/uuid" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "benchmarkRelease": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "protocolID", "protocolVersion"],
+      "properties": {
+        "id": { "const": "suite-b-power" },
+        "version": { "const": "1.0.0-rc.1" },
+        "protocolID": { "const": "suite-b-power" },
+        "protocolVersion": { "const": "1.0.0-rc.1" }
+      }
+    },
+    "officialResultEligible": { "const": false },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sessionID",
+        "workloadID",
+        "workloadVersion",
+        "workloadCategory",
+        "fixtureSHA256",
+        "measurementModeID",
+        "runnerID",
+        "runnerVersion",
+        "appVersion",
+        "appBuild",
+        "appSourceCommit"
+      ],
+      "properties": {
+        "sessionID": { "$ref": "#/$defs/uuid" },
+        "workloadID": {
+          "enum": ["b-ux-001-short-interaction", "b-pipe-001-sustained-generation"]
+        },
+        "workloadVersion": { "const": "1.0.0-rc.1" },
+        "workloadCategory": { "enum": ["user-experience", "pipeline"] },
+        "fixtureSHA256": { "$ref": "#/$defs/sha256" },
+        "measurementModeID": {
+          "enum": ["b-mode-warm-resident-ux-v1", "b-mode-sustained-no-rest-v1"]
+        },
+        "runnerID": { "const": "ios-reference-benchmark-app" },
+        "runnerVersion": { "type": "string", "minLength": 1 },
+        "appVersion": { "type": "string", "minLength": 1 },
+        "appBuild": { "type": "string", "minLength": 1 },
+        "appSourceCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "warmupAttempts",
+        "measuredAttempts",
+        "minimumMetricEligibleMeasuredAttempts",
+        "restIntervalSeconds",
+        "samplingEnabled",
+        "temperature",
+        "topP",
+        "topK",
+        "seed",
+        "repetitionPenalty",
+        "thinkingMode",
+        "chatTemplateIdentity",
+        "includeStopTokenInRawEvents",
+        "outputTokenLimit",
+        "modelLoadPolicy",
+        "contextPolicy",
+        "kvCachePolicy",
+        "automaticRetries",
+        "clock",
+        "memorySamplingIntervalMilliseconds",
+        "memoryMetric",
+        "thermalSource"
+      ],
+      "properties": {
+        "warmupAttempts": { "const": 1 },
+        "measuredAttempts": { "const": 5 },
+        "minimumMetricEligibleMeasuredAttempts": { "const": 3 },
+        "restIntervalSeconds": { "const": 0 },
+        "samplingEnabled": { "const": false },
+        "temperature": { "const": 0 },
+        "topP": { "type": ["number", "null"] },
+        "topK": { "type": ["integer", "null"], "minimum": 0 },
+        "seed": { "type": ["integer", "null"] },
+        "repetitionPenalty": { "type": ["number", "null"] },
+        "thinkingMode": { "type": "string", "minLength": 1 },
+        "chatTemplateIdentity": { "type": "string", "minLength": 1 },
+        "includeStopTokenInRawEvents": { "const": false },
+        "outputTokenLimit": { "enum": [128, 512] },
+        "modelLoadPolicy": { "const": "load-once-before-warmup" },
+        "contextPolicy": { "const": "fresh-conversation-per-attempt" },
+        "kvCachePolicy": { "const": "fresh-kv-cache-per-attempt" },
+        "automaticRetries": { "const": 0 },
+        "clock": { "const": "monotonic-nanoseconds" },
+        "memorySamplingIntervalMilliseconds": { "const": 50 },
+        "memoryMetric": { "const": "TASK_VM_INFO.phys_footprint" },
+        "thermalSource": { "const": "ProcessInfo.thermalState" }
+      }
+    },
+    "model": { "$ref": "#/$defs/model" },
+    "runtime": { "$ref": "#/$defs/runtime" },
+    "device": { "$ref": "#/$defs/device" },
+    "environment": { "$ref": "#/$defs/environment" },
+    "modelPreparation": { "$ref": "#/$defs/modelPreparation" },
+    "attempts": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": { "$ref": "#/$defs/attempt" }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["terminalCounts", "metrics"],
+      "properties": {
+        "terminalCounts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["completed", "failed", "cancelled", "outOfMemory", "notRun", "earlyEOS"],
+          "properties": {
+            "completed": { "type": "integer", "minimum": 0, "maximum": 5 },
+            "failed": { "type": "integer", "minimum": 0, "maximum": 5 },
+            "cancelled": { "type": "integer", "minimum": 0, "maximum": 5 },
+            "outOfMemory": { "type": "integer", "minimum": 0, "maximum": 5 },
+            "notRun": { "type": "integer", "minimum": 0, "maximum": 5 },
+            "earlyEOS": { "type": "integer", "minimum": 0, "maximum": 5 }
+          }
+        },
+        "metrics": { "$ref": "#/$defs/summaryMetrics" }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "execution": {
+            "properties": { "workloadID": { "const": "b-ux-001-short-interaction" } }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "configuration": {
+            "properties": {
+              "topP": { "const": 1 },
+              "topK": { "const": 0 },
+              "seed": { "const": 0 },
+              "repetitionPenalty": { "const": null },
+              "thinkingMode": { "const": "disabled-via-chat-template" },
+              "chatTemplateIdentity": { "const": "artifact-tokenizer-config-enable-thinking-false" },
+              "outputTokenLimit": { "const": 128 }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "execution": {
+            "properties": { "workloadID": { "const": "b-pipe-001-sustained-generation" } }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "configuration": {
+            "properties": {
+              "topP": { "const": null },
+              "topK": { "const": null },
+              "seed": { "const": null },
+              "repetitionPenalty": { "const": null },
+              "thinkingMode": { "const": "disabled-via-prompt-directive" },
+              "chatTemplateIdentity": { "const": "artifact-tokenizer-config" },
+              "outputTokenLimit": { "const": 512 }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+    },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "positiveNumberOrNull": { "type": ["number", "null"], "exclusiveMinimum": 0 },
+    "reasonCodes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "thermalState": { "enum": ["nominal", "fair", "serious", "critical", "unknown"] },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "displayName", "baseModelID", "artifactID", "artifactRevision",
+        "artifactContentHash", "quantization", "modelFormat", "tokenizerIdentity",
+        "sourceURL", "licenseIdentifier", "licenseSourceURL", "artifactRepositorySizeBytes"
+      ],
+      "properties": {
+        "displayName": { "type": "string", "minLength": 1 },
+        "baseModelID": { "type": "string", "minLength": 1 },
+        "artifactID": { "type": "string", "minLength": 1 },
+        "artifactRevision": { "type": "string", "minLength": 1 },
+        "artifactContentHash": { "type": ["string", "null"], "minLength": 1 },
+        "quantization": { "type": "string", "minLength": 1 },
+        "modelFormat": { "type": "string", "minLength": 1 },
+        "tokenizerIdentity": { "type": "string", "minLength": 1 },
+        "sourceURL": { "type": "string", "format": "uri" },
+        "licenseIdentifier": { "type": "string", "minLength": 1 },
+        "licenseSourceURL": { "type": "string", "format": "uri" },
+        "artifactRepositorySizeBytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "resolvedRevision", "backend", "dependencyVersions"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "resolvedRevision": { "type": "string", "minLength": 1 },
+        "backend": { "type": "string", "minLength": 1 },
+        "dependencyVersions": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "device": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["displayName", "machineIdentifier", "systemName", "systemVersion", "systemBuild", "physicalMemoryBytes"],
+      "properties": {
+        "displayName": { "type": "string", "minLength": 1 },
+        "machineIdentifier": { "type": "string", "pattern": "^iPhone[0-9]+,[0-9]+$" },
+        "systemName": { "const": "iOS" },
+        "systemVersion": { "type": "string", "minLength": 1 },
+        "systemBuild": { "type": "string", "minLength": 1 },
+        "physicalMemoryBytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "buildConfiguration", "debuggerAttached", "lowPowerModeEnabled",
+        "batteryState", "batteryLevelPercentAtStart", "thermalStateAtSessionStart",
+        "thermalStateAtSessionEnd"
+      ],
+      "properties": {
+        "buildConfiguration": { "type": "string", "minLength": 1 },
+        "debuggerAttached": { "type": "boolean" },
+        "lowPowerModeEnabled": { "type": "boolean" },
+        "batteryState": { "enum": ["unknown", "unplugged", "charging", "full"] },
+        "batteryLevelPercentAtStart": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "thermalStateAtSessionStart": { "$ref": "#/$defs/thermalState" },
+        "thermalStateAtSessionEnd": { "$ref": "#/$defs/thermalState" }
+      }
+    },
+    "modelPreparation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifactID", "artifactRevision", "cacheVerificationMethod",
+        "downloadOccurredDuringSession", "preparationCompleted", "modelLoadCompleted",
+        "eligibleForPerformanceMeasurement", "reasonCodes", "preparedAt"
+      ],
+      "properties": {
+        "artifactID": { "type": "string", "minLength": 1 },
+        "artifactRevision": { "type": "string", "minLength": 1 },
+        "cacheVerificationMethod": { "type": "string", "minLength": 1 },
+        "downloadOccurredDuringSession": { "type": "boolean" },
+        "preparationCompleted": { "type": "boolean" },
+        "modelLoadCompleted": { "type": "boolean" },
+        "eligibleForPerformanceMeasurement": { "type": "boolean" },
+        "reasonCodes": { "$ref": "#/$defs/reasonCodes" },
+        "preparedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "tokenEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "tokenID", "elapsedNanoseconds"],
+      "properties": {
+        "index": { "type": "integer", "minimum": 0 },
+        "tokenID": { "type": "integer" },
+        "elapsedNanoseconds": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "renderabilityEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tokenIndex", "tokenID", "tokenReceivedNanoseconds", "decodedAtNanoseconds", "decodedPrefix", "isRenderable"],
+      "properties": {
+        "tokenIndex": { "type": "integer", "minimum": 0 },
+        "tokenID": { "type": "integer" },
+        "tokenReceivedNanoseconds": { "type": "integer", "minimum": 0 },
+        "decodedAtNanoseconds": { "type": "integer", "minimum": 0 },
+        "decodedPrefix": { "type": "string" },
+        "isRenderable": { "type": "boolean" }
+      }
+    },
+    "renderabilityTrace": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["policyVersion", "clockOrigin", "scope", "captureLimit", "generationStartNanoseconds", "outcome", "firstRenderableTokenIndex", "entries"],
+      "properties": {
+        "policyVersion": { "const": "first-renderable-decoded-prefix-v1" },
+        "clockOrigin": { "const": "adapter-request-accepted" },
+        "scope": { "const": "through-first-renderable-inclusive" },
+        "captureLimit": { "const": 32 },
+        "generationStartNanoseconds": { "type": "integer", "minimum": 0 },
+        "outcome": { "enum": ["firstRenderableFound", "noRenderableContent", "captureLimitReached"] },
+        "firstRenderableTokenIndex": { "type": ["integer", "null"], "minimum": 0 },
+        "entries": { "type": "array", "maxItems": 32, "items": { "$ref": "#/$defs/renderabilityEntry" } }
+      }
+    },
+    "memorySample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["elapsedNanoseconds", "physicalFootprintBytes"],
+      "properties": {
+        "elapsedNanoseconds": { "type": "integer", "minimum": 0 },
+        "physicalFootprintBytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "thermalEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["before", "after", "transitions"],
+      "properties": {
+        "before": { "$ref": "#/$defs/thermalState" },
+        "after": { "$ref": "#/$defs/thermalState" },
+        "transitions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["elapsedNanoseconds", "state"],
+            "properties": {
+              "elapsedNanoseconds": { "type": "integer", "minimum": 0 },
+              "state": { "$ref": "#/$defs/thermalState" }
+            }
+          }
+        }
+      }
+    },
+    "attemptMetrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pipelineTTFTMilliseconds", "firstRenderableProxyTTFTMilliseconds",
+        "requestCompletionMilliseconds", "prefillTokensPerSecond",
+        "decodeTokensPerSecond", "processPhysicalFootprintMiB"
+      ],
+      "properties": {
+        "pipelineTTFTMilliseconds": { "$ref": "#/$defs/positiveNumberOrNull" },
+        "firstRenderableProxyTTFTMilliseconds": { "$ref": "#/$defs/positiveNumberOrNull" },
+        "requestCompletionMilliseconds": { "$ref": "#/$defs/positiveNumberOrNull" },
+        "prefillTokensPerSecond": { "$ref": "#/$defs/positiveNumberOrNull" },
+        "decodeTokensPerSecond": { "$ref": "#/$defs/positiveNumberOrNull" },
+        "processPhysicalFootprintMiB": { "$ref": "#/$defs/positiveNumberOrNull" }
+      }
+    },
+    "summaryMetrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "medianPipelineTTFTMilliseconds", "medianFirstRenderableProxyTTFTMilliseconds",
+        "medianRequestCompletionMilliseconds", "medianPrefillTokensPerSecond",
+        "medianDecodeTokensPerSecond", "medianProcessPhysicalFootprintMiB",
+        "decodeFirstToLastPercentChange"
+      ],
+      "properties": {
+        "medianPipelineTTFTMilliseconds": { "$ref": "#/$defs/positiveNumberOrNull" },
+        "medianFirstRenderableProxyTTFTMilliseconds": { "$ref": "#/$defs/positiveNumberOrNull" },
+        "medianRequestCompletionMilliseconds": { "$ref": "#/$defs/positiveNumberOrNull" },
+        "medianPrefillTokensPerSecond": { "$ref": "#/$defs/positiveNumberOrNull" },
+        "medianDecodeTokensPerSecond": { "$ref": "#/$defs/positiveNumberOrNull" },
+        "medianProcessPhysicalFootprintMiB": { "$ref": "#/$defs/positiveNumberOrNull" },
+        "decodeFirstToLastPercentChange": { "type": ["number", "null"] }
+      }
+    },
+    "attempt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runIndex", "role", "outcome", "reasonCodes", "stopReason", "generatedText",
+        "promptTokenCount", "outputTokenCount", "responseConformance",
+        "timingEvidence", "tokenEvents", "renderabilityTrace", "memorySamples",
+        "thermal", "derivedMetrics"
+      ],
+      "properties": {
+        "runIndex": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "role": { "enum": ["warmup", "measured"] },
+        "outcome": { "enum": ["completed", "failed", "cancelled", "outOfMemory", "notRun"] },
+        "reasonCodes": { "$ref": "#/$defs/reasonCodes" },
+        "stopReason": { "enum": ["endOfSequence", "outputTokenLimit", null] },
+        "generatedText": { "type": ["string", "null"] },
+        "promptTokenCount": { "type": ["integer", "null"], "minimum": 1 },
+        "outputTokenCount": { "type": ["integer", "null"], "minimum": 0 },
+        "responseConformance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "reasonCodes"],
+          "properties": {
+            "status": { "enum": ["pass", "fail", "notApplicable", "notEvaluated"] },
+            "reasonCodes": { "$ref": "#/$defs/reasonCodes" }
+          }
+        },
+        "timingEvidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["generationStartNanoseconds", "promptEvaluationNanoseconds", "requestCompletionNanoseconds"],
+          "properties": {
+            "generationStartNanoseconds": { "type": ["integer", "null"], "minimum": 0 },
+            "promptEvaluationNanoseconds": { "type": ["integer", "null"], "minimum": 1 },
+            "requestCompletionNanoseconds": { "type": ["integer", "null"], "minimum": 1 }
+          }
+        },
+        "tokenEvents": { "type": "array", "items": { "$ref": "#/$defs/tokenEvent" } },
+        "renderabilityTrace": { "$ref": "#/$defs/renderabilityTrace" },
+        "memorySamples": { "type": "array", "items": { "$ref": "#/$defs/memorySample" } },
+        "thermal": { "$ref": "#/$defs/thermalEvidence" },
+        "derivedMetrics": { "$ref": "#/$defs/attemptMetrics" }
+      }
+    }
+  }
+}

@@ -107,12 +107,12 @@ Foundation App 0.7.0 build 9 and result envelope
 during F2. The frozen release-candidate protocol is
 `suite-b-power@1.0.0-rc.1`; its normative text, machine-readable identity, and
 migration rules are under `benchmarks/suite-b-on-device-performance/`. The App
-and 0.4 envelope remain non-official development identities; the final release
-schema and validator are not frozen until F3.
+and 0.4 envelope remain non-official development identities; their successor
+release-candidate schema and validator were frozen separately in F3.
 
 ### F3 — Release schema and validator freeze
 
-Next.
+Complete.
 
 - Add immutable benchmark-release identity to the official-candidate result
   contract.
@@ -122,7 +122,15 @@ Next.
 - Define validation status and reason codes without conflating structural
   validity, metric eligibility, evidence level, and ranking eligibility.
 
+Release candidate `suite-b-power@1.0.0-rc.1` now pins the F2 protocol, metric
+definitions, fixtures, complete result schema, validation-report schema,
+reason-code registry, and semantic validator by SHA-256. The validator
+recalculates each candidate ranked metric from retained evidence and always
+keeps evidence review and ranking authorization false at this stage.
+
 ### F4 — Reference App hardening
+
+Next.
 
 - Make the App execute only identities compatible with the selected benchmark
   release.

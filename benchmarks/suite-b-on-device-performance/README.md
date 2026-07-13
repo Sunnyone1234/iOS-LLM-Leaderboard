@@ -33,6 +33,7 @@ Read:
 - [Suite B Protocol v2](protocol-v2.md)
 - [Power 1.0 frozen protocol candidate](power-1.0-protocol.md)
 - [Power 1.0 migration rules](power-1.0-migration.md)
+- [Power 1.0 schema and validator freeze](power-1.0-schema-validator.md)
 - [Suite B Metric Definitions](metrics.md)
 - [Framework v2 Architecture](../../methodology/benchmark-framework-v2.md)
 

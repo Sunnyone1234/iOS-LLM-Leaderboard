@@ -1,0 +1,52 @@
+{
+  "schema_version": "suite-b-power-validation-reasons-1.0",
+  "registry_version": "1.0.0-rc.1",
+  "reason_codes": {
+    "schema_invalid": "The submitted JSON does not satisfy the frozen result shape.",
+    "unsupported_release": "The benchmark release is not supported by this validator.",
+    "release_identity_mismatch": "A release-pinned identity or asset does not match.",
+    "workload_identity_mismatch": "The workload identity or category does not match the release.",
+    "fixture_hash_mismatch": "The submitted fixture digest does not match the release.",
+    "runner_incompatible": "The reference runner version is older than the release minimum.",
+    "environment_ineligible": "A required physical-device environment admission rule failed.",
+    "model_preparation_ineligible": "The model artifact was not verified and prepared before measurement.",
+    "incomplete_attempt_records": "The result does not retain all six planned attempt records.",
+    "attempt_sequence_invalid": "Attempt index or warm-up/measured role order is invalid.",
+    "contradictory_outcome_evidence": "Outcome, stop reason, reason codes, or evidence contradict one another.",
+    "token_evidence_invalid": "Token events are incomplete, non-contiguous, or temporally invalid.",
+    "first_renderable_evidence_invalid": "The bounded first-renderable trace cannot prove the submitted value.",
+    "response_conformance_failed": "The Short Interaction response did not satisfy the frozen behavior contract.",
+    "prefill_evidence_unavailable": "Exact prompt count or prompt-evaluation duration is unavailable.",
+    "memory_evidence_unavailable": "No valid in-window process-footprint sample is available.",
+    "thermal_evidence_unavailable": "Required thermal state evidence is unknown or missing.",
+    "metric_not_applicable": "The metric is not defined for this workload.",
+    "insufficient_metric_eligible_attempts": "Fewer than three measured attempts are eligible for the metric.",
+    "aggregate_mismatch": "A submitted derived or aggregate value disagrees with raw evidence.",
+    "evidence_not_reviewed": "Structural validation is not independent evidence review.",
+    "release_candidate_not_official": "The release candidate does not authorize official results.",
+    "ranking_not_authorized": "F4-F6 release gates have not authorized leaderboard ranking."
+  },
+  "attempt_reason_codes": {
+    "failed": {
+      "runtime_error": "The runtime returned a non-OOM error.",
+      "adapter_error": "The runtime adapter failed outside model execution.",
+      "model_input_error": "The exact model input could not be prepared or accepted.",
+      "evidence_capture_error": "Required evidence capture failed during the attempt.",
+      "process_terminated_unclassified": "The process ended without enough evidence to classify OOM."
+    },
+    "cancelled": {
+      "user_cancelled": "The contributor explicitly cancelled the attempt.",
+      "system_cancelled": "The operating system or App lifecycle cancelled the attempt."
+    },
+    "outOfMemory": {
+      "runtime_out_of_memory": "The runtime reported an allocation or memory-capacity failure.",
+      "os_memory_termination": "Durable recovery evidence identified an OS memory termination."
+    },
+    "notRun": {
+      "thermal_state_critical_before_attempt": "Critical thermal state prevented the planned attempt.",
+      "prior_attempt_unrecoverable": "A prior terminal failure made later attempts unsafe to start.",
+      "session_cancelled": "The session was cancelled before this planned attempt started.",
+      "environment_admission_failed": "The session failed admission before this planned attempt started."
+    }
+  }
+}

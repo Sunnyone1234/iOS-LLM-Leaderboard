@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "suite-b-power-release-manifest-1.0",
+  "releaseID": "suite-b-power",
+  "releaseVersion": "1.0.0-rc.1",
+  "status": "schema-validator-frozen",
+  "officialResultEligible": false,
+  "rankingAuthorized": false,
+  "protocol": {
+    "id": "suite-b-power",
+    "version": "1.0.0-rc.1"
+  },
+  "workloads": [
+    {
+      "id": "b-ux-001-short-interaction",
+      "version": "1.0.0-rc.1",
+      "measurementMode": "b-mode-warm-resident-ux-v1"
+    },
+    {
+      "id": "b-pipe-001-sustained-generation",
+      "version": "1.0.0-rc.1",
+      "measurementMode": "b-mode-sustained-no-rest-v1"
+    }
+  ],
+  "resultSchema": {
+    "id": "suite-b-power-result-1.0.0-rc.1",
+    "version": "1.0.0-rc.1"
+  },
+  "validationReportSchema": {
+    "id": "suite-b-power-validation-report-1.0.0-rc.1",
+    "version": "1.0.0-rc.1"
+  },
+  "validator": {
+    "id": "suite-b-power-validator",
+    "version": "1.0.0-rc.1"
+  },
+  "referenceRunner": {
+    "id": "ios-reference-benchmark-app",
+    "minimumVersion": "0.8.0",
+    "implementationStatus": "pending-f4"
+  },
+  "pinnedAssets": [
+    {
+      "role": "protocol",
+      "path": "benchmarks/suite-b-on-device-performance/power-1.0-protocol.json",
+      "sha256": "aa358cf0a3342cc4ffab9c3623a7b013e6acb9f8e7b8225eb47ea602e14684b2"
+    },
+    {
+      "role": "normative-protocol-text",
+      "path": "benchmarks/suite-b-on-device-performance/power-1.0-protocol.md",
+      "sha256": "d33ca37bf96e82fd28cf2ece9c0fec858801c3e64aab771f5117e569883eead3"
+    },
+    {
+      "role": "migration-rules",
+      "path": "benchmarks/suite-b-on-device-performance/power-1.0-migration.md",
+      "sha256": "6c428189726f906e2de273340e8b2b68d8b3c9b940c92c1897893f4c6c07b9a2"
+    },
+    {
+      "role": "metric-definitions",
+      "path": "benchmarks/suite-b-on-device-performance/metrics.md",
+      "sha256": "a44ab1c4c43071cdff474c7dc05ca0243ba74434a676be696829fdd55251f433"
+    },
+    {
+      "role": "short-interaction-fixture",
+      "path": "benchmarks/suite-b-on-device-performance/workloads/fixtures/b-ux-001-short-interaction-prompt.txt",
+      "sha256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84"
+    },
+    {
+      "role": "sustained-generation-fixture",
+      "path": "ios-app/workloads/suite-b-pilot-001-prompt.txt",
+      "sha256": "b865ad1a1993bfd7bf097b85f7c5585e44f1384fa291b9c05426c6051caba996"
+    },
+    {
+      "role": "result-schema",
+      "path": "schemas/suite-b-power-result-1.0.0-rc.1.schema.json",
+      "sha256": "6082bce60ca23624f68aeb208598088dfe6e6bf312aa3246654d0746c271514e"
+    },
+    {
+      "role": "validation-report-schema",
+      "path": "schemas/suite-b-power-validation-report-1.0.0-rc.1.schema.json",
+      "sha256": "efc49f22747df78a46f2ae03fdff4c7a43fdad98f221e80de05cbefe8031dcf8"
+    },
+    {
+      "role": "validation-reason-registry",
+      "path": "benchmarks/suite-b-on-device-performance/power-1.0-validation-reasons.json",
+      "sha256": "6dec0ecbeb08420eed51d299acb4b49904483baaa7d94e8a54aa1068157d02d3"
+    },
+    {
+      "role": "semantic-validator",
+      "path": "scripts/validate_suite_b_power_result.py",
+      "sha256": "220f80edad24d23038f1c7a47484bbf93fb9e7eaa6c99d00ac9c1db63ba4fb22"
+    }
+  ]
+}
