@@ -1,8 +1,8 @@
 {
   "plan_schema_version": "0.3",
   "plan_id": "b-ux-001-validation",
-  "plan_version": "0.2.0-pilot",
-  "status": "pilot-validated",
+  "plan_version": "1.0.0-rc.1",
+  "status": "f4-reference-app-candidate",
   "model_profile": {
     "display_name": "Qwen3 0.6B",
     "base_model_id": "Qwen/Qwen3-0.6B",
@@ -38,8 +38,8 @@
   },
   "workload": {
     "workload_id": "b-ux-001-short-interaction",
-    "workload_version": "0.2.0-pilot",
-    "v2_profile_mapping": "b-ux-001-short-interaction@0.2.0-pilot",
+    "workload_version": "1.0.0-rc.1",
+    "v2_profile_mapping": "b-ux-001-short-interaction@1.0.0-rc.1",
     "category": "user-experience",
     "prompt_path": "ios-app/workloads/b-ux-001-short-interaction-prompt.txt",
     "prompt_sha256": "69b3cd45fb67e1882dabdc082636298123e01081c097af65b3fd133b19ccbc84",
@@ -55,9 +55,9 @@
     "thinking_mode": "disabled-via-chat-template",
     "chat_template_identity": "artifact-tokenizer-config-enable-thinking-false",
     "include_stop_token_in_raw_events": false,
-    "context_policy": "new-context-for-each-generation",
+    "context_policy": "fresh-conversation-per-attempt",
     "model_load_policy": "load-once-before-warmup",
-    "kv_cache_policy": "new-cache-for-each-generation"
+    "kv_cache_policy": "fresh-kv-cache-per-attempt"
   },
   "measurement_mode": {
     "measurement_mode_id": "b-mode-warm-resident-ux-v1",

@@ -7,6 +7,7 @@ struct DeviceEnvironment: Sendable {
     let systemVersion: String
     let systemBuild: String
     let operatingSystemVersion: OperatingSystemVersion
+    let physicalMemoryBytes: UInt64
     let thermalState: String
     let debuggerAttached: Bool
     let buildConfiguration: String
@@ -43,6 +44,7 @@ struct DeviceEnvironment: Sendable {
             systemVersion: UIDevice.current.systemVersion,
             systemBuild: Self.systemBuild,
             operatingSystemVersion: processInfo.operatingSystemVersion,
+            physicalMemoryBytes: processInfo.physicalMemory,
             thermalState: processInfo.thermalState.benchmarkName,
             debuggerAttached: DebuggerStatus.isAttached,
             buildConfiguration: BuildMetadata.configuration,

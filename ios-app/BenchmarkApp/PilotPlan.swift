@@ -118,7 +118,7 @@ enum ProductionBenchmarkPlan: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
-struct PilotPlan: Decodable, Sendable, Equatable {
+struct PilotPlan: Codable, Sendable, Equatable {
     let planSchemaVersion: String
     let planId: String
     let planVersion: String
@@ -131,7 +131,7 @@ struct PilotPlan: Decodable, Sendable, Equatable {
     let procedure: Procedure
     let environmentRequirements: EnvironmentRequirements
 
-    struct ModelProfile: Decodable, Sendable, Equatable {
+    struct ModelProfile: Codable, Sendable, Equatable {
         let displayName: String
         let baseModelId: String
         let artifactId: String
@@ -149,7 +149,7 @@ struct PilotPlan: Decodable, Sendable, Equatable {
         let artifactContentHash: String?
     }
 
-    struct RuntimeProfile: Decodable, Sendable, Equatable {
+    struct RuntimeProfile: Codable, Sendable, Equatable {
         let runtimeName: String
         let packageVersion: String
         let packageRevision: String
@@ -160,7 +160,7 @@ struct PilotPlan: Decodable, Sendable, Equatable {
         let tokenizerPackage: String
     }
 
-    struct Workload: Decodable, Sendable, Equatable {
+    struct Workload: Codable, Sendable, Equatable {
         let workloadId: String
         let workloadVersion: String
         let v2ProfileMapping: String
@@ -170,7 +170,7 @@ struct PilotPlan: Decodable, Sendable, Equatable {
         let outputTokenLimit: Int
     }
 
-    struct Generation: Decodable, Sendable, Equatable {
+    struct Generation: Codable, Sendable, Equatable {
         let samplingEnabled: Bool
         let temperature: Double
         let topP: Double?
@@ -185,7 +185,7 @@ struct PilotPlan: Decodable, Sendable, Equatable {
         let kvCachePolicy: String
     }
 
-    struct MeasurementMode: Decodable, Sendable, Equatable {
+    struct MeasurementMode: Codable, Sendable, Equatable {
         let measurementModeId: String
         let timingBoundaryVersion: String
         let pipelineTtftStart: String
@@ -197,14 +197,14 @@ struct PilotPlan: Decodable, Sendable, Equatable {
         let memorySamplingIntervalMilliseconds: Int
     }
 
-    struct Procedure: Decodable, Sendable, Equatable {
+    struct Procedure: Codable, Sendable, Equatable {
         let warmupRuns: Int
         let measuredRuns: Int
         let minimumSuccessfulRunsForSummary: Int
         let restIntervalSeconds: Int
     }
 
-    struct EnvironmentRequirements: Decodable, Sendable, Equatable {
+    struct EnvironmentRequirements: Codable, Sendable, Equatable {
         let releaseBuildRequired: Bool
         let debuggerDetachedRequired: Bool
         let initialThermalState: String
@@ -307,8 +307,8 @@ enum PilotPlanLoader {
             )
         }
         let supported = [
-            ("b-pipe-001-validation", "0.2.0-pilot", "b-pipe-001-sustained-generation"),
-            ("b-ux-001-validation", "0.2.0-pilot", "b-ux-001-short-interaction"),
+            ("b-pipe-001-validation", "1.0.0-rc.1", "b-pipe-001-sustained-generation"),
+            ("b-ux-001-validation", "1.0.0-rc.1", "b-ux-001-short-interaction"),
         ]
         guard supported.contains(where: {
             $0.0 == plan.planId && $0.1 == plan.planVersion

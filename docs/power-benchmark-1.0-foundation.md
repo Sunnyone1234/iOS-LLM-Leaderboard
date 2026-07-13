@@ -130,7 +130,7 @@ keeps evidence review and ranking authorization false at this stage.
 
 ### F4 — Reference App hardening
 
-Next.
+Implementation candidate complete; awaiting dependent pull-request review.
 
 - Make the App execute only identities compatible with the selected benchmark
   release.
@@ -140,7 +140,20 @@ Next.
 - Keep contributor review local and avoid collecting private device or account
   identifiers.
 
+App `0.8.0` build `10` now locks the production interface to the two frozen
+workload identities, embeds its exact source commit, emits
+`suite-b-power-result-1.0.0-rc.1`, retains raw recalculation evidence, and
+preserves all frozen terminal outcomes. Atomic checkpoints recover interrupted
+sessions conservatively without guessing OOM. Swift-produced fixtures for both
+workloads pass the frozen F3 validator with no structural or protocol errors.
+
+This is implementation verification only. It creates no benchmark result and
+does not authorize ranking. See
+[`power-benchmark-1.0-f4-reference-app.md`](power-benchmark-1.0-f4-reference-app.md).
+
 ### F5 — Release-candidate verification
+
+Next after F4 review.
 
 - Run the frozen App on physical devices without changing the release
   contract.

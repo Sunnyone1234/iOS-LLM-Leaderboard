@@ -80,6 +80,8 @@ final class BenchmarkViewModel {
     private(set) var isRunningContext = false
     private(set) var workloadRegistry: SuiteBPlanRegistry?
     private(set) var latestUnifiedResult: SuiteBResultBundle?
+    private(set) var latestPowerResult: PowerResultBundle?
+    private(set) var recoveryNotice: String?
     private(set) var submissionFileURL: URL?
     private(set) var submissionError: String?
     var contributorName = ""
@@ -92,6 +94,7 @@ final class BenchmarkViewModel {
 
     private let runtime: any ModelPreparingRuntime
     private let resultStore = ResultStore()
+    private let powerCheckpointStore = PowerSessionCheckpointStore()
 
     init(
         runtime: any ModelPreparingRuntime = MLXSwiftRuntime(),
@@ -144,30 +147,25 @@ final class BenchmarkViewModel {
             && !isCalibratingContext
             && !isRunningContext
             && admissionReasonCodes.isEmpty
+            && powerContractError == nil
     }
 
+    // Experimental registry entries remain for historical compatibility, but
+    // App 0.8.0 cannot execute them through the production control surface.
     var canCalibrateInputLengths: Bool {
-        preparationPhase == .ready && phase != .running && !isCalibratingInputLengths
-            && !isRunningInputSweep && !isCalibratingContext && !isRunningContext
-            && workloadRegistry?.plan(workloadID: "b-pipe-002-input-length-sweep") != nil
+        false
     }
 
     var canRunInputSweep: Bool {
-        canRun && inputLengthCalibrations.map(\.targetTokenCount)
-            == workloadRegistry?.plan(workloadID: "b-pipe-002-input-length-sweep")?.targetInputTokens
-            && !isRunningInputSweep
+        false
     }
 
     var canCalibrateContext: Bool {
-        preparationPhase == .ready && phase != .running && !isCalibratingContext
-            && !isRunningContext && !isCalibratingInputLengths && !isRunningInputSweep
-            && workloadRegistry?.plan(workloadID: "b-ux-002-context-assistance") != nil
+        false
     }
 
     var canRunContext: Bool {
-        canRun && contextCalibrations.map(\.targetTokenCount)
-            == workloadRegistry?.plan(workloadID: "b-ux-002-context-assistance")?.targetInputTokens
-            && !isRunningContext
+        false
     }
 
     var admissionReasonCodes: [String] {
@@ -184,6 +182,19 @@ final class BenchmarkViewModel {
             ),
             requirements: plan.environmentRequirements
         )
+    }
+
+    var powerContractError: String? {
+        guard let plan = loadedPlan?.plan else { return "Power plan is unavailable." }
+        do {
+            _ = try PowerBenchmarkRelease.workload(for: plan)
+            _ = try PowerBenchmarkRelease.validateExecutionEnvironment(
+                DeviceEnvironment.current
+            )
+            return nil
+        } catch {
+            return error.localizedDescription
+        }
     }
 
     var canGenerateSubmission: Bool {
@@ -255,6 +266,9 @@ final class BenchmarkViewModel {
     var statusText: String {
         if let configurationError {
             return "Configuration error: \(configurationError)"
+        }
+        if let powerContractError {
+            return powerContractError
         }
         switch preparationPhase {
         case .notPrepared:
@@ -330,130 +344,53 @@ final class BenchmarkViewModel {
         guard canRun,
               let loadedPlan,
               let modelPreparation else { return }
-        guard let registryPlan = workloadRegistry?.plan(
-            workloadID: loadedPlan.plan.workload.workloadId
-        ) else {
-            phase = .failed(message: "The selected workload is missing from the bundled registry.")
-            return
-        }
-        guard SuiteBResultBundle.executionIdentityMatches(
-            registryPlan: registryPlan,
-            plan: loadedPlan.plan
-        ) else {
-            phase = .failed(
-                message: "The selected plan does not match its bundled execution registry identity."
-            )
-            return
-        }
-        let sessionEnvironment = DeviceEnvironment.current
         phase = .running
         currentThermalState = SystemMeasurements.thermalState
 
         do {
+            _ = try PowerBenchmarkRelease.workload(for: loadedPlan.plan)
+            let context = PowerExecutionContext(
+                plan: loadedPlan.plan,
+                environment: try PowerExecutionEnvironmentSnapshot(
+                    liveEnvironment
+                ),
+                modelPreparation: modelPreparation
+            )
+            let sessionID = UUID()
+            let startedAt = Date()
+            try await powerCheckpointStore.begin(
+                context: context,
+                sessionID: sessionID,
+                startedAt: startedAt,
+                thermalStateAtStart: currentThermalState
+            )
             let session = await BenchmarkRunner(
                 runtime: runtime,
                 procedure: BenchmarkProcedure(
                     warmupRuns: loadedPlan.plan.procedure.warmupRuns,
                     measuredRuns: loadedPlan.plan.procedure.measuredRuns,
                     outputTokenLimit: loadedPlan.plan.workload.outputTokenLimit
-                )
+                ),
+                sessionID: sessionID,
+                checkpointStore: powerCheckpointStore
             ).run(prompt: loadedPlan.prompt)
-
-            guard !session.measuredAttempts.isEmpty else {
-                let message = session.attempts.first.map(Self.failureMessage)
-                    ?? "No attempts were recorded."
-                phase = .failed(message: message)
-                return
-            }
-
             let failures = session.measuredAttempts.filter { attempt in
                 if case .completed = attempt.outcome { return false }
                 return true
             }.count
-            if loadedPlan.plan.workload.category == "user-experience" {
-                let completed = session.measuredAttempts.compactMap { attempt -> (RuntimeGenerationResult, AttemptMetrics)? in
-                    guard case .completed(let generation) = attempt.outcome else { return nil }
-                    return (generation, AttemptMetrics.calculate(for: attempt))
-                }
-                uxValidationSummary = UXValidationSummary(
-                    promptTokenCount: completed.first?.0.promptTokenCount,
-                    medianPipelineTTFTMilliseconds: AttemptMetrics.median(
-                        completed.map { $0.1.ttftMilliseconds }
-                    ),
-                    medianUserVisibleTTFTMilliseconds: AttemptMetrics.median(
-                        completed.map { $0.1.userVisibleTTFTMilliseconds }
-                    ),
-                    medianRequestCompletionMilliseconds: AttemptMetrics.median(
-                        completed.map { $0.1.requestCompletionMilliseconds }
-                    ),
-                    sampleOutput: completed.first?.0.generatedText,
-                    outputTokenCount: completed.first?.0.outputTokenCount,
-                    stopReason: completed.first?.0.stopReason.rawValue,
-                    measuredMetrics: completed.map(\.1)
-                )
-                result = nil
-                let unified = SuiteBResultBundle.common(
-                    registryPlan: registryPlan,
-                    basePlan: loadedPlan.plan,
-                    environment: sessionEnvironment,
-                    modelPreparation: modelPreparation,
-                    sessions: [SuiteBResultBundle.session(
-                        id: "default",
-                        target: nil,
-                        fixtureSHA256: registryPlan.fixtureSha256[0],
-                        padding: nil,
-                        benchmarkSession: session,
-                        memoryInterval: loadedPlan.plan.measurementMode.memorySamplingIntervalMilliseconds,
-                        minimumSuccessfulRuns: loadedPlan.plan.procedure.minimumSuccessfulRunsForSummary,
-                        includeQuality: false
-                    )]
-                )
-                resultFileURL = try await resultStore.save(unified)
-                latestUnifiedResult = unified
-                submissionFileURL = nil
-                currentThermalState = session.measuredAttempts.last?.thermalStateAfter
-                    ?? SystemMeasurements.thermalState
-                phase = .completed(
-                    measuredAttempts: session.measuredAttempts.count,
-                    failedAttempts: failures
-                )
-                return
-            }
-            let bundle = PilotResultBundle.make(
+            let bundle = try PowerResultBundle.make(
                 session: session,
-                environment: sessionEnvironment,
-                plan: loadedPlan.plan,
-                modelPreparation: modelPreparation
+                context: context
             )
-            let degradation = bundle.summary.degradation
-            let unified = SuiteBResultBundle.common(
-                registryPlan: registryPlan,
-                basePlan: loadedPlan.plan,
-                environment: sessionEnvironment,
-                modelPreparation: modelPreparation,
-                sessions: [SuiteBResultBundle.session(
-                    id: "default",
-                    target: nil,
-                    fixtureSHA256: registryPlan.fixtureSha256[0],
-                    padding: nil,
-                    benchmarkSession: session,
-                    memoryInterval: loadedPlan.plan.measurementMode.memorySamplingIntervalMilliseconds,
-                    minimumSuccessfulRuns: loadedPlan.plan.procedure.minimumSuccessfulRunsForSummary,
-                    includeQuality: false
-                )],
-                bundleSummary: .init(
-                    firstMeasuredRunIndex: degradation.firstMeasuredRunIndex,
-                    lastMeasuredRunIndex: degradation.lastMeasuredRunIndex,
-                    decodePercentChange: degradation.decodePercentChange,
-                    ttftPercentChange: degradation.ttftPercentChange,
-                    prefillPercentChange: degradation.prefillPercentChange
-                )
-            )
-            resultFileURL = try await resultStore.save(unified)
-            latestUnifiedResult = unified
+            resultFileURL = try await resultStore.save(bundle)
+            try await powerCheckpointStore.clear()
+            latestPowerResult = bundle
+            latestUnifiedResult = nil
             submissionFileURL = nil
-            result = bundle
-            currentThermalState = bundle.summary.finalThermalState
+            result = nil
+            uxValidationSummary = nil
+            currentThermalState = session.thermalStateAtEnd
+            recoveryNotice = nil
             phase = .completed(
                 measuredAttempts: session.measuredAttempts.count,
                 failedAttempts: failures
@@ -461,6 +398,35 @@ final class BenchmarkViewModel {
         } catch {
             currentThermalState = SystemMeasurements.thermalState
             phase = .failed(message: String(describing: error))
+        }
+    }
+
+    func recoverInterruptedSessionIfNeeded() async {
+        guard phase != .running else { return }
+        do {
+            guard let recovered = try await powerCheckpointStore
+                .recoverInterrupted(thermalState: SystemMeasurements.thermalState)
+            else { return }
+            let bundle = try PowerResultBundle.make(
+                session: recovered.session,
+                context: recovered.context
+            )
+            resultFileURL = try await resultStore.save(bundle)
+            try await powerCheckpointStore.clear()
+            latestPowerResult = bundle
+            result = nil
+            latestUnifiedResult = nil
+            recoveryNotice = "Recovered an interrupted Power session without discarding planned attempts."
+            let failures = recovered.session.measuredAttempts.filter {
+                if case .completed = $0.outcome { return false }
+                return true
+            }.count
+            phase = .completed(
+                measuredAttempts: recovered.session.measuredAttempts.count,
+                failedAttempts: failures
+            )
+        } catch {
+            recoveryNotice = "Interrupted Power session could not be exported: \(error.localizedDescription)"
         }
     }
 
@@ -762,6 +728,8 @@ final class BenchmarkViewModel {
         contextResults = []
         contextRunError = nil
         latestUnifiedResult = nil
+        latestPowerResult = nil
+        recoveryNotice = nil
         submissionFileURL = nil
         submissionError = nil
         reviewedResult = false
@@ -773,8 +741,10 @@ final class BenchmarkViewModel {
         switch attempt.outcome {
         case .completed:
             "The runner stopped before measured attempts."
-        case .failed(let message):
+        case .failed(let message, _):
             message
+        case .cancelled(let reason, _), .outOfMemory(let reason, _):
+            reason
         case .notRun(let reason):
             reason
         }

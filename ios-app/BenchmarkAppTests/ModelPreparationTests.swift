@@ -114,7 +114,7 @@ final class ModelPreparationTests: XCTestCase {
     func testBundledPlanAndPromptLoadTogether() throws {
         let loaded = try PilotPlanLoader.load()
         XCTAssertEqual(loaded.plan.planId, "b-pipe-001-validation")
-        XCTAssertEqual(loaded.plan.planVersion, "0.2.0-pilot")
+        XCTAssertEqual(loaded.plan.planVersion, "1.0.0-rc.1")
         XCTAssertEqual(loaded.plan.workload.workloadId, "b-pipe-001-sustained-generation")
         XCTAssertFalse(loaded.prompt.isEmpty)
 
@@ -236,6 +236,7 @@ final class ModelPreparationTests: XCTestCase {
                     minorVersion: 5,
                     patchVersion: 0
                 ),
+                physicalMemoryBytes: 6_000_000_000,
                 thermalState: "nominal",
                 debuggerAttached: false,
                 buildConfiguration: "Release",

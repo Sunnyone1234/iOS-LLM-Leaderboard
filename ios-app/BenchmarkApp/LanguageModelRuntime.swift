@@ -36,6 +36,39 @@ struct FirstRenderableTrace: Codable, Sendable, Equatable {
     let firstRenderableTokenIndex: Int?
     let entries: [Entry]
 
+    private enum CodingKeys: String, CodingKey {
+        case policyVersion
+        case clockOrigin
+        case scope
+        case captureLimit
+        case generationStartNanoseconds
+        case outcome
+        case firstRenderableTokenIndex
+        case entries
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(policyVersion, forKey: .policyVersion)
+        try container.encode(clockOrigin, forKey: .clockOrigin)
+        try container.encode(scope, forKey: .scope)
+        try container.encode(captureLimit, forKey: .captureLimit)
+        try container.encode(
+            generationStartNanoseconds,
+            forKey: .generationStartNanoseconds
+        )
+        try container.encode(outcome, forKey: .outcome)
+        if let firstRenderableTokenIndex {
+            try container.encode(
+                firstRenderableTokenIndex,
+                forKey: .firstRenderableTokenIndex
+            )
+        } else {
+            try container.encodeNil(forKey: .firstRenderableTokenIndex)
+        }
+        try container.encode(entries, forKey: .entries)
+    }
+
     var firstRenderableDecodedAtNanoseconds: UInt64? {
         guard let firstRenderableTokenIndex else { return nil }
         return entries.first {
@@ -139,6 +172,8 @@ struct RuntimeGenerationResult: Codable, Sendable, Equatable {
     let stopReason: StopReason
     let promptTimeSeconds: Double?
     let generateTimeSeconds: Double?
+    let generationStartNanoseconds: UInt64?
+    let promptEvaluationNanoseconds: UInt64?
     let userVisibleTTFTNanoseconds: UInt64?
     let requestCompletionNanoseconds: UInt64?
     let generatedText: String?
@@ -150,6 +185,8 @@ struct RuntimeGenerationResult: Codable, Sendable, Equatable {
         stopReason: StopReason,
         promptTimeSeconds: Double?,
         generateTimeSeconds: Double?,
+        generationStartNanoseconds: UInt64? = nil,
+        promptEvaluationNanoseconds: UInt64? = nil,
         userVisibleTTFTNanoseconds: UInt64? = nil,
         requestCompletionNanoseconds: UInt64? = nil,
         generatedText: String? = nil,
@@ -160,10 +197,20 @@ struct RuntimeGenerationResult: Codable, Sendable, Equatable {
         self.stopReason = stopReason
         self.promptTimeSeconds = promptTimeSeconds
         self.generateTimeSeconds = generateTimeSeconds
+        self.generationStartNanoseconds = generationStartNanoseconds
+        self.promptEvaluationNanoseconds = promptEvaluationNanoseconds
+            ?? promptTimeSeconds.flatMap(Self.nanoseconds)
         self.userVisibleTTFTNanoseconds = userVisibleTTFTNanoseconds
         self.requestCompletionNanoseconds = requestCompletionNanoseconds
         self.generatedText = generatedText
         self.renderabilityTrace = renderabilityTrace
+    }
+
+    private static func nanoseconds(_ seconds: Double) -> UInt64? {
+        guard seconds.isFinite, seconds > 0 else { return nil }
+        let value = seconds * 1_000_000_000
+        guard value <= Double(UInt64.max) else { return nil }
+        return UInt64(value.rounded())
     }
 }
 

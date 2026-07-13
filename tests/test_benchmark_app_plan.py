@@ -28,10 +28,10 @@ class BenchmarkAppPlanTests(unittest.TestCase):
     def setUp(self) -> None:
         self.plan = load_json(PLAN_PATH)
 
-    def test_pilot_cannot_be_treated_as_official(self) -> None:
+    def test_release_candidate_cannot_be_treated_as_official(self) -> None:
         self.assertEqual(self.plan["plan_id"], "b-pipe-001-validation")
-        self.assertEqual(self.plan["plan_version"], "0.2.0-pilot")
-        self.assertEqual(self.plan["status"], "pilot-validated")
+        self.assertEqual(self.plan["plan_version"], "1.0.0-rc.1")
+        self.assertEqual(self.plan["status"], "f4-reference-app-candidate")
         self.assertFalse(self.plan["official_result_eligible"])
 
     def test_procedure_is_one_warmup_and_five_measured_runs(self) -> None:
@@ -67,10 +67,10 @@ class BenchmarkAppPlanTests(unittest.TestCase):
         workload = self.plan["workload"]
         self.assertEqual(workload["category"], "pipeline")
         self.assertEqual(workload["workload_id"], "b-pipe-001-sustained-generation")
-        self.assertEqual(workload["workload_version"], "0.2.0-pilot")
+        self.assertEqual(workload["workload_version"], "1.0.0-rc.1")
         self.assertEqual(
             workload["v2_profile_mapping"],
-            "b-pipe-001-sustained-generation@0.2.0-pilot",
+            "b-pipe-001-sustained-generation@1.0.0-rc.1",
         )
 
     def test_timing_boundary_is_pipeline_not_user_visible(self) -> None:
@@ -89,7 +89,7 @@ class BenchmarkAppPlanTests(unittest.TestCase):
         generation = self.plan["generation"]
         environment = self.plan["environment_requirements"]
         self.assertEqual(generation["temperature"], 0.0)
-        self.assertEqual(generation["kv_cache_policy"], "new-cache-for-each-generation")
+        self.assertEqual(generation["kv_cache_policy"], "fresh-kv-cache-per-attempt")
         self.assertEqual(environment["initial_thermal_state"], "nominal")
         self.assertEqual(environment["low_power_mode"], "off")
         self.assertEqual(
@@ -111,8 +111,10 @@ class ShortInteractionPlanTests(unittest.TestCase):
 
     def test_candidate_identity_and_prompt_hash_are_frozen(self) -> None:
         self.assertEqual(self.plan["plan_id"], "b-ux-001-validation")
-        self.assertEqual(self.plan["status"], "pilot-validated")
+        self.assertEqual(self.plan["plan_version"], "1.0.0-rc.1")
+        self.assertEqual(self.plan["status"], "f4-reference-app-candidate")
         workload = self.plan["workload"]
+        self.assertEqual(workload["workload_version"], "1.0.0-rc.1")
         prompt = ROOT / workload["prompt_path"]
         self.assertEqual(
             hashlib.sha256(prompt.read_bytes()).hexdigest(),

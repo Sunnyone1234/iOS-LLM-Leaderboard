@@ -3,9 +3,9 @@
   "plans": [
     {
       "plan_id": "b-pipe-001-validation",
-      "plan_version": "0.2.0-pilot",
+      "plan_version": "1.0.0-rc.1",
       "workload_id": "b-pipe-001-sustained-generation",
-      "workload_version": "0.2.0-pilot",
+      "workload_version": "1.0.0-rc.1",
       "category": "pipeline",
       "runner_kind": "single-session",
       "thinking_mode": "disabled-via-prompt-directive",
@@ -20,9 +20,9 @@
     },
     {
       "plan_id": "b-ux-001-validation",
-      "plan_version": "0.2.0-pilot",
+      "plan_version": "1.0.0-rc.1",
       "workload_id": "b-ux-001-short-interaction",
-      "workload_version": "0.2.0-pilot",
+      "workload_version": "1.0.0-rc.1",
       "category": "user-experience",
       "runner_kind": "single-session",
       "thinking_mode": "disabled-via-chat-template",

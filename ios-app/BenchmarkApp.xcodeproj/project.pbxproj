@@ -39,6 +39,9 @@
 		A10000000000000000000030 /* benchmark-plans/suite-b-workload-registry.json in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000032 /* benchmark-plans/suite-b-workload-registry.json */; };
 		A10000000000000000000031 /* SuiteBResultBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000033 /* SuiteBResultBundle.swift */; };
 		A10000000000000000000032 /* CommunitySubmissionBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000034 /* CommunitySubmissionBundle.swift */; };
+		A10000000000000000000033 /* PowerBenchmarkContract.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000035 /* PowerBenchmarkContract.swift */; };
+		A10000000000000000000034 /* PowerResultBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000036 /* PowerResultBundle.swift */; };
+		A10000000000000000000035 /* PowerReferenceAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000037 /* PowerReferenceAppTests.swift */; };
 		C10000000000000000000001 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000001 /* MLXLLM */; };
 		C10000000000000000000002 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000002 /* MLXLMCommon */; };
 		C10000000000000000000004 /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000004 /* HuggingFace */; };
@@ -90,6 +93,9 @@
 		A20000000000000000000032 /* benchmark-plans/suite-b-workload-registry.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "benchmark-plans/suite-b-workload-registry.json"; sourceTree = SOURCE_ROOT; };
 		A20000000000000000000033 /* SuiteBResultBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteBResultBundle.swift; sourceTree = "<group>"; };
 		A20000000000000000000034 /* CommunitySubmissionBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunitySubmissionBundle.swift; sourceTree = "<group>"; };
+		A20000000000000000000035 /* PowerBenchmarkContract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerBenchmarkContract.swift; sourceTree = "<group>"; };
+		A20000000000000000000036 /* PowerResultBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerResultBundle.swift; sourceTree = "<group>"; };
+		A20000000000000000000037 /* PowerReferenceAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerReferenceAppTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +159,8 @@
 				A20000000000000000000031 /* SuiteBPlanRegistry.swift */,
 				A20000000000000000000033 /* SuiteBResultBundle.swift */,
 				A20000000000000000000034 /* CommunitySubmissionBundle.swift */,
+				A20000000000000000000035 /* PowerBenchmarkContract.swift */,
+				A20000000000000000000036 /* PowerResultBundle.swift */,
 				A20000000000000000000017 /* ResultStore.swift */,
 				A20000000000000000000010 /* MLXSwiftRuntime.swift */,
 				A20000000000000000000011 /* BenchmarkViewModel.swift */,
@@ -165,6 +173,7 @@
 			children = (
 				A20000000000000000000006 /* BenchmarkRunnerTests.swift */,
 				A20000000000000000000022 /* ModelPreparationTests.swift */,
+				A20000000000000000000037 /* PowerReferenceAppTests.swift */,
 			);
 			path = BenchmarkAppTests;
 			sourceTree = "<group>";
@@ -188,6 +197,7 @@
 				A90000000000000000000001 /* Sources */,
 				A60000000000000000000001 /* Frameworks */,
 				A90000000000000000000002 /* Resources */,
+				D90000000000000000000001 /* Embed Git commit */,
 			);
 			buildRules = (
 			);
@@ -289,6 +299,24 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		D90000000000000000000001 /* Embed Git commit */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Git commit";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\ncommit=\"$(git -C \"$SRCROOT/..\" rev-parse HEAD)\"\nresource_directory=\"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"\n/bin/mkdir -p \"$resource_directory\"\n/usr/bin/printf '%s\\n' \"$commit\" > \"$resource_directory/GIT_COMMIT_SHA\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		A90000000000000000000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -313,6 +341,8 @@
 				A10000000000000000000029 /* SuiteBPlanRegistry.swift in Sources */,
 				A10000000000000000000031 /* SuiteBResultBundle.swift in Sources */,
 				A10000000000000000000032 /* CommunitySubmissionBundle.swift in Sources */,
+				A10000000000000000000033 /* PowerBenchmarkContract.swift in Sources */,
+				A10000000000000000000034 /* PowerResultBundle.swift in Sources */,
 				A10000000000000000000015 /* ResultStore.swift in Sources */,
 				A10000000000000000000008 /* MLXSwiftRuntime.swift in Sources */,
 				A10000000000000000000009 /* BenchmarkViewModel.swift in Sources */,
@@ -325,6 +355,7 @@
 			files = (
 				A10000000000000000000006 /* BenchmarkRunnerTests.swift in Sources */,
 				A10000000000000000000020 /* ModelPreparationTests.swift in Sources */,
+				A10000000000000000000035 /* PowerReferenceAppTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,16 +396,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = ZMN7LG4SD9;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "LLM Benchmark";
-				INFOPLIST_KEY_GIT_COMMIT_SHA = "$(GIT_COMMIT_SHA)";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				MARKETING_VERSION = 0.7.0;
+				MARKETING_VERSION = 0.8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.benchmark;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -390,15 +421,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = ZMN7LG4SD9;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "LLM Benchmark";
-				INFOPLIST_KEY_GIT_COMMIT_SHA = "$(GIT_COMMIT_SHA)";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				MARKETING_VERSION = 0.7.0;
+				MARKETING_VERSION = 0.8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.iosllmleaderboard.benchmark;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

@@ -42,11 +42,22 @@ enum BuildMetadata {
     }
 
     static var sourceCommit: String? {
+        if let resourceURL = Bundle.main.url(
+            forResource: "GIT_COMMIT_SHA",
+            withExtension: nil
+        ),
+           let rawValue = try? String(contentsOf: resourceURL, encoding: .utf8),
+           let value = normalizedSourceCommit(rawValue) {
+            return value
+        }
+
         guard let rawValue = Bundle.main.object(
             forInfoDictionaryKey: "GIT_COMMIT_SHA"
-        ) as? String else {
-            return nil
-        }
+        ) as? String else { return nil }
+        return normalizedSourceCommit(rawValue)
+    }
+
+    private static func normalizedSourceCommit(_ rawValue: String) -> String? {
         let value = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !value.isEmpty,
               value != "unknown",
