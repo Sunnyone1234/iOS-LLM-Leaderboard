@@ -9,6 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SUITE = ROOT / "benchmarks" / "suite-b-on-device-performance"
 MANIFEST = SUITE / "releases" / "suite-b-power-1.1.0-draft.1.json"
+REPORT_SCHEMA = ROOT / "schemas" / "suite-b-power-validation-report-1.1.0-draft.1.schema.json"
 
 
 class PowerOneOneProtocolDraftTests(unittest.TestCase):
@@ -16,6 +17,7 @@ class PowerOneOneProtocolDraftTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.protocol = json.loads((SUITE / "power-1.1-protocol.json").read_text())
         cls.manifest = json.loads(MANIFEST.read_text())
+        cls.report_schema = json.loads(REPORT_SCHEMA.read_text())
 
     def test_draft_is_non_official_and_preserves_workload_ids(self) -> None:
         self.assertEqual(self.protocol["protocol_version"], "1.1.0-draft.1")
@@ -59,6 +61,11 @@ class PowerOneOneProtocolDraftTests(unittest.TestCase):
         self.assertFalse(ux["affects_measurement_eligibility"])
         self.assertFalse(ux["affects_performance_ranking_eligibility"])
         self.assertTrue(ux["affects_recommendation_eligibility"])
+        self.assertEqual(
+            ux["assessment_statuses"],
+            ["verified", "not_verified", "contradicted"],
+        )
+        self.assertEqual(ux["policy_non_match_status"], "not_verified")
 
     def test_submission_determines_facts_and_ranking_consumes_report(self) -> None:
         validator = self.protocol["submission_validator"]
@@ -81,6 +88,46 @@ class PowerOneOneProtocolDraftTests(unittest.TestCase):
             "fail-closed",
         )
 
+    def test_validation_report_is_minimal_internal_contract(self) -> None:
+        properties = self.report_schema["properties"]
+        self.assertFalse(self.report_schema["additionalProperties"])
+        self.assertEqual(
+            set(properties),
+            {
+                "schemaVersion",
+                "result",
+                "benchmarkRelease",
+                "validator",
+                "rankingPolicy",
+                "structuralValidity",
+                "protocolConformance",
+                "metricEligibility",
+                "behaviorConformance",
+                "performanceRankingEligibility",
+                "recommendationEligibility",
+            },
+        )
+        self.assertNotIn("attempts", properties)
+        self.assertNotIn("rawEvidence", properties)
+        self.assertEqual(
+            properties["result"]["properties"]["sha256"]["pattern"],
+            "^[0-9a-f]{64}$",
+        )
+        report_contract = self.protocol["validation_report"]
+        self.assertTrue(report_contract["automatically_generated"])
+        self.assertFalse(report_contract["contributor_supplied"])
+        self.assertFalse(report_contract["duplicates_raw_evidence"])
+
+    def test_behavior_assessment_distinguishes_unverified_from_contradicted(self) -> None:
+        behavior = self.report_schema["properties"]["behaviorConformance"]
+        self.assertEqual(
+            behavior["properties"]["status"]["enum"],
+            ["verified", "not_verified", "contradicted", None],
+        )
+        contract = self.protocol["validation_report"]["behavior_assessment"]
+        self.assertFalse(contract["non_match_is_semantic_failure"])
+        self.assertEqual(contract["non_match_status"], "not_verified")
+
     def test_migration_keeps_power_1_0_immutable(self) -> None:
         migration = self.protocol["migration"]
         self.assertTrue(migration["power_1_0_evidence_immutable"])
@@ -94,6 +141,7 @@ class PowerOneOneProtocolDraftTests(unittest.TestCase):
         for asset in (
             self.manifest["protocol"]["markdown"],
             self.manifest["protocol"]["machineReadable"],
+            self.manifest["validationReportSchema"],
         ):
             path = ROOT / asset["path"]
             self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), asset["sha256"])
@@ -106,6 +154,8 @@ class PowerOneOneProtocolDraftTests(unittest.TestCase):
         self.assertIn("Submission-time fact determination", document)
         self.assertIn("Ranking-time policy application", document)
         self.assertIn("consumer of the validation report", document)
+        self.assertIn("not a claim that the response is semantically wrong", document)
+        self.assertIn("synonym such as `secure`", document)
         self.assertIn("Power 1.0 evidence is immutable", document)
 
 

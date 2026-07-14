@@ -14,12 +14,16 @@
     "version": "1.1.0-draft.1",
     "markdown": {
       "path": "benchmarks/suite-b-on-device-performance/power-1.1-protocol.md",
-      "sha256": "5bb53532218ca8b909a52427750278ff1960fd2da6124040c5abaf05493fa452"
+      "sha256": "c844145b8c576c684cae90ef5b776fe774aeae675714806f435b772ad38e3473"
     },
     "machineReadable": {
       "path": "benchmarks/suite-b-on-device-performance/power-1.1-protocol.json",
-      "sha256": "b8ed6f998e76585f7161815068ecce7385f29b117f01efd294103ef0cb867381"
+      "sha256": "ad468892e45c86125204c3d0a529e33b1572724d1e8e7abf18fd28f5667f9702"
     }
+  },
+  "validationReportSchema": {
+    "path": "schemas/suite-b-power-validation-report-1.1.0-draft.1.schema.json",
+    "sha256": "4c5191121626fb91ae100db129ac00a6d28b9a0a3fe0b32986cb0bfd88986089"
   },
   "workloads": [
     {
@@ -32,7 +36,8 @@
     }
   ],
   "implementedContracts": [
-    "protocol-draft"
+    "protocol-draft",
+    "validation-report-schema-draft"
   ],
   "requiredBeforeReleaseCandidate": [
     "suite-b-power-result-1.1-schema",

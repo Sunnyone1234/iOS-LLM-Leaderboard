@@ -48,6 +48,12 @@ transition.
 - `suite-b-power-validation-report-1.0.0-rc.1.schema.json` keeps structural
   validity, protocol conformance, per-metric eligibility, evidence review, and
   ranking eligibility as separate validator decisions.
+- `suite-b-power-validation-report-1.1.0-draft.1.schema.json` is the minimal
+  internal Power 1.1 report generated from one submitted result. It binds the
+  result SHA-256, records validator and ranking-policy versions, separates
+  metric and recommendation eligibility, and represents applicable behavior
+  assessment as `verified`, `not_verified`, or `contradicted`. Contributors do
+  not create or upload this report.
 - `suite-b-community-submission-0.1.schema.json` wraps exact result bytes,
   integrity evidence, contributor declarations, and a Draft trust request for
   offline repository submission.

@@ -32,6 +32,13 @@
         "policy_version": "short-interaction-response-v1",
         "decision_authority": "submission-validator",
         "app_assessment_authoritative": false,
+        "assessment_statuses": [
+          "verified",
+          "not_verified",
+          "contradicted"
+        ],
+        "policy_non_match_status": "not_verified",
+        "contradicted_requires_positive_versioned_rule": true,
         "affects_measurement_eligibility": false,
         "affects_performance_ranking_eligibility": false,
         "affects_recommendation_eligibility": true
@@ -85,7 +92,11 @@
     ]
   },
   "validation_report": {
+    "schema_path": "schemas/suite-b-power-validation-report-1.1.0-draft.1.schema.json",
     "producer": "submission-validator",
+    "automatically_generated": true,
+    "contributor_supplied": false,
+    "duplicates_raw_evidence": false,
     "authoritative_fact_record": true,
     "versioned": true,
     "immutable": true,
@@ -97,7 +108,21 @@
       "ranking-policy-version"
     ],
     "machine_readable_reason_codes_required": true,
-    "behavior_nonconformant_evidence_may_be_retained": true
+    "behavior_nonconformant_evidence_may_be_retained": true,
+    "behavior_assessment": {
+      "applicable_statuses": [
+        "verified",
+        "not_verified",
+        "contradicted"
+      ],
+      "non_match_is_semantic_failure": false,
+      "non_match_status": "not_verified",
+      "not_applicable_representation": {
+        "applicable": false,
+        "policy_id": null,
+        "status": null
+      }
+    }
   },
   "leaderboard_consumer": {
     "role": "validation-report-policy-consumer",
@@ -123,8 +148,8 @@
   "public_views": {
     "combined_score_defined": false,
     "measured_performance": "measurement-eligible",
-    "behavior_conformant": "validator-derived-filter-or-badge",
-    "recommended": "performance-ranking-eligible-and-behavior-conformant"
+    "behavior_status": "validator-derived-verified-not_verified-or-contradicted",
+    "recommended": "performance-ranking-eligible-and-behavior-verified-when-applicable"
   },
   "migration": {
     "power_1_0_evidence_immutable": true,

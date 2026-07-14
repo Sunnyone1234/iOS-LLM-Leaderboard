@@ -9,6 +9,8 @@ evidence, eligibility decisions, and public ranking are unchanged.
 
 The machine-readable companion is
 [`power-1.1-protocol.json`](power-1.1-protocol.json).
+The minimal internal validation-report contract is
+[`suite-b-power-validation-report-1.1.0-draft.1.schema.json`](../../schemas/suite-b-power-validation-report-1.1.0-draft.1.schema.json).
 
 Power 1.1 retains exactly the two Power 1.0 workload IDs:
 
@@ -58,13 +60,13 @@ App badge or local decision. Its report keeps these decisions separate:
 - **structural validity**: the bundle matches the versioned schema;
 - **protocol conformance**: execution identity and frozen settings match 1.1;
 - **measurement eligibility**: each metric is supported by its own raw evidence;
-- **behavior conformance**: generated text satisfies the workload behavior
-  contract;
+- **behavior conformance**: the workload behavior is `verified`,
+  `not_verified`, or `contradicted` when a behavior policy applies;
 - **performance-ranking eligibility**: the primary performance metric is
   measurement-eligible and the evidence level is allowed by ranking policy;
   and
-- **recommendation eligibility**: performance-ranking eligibility and behavior
-  conformance both pass.
+- **recommendation eligibility**: performance-ranking eligibility passes and
+  behavior is `verified` when a behavior policy applies.
 
 Validation never rewrites the submitted result. Trust or ranking transitions
 remain governed by review records and cannot be granted by App output or CI
@@ -80,10 +82,17 @@ version, and ranking-policy version used for its decisions.
 
 The report is the authoritative record of structural validity, protocol
 conformance, per-metric measurement eligibility, behavior conformance,
-performance-ranking eligibility, and recommendation eligibility. Every failed
-decision retains machine-readable reason codes. Behavior nonconformance does
-not make otherwise valid evidence disappear or prevent it from being retained
-as an accepted submission.
+performance-ranking eligibility, and recommendation eligibility. Every
+non-affirmative decision retains machine-readable reason codes. A
+`not_verified` or `contradicted` behavior assessment does not make otherwise
+valid evidence disappear or prevent it from being retained as an accepted
+submission.
+
+The report is generated automatically by repository validation. It is an
+internal derived artifact, not a second file that a contributor creates or
+uploads. It contains decisions and version identities only; raw token, timing,
+memory, thermal, and generated-text evidence remains exclusively in the exact
+submitted result.
 
 ### Ranking-time policy application
 
@@ -118,14 +127,27 @@ must be nonempty, contain no more than two sentences, express that the note is
 safe locally, and express that synchronization will occur when connectivity
 returns.
 
-The validator records this as a separate behavior-conformance decision. A
-failure:
+For an applicable behavior policy, the validator records exactly one of:
+
+- **`verified`**: the frozen deterministic policy proves the required concepts;
+- **`not_verified`**: the policy cannot prove all required concepts; this is
+  not a claim that the response is semantically wrong; or
+- **`contradicted`**: a frozen deterministic rule positively proves a conflict
+  with the required behavior.
+
+A policy non-match defaults to `not_verified`. `contradicted` may be emitted
+only when the policy version defines positive contradiction evidence. Because
+`short-interaction-response-v1` defines no such contradiction rule, a correct
+synonym such as `secure` that does not match its literal `safe` check is
+`not_verified`, not failed or contradicted.
+
+An assessment other than `verified`:
 
 - does not invalidate structurally valid execution evidence;
 - does not erase or null a technically derivable performance metric;
 - does not exclude the configuration from a metric-specific performance view;
   and
-- does make the result ineligible for a behavior-conformant recommendation
+- does make the result ineligible for a behavior-verified recommendation
   view.
 
 `short-interaction-response-v1` remains intentionally visible in evidence so a
@@ -161,9 +183,10 @@ Power 1.1 defines no combined score. Public views must distinguish:
 
 - **Measured performance**: includes measurement-eligible configurations and
   ranks only the selected metric;
-- **Behavior conformant**: a filter or badge derived from validator output; and
+- **Behavior status**: shows `Verified`, `Not verified`, or `Contradicted`
+  exactly as recorded by the validator; and
 - **Recommended**: includes only configurations that are both performance-
-  ranking eligible and behavior conformant.
+  ranking eligible and behavior verified when the policy applies.
 
 Labels such as `fastest` refer only to the selected performance metric. They
 must not be presented as `best`, `most useful`, or `recommended` without the
@@ -179,8 +202,8 @@ presentation-only.
 
 Failed, cancelled, OOM, and not-run attempts never contribute a performance
 value, but remain mandatory evidence. Missing, unavailable, nonfinite, or
-technically ineligible metrics are `null`. A behavior-conformance failure is
-not a reason to manufacture a technical `null`.
+technically ineligible metrics are `null`. A `not_verified` or `contradicted`
+behavior assessment is not a reason to manufacture a technical `null`.
 
 ## Compatibility and migration
 
@@ -190,7 +213,8 @@ official 1.1 ranking or be modified in place.
 
 Power 1.1 requires:
 
-1. a versioned result schema and validation-report schema;
+1. a versioned result schema and the freeze of the current draft
+   validation-report schema;
 2. a validator that independently recomputes metrics and behavior conformance;
 3. an App version that exports technically derivable metrics independently of
    behavior conformance;
