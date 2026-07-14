@@ -262,6 +262,10 @@ remains non-official and separate from the official ranking.
 - Do not rank incompatible devices, workloads, or measurement boundaries
   together.
 
+The [2026-07-14 history correction record](docs/provenance/2026-07-14-history-correction.md)
+documents the repository's authorship correction and the SHA translation used
+to preserve benchmark-source provenance after that correction.
+
 ## Licensing
 
 This repository uses a dual-license model:
