@@ -35,7 +35,7 @@ git clone https://github.com/YOUR_GITHUB_HANDLE/iOS-LLM-Leaderboard.git
 cd iOS-LLM-Leaderboard
 git remote add upstream https://github.com/YizeSun/iOS-LLM-Leaderboard.git
 git fetch upstream
-git worktree add ../ios-llm-power-app 2f105ff463bc9b281b19655ba711b1ca7dee8759
+git worktree add ../ios-llm-power-app d7fcff7e27b4c46b1121df8988a0b2fb76d56804
 ```
 
 Building from this exact worktree matters: the App embeds its checkout commit,

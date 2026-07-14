@@ -12,7 +12,7 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
 
     enum EvidenceStatus: String, Sendable {
         case maintainerReference = "Maintainer reference"
-        case untestedCandidate = "Untested candidate"
+        case communityEvidence = "Community evidence"
     }
 
     var id: String { rawValue }
@@ -22,10 +22,10 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
         case .small: "Qwen3 0.6B · 4-bit · Small"
         case .medium: "Qwen3 1.7B · 4-bit · Medium"
         case .large: "Qwen3 4B · 3-bit · Larger"
-        case .llama32OneB: "Llama 3.2 1B · 4-bit · Untested"
-        case .gemma3OneB: "Gemma 3 1B · 4-bit · Untested"
-        case .granite33TwoB: "Granite 3.3 2B · 4-bit · Untested"
-        case .smolLM3ThreeB: "SmolLM3 3B · 4-bit · Untested"
+        case .llama32OneB: "Llama 3.2 1B · 4-bit · Community tested"
+        case .gemma3OneB: "Gemma 3 1B · 4-bit · Community tested"
+        case .granite33TwoB: "Granite 3.3 2B · 4-bit · Community tested"
+        case .smolLM3ThreeB: "SmolLM3 3B · 4-bit · Community tested"
         }
     }
 
@@ -33,7 +33,7 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
         switch self {
         case .small, .medium, .large: .maintainerReference
         case .llama32OneB, .gemma3OneB, .granite33TwoB, .smolLM3ThreeB:
-            .untestedCandidate
+            .communityEvidence
         }
     }
 
@@ -125,7 +125,7 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
                 licenseIdentifier: "llama3.2",
                 licenseSourceUrl: "https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct/blob/9213176726f574b556790deb65791e0c5aa438b6/LICENSE.txt",
                 artifactRepositorySizeBytes: 712_593_855,
-                compatibilityConstraints: Self.candidateConstraints(
+                compatibilityConstraints: Self.communityTestedConstraints(
                     modelType: "llama"
                 ),
                 artifactContentHash: nil
@@ -145,7 +145,7 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
                 licenseIdentifier: "gemma",
                 licenseSourceUrl: "https://huggingface.co/google/gemma-3-1b-it/blob/dcc83ea841ab6100d6b47a070329e1ba4cf78752/README.md",
                 artifactRepositorySizeBytes: 771_863_021,
-                compatibilityConstraints: Self.candidateConstraints(
+                compatibilityConstraints: Self.communityTestedConstraints(
                     modelType: "gemma3_text"
                 ),
                 artifactContentHash: nil
@@ -165,7 +165,7 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
                 licenseIdentifier: "apache-2.0",
                 licenseSourceUrl: "https://huggingface.co/ibm-granite/granite-3.3-2b-instruct/blob/707f574c62054322f6b5b04b6d075f0a8f05e0f0/README.md",
                 artifactRepositorySizeBytes: 1_430_233_125,
-                compatibilityConstraints: Self.candidateConstraints(
+                compatibilityConstraints: Self.communityTestedConstraints(
                     modelType: "granite"
                 ),
                 artifactContentHash: nil
@@ -185,7 +185,7 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
                 licenseIdentifier: "apache-2.0",
                 licenseSourceUrl: "https://huggingface.co/HuggingFaceTB/SmolLM3-3B/blob/a07cc9a04f16550a088caea529712d1d335b0ac1/README.md",
                 artifactRepositorySizeBytes: 1_747_380_812,
-                compatibilityConstraints: Self.candidateConstraints(
+                compatibilityConstraints: Self.communityTestedConstraints(
                     modelType: "smollm3"
                 ),
                 artifactContentHash: nil
@@ -201,14 +201,14 @@ enum ProductionModelProfile: String, CaseIterable, Identifiable, Sendable {
         "physical-run-required-before-publication",
     ]
 
-    private static func candidateConstraints(modelType: String) -> [String] {
+    private static func communityTestedConstraints(modelType: String) -> [String] {
         [
             "runtime:MLX-Swift-LM-3.31.4",
             "backend:MLX/Metal",
             "model-type:\(modelType)",
             "runtime-registry-confirmed",
-            "physical-iphone-compatibility:untested",
-            "physical-run-required-before-ranking",
+            "physical-iphone-compatibility:community-tested",
+            "independent-reproduction:requested",
         ]
     }
 }

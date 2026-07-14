@@ -44,10 +44,10 @@ struct RunBenchmarkView: View {
                         value: viewModel.selectedModelProfile.evidenceStatus.rawValue
                     )
                     if viewModel.selectedModelProfile.evidenceStatus
-                        == .untestedCandidate {
-                        Text("This artifact is recommended for testing but has no accepted physical-iPhone evidence yet. It is not a leaderboard result.")
+                        == .communityEvidence {
+                        Text("This artifact has single-contributor community evidence. Another physical-iPhone run adds evidence; reproduction grouping still requires an exact comparison identity.")
                             .font(.footnote)
-                            .foregroundStyle(.orange)
+                            .foregroundStyle(.secondary)
                     }
                     LabeledContent("Procedure", value: procedureDescription)
                     Text(timingBoundaryDescription)

@@ -18,8 +18,14 @@ Two exact App sources are authorized for public intake:
 
 | Purpose | App identity | Exact source |
 | --- | --- | --- |
-| Reproduce the existing Qwen comparison cells | `0.8.0` build `10` | `2f105ff463bc9b281b19655ba711b1ca7dee8759` |
-| Test the four pinned candidates in the non-ranking model catalog | `0.9.0` build `11` | `002c76ccbfed7b1c8b7c13313b887aaebf610a3e` |
+| Reproduce the existing Qwen configurations | `0.8.0` build `10` | `d7fcff7e27b4c46b1121df8988a0b2fb76d56804` |
+| Add evidence for the four pinned models in the non-ranking catalog | `0.9.0` build `11` | `9ad1e4507bdc8e5d2a3f75387f3af86675bf69ab` |
+
+These are the content-equivalent checkout SHAs after the 2026-07-14 authorship
+correction. Existing immutable exports retain the original SHA they recorded;
+see the [history correction mapping](provenance/2026-07-14-history-correction.md).
+New exports record the corrected checkout SHA and therefore preserve their own
+exact comparison identity.
 
 App 0.9.0 is an additional community-testing source, not a rewrite of the
 published Reference App or its six-result matrix. Its candidate guide is

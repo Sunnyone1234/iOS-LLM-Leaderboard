@@ -8,11 +8,11 @@ exact App sources:
 - use the [Power 1.0 contributor quickstart](power-1.0-quickstart.md) and App
   0.8.0 build 10 to reproduce an existing Qwen comparison cell;
 - use [Test a Recommended Power Model](test-recommended-model.md) and App 0.9.0
-  build 11 to create evidence for one of four pinned, untested candidates.
+  build 11 to add evidence for one of four pinned, community-tested artifacts.
 
 Both paths cover the exact App checkout, physical-device run, immutable
-package, validation, and contributor-owned pull request. The candidates are
-not ranking rows until genuine evidence is accepted.
+package, validation, and contributor-owned pull request. App catalog status is
+descriptive only; accepted result evidence controls leaderboard inclusion.
 
 Framework v1 retains a separate historical manual workflow. App 0.4 can
 generate a reviewed offline Draft submission containing the exact unified

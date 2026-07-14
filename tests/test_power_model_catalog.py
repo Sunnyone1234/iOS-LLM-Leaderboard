@@ -15,12 +15,20 @@ class PowerModelCatalogTests(unittest.TestCase):
     def setUp(self) -> None:
         self.catalog = json.loads(CATALOG_PATH.read_text())
 
-    def test_catalog_contains_four_unique_unmeasured_candidates(self) -> None:
+    def test_catalog_contains_four_unique_community_tested_models(self) -> None:
         models = self.catalog["models"]
         self.assertEqual([model["recommendedPriority"] for model in models], [1, 2, 3, 4])
         self.assertEqual(len({model["artifactID"] for model in models}), 4)
-        self.assertTrue(all(model["physicalDeviceEvidenceStatus"] == "untested" for model in models))
-        self.assertTrue(all(model["runtimeRegistryStatus"] == "registered-not-device-verified" for model in models))
+        self.assertTrue(
+            all(
+                model["physicalDeviceEvidenceStatus"]
+                == "community-submitted-single-contributor"
+                for model in models
+            )
+        )
+        self.assertTrue(
+            all(model["runtimeRegistryStatus"] == "registered-device-tested" for model in models)
+        )
         self.assertTrue(all(re.fullmatch(r"[0-9a-f]{40}", model["artifactRevision"]) for model in models))
         self.assertTrue(all(model["artifactRevision"] in model["sourceURL"] for model in models))
         catalog_keys = {
@@ -94,19 +102,28 @@ class PowerModelCatalogTests(unittest.TestCase):
         for model in self.catalog["openModelWatchlist"]:
             self.assertNotIn(model["officialModelID"], swift)
 
-    def test_untested_candidates_are_absent_from_all_ranking_data(self) -> None:
-        candidate_ids = {model["artifactID"] for model in self.catalog["models"]}
-        candidate_ids.update(model["officialModelID"] for model in self.catalog["openModelWatchlist"])
-        for relative in (
-            "results/suite-b-power-1.0/normalized-results.json",
-            "results/suite-b-power-community/normalized-results.json",
-        ):
-            data = json.loads((ROOT / relative).read_text())
-            ranked_ids = {
-                row["configuration"]["model"]["artifactID"]
-                for row in data["results"]
-            }
-            self.assertTrue(candidate_ids.isdisjoint(ranked_ids))
+    def test_catalog_evidence_matches_rankings_and_watchlist_stays_absent(self) -> None:
+        app_ready_ids = {model["artifactID"] for model in self.catalog["models"]}
+        watchlist_ids = {
+            model["officialModelID"] for model in self.catalog["openModelWatchlist"]
+        }
+        official = json.loads(
+            (ROOT / "results/suite-b-power-1.0/normalized-results.json").read_text()
+        )
+        community = json.loads(
+            (ROOT / "results/suite-b-power-community/normalized-results.json").read_text()
+        )
+        official_ids = {
+            row["configuration"]["model"]["artifactID"]
+            for row in official["results"]
+        }
+        community_ids = {
+            row["configuration"]["model"]["artifactID"]
+            for row in community["results"]
+        }
+        self.assertTrue(app_ready_ids.isdisjoint(official_ids))
+        self.assertTrue(app_ready_ids.issubset(community_ids))
+        self.assertTrue(watchlist_ids.isdisjoint(official_ids | community_ids))
 
     def test_site_exposes_a_separate_non_ranking_catalog(self) -> None:
         index = (ROOT / "index.html").read_text()
@@ -119,7 +136,7 @@ class PowerModelCatalogTests(unittest.TestCase):
         self.assertIn("openModelWatchlist", app)
 
     def test_candidate_source_and_contributor_guide_are_pinned(self) -> None:
-        source_commit = "002c76ccbfed7b1c8b7c13313b887aaebf610a3e"
+        source_commit = "9ad1e4507bdc8e5d2a3f75387f3af86675bf69ab"
         self.assertEqual(self.catalog["referenceApp"]["sourceCommit"], source_commit)
         guide = (ROOT / "contributor-kit" / "test-recommended-model.md").read_text()
         self.assertIn(source_commit, guide)

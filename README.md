@@ -34,14 +34,15 @@ The website combines the immutable Power 1.0 Maintainer Reference evidence
 with valid merged community packages. It provides Power workload rankings,
 per-cell contributor and variation evidence, plus a sortable Ship deployment
 profile view linked to exact tested configurations and Swift integration code.
-Its separate **Models** view distinguishes pinned, untested artifacts that the
-community can run now from a public-weight watchlist that is not yet App-ready.
-Neither group has a rank or performance claim, and neither appears in a
-leaderboard until genuine evidence is accepted. A watchlist model becomes an
-App option only after a compatible artifact and locked-runtime support are
-confirmed. Watchlist inclusion means official weights are downloadable under
-an inspectable license; it does not claim that every custom model license is
-OSI-approved open source.
+Its separate **Models** view distinguishes pinned, App-ready artifacts with
+single-contributor community evidence from a public-weight watchlist that is
+not yet App-ready. The catalog itself does not rank models or make independent
+performance claims; accepted result evidence remains the only source of
+leaderboard rows. A watchlist model becomes an App option only after a
+compatible artifact and locked-runtime support are confirmed. Watchlist
+inclusion means official weights are downloadable under an inspectable
+license; it does not claim that every custom model license is OSI-approved open
+source.
 To preview the site locally from the repository root:
 
 ```bash

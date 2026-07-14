@@ -99,7 +99,7 @@ const modeConfig = {
   catalog: {
     kind: "catalog",
     label: "Model catalog",
-    description: "App-ready candidates and requested public-weight models awaiting compatible Apple-device artifacts. These are not rankings.",
+    description: "App-ready tested artifacts and requested public-weight models awaiting compatible Apple-device artifacts. These are not rankings.",
     defaultSort: "priority",
     defaultDirection: "asc",
     columns: [
@@ -260,9 +260,12 @@ function catalogSupportMarkup(row) {
 }
 
 function catalogEvidenceMarkup(row) {
-  return row.catalogEntryType === "app-ready"
-    ? '<span class="catalog-status">Untested</span>'
-    : '<span class="catalog-watchlist">Watchlist</span>';
+  if (row.catalogEntryType !== "app-ready") {
+    return '<span class="catalog-watchlist">Watchlist</span>';
+  }
+  return row.physicalDeviceEvidenceStatus === "community-submitted-single-contributor"
+    ? '<span class="catalog-status">Community tested</span>'
+    : '<span class="catalog-status">Evidence pending</span>';
 }
 
 function catalogActionMarkup(row) {
