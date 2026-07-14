@@ -70,6 +70,45 @@ Validation never rewrites the submitted result. Trust or ranking transitions
 remain governed by review records and cannot be granted by App output or CI
 alone.
 
+### Submission-time fact determination
+
+The independent validator runs during submission intake and review, before a
+result can be consumed by a public ranking. It produces a versioned,
+immutable validation report bound to the exact submitted result SHA-256. The
+report must identify the result-schema version, protocol version, validator
+version, and ranking-policy version used for its decisions.
+
+The report is the authoritative record of structural validity, protocol
+conformance, per-metric measurement eligibility, behavior conformance,
+performance-ranking eligibility, and recommendation eligibility. Every failed
+decision retains machine-readable reason codes. Behavior nonconformance does
+not make otherwise valid evidence disappear or prevent it from being retained
+as an accepted submission.
+
+### Ranking-time policy application
+
+The leaderboard is a consumer of the validation report, not a second
+conformance implementation. It must not infer conformance from an App field or
+reimplement the validator's rules against raw evidence. Before displaying a
+result it verifies that:
+
+1. the validation-report version is supported;
+2. the report's result SHA-256 matches the exact submitted result;
+3. the report names the expected protocol, validator, and ranking-policy
+   versions; and
+4. the relevant eligibility decision is affirmative.
+
+The measured-performance view applies `performance-ranking-eligibility`; the
+recommended view applies `recommendation-eligibility`. Missing, stale,
+unsupported, or digest-mismatched reports fail closed and cannot affect a
+ranking. A leaderboard build may invoke the independent validator as a
+deterministic prerequisite, but it must consume the resulting report rather
+than maintain duplicate conformance logic.
+
+Changing a conformance or ranking policy requires a new policy version and a
+new validation report. Historical reports and rankings must never be silently
+reinterpreted under changed rules.
+
 ## Short Interaction behavior contract
 
 Power 1.1 retains the frozen `short-interaction-response-v1` check while making

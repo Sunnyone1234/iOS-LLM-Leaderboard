@@ -14,11 +14,11 @@
     "version": "1.1.0-draft.1",
     "markdown": {
       "path": "benchmarks/suite-b-on-device-performance/power-1.1-protocol.md",
-      "sha256": "afa8bf44ea22a4de88910a7929960e3897605ed7720df975565a93fa17c27fee"
+      "sha256": "5bb53532218ca8b909a52427750278ff1960fd2da6124040c5abaf05493fa452"
     },
     "machineReadable": {
       "path": "benchmarks/suite-b-on-device-performance/power-1.1-protocol.json",
-      "sha256": "eeeb9a33fe284c5881d9a8b55facc7741a828109c59f0ec43b5ab80ddaa58d02"
+      "sha256": "b8ed6f998e76585f7161815068ecce7385f29b117f01efd294103ef0cb867381"
     }
   },
   "workloads": [

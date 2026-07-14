@@ -69,6 +69,7 @@
     "local_behavior_assessment": "advisory-only"
   },
   "submission_validator": {
+    "execution_stage": "submission-intake-and-review",
     "decision_authority": true,
     "recompute_metrics_from_raw_evidence": true,
     "recompute_behavior_conformance_from_generated_text": true,
@@ -82,6 +83,33 @@
       "performance-ranking-eligibility",
       "recommendation-eligibility"
     ]
+  },
+  "validation_report": {
+    "producer": "submission-validator",
+    "authoritative_fact_record": true,
+    "versioned": true,
+    "immutable": true,
+    "binds_exact_result_sha256": true,
+    "required_version_identities": [
+      "result-schema-version",
+      "protocol-version",
+      "validator-version",
+      "ranking-policy-version"
+    ],
+    "machine_readable_reason_codes_required": true,
+    "behavior_nonconformant_evidence_may_be_retained": true
+  },
+  "leaderboard_consumer": {
+    "role": "validation-report-policy-consumer",
+    "recompute_conformance_from_raw_result": false,
+    "duplicate_validator_rules": false,
+    "verify_report_version": true,
+    "verify_result_sha256_binding": true,
+    "verify_protocol_validator_and_policy_versions": true,
+    "measured_performance_decision": "performance-ranking-eligibility",
+    "recommended_decision": "recommendation-eligibility",
+    "missing_stale_unsupported_or_mismatched_report": "fail-closed",
+    "policy_change_requires_new_version_and_revalidation": true
   },
   "metric_behavior_gates": {
     "pipeline_ttft_ms@1": false,

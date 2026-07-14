@@ -60,6 +60,27 @@ class PowerOneOneProtocolDraftTests(unittest.TestCase):
         self.assertFalse(ux["affects_performance_ranking_eligibility"])
         self.assertTrue(ux["affects_recommendation_eligibility"])
 
+    def test_submission_determines_facts_and_ranking_consumes_report(self) -> None:
+        validator = self.protocol["submission_validator"]
+        report = self.protocol["validation_report"]
+        leaderboard = self.protocol["leaderboard_consumer"]
+        self.assertEqual(validator["execution_stage"], "submission-intake-and-review")
+        self.assertEqual(report["producer"], "submission-validator")
+        self.assertTrue(report["authoritative_fact_record"])
+        self.assertTrue(report["binds_exact_result_sha256"])
+        self.assertTrue(report["behavior_nonconformant_evidence_may_be_retained"])
+        self.assertEqual(leaderboard["role"], "validation-report-policy-consumer")
+        self.assertFalse(leaderboard["recompute_conformance_from_raw_result"])
+        self.assertFalse(leaderboard["duplicate_validator_rules"])
+        self.assertEqual(
+            leaderboard["measured_performance_decision"],
+            "performance-ranking-eligibility",
+        )
+        self.assertEqual(
+            leaderboard["missing_stale_unsupported_or_mismatched_report"],
+            "fail-closed",
+        )
+
     def test_migration_keeps_power_1_0_immutable(self) -> None:
         migration = self.protocol["migration"]
         self.assertTrue(migration["power_1_0_evidence_immutable"])
@@ -82,6 +103,9 @@ class PowerOneOneProtocolDraftTests(unittest.TestCase):
         self.assertIn("The App is an evidence producer", document)
         self.assertIn("The independent validator is the sole authority", document)
         self.assertIn("never set a technically derivable metric to `null`", document)
+        self.assertIn("Submission-time fact determination", document)
+        self.assertIn("Ranking-time policy application", document)
+        self.assertIn("consumer of the validation report", document)
         self.assertIn("Power 1.0 evidence is immutable", document)
 
 
