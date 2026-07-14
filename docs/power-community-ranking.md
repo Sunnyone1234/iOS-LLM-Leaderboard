@@ -19,6 +19,12 @@ A community result enters the live dataset after its two-file Power package:
 2. passes the frozen package and Power result validators; and
 3. is merged into `main` by a maintainer.
 
+For evidence captured on or after 2026-07-14, the maintainer must additionally
+confirm that the pull request contains a complete, compliant
+[Power 1.0 environmental declaration](../benchmarks/suite-b-on-device-performance/power-1.0-environment-control.md).
+The declaration is a manual intake gate because the frozen Power result and
+submission schemas do not contain ambient-temperature or placement fields.
+
 The pull-request check compares the declared handle with the PR author
 case-insensitively. A merged valid package may appear in the live community
 view while its formal evidence level remains `unreviewed`. Formal,
@@ -88,6 +94,7 @@ community can investigate thermal state, OS differences, or other causes.
 App export
 → contributor-owned pull request
 → package, protocol, hash, and GitHub-handle checks
+→ environmental declaration review for post-addendum evidence
 → maintainer merge
 → exact-cell matching and contributor-weighted aggregation
 → GitHub Pages regeneration

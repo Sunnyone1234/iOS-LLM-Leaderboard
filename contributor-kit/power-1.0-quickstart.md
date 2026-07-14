@@ -9,6 +9,7 @@ personal prompts.
 
 - a Mac with Xcode;
 - a physical iPhone with at least 50% battery;
+- a room thermostat or thermometer for the required ambient reading;
 - enough free space for the selected pinned model;
 - a GitHub account and a fork of this repository; and
 - GitHub CLI (`gh`) for the commands below, or equivalent GitHub web actions.
@@ -54,6 +55,13 @@ Before measurement, turn off Low Power Mode, charge above 50%, disconnect
 external power, close unnecessary background work, and wait for the App to
 report nominal thermal state.
 
+For evidence captured on or after 2026-07-14, also follow the
+[environmental control addendum](../benchmarks/suite-b-on-device-performance/power-1.0-environment-control.md):
+use a 20.0–25.0 °C indoor room, remove the case and thermally relevant
+accessories, place the phone screen-up on a dry room-temperature non-metal
+tabletop, use no external cooling or heating, and keep the device nominal in
+that setup for five minutes before starting.
+
 ## 3. Run one locked benchmark cell
 
 Choose one pinned model and one workload in the App.
@@ -64,9 +72,12 @@ Choose one pinned model and one workload in the App.
    artifact is verified.
 4. Confirm Release, no debugger, Low Power Mode off, unplugged power, battery
    at least 50%, and nominal thermal state.
-5. Tap **Run Benchmark** once and allow the fixed warm-up plus five measured
+5. Record the ambient temperature and confirm the environmental setup before
+   tapping **Run Benchmark**.
+6. Tap **Run Benchmark** once and allow the fixed warm-up plus five measured
    attempts to finish.
-6. Tap **Export Raw JSON** and save the original file without editing it.
+7. Record the ambient temperature again, then tap **Export Raw JSON** and save
+   the original file without editing it.
 
 Do not use the historical **Export Submission JSON** action for Power 1.0.
 
@@ -121,6 +132,11 @@ gh pr create --web \
 Select **Power 1.0 Draft package (adopted RC1 contract)** in the pull-request
 checklist. CI validates the package, protocol, raw-evidence calculations,
 integrity binding, and GitHub-handle match.
+
+Complete the environmental declaration in the pull-request template for every
+post-addendum result. CI does not read a room thermometer and therefore cannot
+verify those conditions automatically; a maintainer reviews the declaration
+before merge.
 
 ## What happens after merge
 
