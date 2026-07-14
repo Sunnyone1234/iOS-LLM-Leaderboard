@@ -39,6 +39,17 @@ must not be rewritten. Resolve the currently used evidence SHAs as follows:
 The machine-readable summary is
 [`2026-07-14-history-correction.json`](2026-07-14-history-correction.json).
 
+## Historical pull-request archive
+
+GitHub's archived commit list for merged
+[pull request #2](https://github.com/YizeSun/iOS-LLM-Leaderboard/pull/2)
+continues to display the two original commit objects. Those immutable objects
+are not reachable from any active branch or release tag and are not counted by
+the repository contributors API. The pull-request body now begins with an
+authorship-correction notice that identifies both corrected commits and links
+to this record. The corrected active history and this provenance record are
+authoritative; Codex is not a project contributor.
+
 ## Public refs and releases
 
 The active branches and annotated release tags were retargeted to their
