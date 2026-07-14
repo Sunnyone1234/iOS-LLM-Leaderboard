@@ -54,9 +54,9 @@ class CommunityRankingTests(unittest.TestCase):
     def test_current_official_matrix_builds_without_mutating_release(self) -> None:
         dataset = build_dataset()
         self.assertEqual(dataset["officialReferenceResultCount"], 6)
-        self.assertEqual(dataset["communityResultCount"], 0)
-        self.assertEqual(dataset["cellCount"], 6)
-        self.assertEqual(dataset["activeRankedCellCount"], 5)
+        self.assertEqual(dataset["communityResultCount"], 22)
+        self.assertEqual(dataset["cellCount"], 28)
+        self.assertEqual(dataset["activeRankedCellCount"], 18)
         self.assertEqual(dataset["contributorCount"], 1)
         self.assertEqual(dataset["reproducedCellCount"], 0)
 

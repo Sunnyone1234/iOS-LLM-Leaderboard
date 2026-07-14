@@ -1,0 +1,39 @@
+{
+  "benchmarkRelease": {
+    "id": "suite-b-power",
+    "version": "1.0.0-rc.1"
+  },
+  "conflictOfInterest": {
+    "category": "none",
+    "statement": "No conflict of interest disclosed."
+  },
+  "contributor": {
+    "githubHandle": "YizeSun"
+  },
+  "createdAt": "2026-07-14T10:30:29.959666Z",
+  "declarations": {
+    "acceptsCCBY40": true,
+    "authorizedToSubmit": true,
+    "containsNoPersonalData": true,
+    "ranOnPhysicalDevice": true,
+    "rawResultUnmodified": true,
+    "reviewedPublicMetadata": true,
+    "understandsNoRankingGuarantee": true
+  },
+  "requestedEvidenceLevel": "community-submitted",
+  "result": {
+    "artifactID": "mlx-community/exaone-4.0-1.2b-4bit",
+    "artifactRevision": "6dbf5f06dcb9526a7c328f692b1e08d35e17bff2",
+    "machineIdentifier": "iPhone15,3",
+    "path": "result.json",
+    "resultID": "E0223358-9263-4A2B-80FF-791BDDAEE6AB",
+    "runtimeName": "MLX Swift LM",
+    "runtimeVersion": "3.31.4",
+    "schemaVersion": "suite-b-power-result-1.0.0-rc.1",
+    "sha256": "5994a8fe610693900ec5460212a3cbc9cdf41b9b2f50cd5688c8f903ad179cdb",
+    "workloadID": "b-pipe-001-sustained-generation"
+  },
+  "schemaVersion": "suite-b-power-submission-1.0.0-rc.1",
+  "state": "draft",
+  "submissionID": "358536fc-4fe4-4d75-a64a-6c7fb4958db0"
+}
