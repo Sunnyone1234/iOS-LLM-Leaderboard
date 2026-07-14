@@ -80,6 +80,18 @@ Open a pull request containing only the new two-file package and select
 template. The frozen RC1 guide remains the normative package definition where
 this authorization does not explicitly change operational status.
 
+The pull request should also complete the
+[Power 1.0 Environmental Observation Draft](../benchmarks/suite-b-on-device-performance/power-1.0-environment-control.md).
+Ambient temperature, externally measured device-surface temperature, case
+state, and placement are recommended observations, not current hard admission
+requirements. Deliberate external cooling or heating must be disclosed so
+assisted evidence is not silently aggregated into the ordinary live ranking.
+Because the current package and generator cannot encode a separate assisted
+class, ordinary intake merge requires `none`; assisted and unresolved
+`unknown` submissions remain reviewable in their pull requests rather than
+being merged into `main`. This record does not add a third package file or
+modify the frozen JSON schemas.
+
 ## Trust and ranking boundary
 
 Opening intake authorizes contributors to submit reviewable evidence. It does
@@ -99,6 +111,14 @@ official release. The later
 adds a separate, explicitly labeled live community view. A valid package
 merged into `main` may enter that view automatically without changing its
 formal evidence level or the Power 1.0 release package.
+
+The frozen automated checks cover the seven JSON manifest declarations. The
+environmental observation block is reviewed manually because CI cannot verify
+physical conditions. Missing temperature, case, or placement observations do
+not block ranking under this draft, and passing CI must not be represented as
+verification of those observations. Before merge, the maintainer must also
+confirm that thermal assistance is declared `none`; there is no automated
+post-merge exclusion mechanism in the current live-ranking generator.
 
 For the live view, the declared GitHub handle must match the pull-request
 author. Different GitHub accounts count as independent contributors inside an

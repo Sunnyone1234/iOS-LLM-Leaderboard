@@ -39,6 +39,7 @@ Read:
 
 - [Suite B Protocol v2](protocol-v2.md)
 - [Power 1.0 frozen protocol candidate](power-1.0-protocol.md)
+- [Power 1.0 environmental observation draft](power-1.0-environment-control.md)
 - [Power 1.0 migration rules](power-1.0-migration.md)
 - [Power 1.0 schema and validator freeze](power-1.0-schema-validator.md)
 - [Power 1.0 RC1 submission guide](../../docs/power-benchmark-1.0-submission.md)

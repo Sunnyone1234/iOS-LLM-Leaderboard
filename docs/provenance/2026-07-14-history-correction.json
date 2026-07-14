@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "1.0.0",
+  "correctionDate": "2026-07-14",
+  "reason": "Two mail-patch From headers contained an invalid Codex author identity.",
+  "canonicalAuthor": {
+    "name": "Yize Sun",
+    "email": "martin.yize.sun@gmail.com"
+  },
+  "contentChanged": false,
+  "mappedCommitCount": 90,
+  "correctedAuthorCommits": [
+    {
+      "originalCommit": "4b65078212509978e153f4dcbf6cb055f2787118",
+      "correctedCommit": "e9a785b2faede4b0913b6b846ac6deab45e913f0",
+      "tree": "7f20900a4b371b1903b14385300ec140a636f8c1"
+    },
+    {
+      "originalCommit": "3e596d509b2a7b9bc6b7e826d370d62c28611a46",
+      "correctedCommit": "da2d7392bd829726f2c6fdb19cfa9b298a9c9db2",
+      "tree": "fb9d18fe45045a71b37629c64512b695fae99494"
+    }
+  ],
+  "appSourceCommitMappings": [
+    {
+      "recordedCommit": "2f105ff463bc9b281b19655ba711b1ca7dee8759",
+      "correctedCommit": "d7fcff7e27b4c46b1121df8988a0b2fb76d56804",
+      "tree": "6c15ea47b35a980997f62e659df082a28f66075a"
+    },
+    {
+      "recordedCommit": "07a79186a701afee93d3ae8d8dd77a7b50b702ae",
+      "correctedCommit": "f676981e508d007694850125eca139aee32043ce",
+      "tree": "7980cceaf3946edd4e3582e2d733c8c76096d50d"
+    },
+    {
+      "recordedCommit": "c8b1f7bc404e9b506aa5d7d5f9e7d8b7978271be",
+      "correctedCommit": "c06cc31388bb6f60349154ad5c99e278bf1e3dcb",
+      "tree": "2d50d4d6f8e7dc3bb90b54101f7949a5dde7821f"
+    }
+  ],
+  "activeRefMappings": [
+    {
+      "ref": "refs/heads/main",
+      "originalTarget": "66034b506c8a0dbaa79922251d5a7c0b6c5344ba",
+      "contentEquivalentTarget": "5e5d1a4f949f57f1d667f157e6ac63fab76d3a0b",
+      "tree": "82fe1eee9fbe65dba39bc4db68a886f0b9c62fb7"
+    },
+    {
+      "ref": "refs/heads/codex/power-benchmark-app-lab",
+      "originalTarget": "ac086f505fd199b84d226ccf598019dc628eebf1",
+      "contentEquivalentTarget": "00bff5161bd8def350ab3f93f87bdaaf1b760c2e",
+      "tree": "9b64ae5d53a04f2db772146fff962eed843b95bf"
+    },
+    {
+      "ref": "refs/heads/codex/recommended-model-catalog",
+      "originalTarget": "0607d7375edd6996ba18a5580fa7c544f9bb7c6f",
+      "contentEquivalentTarget": "5ed418f014c4640d73510af93a570d5cfeb646ed",
+      "tree": "97763760622cac89e012b1370a35750321a414d1"
+    },
+    {
+      "ref": "refs/tags/1.0.0^{}",
+      "originalTarget": "f0381df16abff108b56a674eb1541c73b3d11629",
+      "contentEquivalentTarget": "4f1fe77864e285295dc271c3f3b203a17331ec0f",
+      "tree": "f02213ee4b352cc3612e5d20152b65dbdb6871ac"
+    },
+    {
+      "ref": "refs/tags/ship-1.0.0^{}",
+      "originalTarget": "d5d3d7ad389984181d01a29b55015b41f6e61f20",
+      "contentEquivalentTarget": "a09a91d248d0a56304342a775a9ad7cbed317aa0",
+      "tree": "6d8ecde86286b49333c5aa8a0150f5b2d2ceba55"
+    }
+  ],
+  "annotatedTagObjectMappings": [
+    {
+      "tag": "1.0.0",
+      "originalObject": "3dae51052ec542e0d42202696fa431ae3c43277a",
+      "correctedObject": "cc6cc25050441ec3dea6ac413c7de1c226aa432e"
+    },
+    {
+      "tag": "ship-1.0.0",
+      "originalObject": "838102388eed635e481f5385de8b9df04b48fd5a",
+      "correctedObject": "02ae82c30dc923476d1176bf98f8c60a01cde0f6"
+    }
+  ],
+  "commitMap": {
+    "path": "docs/provenance/2026-07-14-commit-map.tsv",
+    "sha256": "84ea489473b0fecca3d4bf7df4d55e3573ebe6f77fc8e6068ef9f5a7017220b6"
+  },
+  "offlineBackupBundleSha256": "10fce161db96450f408b3316d789f783aa721ca839bf05aac941bac38987b399"
+}

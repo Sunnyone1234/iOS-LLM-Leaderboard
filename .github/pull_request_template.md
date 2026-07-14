@@ -31,6 +31,25 @@
 - [ ] I understand submission and CI do not add this evidence to the frozen Power 1.0 release or official ranking.
 - [ ] I understand a valid merged package may appear in the separately labeled live community ranking.
 
+### Power 1.0 environmental observations
+
+See the
+[environmental observation draft](../benchmarks/suite-b-on-device-performance/power-1.0-environment-control.md).
+Temperature, case, and placement observations are recommended and may be
+`not recorded`. The thermal-assistance disclosure is required for ordinary
+live-ranking review.
+
+- Result ID(s): <!-- UUID(s) covered by this observation block -->
+- Thermal assistance: <!-- none | deliberate-cooling | deliberate-heating | other-assisted | unknown -->
+- Ambient at session start/end: <!-- °C and reading source, or not recorded -->
+- Device-surface temperature at start/end: <!-- °C, external method, measurement location, or not recorded -->
+- Case state: <!-- installed | removed | unknown -->
+- Placement: <!-- tabletop | stand | handheld | other | unknown -->
+- Notes: <!-- optional environmental context -->
+- [ ] I have disclosed any deliberate external cooling or heating accurately.
+- [ ] Thermal assistance is `none` for ordinary live intake, or I understand
+      this pull request will remain unmerged until a separate intake path exists.
+
 ## Power evidence-review checklist
 
 - [ ] The review binds the immutable manifest and result SHA-256 values.

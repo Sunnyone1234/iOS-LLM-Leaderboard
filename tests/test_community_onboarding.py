@@ -17,7 +17,7 @@ class CommunityOnboardingTests(unittest.TestCase):
             ROOT / "results/suite-b-power-community/COVERAGE.md"
         ).read_text()
         self.assertEqual(actual, expected)
-        self.assertIn("Exact comparison cells: 6", actual)
+        self.assertIn("Exact comparison cells: 28", actual)
         self.assertIn("Reproduced cells: 0", actual)
         self.assertIn("does not create placeholder devices", actual)
 

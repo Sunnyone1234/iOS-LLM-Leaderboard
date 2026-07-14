@@ -1,0 +1,39 @@
+name: Commit identity integrity
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check pull-request commits
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python3 scripts/check_commit_identity.py --range "$BASE_SHA..$HEAD_SHA"
+      - name: Check pushed commits
+        if: github.event_name == 'push'
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
+        run: |
+          if git cat-file -e "$BEFORE_SHA^{commit}" 2>/dev/null; then
+            revision="$BEFORE_SHA..$AFTER_SHA"
+          else
+            revision="$AFTER_SHA"
+          fi
+          python3 scripts/check_commit_identity.py --range "$revision"
+      - name: Check all history on manual runs
+        if: github.event_name == 'workflow_dispatch'
+        run: python3 scripts/check_commit_identity.py --range=--all
