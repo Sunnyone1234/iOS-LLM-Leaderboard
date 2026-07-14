@@ -81,6 +81,14 @@
       "correctedObject": "02ae82c30dc923476d1176bf98f8c60a01cde0f6"
     }
   ],
+  "historicalPullRequestRecord": {
+    "number": 2,
+    "url": "https://github.com/YizeSun/iOS-LLM-Leaderboard/pull/2",
+    "archivedCommitListRetainsOriginalObjects": true,
+    "correctionNoticeAdded": true,
+    "originalObjectsReachableFromActiveRefs": false,
+    "codexPresentInContributorsAPI": false
+  },
   "commitMap": {
     "path": "docs/provenance/2026-07-14-commit-map.tsv",
     "sha256": "84ea489473b0fecca3d4bf7df4d55e3573ebe6f77fc8e6068ef9f5a7017220b6"
