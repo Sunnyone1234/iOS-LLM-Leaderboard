@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ios-llm-leaderboard:schema:suite-b-power-result:1.1.0-draft.1",
+  "title": "Suite B Power result 1.1.0-draft.1",
+  "description": "Draft Power 1.1 App evidence contract. It preserves the Power 1.0 submitted field shape, treats App responseConformance as advisory, and requires the semantic validator to reject behavior-gated metric nulls. It never authorizes ranking by itself.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "resultID",
+    "createdAt",
+    "benchmarkRelease",
+    "officialResultEligible",
+    "execution",
+    "configuration",
+    "model",
+    "runtime",
+    "device",
+    "environment",
+    "modelPreparation",
+    "attempts",
+    "summary"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "suite-b-power-result-1.1.0-draft.1"
+    },
+    "resultID": {
+      "$ref": "urn:ios-llm-leaderboard:schema:suite-b-power-result:1.0.0-rc.1#/properties/resultID"
+    },
+    "createdAt": {
+      "$ref": "urn:ios-llm-leaderboard:schema:suite-b-power-result:1.0.0-rc.1#/properties/createdAt"
+    },
+    "benchmarkRelease": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "protocolID", "protocolVersion"],
+      "properties": {
+        "id": { "const": "suite-b-power" },
+        "version": { "const": "1.1.0-draft.1" },
+        "protocolID": { "const": "suite-b-power" },
+        "protocolVersion": { "const": "1.1.0-draft.1" }
+      }
+    },
+    "officialResultEligible": { "const": false },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sessionID",
+        "workloadID",
+        "workloadVersion",
+        "workloadCategory",
+        "fixtureSHA256",
+        "measurementModeID",
+        "runnerID",
+        "runnerVersion",
+        "appVersion",
+        "appBuild",
+        "appSourceCommit"
+      ],
+      "properties": {
+        "sessionID": {
+          "$ref": "urn:ios-llm-leaderboard:schema:suite-b-power-result:1.0.0-rc.1#/$defs/uuid"
+        },
+        "workloadID": {
+          "enum": [
+            "b-ux-001-short-interaction",
+            "b-pipe-001-sustained-generation"
+          ]
+        },
+        "workloadVersion": { "const": "1.1.0-draft.1" },
+        "workloadCategory": { "enum": ["user-experience", "pipeline"] },
+        "fixtureSHA256": {
+          "$ref": "urn:ios-llm-leaderboard:schema:suite-b-power-result:1.0.0-rc.1#/$defs/sha256"
+        },
+        "measurementModeID": {
+          "enum": [
+            "b-mode-warm-resident-ux-v1",
+            "b-mode-sustained-no-rest-v1"
+          ]
+        },
+        "runnerID": { "const": "ios-reference-benchmark-app" },
+        "runnerVersion": { "type": "string", "minLength": 1 },
+        "appVersion": { "type": "string", "minLength": 1 },
+        "appBuild": { "type": "string", "minLength": 1 },
+        "appSourceCommit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      }
+    },
+    "configuration": {
+      "$ref": "urn:ios-llm-leaderboard:schema:suite-b-power-result:1.0.0-rc.1#/properties/configuration"
+    },
+    "model": {
+      "$ref": "urn:ios-llm-leaderboard:schema:suite-b-power-result:1.0.0-rc.1#/properties/model"
+    },
+    "runtime": {
+      "$ref": "urn:ios-llm-leaderboard:schema:suite-b-power-result:1.0.0-rc.1#/properties/runtime"
+    },
+    "device": {
+      "$ref": "urn:ios-llm-leaderboard:schema:suite-b-power-result:1.0.0-rc.1#/properties/device"
+    },
+    "environment": {
+      "$ref": "urn:ios-llm-leaderboard:schema:suite-b-power-result:1.0.0-rc.1#/properties/environment"
+    },
+    "modelPreparation": {
+      "$ref": "urn:ios-llm-leaderboard:schema:suite-b-power-result:1.0.0-rc.1#/properties/modelPreparation"
+    },
+    "attempts": {
+      "description": "The existing responseConformance member is an advisory App observation only. It is not trusted by submission validation and must not suppress technically derivable derivedMetrics.",
+      "allOf": [
+        {
+          "$ref": "urn:ios-llm-leaderboard:schema:suite-b-power-result:1.0.0-rc.1#/properties/attempts"
+        }
+      ]
+    },
+    "summary": {
+      "description": "Summary values aggregate each metric from its own technically eligible measured attempts, independently of advisory responseConformance.",
+      "allOf": [
+        {
+          "$ref": "urn:ios-llm-leaderboard:schema:suite-b-power-result:1.0.0-rc.1#/properties/summary"
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "urn:ios-llm-leaderboard:schema:suite-b-power-result:1.0.0-rc.1#/allOf/0"
+    },
+    {
+      "$ref": "urn:ios-llm-leaderboard:schema:suite-b-power-result:1.0.0-rc.1#/allOf/1"
+    }
+  ]
+}

@@ -11,6 +11,8 @@ The machine-readable companion is
 [`power-1.1-protocol.json`](power-1.1-protocol.json).
 The minimal internal validation-report contract is
 [`suite-b-power-validation-report-1.1.0-draft.1.schema.json`](../../schemas/suite-b-power-validation-report-1.1.0-draft.1.schema.json).
+The submitted App evidence contract is
+[`suite-b-power-result-1.1.0-draft.1.schema.json`](../../schemas/suite-b-power-result-1.1.0-draft.1.schema.json).
 
 Power 1.1 retains exactly the two Power 1.0 workload IDs:
 
@@ -50,6 +52,24 @@ updates a public ranking. It must:
 The App may display a local behavior-conformance preview for operator feedback,
 but that preview is advisory. It must not be trusted as the submission decision
 and must not alter raw evidence or derived performance values.
+
+### Submitted result contract
+
+Power 1.1 preserves the complete submitted field shape of the frozen Power 1.0
+result schema. No contributor-authored field is added. The new result schema
+changes only the schema, release, protocol, and workload version identities and
+the semantics governing existing evidence.
+
+The existing per-attempt `responseConformance` member remains in the App JSON
+for wire compatibility and immediate operator feedback, but it is explicitly
+advisory. The independent validator recomputes behavior from retained generated
+text and does not trust that member. Likewise, each `derivedMetrics` value and
+each summary metric is independent of the App's advisory response assessment.
+
+JSON Schema validates the result's structure. The independent semantic
+validator enforces cross-field facts that JSON Schema cannot prove, including
+metric recalculation and the rule that a technically derivable metric cannot be
+`null` solely because behavior was not verified.
 
 ### Submission validator
 

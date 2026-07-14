@@ -75,6 +75,15 @@
     "behavior_failure_may_null_metrics": false,
     "local_behavior_assessment": "advisory-only"
   },
+  "result_schema": {
+    "path": "schemas/suite-b-power-result-1.1.0-draft.1.schema.json",
+    "schema_version": "suite-b-power-result-1.1.0-draft.1",
+    "inherits_field_shape_from": "suite-b-power-result-1.0.0-rc.1",
+    "new_contributor_fields": [],
+    "app_response_conformance_member": "advisory-only",
+    "semantic_validator_recomputes_behavior": true,
+    "technically_derivable_metrics_independent_of_app_behavior_assessment": true
+  },
   "submission_validator": {
     "execution_stage": "submission-intake-and-review",
     "decision_authority": true,

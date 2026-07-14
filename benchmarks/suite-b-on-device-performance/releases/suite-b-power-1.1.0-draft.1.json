@@ -14,16 +14,26 @@
     "version": "1.1.0-draft.1",
     "markdown": {
       "path": "benchmarks/suite-b-on-device-performance/power-1.1-protocol.md",
-      "sha256": "c844145b8c576c684cae90ef5b776fe774aeae675714806f435b772ad38e3473"
+      "sha256": "feb9a9114e7991d5a3eda7c12698434136902486777699c220b81721d069632d"
     },
     "machineReadable": {
       "path": "benchmarks/suite-b-on-device-performance/power-1.1-protocol.json",
-      "sha256": "ad468892e45c86125204c3d0a529e33b1572724d1e8e7abf18fd28f5667f9702"
+      "sha256": "769b9ebabf23b82513b6e02d6bb4e67118ff1aa025fd781521bc6964783b6eed"
     }
   },
   "validationReportSchema": {
     "path": "schemas/suite-b-power-validation-report-1.1.0-draft.1.schema.json",
     "sha256": "4c5191121626fb91ae100db129ac00a6d28b9a0a3fe0b32986cb0bfd88986089"
+  },
+  "resultSchema": {
+    "schema": {
+      "path": "schemas/suite-b-power-result-1.1.0-draft.1.schema.json",
+      "sha256": "d346f09ff3e968eddd8890e1d505b0bf7c5d9133a3453ef7215d301ed444f1b4"
+    },
+    "baseShapeDependency": {
+      "path": "schemas/suite-b-power-result-1.0.0-rc.1.schema.json",
+      "sha256": "6082bce60ca23624f68aeb208598088dfe6e6bf312aa3246654d0746c271514e"
+    }
   },
   "workloads": [
     {
@@ -37,6 +47,7 @@
   ],
   "implementedContracts": [
     "protocol-draft",
+    "result-schema-draft",
     "validation-report-schema-draft"
   ],
   "requiredBeforeReleaseCandidate": [

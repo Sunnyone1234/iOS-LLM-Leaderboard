@@ -10,6 +10,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SUITE = ROOT / "benchmarks" / "suite-b-on-device-performance"
 MANIFEST = SUITE / "releases" / "suite-b-power-1.1.0-draft.1.json"
 REPORT_SCHEMA = ROOT / "schemas" / "suite-b-power-validation-report-1.1.0-draft.1.schema.json"
+RESULT_SCHEMA = ROOT / "schemas" / "suite-b-power-result-1.1.0-draft.1.schema.json"
+POWER_1_0_RESULT_SCHEMA = ROOT / "schemas" / "suite-b-power-result-1.0.0-rc.1.schema.json"
 
 
 class PowerOneOneProtocolDraftTests(unittest.TestCase):
@@ -18,6 +20,8 @@ class PowerOneOneProtocolDraftTests(unittest.TestCase):
         cls.protocol = json.loads((SUITE / "power-1.1-protocol.json").read_text())
         cls.manifest = json.loads(MANIFEST.read_text())
         cls.report_schema = json.loads(REPORT_SCHEMA.read_text())
+        cls.result_schema = json.loads(RESULT_SCHEMA.read_text())
+        cls.power_1_0_result_schema = json.loads(POWER_1_0_RESULT_SCHEMA.read_text())
 
     def test_draft_is_non_official_and_preserves_workload_ids(self) -> None:
         self.assertEqual(self.protocol["protocol_version"], "1.1.0-draft.1")
@@ -118,6 +122,65 @@ class PowerOneOneProtocolDraftTests(unittest.TestCase):
         self.assertFalse(report_contract["contributor_supplied"])
         self.assertFalse(report_contract["duplicates_raw_evidence"])
 
+    def test_result_schema_versions_the_same_submitted_field_shape(self) -> None:
+        current = self.result_schema
+        previous = self.power_1_0_result_schema
+        self.assertEqual(current["required"], previous["required"])
+        self.assertEqual(set(current["properties"]), set(previous["properties"]))
+        self.assertEqual(
+            current["properties"]["schemaVersion"]["const"],
+            "suite-b-power-result-1.1.0-draft.1",
+        )
+        release = current["properties"]["benchmarkRelease"]["properties"]
+        self.assertEqual(release["version"]["const"], "1.1.0-draft.1")
+        self.assertEqual(release["protocolVersion"]["const"], "1.1.0-draft.1")
+        execution = current["properties"]["execution"]["properties"]
+        self.assertEqual(execution["workloadVersion"]["const"], "1.1.0-draft.1")
+        self.assertFalse(current["properties"]["officialResultEligible"]["const"])
+        self.assertEqual(self.protocol["result_schema"]["new_contributor_fields"], [])
+
+    def test_result_schema_keeps_app_behavior_advisory(self) -> None:
+        attempts = self.result_schema["properties"]["attempts"]
+        summary = self.result_schema["properties"]["summary"]
+        self.assertIn("advisory App observation only", attempts["description"])
+        self.assertIn("must not suppress technically derivable", attempts["description"])
+        self.assertIn("independently of advisory", summary["description"])
+        contract = self.protocol["result_schema"]
+        self.assertEqual(contract["app_response_conformance_member"], "advisory-only")
+        self.assertTrue(contract["semantic_validator_recomputes_behavior"])
+        self.assertTrue(
+            contract["technically_derivable_metrics_independent_of_app_behavior_assessment"]
+        )
+
+    def test_result_schema_reuses_only_valid_frozen_power_1_0_pointers(self) -> None:
+        base_id = self.power_1_0_result_schema["$id"]
+
+        def references(value: object) -> list[str]:
+            if isinstance(value, dict):
+                found = [value["$ref"]] if isinstance(value.get("$ref"), str) else []
+                return found + [
+                    reference
+                    for child in value.values()
+                    for reference in references(child)
+                ]
+            if isinstance(value, list):
+                return [
+                    reference
+                    for child in value
+                    for reference in references(child)
+                ]
+            return []
+
+        refs = references(self.result_schema)
+        self.assertTrue(refs)
+        for reference in refs:
+            self.assertTrue(reference.startswith(f"{base_id}#/"))
+            target: object = self.power_1_0_result_schema
+            for raw_part in reference.split("#/", 1)[1].split("/"):
+                part = raw_part.replace("~1", "/").replace("~0", "~")
+                target = target[int(part)] if isinstance(target, list) else target[part]
+            self.assertIsNotNone(target)
+
     def test_behavior_assessment_distinguishes_unverified_from_contradicted(self) -> None:
         behavior = self.report_schema["properties"]["behaviorConformance"]
         self.assertEqual(
@@ -141,6 +204,8 @@ class PowerOneOneProtocolDraftTests(unittest.TestCase):
         for asset in (
             self.manifest["protocol"]["markdown"],
             self.manifest["protocol"]["machineReadable"],
+            self.manifest["resultSchema"]["schema"],
+            self.manifest["resultSchema"]["baseShapeDependency"],
             self.manifest["validationReportSchema"],
         ):
             path = ROOT / asset["path"]
@@ -156,6 +221,8 @@ class PowerOneOneProtocolDraftTests(unittest.TestCase):
         self.assertIn("consumer of the validation report", document)
         self.assertIn("not a claim that the response is semantically wrong", document)
         self.assertIn("synonym such as `secure`", document)
+        self.assertIn("No contributor-authored field is added", document)
+        self.assertIn("explicitly\nadvisory", document)
         self.assertIn("Power 1.0 evidence is immutable", document)
 
 
