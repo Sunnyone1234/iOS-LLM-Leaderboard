@@ -68,7 +68,7 @@ class PublicSurfaceTests(unittest.TestCase):
         self.assertIn("function eligibilityExplanation(row)", app)
         self.assertIn('title="${escapeAttribute(explanation)}"', app)
         self.assertIn('tabindex="0"', app)
-        self.assertIn("failed this workload's response check", app)
+        self.assertIn("not a semantic-failure claim", app)
         self.assertIn(".unranked-meta:focus-visible", styles)
 
 

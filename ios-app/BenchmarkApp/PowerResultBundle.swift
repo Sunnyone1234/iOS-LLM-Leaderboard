@@ -803,29 +803,102 @@ struct PowerResultBundle: Encodable, Sendable, Equatable {
 }
 
 enum ShortInteractionResponseConformance {
+    enum Assessment: String, Equatable {
+        case verified
+        case notVerified = "not_verified"
+        case contradicted
+    }
+
+    private struct Policy: Decodable {
+        struct LocalPersistence: Decodable {
+            let claimTerms: [String]
+            let locationTerms: [String]
+            let contradictionPhrases: [String]
+        }
+
+        struct DeferredSync: Decodable {
+            let actionTerms: [String]
+            let connectivityTerms: [String]
+            let conditionTerms: [String]
+            let contradictionPhrases: [String]
+        }
+
+        let policyID: String
+        let policyVersion: String
+        let status: String
+        let maximumSentences: Int
+        let localPersistence: LocalPersistence
+        let deferredSync: DeferredSync
+    }
+
+    private final class PolicyBundleMarker: NSObject {}
+
+    private static let policy: Policy? = {
+        let bundles = [Bundle(for: PolicyBundleMarker.self), Bundle.main]
+        guard let url = bundles.lazy.compactMap({
+            $0.url(
+                forResource: "short-interaction-response-v2",
+                withExtension: "json"
+            )
+        }).first,
+        let data = try? Data(contentsOf: url),
+        let value = try? JSONDecoder().decode(Policy.self, from: data),
+        value.policyID == "short-interaction-response-v2",
+        value.status == "draft" else {
+            return nil
+        }
+        return value
+    }()
+
+    static var policyIdentity: String? {
+        policy.map { "\($0.policyID)@\($0.policyVersion)" }
+    }
+
     static func passes(_ text: String?) -> Bool {
-        guard let text else { return false }
+        assessment(text) == .verified
+    }
+
+    static func assessment(_ text: String?) -> Assessment {
+        guard let policy, let text else { return .notVerified }
         let normalized = text.precomposedStringWithCompatibilityMapping
             .lowercased()
             .split(whereSeparator: { $0.isWhitespace })
             .joined(separator: " ")
-        guard !normalized.isEmpty else { return false }
+        guard !normalized.isEmpty else { return .notVerified }
         let sentenceCount = normalized.components(
             separatedBy: CharacterSet(charactersIn: ".!?")
         ).filter {
             !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         }.count
-        let localSafety = normalized.contains("safe")
-            && ["iphone", "device", "local"].contains {
-                normalized.contains($0)
-            }
-        let syncReturn = normalized.contains("sync")
-            && ["connect", "network", "online"].contains {
-                normalized.contains($0)
-            }
-            && ["return", "restore", "available", "back", "again"]
-                .contains { normalized.contains($0) }
-        return sentenceCount <= 2 && localSafety && syncReturn
+        guard sentenceCount <= policy.maximumSentences else {
+            return .notVerified
+        }
+
+        let contradictions =
+            policy.localPersistence.contradictionPhrases
+            + policy.deferredSync.contradictionPhrases
+        if contradictions.contains(where: normalized.contains) {
+            return .contradicted
+        }
+
+        let tokens = Set(
+            normalized.components(
+                separatedBy: CharacterSet.alphanumerics.inverted
+            ).filter { !$0.isEmpty }
+        )
+        let localPersistence = !tokens.isDisjoint(
+            with: Set(policy.localPersistence.claimTerms)
+        ) && !tokens.isDisjoint(
+            with: Set(policy.localPersistence.locationTerms)
+        )
+        let deferredSync = !tokens.isDisjoint(
+            with: Set(policy.deferredSync.actionTerms)
+        ) && !tokens.isDisjoint(
+            with: Set(policy.deferredSync.connectivityTerms)
+        ) && !tokens.isDisjoint(
+            with: Set(policy.deferredSync.conditionTerms)
+        )
+        return localPersistence && deferredSync ? .verified : .notVerified
     }
 }
 

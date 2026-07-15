@@ -9,7 +9,7 @@ from scripts.validate_suite_b_power_1_1_final_result import (
     validate_report_shape,
     verify_final_assets,
 )
-from tests.test_suite_b_power_1_1_rc1_result import power_1_1_result
+from tests.test_suite_b_power_1_1_history import power_1_1_result
 
 
 def digest(result: dict) -> str:
