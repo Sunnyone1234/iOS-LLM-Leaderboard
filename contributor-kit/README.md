@@ -36,5 +36,3 @@ contracts. Do not use them for a new Power 1.1 submission:
 
 - [Power 1.0 quickstart](power-1.0-quickstart.md)
 - [Historical recommended-model workflow](test-recommended-model.md)
-- [Framework v1 model result](submit-model-result.md)
-- [Framework v1 device result](submit-device-result.md)

@@ -32,7 +32,6 @@ Do not add a new top-level directory unless none of these owns the content:
 - `scripts/` — validators and deterministic generators;
 - `site/` — website code;
 - `submissions/` — contributor-owned packages;
-- `templates/` — reusable historical or cross-suite templates;
 - `tests/` — regression tests.
 
 A pull request proposing a new top-level directory must document its owner,
