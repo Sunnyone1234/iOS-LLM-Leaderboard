@@ -25,25 +25,26 @@ ranking, publication, tagging, or release authorization.
 
 ## Physical-device evidence
 
-- [ ] Six new RC raw results exist for the frozen three-model/two-workload matrix.
-- [ ] Every result reports App 0.13.0 build 16 and source commit `f5b863c…`.
-- [ ] Every result passes structural and protocol validation.
-- [ ] Six hash-bound validation reports exist.
-- [ ] Every result/report pair passes the independent consumer.
-- [ ] Failures and replacement runs, if any, are retained and documented.
-- [ ] Environment observations and deviations are reviewed.
+- [x] Six new RC raw results exist for the frozen three-model/two-workload matrix.
+- [x] Every result reports App 0.13.0 build 16 and source commit `f5b863c…`.
+- [x] Every result passes structural and protocol validation.
+- [x] Six hash-bound validation reports exist.
+- [x] Every result/report pair passes the independent consumer.
+- [x] Failures and replacement runs, if any, are retained and documented.
+- [x] Exported environment observations and deviations are reviewed. External
+  thermal-assistance disclosure remains a maintainer-approval gate.
 
 ## Release package
 
-- [ ] Raw result inventory is complete and contains no duplicate result IDs.
-- [ ] SHA-256 checksum file covers every raw result and validation report.
-- [ ] Privacy review confirms no account, device name, UDID, serial number,
+- [x] Raw result inventory is complete and contains no duplicate result IDs.
+- [x] SHA-256 checksum file covers every raw result and validation report.
+- [x] Privacy review confirms no account, device name, UDID, serial number,
   personal prompt, or unrelated user data is present.
-- [ ] Consistency review confirms exact model revisions, runtime, device, OS,
+- [x] Consistency review confirms exact model revisions, runtime, device, OS,
   workload, fixture, App, and protocol identities.
-- [ ] Metric eligibility and behavior status are presented separately.
-- [ ] Known limitations are complete.
-- [ ] Release notes contain no unsupported performance or quality claim.
+- [x] Metric eligibility and behavior status are presented separately.
+- [x] Known limitations are complete.
+- [x] Release notes contain no unsupported performance or quality claim.
 - [ ] Website/ranking change is generated from adopted reports, not handwritten.
 - [ ] Full automated tests and reference App build pass at the release commit.
 

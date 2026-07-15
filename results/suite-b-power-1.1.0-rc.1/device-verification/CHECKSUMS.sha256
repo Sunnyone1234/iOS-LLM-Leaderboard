@@ -1,0 +1,12 @@
+bcc40c1b4dd06143c9877b049c748520d7a61c579d4699902a7b60d0d1e1153b  raw/2026-07-15T15-25-48Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_21b5f28f.json
+430a54072f1905b9acaa2459d9d96f67c02ce9a1f7dc123b058a0c8810272b7b  raw/2026-07-15T15-30-51Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_8c10d75c.json
+dffaef97d53b597fcef086d806e7cf1ca3f05a5d0f138e868cd0ecc08365af03  raw/2026-07-15T15-41-21Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_169ebb65.json
+a2f4970bd33ffa6ac3175c42c6a3a00f9fd5feba97883832f9a6d2d5cdd856cd  raw/2026-07-15T15-44-46Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_4784ff6e.json
+a87e1416d99cae09cb28b705a5432b8854fe7a677d1f492ca96f28c5ee9e127c  raw/2026-07-15T15-48-56Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_e357d4e7.json
+66eea26f93e6a664e8bd9cf87878d2079e3560c4b038184d706806d55713cc9b  raw/2026-07-15T15-56-24Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_167679d8.json
+a0d95d42b415c0c0af10e3e8829c911dc6c77427e797b231fda1adce6ff6198e  validation/2026-07-15T15-25-48Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_21b5f28f.validation.json
+c64b0763642fb756b459b411ed1a48e2290cdb90e9687505275cc2c3b74deeec  validation/2026-07-15T15-30-51Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_8c10d75c.validation.json
+a7443b05150ca42e4adf0e104ddc91a62ab4ac015d482b4e81246f731cec47f8  validation/2026-07-15T15-41-21Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_169ebb65.validation.json
+1cb7064cdcac8f01525753fa56ad2fba7ed08b78a776462028aae19346d50e83  validation/2026-07-15T15-44-46Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_4784ff6e.validation.json
+fd3020059ca771bccd7e827eb439b68cd4a7525c24f4035181b5b2ed82b1299c  validation/2026-07-15T15-48-56Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_e357d4e7.validation.json
+d1b3bb0128745e47693f8a8ad6e1cfa6c1d0fc76efd1df6f9d8c9c6a1250e34c  validation/2026-07-15T15-56-24Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_167679d8.validation.json

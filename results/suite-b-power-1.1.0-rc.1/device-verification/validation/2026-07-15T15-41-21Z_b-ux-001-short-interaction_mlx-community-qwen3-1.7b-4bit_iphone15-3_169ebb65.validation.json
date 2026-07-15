@@ -1,0 +1,78 @@
+{
+  "behaviorConformance": {
+    "applicable": true,
+    "policyID": "short-interaction-response-v1",
+    "reasonCodes": [],
+    "status": "verified"
+  },
+  "benchmarkRelease": {
+    "id": "suite-b-power",
+    "protocolVersion": "1.1.0-rc.1"
+  },
+  "metricEligibility": {
+    "decode_tokens_per_second@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    },
+    "first_renderable_proxy_ttft_ms@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    },
+    "pipeline_ttft_ms@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    },
+    "prefill_tokens_per_second@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    },
+    "process_physical_footprint_mib@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    },
+    "request_completion_ms@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    }
+  },
+  "performanceRankingEligibility": {
+    "eligible": false,
+    "reasonCodes": [
+      "release_candidate_not_rank_authorized"
+    ]
+  },
+  "protocolConformance": {
+    "reasonCodes": [],
+    "valid": true
+  },
+  "rankingPolicy": {
+    "id": "suite-b-power-ranking-policy",
+    "version": "1.1.0-rc.1"
+  },
+  "recommendationEligibility": {
+    "eligible": false,
+    "reasonCodes": [
+      "release_candidate_not_rank_authorized"
+    ]
+  },
+  "result": {
+    "id": "169EBB65-2DF6-4BF6-9F85-C36109C2700F",
+    "schemaVersion": "suite-b-power-result-1.1.0-rc.1",
+    "sha256": "dffaef97d53b597fcef086d806e7cf1ca3f05a5d0f138e868cd0ecc08365af03"
+  },
+  "schemaVersion": "suite-b-power-validation-report-1.1.0-rc.1",
+  "structuralValidity": {
+    "reasonCodes": [],
+    "valid": true
+  },
+  "validator": {
+    "id": "suite-b-power-validator",
+    "version": "1.1.0-rc.1"
+  }
+}
