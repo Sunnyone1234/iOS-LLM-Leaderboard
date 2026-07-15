@@ -1,0 +1,12 @@
+90c089dfbde92446ac25f695bff7d45b723a6cdc0cb5dc9c12fd12673175f1e5  benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.0.json
+f5571b25b2f0d63343edee9747dad8c58517f26ce35b3c3d9464be219c97b766  results/suite-b-power-1.1/evidence-adoption.json
+334937d2ffcb4af5a70ecac3a80589cb371b637bf21a414112b70f54518aaa6f  results/suite-b-power-1.1/final-validation/2026-07-15T15-25-48Z_b-ux-001-short-interaction_mlx-community-qwen3-0.6b-4bit_iphone15-3_21b5f28f.validation.json
+abd9e0c2163e382851d65b45f7b1543fecace7637f3fcfe39dafd99a9e2dd979  results/suite-b-power-1.1/final-validation/2026-07-15T15-30-51Z_b-pipe-001-sustained-generation_mlx-community-qwen3-0.6b-4bit_iphone15-3_8c10d75c.validation.json
+8dca9f7f2ce02d51c63ac684766bfafac971740440d2012e0b5f63e832ecae43  results/suite-b-power-1.1/final-validation/2026-07-15T15-41-21Z_b-ux-001-short-interaction_mlx-community-qwen3-1.7b-4bit_iphone15-3_169ebb65.validation.json
+3880db36c4b40222cfd0ecfd117b7863fc1c0133878ce7b29508ecf58101b09e  results/suite-b-power-1.1/final-validation/2026-07-15T15-44-46Z_b-pipe-001-sustained-generation_mlx-community-qwen3-1.7b-4bit_iphone15-3_4784ff6e.validation.json
+1dd9069f8790cdb4dcdd4c1d9d83ef155baf1fb763a9039c823ff34b2f48cf67  results/suite-b-power-1.1/final-validation/2026-07-15T15-48-56Z_b-ux-001-short-interaction_mlx-community-qwen3-4b-3bit_iphone15-3_e357d4e7.validation.json
+93fad02587d218850986363779fc97a9836c1ff5462d5a42aa38f0fed4d4b33b  results/suite-b-power-1.1/final-validation/2026-07-15T15-56-24Z_b-pipe-001-sustained-generation_mlx-community-qwen3-4b-3bit_iphone15-3_167679d8.validation.json
+399e862f2230a03cecce0d18eaf09af18e2242031539b0a29e5f72b3c1008962  results/suite-b-power-1.1/normalized-results.json
+b012b0d3b727be431fb542dfac230679d11d6b4a070cd8d9cf8549c4be6cfc4c  results/suite-b-power-1.1/LEADERBOARD.md
+19b8b6bd1af12b28bcc500e2c6a86c85933b5ecac74f9b6b619d658038afc988  results/suite-b-power-1.1/RELEASE-NOTES.md
+91a0cbdb5191d56764a2546fe4ba2cfb925083f000cb8e6e9458da16b3d8a941  results/suite-b-power-1.1/README.md

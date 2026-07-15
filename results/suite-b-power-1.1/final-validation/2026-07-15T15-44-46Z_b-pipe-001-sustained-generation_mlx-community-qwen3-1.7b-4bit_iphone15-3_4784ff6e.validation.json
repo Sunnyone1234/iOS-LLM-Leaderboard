@@ -1,0 +1,69 @@
+{
+  "behaviorConformance": {
+    "applicable": false,
+    "policyID": null,
+    "reasonCodes": [],
+    "status": null
+  },
+  "benchmarkRelease": {
+    "id": "suite-b-power",
+    "protocolVersion": "1.1.0-rc.1"
+  },
+  "metricEligibility": {
+    "decode_first_to_last_percent_change@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 2,
+      "reasonCodes": []
+    },
+    "decode_tokens_per_second@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    },
+    "pipeline_ttft_ms@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    },
+    "prefill_tokens_per_second@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    },
+    "process_physical_footprint_mib@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    }
+  },
+  "performanceRankingEligibility": {
+    "eligible": true,
+    "reasonCodes": []
+  },
+  "protocolConformance": {
+    "reasonCodes": [],
+    "valid": true
+  },
+  "rankingPolicy": {
+    "id": "suite-b-power-ranking-policy",
+    "version": "1.1.0"
+  },
+  "recommendationEligibility": {
+    "eligible": true,
+    "reasonCodes": []
+  },
+  "result": {
+    "id": "4784FF6E-3126-4415-A437-CAEF257818B0",
+    "schemaVersion": "suite-b-power-result-1.1.0-rc.1",
+    "sha256": "a2f4970bd33ffa6ac3175c42c6a3a00f9fd5feba97883832f9a6d2d5cdd856cd"
+  },
+  "schemaVersion": "suite-b-power-validation-report-1.1.0",
+  "structuralValidity": {
+    "reasonCodes": [],
+    "valid": true
+  },
+  "validator": {
+    "id": "suite-b-power-validator",
+    "version": "1.1.0"
+  }
+}

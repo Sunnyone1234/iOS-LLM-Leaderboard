@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "suite-b-power-release-manifest-1.1",
+  "releaseID": "suite-b-power",
+  "releaseVersion": "1.1.0",
+  "preparedAt": "2026-07-15T17:52:13Z",
+  "approvedAt": null,
+  "status": "final-review-candidate",
+  "officialResultEligible": false,
+  "rankingAuthorized": false,
+  "publicationAuthorized": false,
+  "tagAuthorized": false,
+  "previousPublishedRelease": "1.0.0",
+  "contractAdoption": {
+    "method": "exact-release-candidate-adoption-with-final-revalidation",
+    "sourceRelease": {
+      "id": "suite-b-power",
+      "version": "1.1.0-rc.1"
+    },
+    "protocolSemanticsChanged": false,
+    "resultSchemaChanged": false,
+    "referenceAppChanged": false,
+    "rankingPolicyFinalized": true,
+    "validationReportVersionChanged": true,
+    "newExecutionRequired": false,
+    "rawEvidenceMutationAllowed": false,
+    "sourceIdentitiesRemainVisible": true,
+    "rcReportsPreserved": true,
+    "rcReportReinterpretationAllowed": false
+  },
+  "protocol": {
+    "id": "suite-b-power",
+    "adoptedVersion": "1.1.0-rc.1"
+  },
+  "workloads": [
+    {
+      "id": "b-ux-001-short-interaction",
+      "adoptedVersion": "1.1.0-rc.1",
+      "measurementMode": "b-mode-warm-resident-ux-v1",
+      "primaryRankingMetric": "first_renderable_proxy_ttft_ms@1",
+      "rankingDirection": "ascending"
+    },
+    {
+      "id": "b-pipe-001-sustained-generation",
+      "adoptedVersion": "1.1.0-rc.1",
+      "measurementMode": "b-mode-sustained-no-rest-v1",
+      "primaryRankingMetric": "decode_tokens_per_second@1",
+      "rankingDirection": "descending"
+    }
+  ],
+  "resultContract": {
+    "sourceResultSchemaID": "suite-b-power-result-1.1.0-rc.1",
+    "validatorID": "suite-b-power-validator",
+    "validatorVersion": "1.1.0",
+    "validationReportSchemaID": "suite-b-power-validation-report-1.1.0",
+    "rankingPolicyID": "suite-b-power-ranking-policy",
+    "rankingPolicyVersion": "1.1.0"
+  },
+  "referenceApp": {
+    "id": "ios-reference-benchmark-app",
+    "version": "0.13.0",
+    "build": "16",
+    "sourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c"
+  },
+  "evidence": {
+    "sourceDirectory": "results/suite-b-power-1.1.0-rc.1/device-verification",
+    "rawResultCount": 6,
+    "rcValidationReportCount": 6,
+    "finalValidationDirectory": "results/suite-b-power-1.1/final-validation",
+    "evidenceAdoptionPath": "results/suite-b-power-1.1/evidence-adoption.json",
+    "evidenceAdoptionSHA256": "f5571b25b2f0d63343edee9747dad8c58517f26ce35b3c3d9464be219c97b766"
+  },
+  "rankingPolicy": {
+    "configurationSpecific": true,
+    "individuallyEligibleMetricsOnly": true,
+    "measuredPerformanceAndRecommendationSeparated": true,
+    "primaryMetricPerWorkload": true,
+    "globalScoreDefined": false,
+    "shipScoreDefined": false,
+    "publicationControlledByThisManifest": true
+  },
+  "activationRequirements": [
+    "contributor-declarations-confirmed",
+    "conflict-disclosure-confirmed",
+    "thermal-assistance-disclosure-none",
+    "evidence-adoption-approved",
+    "final-generated-package-verified",
+    "maintainer-publication-authorization"
+  ],
+  "pinnedAssets": [
+    {
+      "role": "source-release-manifest",
+      "path": "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.0-rc.1.json",
+      "sha256": "e43552dddaa24bd09dd7a530929a12d2295059b7080becfd8777a17cd61ef5cd"
+    },
+    {
+      "role": "final-ranking-policy",
+      "path": "benchmarks/suite-b-on-device-performance/power-1.1-ranking-policy.json",
+      "sha256": "7d41b790590baa38dbbdc1ff51f5abe4a2b9da32c54754e603f431c84e1b0530"
+    },
+    {
+      "role": "final-validation-reason-registry",
+      "path": "benchmarks/suite-b-on-device-performance/power-1.1-final-validation-reasons.json",
+      "sha256": "2ae11c744c6b064a3b420ceee19eabd1a70644164aa35c4401e33717418662ae"
+    },
+    {
+      "role": "final-validation-report-schema",
+      "path": "schemas/suite-b-power-validation-report-1.1.0.schema.json",
+      "sha256": "96deff5853078fd9a3fa2153406079592dbc66cccf838a1321298e9a07278f56"
+    },
+    {
+      "role": "final-validator",
+      "path": "scripts/validate_suite_b_power_1_1_final_result.py",
+      "sha256": "4f7c021d66df44b6186a1104f76e5c463ac7bae614a177d761d658ff908f255f"
+    },
+    {
+      "role": "final-report-consumer",
+      "path": "scripts/consume_suite_b_power_1_1_report.py",
+      "sha256": "7c2d8049999540c99444acae9e5b84bad14a2fede2645f2e72dc7659e1c9f575"
+    },
+    {
+      "role": "final-release-generator",
+      "path": "scripts/generate_suite_b_power_1_1_release.py",
+      "sha256": "bad5bf0c362565bcab5ef3500f62942a7ce3b01f4397fdb6c5c8a1537fdbd1cf"
+    },
+    {
+      "role": "source-evidence-checksums",
+      "path": "results/suite-b-power-1.1.0-rc.1/device-verification/CHECKSUMS.sha256",
+      "sha256": "6b3d8837fb64f1cb9375d01f4444df63a412ce8a257f487001dc4403f8a32068"
+    },
+    {
+      "role": "source-evidence-review",
+      "path": "results/suite-b-power-1.1.0-rc.1/device-verification/REVIEW.md",
+      "sha256": "4fe8791f6fe5f92a199bc1d6dcaf7716e7a4760674e60dcb980b9bcb033a6e8e"
+    }
+  ]
+}

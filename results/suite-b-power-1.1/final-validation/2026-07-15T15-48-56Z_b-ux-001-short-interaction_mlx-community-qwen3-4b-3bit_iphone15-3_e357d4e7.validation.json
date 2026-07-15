@@ -1,0 +1,74 @@
+{
+  "behaviorConformance": {
+    "applicable": true,
+    "policyID": "short-interaction-response-v1",
+    "reasonCodes": [],
+    "status": "verified"
+  },
+  "benchmarkRelease": {
+    "id": "suite-b-power",
+    "protocolVersion": "1.1.0-rc.1"
+  },
+  "metricEligibility": {
+    "decode_tokens_per_second@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    },
+    "first_renderable_proxy_ttft_ms@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    },
+    "pipeline_ttft_ms@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    },
+    "prefill_tokens_per_second@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    },
+    "process_physical_footprint_mib@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    },
+    "request_completion_ms@1": {
+      "eligible": true,
+      "eligibleMeasuredAttempts": 5,
+      "reasonCodes": []
+    }
+  },
+  "performanceRankingEligibility": {
+    "eligible": true,
+    "reasonCodes": []
+  },
+  "protocolConformance": {
+    "reasonCodes": [],
+    "valid": true
+  },
+  "rankingPolicy": {
+    "id": "suite-b-power-ranking-policy",
+    "version": "1.1.0"
+  },
+  "recommendationEligibility": {
+    "eligible": true,
+    "reasonCodes": []
+  },
+  "result": {
+    "id": "E357D4E7-1BEA-4EA3-9C0C-59B664FDD471",
+    "schemaVersion": "suite-b-power-result-1.1.0-rc.1",
+    "sha256": "a87e1416d99cae09cb28b705a5432b8854fe7a677d1f492ca96f28c5ee9e127c"
+  },
+  "schemaVersion": "suite-b-power-validation-report-1.1.0",
+  "structuralValidity": {
+    "reasonCodes": [],
+    "valid": true
+  },
+  "validator": {
+    "id": "suite-b-power-validator",
+    "version": "1.1.0"
+  }
+}

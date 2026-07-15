@@ -1,0 +1,26 @@
+{
+  "schema_version": "suite-b-power-validation-reasons-1.1",
+  "registry_version": "1.1.0",
+  "reason_codes": {
+    "schema_invalid": "The submitted JSON does not satisfy the adopted Power 1.1 result contract.",
+    "release_identity_mismatch": "A release-pinned identity does not match Power 1.1.",
+    "release_asset_mismatch": "A Power 1.1 release asset is missing or does not match its pinned SHA-256.",
+    "workload_identity_mismatch": "The workload identity or category does not match the adopted Power 1.1 protocol.",
+    "fixture_hash_mismatch": "The submitted fixture digest does not match the adopted protocol.",
+    "runner_incompatible": "The submitted runner identity does not match the adopted reference App.",
+    "environment_ineligible": "A required physical-device environment admission rule failed.",
+    "model_preparation_ineligible": "The model artifact was not verified and prepared before measurement.",
+    "attempt_sequence_invalid": "Attempt index or warm-up/measured role order is invalid.",
+    "contradictory_outcome_evidence": "Outcome, stop reason, reason codes, or evidence contradict one another.",
+    "token_evidence_invalid": "Token events are incomplete, non-contiguous, or temporally invalid.",
+    "first_renderable_evidence_invalid": "The bounded first-renderable trace cannot prove the submitted value.",
+    "thermal_evidence_unavailable": "Required thermal state evidence is unknown or missing.",
+    "metric_not_applicable": "The metric is not defined for this workload.",
+    "insufficient_metric_eligible_attempts": "Fewer than three measured attempts are eligible for the metric.",
+    "aggregate_mismatch": "A submitted derived or aggregate value disagrees with raw evidence.",
+    "behavior_not_verified": "The deterministic behavior policy could not prove all required concepts.",
+    "behavior_contradicted": "A versioned deterministic rule positively proved a behavior contradiction.",
+    "primary_metric_ineligible": "The workload primary performance metric is not measurement-eligible.",
+    "behavior_verification_required": "Recommendation requires verified behavior when a behavior policy applies."
+  }
+}

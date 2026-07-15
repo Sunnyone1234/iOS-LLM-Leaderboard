@@ -1,0 +1,66 @@
+{
+  "schema_version": "suite-b-power-ranking-policy-1.1",
+  "policy_id": "suite-b-power-ranking-policy",
+  "policy_version": "1.1.0",
+  "status": "final",
+  "ranking_authorized": true,
+  "publication_control": "release-manifest",
+  "source_contract": {
+    "protocol_version": "1.1.0-rc.1",
+    "result_schema_version": "suite-b-power-result-1.1.0-rc.1",
+    "reference_app_version": "0.13.0",
+    "reference_app_build": "16",
+    "raw_evidence_mutation_allowed": false,
+    "new_execution_required": false
+  },
+  "validation_contract": {
+    "report_schema_version": "suite-b-power-validation-report-1.1.0",
+    "validator_version": "1.1.0",
+    "exact_result_sha256_required": true,
+    "exact_result_id_required": true,
+    "deterministic_revalidation_required": true,
+    "rc_report_reinterpretation_allowed": false,
+    "unsupported_or_missing_report": "fail-closed",
+    "stale_or_digest_mismatched_report": "fail-closed"
+  },
+  "views": {
+    "measured_performance": {
+      "decision": "performanceRankingEligibility",
+      "requires": [
+        "structuralValidity.valid",
+        "protocolConformance.valid",
+        "primaryMetric.eligible"
+      ]
+    },
+    "recommended": {
+      "decision": "recommendationEligibility",
+      "requires": [
+        "performanceRankingEligibility.eligible",
+        "behaviorConformance.verified_when_applicable"
+      ]
+    }
+  },
+  "primary_metrics": {
+    "b-ux-001-short-interaction": {
+      "metric": "first_renderable_proxy_ttft_ms@1",
+      "direction": "lower-is-better"
+    },
+    "b-pipe-001-sustained-generation": {
+      "metric": "decode_tokens_per_second@1",
+      "direction": "higher-is-better"
+    }
+  },
+  "aggregation": {
+    "configuration_specific": true,
+    "individually_eligible_metrics_only": true,
+    "combined_score_defined": false,
+    "ship_score_defined": false
+  },
+  "publication": {
+    "technical_eligibility_does_not_publish_a_row": true,
+    "requires_release_manifest_authorization": true,
+    "requires_evidence_adoption": true,
+    "requires_contributor_declarations": true,
+    "requires_thermal_assistance_disclosure": true
+  }
+}

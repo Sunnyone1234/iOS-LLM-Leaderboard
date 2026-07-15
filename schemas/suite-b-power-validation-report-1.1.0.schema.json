@@ -1,0 +1,256 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ios-llm-leaderboard:schema:suite-b-power-validation-report:1.1.0",
+  "title": "Suite B Power validation report 1.1.0",
+  "description": "Final independent validation report regenerated from an adopted Power 1.1 RC result. It binds exact raw bytes and keeps metric, performance-ranking, and recommendation decisions separate from publication authorization.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "result",
+    "benchmarkRelease",
+    "validator",
+    "rankingPolicy",
+    "structuralValidity",
+    "protocolConformance",
+    "metricEligibility",
+    "behaviorConformance",
+    "performanceRankingEligibility",
+    "recommendationEligibility"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "suite-b-power-validation-report-1.1.0"
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sha256", "schemaVersion"],
+      "properties": {
+        "id": { "type": ["string", "null"], "minLength": 1 },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "schemaVersion": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "benchmarkRelease": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "protocolVersion"],
+      "properties": {
+        "id": { "const": "suite-b-power" },
+        "protocolVersion": { "const": "1.1.0-rc.1" }
+      }
+    },
+    "validator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "const": "suite-b-power-validator" },
+        "version": { "const": "1.1.0" }
+      }
+    },
+    "rankingPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "const": "suite-b-power-ranking-policy" },
+        "version": { "const": "1.1.0" }
+      }
+    },
+    "structuralValidity": { "$ref": "#/$defs/validityDecision" },
+    "protocolConformance": { "$ref": "#/$defs/validityDecision" },
+    "metricEligibility": {
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "pipeline_ttft_ms@1",
+          "first_renderable_proxy_ttft_ms@1",
+          "request_completion_ms@1",
+          "prefill_tokens_per_second@1",
+          "decode_tokens_per_second@1",
+          "process_physical_footprint_mib@1",
+          "decode_first_to_last_percent_change@1"
+        ]
+      },
+      "additionalProperties": { "$ref": "#/$defs/metricDecision" }
+    },
+    "behaviorConformance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["applicable", "policyID", "status", "reasonCodes"],
+      "properties": {
+        "applicable": { "type": "boolean" },
+        "policyID": { "type": ["string", "null"] },
+        "status": {
+          "type": ["string", "null"],
+          "enum": ["verified", "not_verified", "contradicted", null]
+        },
+        "reasonCodes": { "$ref": "#/$defs/reasons" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "applicable": { "const": true } },
+            "required": ["applicable"]
+          },
+          "then": {
+            "properties": {
+              "policyID": { "type": "string", "minLength": 1 },
+              "status": {
+                "enum": ["verified", "not_verified", "contradicted"]
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "policyID": { "const": null },
+              "status": { "const": null },
+              "reasonCodes": { "maxItems": 0 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "status": { "const": "verified" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": { "reasonCodes": { "maxItems": 0 } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "status": { "const": "not_verified" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "reasonCodes": {
+                "minItems": 1,
+                "maxItems": 1,
+                "items": { "const": "behavior_not_verified" }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "status": { "const": "contradicted" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "reasonCodes": {
+                "minItems": 1,
+                "maxItems": 1,
+                "items": { "const": "behavior_contradicted" }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "performanceRankingEligibility": {
+      "$ref": "#/$defs/eligibilityDecision"
+    },
+    "recommendationEligibility": {
+      "$ref": "#/$defs/eligibilityDecision"
+    }
+  },
+  "$defs": {
+    "reasons": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "validityDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["valid", "reasonCodes"],
+      "properties": {
+        "valid": { "type": "boolean" },
+        "reasonCodes": { "$ref": "#/$defs/reasons" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "valid": { "const": true } }, "required": ["valid"] },
+          "then": { "properties": { "reasonCodes": { "maxItems": 0 } } },
+          "else": { "properties": { "reasonCodes": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "eligibilityDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eligible", "reasonCodes"],
+      "properties": {
+        "eligible": { "type": "boolean" },
+        "reasonCodes": { "$ref": "#/$defs/reasons" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "eligible": { "const": true } }, "required": ["eligible"] },
+          "then": { "properties": { "reasonCodes": { "maxItems": 0 } } },
+          "else": { "properties": { "reasonCodes": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "metricDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eligible", "eligibleMeasuredAttempts", "reasonCodes"],
+      "properties": {
+        "eligible": { "type": "boolean" },
+        "eligibleMeasuredAttempts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "reasonCodes": { "$ref": "#/$defs/reasons" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "eligible": { "const": true } }, "required": ["eligible"] },
+          "then": {
+            "properties": {
+              "eligibleMeasuredAttempts": { "minimum": 1 },
+              "reasonCodes": { "maxItems": 0 }
+            }
+          },
+          "else": { "properties": { "reasonCodes": { "minItems": 1 } } }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "structuralValidity": {
+            "properties": { "valid": { "const": true } },
+            "required": ["valid"]
+          }
+        },
+        "required": ["structuralValidity"]
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "schemaVersion": { "const": "suite-b-power-result-1.1.0-rc.1" }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
