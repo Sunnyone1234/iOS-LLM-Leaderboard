@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "short-interaction-response-policy-1",
+  "policyID": "short-interaction-response-v2",
+  "policyVersion": "2.0.0-draft.1",
+  "status": "draft",
+  "language": "en",
+  "normalization": [
+    "unicode-nfkc",
+    "case-fold",
+    "collapse-whitespace",
+    "alphanumeric-tokenization"
+  ],
+  "maximumSentences": 2,
+  "minimumVerifiedMeasuredAttempts": 3,
+  "localPersistence": {
+    "claimTerms": [
+      "safe",
+      "safely",
+      "secure",
+      "securely",
+      "saved",
+      "stored",
+      "preserved",
+      "kept"
+    ],
+    "locationTerms": [
+      "iphone",
+      "phone",
+      "device",
+      "local",
+      "locally"
+    ],
+    "contradictionPhrases": [
+      "not safe",
+      "is not safe",
+      "isn't safe",
+      "unsafe",
+      "not secure",
+      "is not secure",
+      "isn't secure",
+      "not saved",
+      "was not saved",
+      "wasn't saved",
+      "not stored",
+      "was not stored",
+      "wasn't stored",
+      "note is lost",
+      "note was lost",
+      "note is gone",
+      "note was deleted",
+      "note has been deleted",
+      "cannot be recovered",
+      "can't be recovered"
+    ]
+  },
+  "deferredSync": {
+    "actionTerms": [
+      "sync",
+      "syncs",
+      "synced",
+      "syncing",
+      "upload",
+      "uploads",
+      "uploaded",
+      "uploading"
+    ],
+    "connectivityTerms": [
+      "connect",
+      "connected",
+      "connection",
+      "connectivity",
+      "reconnect",
+      "reconnected",
+      "reconnecting",
+      "network",
+      "online"
+    ],
+    "conditionTerms": [
+      "return",
+      "returns",
+      "returned",
+      "restore",
+      "restored",
+      "available",
+      "back",
+      "again",
+      "once",
+      "when",
+      "after",
+      "resume",
+      "resumes",
+      "resumed"
+    ],
+    "contradictionPhrases": [
+      "will not sync",
+      "won't sync",
+      "cannot sync",
+      "can't sync",
+      "never sync",
+      "will not upload",
+      "won't upload",
+      "cannot upload",
+      "can't upload",
+      "never upload"
+    ]
+  },
+  "decisions": {
+    "verified": "All required concepts are deterministically established and no contradiction matches.",
+    "not_verified": "The deterministic policy cannot establish every required concept; this is not a semantic-failure claim.",
+    "contradicted": "A versioned positive contradiction phrase matches the response."
+  },
+  "rankingEffects": {
+    "measurementEligibility": false,
+    "performanceRankingEligibility": false,
+    "recommendationEligibility": true
+  }
+}

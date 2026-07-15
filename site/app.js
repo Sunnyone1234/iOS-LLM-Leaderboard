@@ -526,7 +526,7 @@ function eligibilityExplanation(row) {
   if (!row.rankingEligibility || row.rankingEligibility.candidateEligible) return "";
   const reasons = new Set(row.rankingEligibility.reasonCodes ?? []);
   if (reasons.has("response_conformance_failed") || reasons.has("response_conformance_not_passed")) {
-    return "The recorded response failed this workload's response check, so its measurements are excluded from ranking.";
+    return "The frozen word-based check could not verify this response; this is not a semantic-failure claim. This legacy export contains no rankable metrics.";
   }
   if (reasons.has("ordinary_live_ranking_not_allowed")) {
     return "The result is retained as evidence, but its test conditions are not eligible for the live ranking.";

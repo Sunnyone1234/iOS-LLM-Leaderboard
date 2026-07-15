@@ -157,7 +157,11 @@ final class PowerReferenceAppTests: XCTestCase {
         try await store.clear()
     }
 
-    func testShortInteractionResponseConformanceMatchesFrozenEnglishContract() {
+    func testShortInteractionResponseConformanceUsesVersionedV2Policy() {
+        XCTAssertEqual(
+            ShortInteractionResponseConformance.policyIdentity,
+            "short-interaction-response-v2@2.0.0-draft.1"
+        )
         XCTAssertTrue(
             ShortInteractionResponseConformance.passes(
                 "Your note is safe on this iPhone. Sync will return when the device is online again."
@@ -168,10 +172,27 @@ final class PowerReferenceAppTests: XCTestCase {
                 "Your note will sync later."
             )
         )
-        XCTAssertFalse(
+        XCTAssertTrue(
             ShortInteractionResponseConformance.passes(
                 "Your note is securely stored on this device. It will sync when connectivity returns."
             )
+        )
+        XCTAssertTrue(
+            ShortInteractionResponseConformance.passes(
+                "The note was saved locally. It will upload automatically once you are back online."
+            )
+        )
+        XCTAssertEqual(
+            ShortInteractionResponseConformance.assessment(
+                "Your note is not safe on this device. It will sync when connectivity returns."
+            ),
+            .contradicted
+        )
+        XCTAssertEqual(
+            ShortInteractionResponseConformance.assessment(
+                "Your note remains intact on this device. It will sync when connectivity returns."
+            ),
+            .notVerified
         )
     }
 
@@ -179,7 +200,7 @@ final class PowerReferenceAppTests: XCTestCase {
         let result = try fixtureResult(
             resource: "b-ux-001-short-interaction",
             userExperienceText:
-                "Your note is securely stored on this device. It will sync when connectivity returns."
+                "Your note remains intact on this device. It will sync when connectivity returns."
         )
 
         for attempt in result.attempts {

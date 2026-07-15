@@ -6,10 +6,16 @@ an inference framework.
 
 ## Current status
 
-App `0.13.0` build `16` is the frozen reference runner adopted by Power 1.1. It preserves
-the two stable Power workload IDs, fixtures, measurement boundaries, generation
-settings, and attempt counts while changing the export responsibility boundary:
-the App always exports technically derivable measurements, and its local
+App `0.14.0` build `17` is the development runner for the draft
+`short-interaction-response-v2` behavior policy. It retains the frozen Power
+1.1 workload IDs, fixtures, measurement boundaries, generation settings,
+attempt counts, and submitted result identity. Only the advisory local behavior
+preview changes. Power 1.1 performance evidence remains governed by its
+published validator and ranking policy until a later policy release is
+explicitly approved.
+
+App `0.13.0` build `16` remains the frozen reference runner adopted by Power
+1.1. It always exports technically derivable measurements, and its local
 response-conformance badge is advisory only. The final release independently
 derives measured-performance and recommendation eligibility.
 
@@ -22,7 +28,8 @@ substituted when an exact Power 1.0 reproduction is intended.
 
 Apps 0.8.0 through 0.11.0 emit the adopted Power 1.0 source result contract
 `suite-b-power-result-1.0.0-rc.1`. App 0.12.0 remains the historical Power 1.1
-draft runner. App 0.13.0 emits `suite-b-power-result-1.1.0-rc.1`. Every raw App export sets
+draft runner. Apps 0.13.0 and 0.14.0 emit
+`suite-b-power-result-1.1.0-rc.1`. Every raw App export sets
 `officialResultEligible` to `false`; no App export assigns its own publication,
 trust, or ranking status. Repository validation and release policy do. A
 picker entry is never evidence by itself.
@@ -36,7 +43,7 @@ The production control surface exposes exactly two workload identities:
 
 The loader rejects any other plan identity or version. Experimental
 `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` resources are
-retained for repository history and compatibility, but App 0.13.0 cannot
+retained for repository history and compatibility, but App 0.14.0 cannot
 execute them through its production controls.
 
 The three pinned Qwen3 profiles have Maintainer Reference evidence:
@@ -45,7 +52,7 @@ The three pinned Qwen3 profiles have Maintainer Reference evidence:
 - `mlx-community/Qwen3-1.7B-4bit`;
 - `mlx-community/Qwen3-4B-3bit`.
 
-App 0.13.0 also exposes eight pinned artifacts with accepted single-contributor
+App 0.14.0 also exposes eight pinned artifacts with accepted single-contributor
 physical-iPhone community evidence:
 
 - `mlx-community/Llama-3.2-1B-Instruct-4bit`;
@@ -111,11 +118,13 @@ and `notRun`. It classifies OOM only from an explicit trusted runtime failure
 or `ENOMEM`; it never guesses that an unexplained process termination was an
 OOM.
 
-For Short Interaction, the App still records its deterministic local
-`responseConformance` observation. That observation never suppresses token,
-timing, memory, or first-renderable metrics. The independent validator
-recomputes behavior status from generated text and records it separately from
-performance eligibility.
+For Short Interaction, the App records a deterministic local
+`responseConformance` observation using the draft v2 policy resource. The v2
+preview recognizes versioned alternatives such as `safe`, `secure`, `saved`,
+and `stored`, and distinguishes a policy non-match from a positive
+contradiction. That observation never suppresses token, timing, memory, or
+first-renderable metrics. The independent validator recomputes behavior status
+from generated text and records it separately from performance eligibility.
 
 An atomic local checkpoint is written before each attempt and after each
 terminal record. If the process ends mid-session, the next launch preserves
