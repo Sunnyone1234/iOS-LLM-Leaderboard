@@ -19,3 +19,7 @@ All files remain non-official until explicit maintainer adoption. See
 [`power-benchmark-1.1-rc1-device-verification.md`](../../docs/power-benchmark-1.1-rc1-device-verification.md)
 and
 [`power-benchmark-1.1-finalization.md`](../../docs/power-benchmark-1.1-finalization.md).
+
+Rejected or superseded intake is recorded without being promoted into the raw
+release matrix. The first such review is
+[`device-verification/INTAKE-2026-07-15.md`](device-verification/INTAKE-2026-07-15.md).
