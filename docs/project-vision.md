@@ -62,6 +62,8 @@ The current Power release is
 B-UX-001 and B-PIPE-001, adopts the completed physical-device matrix without
 rewriting its RC1 source identity, and activates five eligible rows in the
 workload-specific official ranking. It does not add a Suite D or Suite E task.
+Power 1.1 RC1 is a non-official verification candidate and does not replace
+that release until its new evidence package and explicit approval are complete.
 
 ### Phase 2 Research Track: Build
 

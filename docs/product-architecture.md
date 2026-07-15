@@ -18,6 +18,8 @@ deploying on-device AI on Apple platforms.
 
 The current Power release is
 [Power Benchmark 1.0](power-benchmark-1.0-finalization.md).
+Power 1.1 RC1 is frozen for new physical-device verification but remains
+non-official and does not alter the active Power 1.0 ranking.
 The completed Power + Ship Pilot v0.1 remains non-official historical evidence
 and will not be tagged or published as a release. B-UX-001 and B-PIPE-001 are
 the only Power 1.0 workloads; the protocol, schema, validator, App,

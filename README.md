@@ -26,6 +26,11 @@ This repository publishes Power Benchmark 1.0 and its workload-specific
 official ranking. Historical Pilot and RC evidence remains available with its
 original non-official identity.
 
+Power 1.1 RC1 is now frozen for new physical-device verification. It does not
+replace Power 1.0, authorize a 1.1 ranking, or reuse draft evidence. See the
+[RC freeze record](docs/power-benchmark-1.1-rc1-freeze.md) and
+[finalization checklist](docs/power-benchmark-1.1-finalization.md).
+
 ## Interactive Leaderboard
 
 [**Open the interactive Power + Ship leaderboard →**](https://yizesun.github.io/iOS-LLM-Leaderboard/)

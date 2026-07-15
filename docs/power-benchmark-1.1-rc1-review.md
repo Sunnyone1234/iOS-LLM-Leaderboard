@@ -1,5 +1,12 @@
 # Power Benchmark 1.1 RC1 Final Review
 
+> Freeze update (2026-07-15): the three blockers identified by this review are
+> closed by the Power 1.1 RC1 result/report schemas, direct schema-registry
+> validator, complete pinned-asset manifest, strict report invariants, and App
+> 0.13.0 build 16. See
+> [`power-benchmark-1.1-rc1-freeze.md`](power-benchmark-1.1-rc1-freeze.md).
+> Physical-device verification and formal release approval remain pending.
+
 Date: 2026-07-15
 
 Status: **RC freeze not yet approved**
