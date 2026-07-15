@@ -1,99 +1,50 @@
-# Framework v2 Transition
+# Framework v2 transition
 
 ## Status
 
-Framework v2 is a design target, not an active benchmark standard.
+Framework v2 concepts are active only inside the bounded Suite B Power release
+slice. Framework v1 remains supported for historical A–E tasks and results.
+Other suites do not become v2 merely because Power uses versioned workloads,
+measurement modes, result bundles, and independent validation.
 
-Framework v1 remains the current repository format until a migration document,
-machine-readable schemas, reference examples, and validators are accepted.
-
-The concrete draft object model now lives in
+The object model is documented in
 [Benchmark Framework v2 Architecture](../methodology/benchmark-framework-v2.md).
 
-## Why a New Version Is Needed
+## Why Power needed it
 
-Framework v1 uses task for several different concepts:
+Framework v1 used `task` for a scenario, measurement protocol, metric-specific
+test, and runtime comparison. Power separates:
 
-- a user scenario;
-- a measurement protocol;
-- a metric-specific test;
-- a runtime comparison template.
+- workload — versioned input and output requirements;
+- measurement mode — the execution state;
+- metric — a value calculated from observations;
+- result bundle — exact configuration, attempts, summary, and raw evidence;
+- validation report — structural, protocol, metric, behavior, and ranking
+  decisions derived from the submitted result.
 
-It also uses one result structure across suites with very different evidence.
+This lets one compatible run retain TTFT, prefill, decode, memory, thermal,
+failure, and token evidence without creating one task per number.
 
-Framework v2 should separate:
+## Compatibility rules
 
-- workload: the versioned input and output requirements;
-- measurement mode: warm, cold, memory, thermal, or another execution state;
-- metric: a value calculated from observations;
-- task: an executable combination of workload and measurement mode;
-- result bundle: summary plus raw evidence from one submission.
+- do not reuse an ID for a different workload;
+- keep every historical result labeled with its original schema and release;
+- do not rewrite evidence during migration;
+- do not mix incompatible result contracts in one exact comparison cell;
+- freeze benchmark releases and SHA-256-pinned assets after publication;
+- migrate another suite only through a separately approved contract.
 
-## Proposed Result Architecture
+## Completed Power slice
 
-### Common envelope
+Power 1.1 has frozen workload, measurement-mode, fixture, App, result-schema,
+validator, validation-report, ranking-policy, release, and evidence identities
+for B-UX-001 and B-PIPE-001. The final release adopts six RC1 source results by
+exact ID and hash. Current community packages preserve the raw source export
+and add a separate final-release contributor manifest.
 
-- schema version;
-- benchmark release;
-- suite and task identity;
-- submission identity;
-- contributor and date;
-- provenance;
-- evidence level;
-- artifact references;
-- license confirmation.
+## What is not implied
 
-### Configuration identity
-
-- model artifact;
-- tokenizer and chat template;
-- quantization;
-- runtime build and backend;
-- device profile and OS build;
-- inference configuration;
-- runner build.
-
-### Suite-specific payload
-
-Each suite defines its own payload and validation rules.
-
-Suite B may store token events, timing, memory, thermal, cache, and failures.
-Suite A may store generated files, compile results, tests, and rubric scores.
-
-## Compatibility Rules
-
-- do not reuse a task ID for a different workload;
-- provide an explicit v1 to v2 mapping;
-- keep existing draft results labeled with their original schema;
-- do not merge v1 and v2 results in one ranking;
-- version workloads independently from documentation wording;
-- keep benchmark releases immutable after publication.
-
-## Transition Order
-
-1. approve project vision and product architecture;
-2. approve Framework v2 concepts;
-3. define Suite B payload and result bundle;
-4. implement schemas and validators;
-5. implement the reference app export;
-6. publish the first Suite B benchmark release;
-7. migrate other suites separately.
-
-## Current Progress
-
-- The Suite B Power 1.0 RC1 slice now has frozen release, workload, protocol,
-  metric, result-schema, validator, and App identities for B-UX-001 and
-  B-PIPE-001.
-- App 0.8.0 exports the frozen RC1 envelope, including bounded cumulative token
-  evidence for independent First-renderable proxy TTFT recalculation.
-- The F5 physical-iPhone matrix verifies three pinned model artifacts across
-  both workloads. Power 1.0 adopts these six immutable RC1 source results by
-  exact identity and hash; five have candidate-eligible primary metrics.
-- F6 added hash-bound community submission, evidence-transition, correction,
-  withdrawal, privacy-removal, and release-review contracts without changing
-  the frozen benchmark or App.
-- Power 1.0 is published. Contributor declarations, publication, ranking, and
-  tag authorization are recorded in the final release and evidence-adoption
-  manifests.
-- Framework v2 outside this bounded Suite B Power slice remains a design and
-  migration target; other suites continue to use their existing contracts.
+- Suite A/C Build Research is not an active v2 benchmark.
+- Suite D/E has no active v2 release.
+- Historical Framework v1 content remains valid in its original scope.
+- A future migration must not create a parallel public contribution workflow.

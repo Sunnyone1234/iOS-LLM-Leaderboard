@@ -1,125 +1,85 @@
-# Community Contribution Model
+# Community contribution model
 
 ## Goal
 
-Enable many iOS developers to contribute real-device benchmark evidence without
-requiring them to understand the repository schema or manually construct result
-JSON.
+Let iOS developers contribute reviewable physical-device evidence without
+manually constructing benchmark JSON or learning the whole repository.
 
-## Intended Contributor Flow
+## Current flow
 
-1. Install the official benchmark app.
-2. Select a compatible model profile and benchmark release.
-3. Download required artifacts before measurement.
-4. Run the locked procedure.
-5. Review the result and every field that will be submitted.
-6. Submit the result bundle.
-7. Allow repository validation to create or update a contribution.
-
-The target experience is one-tap submission after review.
-
-## Submission Boundary
-
-The app should submit benchmark evidence, not personal device identity.
-
-Expected fields include:
-
-- public device model and chip;
-- OS version and build;
-- benchmark app and release version;
-- model artifact and runtime identity;
-- inference settings;
-- raw and aggregated measurements;
-- thermal and failure observations;
-- result integrity hash.
-
-The app should not collect:
-
-- Apple ID;
-- device serial number;
-- UDID;
-- user documents;
-- personal prompts;
-- unrelated app data.
-
-## Repository Entry
-
-The app should not write directly to the default branch.
-
-A submission service or GitHub App should:
-
-1. receive the result bundle;
-2. perform initial validation;
-3. create a pull request or bot-managed submission;
-4. attach validation findings;
-5. allow public review.
-
-The historical offline MVP exports `suite-b-community-submission-0.1`. It embeds
-the exact unified result bytes as Base64, records their SHA-256 digest, and
-requires review, a no-personal-data confirmation, and license acceptance. It
-does not upload or create a pull request. Every App-generated package starts as
-`Draft` and only requests `Community Submitted`; repository validation and
-review control transitions.
-
-```bash
-python3 scripts/validate_suite_b_submission.py path/to/submission.json
+```text
+official App → one physical-device run → untouched result export
+→ contributor manifest → pull request → CI validation
+→ maintainer merge → live community view
 ```
 
-Power 1.0 public intake preserves the App's adopted RC1 result as a standalone,
-byte-exact `result.json` and adds a contributor-owned `submission.json`. This
-avoids Base64 duplication and lets repository validation run the frozen Power
-semantic validator directly without changing the App export. See the
-[Power 1.0 public-intake guide](power-benchmark-1.0-public-intake.md) and the
-pinned [RC1 package definition](power-benchmark-1.0-submission.md).
+The App does not upload directly or write to `main`. The current contributor
+creates a two-file package with:
 
-## Evidence Levels
+```bash
+python3 scripts/power.py submit /path/to/result.json \
+  --github YOUR_GITHUB_HANDLE \
+  --accept-declarations
+```
 
-| Level | Meaning | Default ranking |
-| --- | --- | --- |
-| Draft | Incomplete or local-only evidence | No |
-| Community Submitted | One submission passes structural checks | No |
-| Reproduced | Independent compatible evidence exists | Candidate |
-| Verified | Full release, workload, configuration, and evidence rules pass | Yes |
-| Maintainer Reference | Maintainer run using the official reference procedure | Yes, labeled |
+The package lives under
+`submissions/suite-b/power-1.1.0/draft/<submission-id>/`. `result.json` is
+byte-for-byte the App export. `submission.json` binds it to the final Power 1.1
+release, contributor, conflict disclosure, environment disclosure, and license
+declarations.
 
-The App cannot assign Reproduced, Verified, or Maintainer Reference status.
+The pull-request author must match the declared GitHub handle. App Attest,
+UDID, serial number, and persistent device fingerprints are not required.
 
-The live Power community view separately derives contributor counts from
-valid merged packages. Inside one exact comparison cell, two different GitHub
-accounts display as `Reproduced` and three or more enable a community
-aggregate. This display is not a formal evidence-level transition. One account
-counts once per cell but may participate in any number of different cells. See
-[Power Community Reproduction and Live Ranking](power-community-ranking.md).
+## Privacy boundary
 
-Power 1.0 intake stores immutable two-file packages under
-`submissions/suite-b/power-1.0.0-rc.1/draft/`. CI emits structural, semantic,
-integrity, and declaration findings but does not alter trust. Separate review
-records control evidence transitions. The RC1 path is retained because it is
-the exact source contract adopted by Power 1.0. Historical Pilot packages remain under
-`submissions/suite-b/draft/`. See
-[Community Submissions](../submissions/README.md).
+Expected public technical fields include device model, OS version/build, App
+and benchmark release, model artifact and runtime identity, inference settings,
+raw measurements, thermal observations, failures, and integrity hashes.
 
-Evidence level describes the submission process, not permanent truth.
+The App and package must not collect Apple ID, serial number, UDID, device
+name, personal prompts, user documents, or unrelated app data.
 
-## Low-friction Contribution Principles
+## Validation and publication
 
-- auto-detect metadata where public APIs allow;
-- keep measured settings locked by the benchmark release;
-- show progress and expected test duration;
-- retain failures rather than asking contributors to repeat until fast;
-- let contributors inspect data before upload;
-- provide useful local results even when the contributor does not submit;
-- publish device-coverage gaps that the community can help fill.
+CI validates package shape, raw hash binding, contributor declarations, the
+frozen Power contract, and a live-ranking preview. Validation does not mutate
+the result, assign Maintainer Reference status, or change an immutable release.
 
-## Governance Requirements
+Merging a valid package makes it eligible for the live community evidence view
+when its primary metric and ordinary thermal policy are eligible. Deliberate
+cooling, deliberate heating, other assistance, or unknown assistance is
+retained but not included in the ordinary live ranking.
 
-Before public result intake:
+## Evidence language
 
-- [x] define maintainers and review authority;
-- [x] publish a code of conduct;
-- [x] publish benchmark proposal and release rules;
-- [x] add pull-request submission and review checklists;
-- [x] add automated schema and semantic validation;
-- [x] define conflict-of-interest disclosure;
-- [x] define correction, withdrawal, and deprecation procedures;
-- [x] receive explicit maintainer approval to open public Power intake.
+| Display or evidence term | Meaning |
+| --- | --- |
+| Unreviewed | Valid merged package without a formal trust transition |
+| Single contributor | One metric-eligible GitHub account in an exact cell |
+| Reproduced | Two or more independent eligible accounts in an exact cell |
+| Community aggregate | Three or more independent eligible accounts |
+| Verified | A separate formal review confirms the required release and evidence rules |
+| Maintainer Reference | Maintainer-run reference evidence published by a release decision |
+
+The live `Reproduced` label is a deterministic contributor-count fact. It does
+not silently rewrite the formal trust level.
+
+One case-insensitive GitHub account counts once per exact comparison cell and
+may contribute to any number of different cells. Repeated eligible runs are
+retained, then reduced to one per-contributor median before cross-contributor
+aggregation.
+
+## Future convenience
+
+A future service may create the same pull request after an in-App review. It
+must preserve the two-file evidence boundary, contributor ownership, public
+validation, and maintainer merge. Automation may reduce clicks; it must not
+weaken reproducibility or bypass review.
+
+Historical Framework v1 and Power 1.0 submission paths remain in versioned
+directories for auditability. They are not the current public contribution
+route.
+
+See [Power 1.1 quickstart](../contributor-kit/power-1.1-quickstart.md) and
+[live ranking policy](power-community-ranking.md).

@@ -14,11 +14,15 @@ from typing import Any, Iterable
 
 try:
     from scripts.consume_suite_b_power_1_1_report import verify_pair as verify_final_pair
+    from scripts.validate_suite_b_power_1_1_final_result import validate as validate_power_1_1_result
+    from scripts.validate_suite_b_power_1_1_submission import validate_package as validate_power_1_1_package
     from scripts.validate_suite_b_power_result import validate as validate_power_result
     from scripts.validate_suite_b_power_reviews import validate_reviews
     from scripts.validate_suite_b_power_submission import validate_package
 except ModuleNotFoundError:
     from consume_suite_b_power_1_1_report import verify_pair as verify_final_pair
+    from validate_suite_b_power_1_1_final_result import validate as validate_power_1_1_result
+    from validate_suite_b_power_1_1_submission import validate_package as validate_power_1_1_package
     from validate_suite_b_power_result import validate as validate_power_result
     from validate_suite_b_power_reviews import validate_reviews
     from validate_suite_b_power_submission import validate_package
@@ -27,7 +31,8 @@ except ModuleNotFoundError:
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OFFICIAL = ROOT / "results/suite-b-power-1.1/normalized-results.json"
 DEFAULT_ADOPTION = ROOT / "results/suite-b-power-1.1/evidence-adoption.json"
-DEFAULT_SUBMISSIONS = ROOT / "submissions/suite-b/power-1.0.0-rc.1/draft"
+DEFAULT_CURRENT_SUBMISSIONS = ROOT / "submissions/suite-b/power-1.1.0/draft"
+DEFAULT_LEGACY_SUBMISSIONS = ROOT / "submissions/suite-b/power-1.0.0-rc.1/draft"
 DEFAULT_OUTPUT = ROOT / "results/suite-b-power-community"
 
 PRIMARY_METRICS = {
@@ -89,6 +94,13 @@ def result_sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def display_path(path: Path) -> str:
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
 def comparison_identity(result: dict[str, Any]) -> dict[str, Any]:
     """Return the exact test cell used for community contributor counting."""
     execution = result["execution"]
@@ -139,8 +151,13 @@ def make_contribution(
     source_kind: str,
     evidence_level: str,
     submission_id: str | None = None,
+    ordinary_live_ranking_allowed: bool = True,
+    ordinary_live_ranking_reason: str | None = None,
 ) -> dict[str, Any]:
-    report = validate_power_result(result)
+    if result.get("schemaVersion") == "suite-b-power-result-1.1.0-rc.1":
+        report = validate_power_1_1_result(result, raw_sha256)
+    else:
+        report = validate_power_result(result)
     if not report.get("structuralValidity", {}).get("valid"):
         raise ValueError(f"structurally invalid Power result: {raw_path}")
     if not report.get("protocolConformance", {}).get("valid"):
@@ -161,6 +178,8 @@ def make_contribution(
         "rawSHA256": raw_sha256,
         "result": result,
         "validation": report,
+        "ordinaryLiveRankingAllowed": ordinary_live_ranking_allowed,
+        "ordinaryLiveRankingReason": ordinary_live_ranking_reason,
     }
 
 
@@ -213,6 +232,8 @@ def load_official_contributions(
             "rawSHA256": actual_sha,
             "result": result,
             "validation": report,
+            "ordinaryLiveRankingAllowed": True,
+            "ordinaryLiveRankingReason": None,
         })
     return contributions
 
@@ -225,8 +246,8 @@ def load_review_levels(submissions_path: Path, reviews_path: Path) -> dict[str, 
     return dict(report.get("evidenceLevels", {}))
 
 
-def load_community_contributions(
-    submissions_path: Path = DEFAULT_SUBMISSIONS,
+def load_legacy_community_contributions(
+    submissions_path: Path = DEFAULT_LEGACY_SUBMISSIONS,
     reviews_path: Path | None = None,
 ) -> list[dict[str, Any]]:
     reviews_path = reviews_path or submissions_path.parent / "reviews"
@@ -243,13 +264,44 @@ def load_community_contributions(
         contributions.append(make_contribution(
             contributor=manifest["contributor"]["githubHandle"],
             result=result,
-            raw_path=result_path.relative_to(ROOT).as_posix(),
+            raw_path=display_path(result_path),
             raw_sha256=result_sha256(result_path),
             source_kind="community-submission",
             evidence_level=review_levels.get(submission_id, "unreviewed"),
             submission_id=submission_id,
         ))
     return contributions
+
+
+def load_current_community_contributions(
+    submissions_path: Path = DEFAULT_CURRENT_SUBMISSIONS,
+) -> list[dict[str, Any]]:
+    contributions: list[dict[str, Any]] = []
+    for package in sorted(path for path in submissions_path.iterdir() if path.is_dir()):
+        report = validate_power_1_1_package(package)
+        if report.get("overallStatus") == "invalid":
+            raise ValueError(f"invalid merged Power 1.1 community package: {package}")
+        manifest = load_json(package / "submission.json")
+        result_path = package / "result.json"
+        result = load_json(result_path)
+        ordinary = report["ordinaryLiveRankingEligibility"]["eligible"]
+        reasons = report["ordinaryLiveRankingEligibility"].get("reasonCodes", [])
+        contributions.append(make_contribution(
+            contributor=manifest["contributor"]["githubHandle"],
+            result=result,
+            raw_path=display_path(result_path),
+            raw_sha256=result_sha256(result_path),
+            source_kind="community-submission",
+            evidence_level="unreviewed",
+            submission_id=manifest["submissionID"],
+            ordinary_live_ranking_allowed=ordinary,
+            ordinary_live_ranking_reason=(", ".join(reasons) if reasons else None),
+        ))
+    return contributions
+
+
+# Compatibility alias for callers that still refer to the historical intake.
+load_community_contributions = load_legacy_community_contributions
 
 
 def ensure_unique_evidence(contributions: Iterable[dict[str, Any]]) -> None:
@@ -339,7 +391,8 @@ def build_cell(contributions: list[dict[str, Any]]) -> dict[str, Any]:
         metric_contributions = (
             [
                 item for item in contributions
-                if item["validation"]["metricEligibility"].get(eligibility_id, {}).get("eligible")
+                if item.get("ordinaryLiveRankingAllowed", True)
+                and item["validation"]["metricEligibility"].get(eligibility_id, {}).get("eligible")
             ]
             if eligibility_id
             else contributions
@@ -366,7 +419,8 @@ def build_cell(contributions: list[dict[str, Any]]) -> dict[str, Any]:
     primary_metric_id, primary_field, _ = PRIMARY_METRICS[workload_id]
     eligible = [
         item for item in contributions
-        if item["validation"]["metricEligibility"][primary_metric_id]["eligible"]
+        if item.get("ordinaryLiveRankingAllowed", True)
+        and item["validation"]["metricEligibility"][primary_metric_id]["eligible"]
     ]
     primary_value, primary_contributor_values = contributor_weighted_metric(eligible, primary_field)
     primary_variation = relative_mad_percent(primary_contributor_values)
@@ -375,7 +429,7 @@ def build_cell(contributions: list[dict[str, Any]]) -> dict[str, Any]:
 
     evidence = []
     for item in sorted(contributions, key=lambda value: (value["createdAt"], value["rawPath"])):
-        evidence.append({
+        evidence_item = {
             "contributor": item["contributor"],
             "submissionID": item["submissionID"],
             "sourceKind": item["sourceKind"],
@@ -386,7 +440,13 @@ def build_cell(contributions: list[dict[str, Any]]) -> dict[str, Any]:
             "rawPath": item["rawPath"],
             "rawSHA256": item["rawSHA256"],
             "primaryMetricEligible": item in eligible,
-        })
+        }
+        if not item.get("ordinaryLiveRankingAllowed", True):
+            evidence_item["ordinaryLiveRankingAllowed"] = False
+            evidence_item["ordinaryLiveRankingReason"] = item.get(
+                "ordinaryLiveRankingReason"
+            )
+        evidence.append(evidence_item)
 
     return {
         "comparisonID": representative["comparisonID"],
@@ -545,12 +605,16 @@ def current_display_cells(
 def build_dataset(
     official_path: Path = DEFAULT_OFFICIAL,
     adoption_path: Path = DEFAULT_ADOPTION,
-    submissions_path: Path = DEFAULT_SUBMISSIONS,
+    current_submissions_path: Path = DEFAULT_CURRENT_SUBMISSIONS,
+    legacy_submissions_path: Path = DEFAULT_LEGACY_SUBMISSIONS,
     reviews_path: Path | None = None,
 ) -> dict[str, Any]:
     official = load_json(official_path)
     contributions = load_official_contributions(official_path, adoption_path)
-    contributions.extend(load_community_contributions(submissions_path, reviews_path))
+    contributions.extend(load_current_community_contributions(current_submissions_path))
+    contributions.extend(
+        load_legacy_community_contributions(legacy_submissions_path, reviews_path)
+    )
     cells = aggregate_contributions(contributions)
     ranked = [cell for cell in cells if cell["rankingEligibility"]["active"]]
     community_runs = sum(item["sourceKind"] == "community-submission" for item in contributions)
@@ -697,7 +761,7 @@ def render_coverage(dataset: dict[str, Any]) -> str:
         "",
         "An accepted result from a new physical iPhone creates additional device coverage. It is not compared inside an existing exact cell unless every comparison-identity field matches.",
         "",
-        "See the [Power 1.0 contributor quickstart](../../contributor-kit/power-1.0-quickstart.md) to contribute genuine physical-device evidence.",
+        "See the [Power 1.1 contributor quickstart](../../contributor-kit/power-1.1-quickstart.md) to contribute genuine physical-device evidence.",
         "",
     ])
     return "\n".join(lines)
@@ -707,13 +771,15 @@ def write_outputs(
     output: Path = DEFAULT_OUTPUT,
     official_path: Path = DEFAULT_OFFICIAL,
     adoption_path: Path = DEFAULT_ADOPTION,
-    submissions_path: Path = DEFAULT_SUBMISSIONS,
+    current_submissions_path: Path = DEFAULT_CURRENT_SUBMISSIONS,
+    legacy_submissions_path: Path = DEFAULT_LEGACY_SUBMISSIONS,
     reviews_path: Path | None = None,
 ) -> dict[str, Any]:
     dataset = build_dataset(
         official_path=official_path,
         adoption_path=adoption_path,
-        submissions_path=submissions_path,
+        current_submissions_path=current_submissions_path,
+        legacy_submissions_path=legacy_submissions_path,
         reviews_path=reviews_path,
     )
     output.mkdir(parents=True, exist_ok=True)
@@ -729,7 +795,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--official", type=Path, default=DEFAULT_OFFICIAL)
     parser.add_argument("--adoption", type=Path, default=DEFAULT_ADOPTION)
-    parser.add_argument("--submissions", type=Path, default=DEFAULT_SUBMISSIONS)
+    parser.add_argument(
+        "--current-submissions", type=Path, default=DEFAULT_CURRENT_SUBMISSIONS
+    )
+    parser.add_argument(
+        "--legacy-submissions", type=Path, default=DEFAULT_LEGACY_SUBMISSIONS
+    )
     parser.add_argument("--reviews", type=Path)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()
@@ -738,7 +809,8 @@ def main() -> int:
             output=args.output,
             official_path=args.official,
             adoption_path=args.adoption,
-            submissions_path=args.submissions,
+            current_submissions_path=args.current_submissions,
+            legacy_submissions_path=args.legacy_submissions,
             reviews_path=args.reviews,
         )
     except (OSError, json.JSONDecodeError, KeyError, ValueError) as error:

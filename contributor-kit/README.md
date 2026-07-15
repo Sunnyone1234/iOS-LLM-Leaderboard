@@ -1,54 +1,38 @@
 # Contributor Kit
 
-This kit explains how community members can contribute to iOS-LLM-Leaderboard.
+There is one current benchmark-result path:
 
-Power 1.0 public intake is open for unmodified physical-iPhone exports from two
-exact App sources:
+## Contribute Power 1.1 evidence
 
-- use the [Power 1.0 contributor quickstart](power-1.0-quickstart.md) and App
-  0.8.0 build 10 to reproduce an existing Qwen comparison cell;
-- use [Test a Recommended Power Model](test-recommended-model.md) and App 0.9.0
-  build 11 to add evidence for one of four pinned, community-tested artifacts.
+Use the [Power 1.1 quickstart](power-1.1-quickstart.md) to:
 
-Both paths cover the exact App checkout, physical-device run, immutable
-package, validation, and contributor-owned pull request. App catalog status is
-descriptive only; accepted result evidence controls leaderboard inclusion.
-
-Framework v1 retains a separate historical manual workflow. App 0.4 can
-generate a reviewed offline Draft submission containing the exact unified
-result bytes and integrity digest. It does not make a submission official or
-verified and does not upload to GitHub.
-
-You can contribute:
-
-- benchmark results
-- device benchmark results
-- new benchmark tasks
-- example integrations
-- methodology improvements
-
-Before submitting results, make sure placeholder data is removed and all metadata needed for reproduction is included.
-
-See [Community Contribution Model](../docs/community-contribution-model.md) for
-the planned low-friction app submission and evidence-level process.
-
-Benchmark tasks must follow [Benchmark Task Specification](../methodology/benchmark-specification.md).
-
-Benchmark results must follow [Benchmark Result Specification](../methodology/benchmark-result-specification.md).
-
-Useful files:
-
-- [Contribute a Power 1.0 result](power-1.0-quickstart.md)
-- [Test a recommended Power model](test-recommended-model.md)
-- [Recommended model catalog](../models/power-test-catalog.json)
-- [Live Power coverage gaps](../results/suite-b-power-community/COVERAGE.md)
-- [Submit a model result](submit-model-result.md)
-- [Submit a device result](submit-device-result.md)
-- [Model result template](../templates/model-result-template.json)
-- [Device result template](../templates/device-result-template.json)
-
-Validate an App-generated Suite B package with:
+1. build the exact official Benchmark App source;
+2. run one model and one workload on a physical iPhone;
+3. export the untouched result JSON;
+4. create and validate a two-file package; and
+5. open a pull request from your own GitHub account.
 
 ```bash
-python3 scripts/validate_suite_b_submission.py path/to/submission.json
+python3 scripts/power.py submit /path/to/result.json \
+  --github YOUR_GITHUB_HANDLE \
+  --accept-declarations
 ```
+
+See [live coverage gaps](../results/suite-b-power-community/COVERAGE.md) and the
+[App-ready model catalog](../models/power-test-catalog.json) when choosing what
+to test.
+
+## Other contributions
+
+- Read [CONTRIBUTING.md](../CONTRIBUTING.md) for focused integration,
+  documentation, validation, and Build Research work.
+- Benchmark methodology lives in [docs/power.md](../docs/power.md).
+- Stable task and result rules remain in [methodology/](../methodology/).
+
+## Historical paths
+
+The following guides remain available only to reproduce or audit their frozen
+contracts. Do not use them for a new Power 1.1 submission:
+
+- [Power 1.0 quickstart](power-1.0-quickstart.md)
+- [Historical recommended-model workflow](test-recommended-model.md)

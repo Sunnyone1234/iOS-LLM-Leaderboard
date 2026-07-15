@@ -1,157 +1,98 @@
 # Contributing
 
-Thank you for helping improve iOS-LLM-Leaderboard.
+Thank you for helping make on-device AI evaluation more useful and credible.
+Choose the smallest contribution path that fits your change.
 
-This project values reproducibility, transparent methodology, and practical usefulness for iOS developers. Benchmark quality is more important than benchmark quantity.
+## 1. Submit a Power 1.1 result
 
-## Licensing
-
-By submitting a pull request, you agree that your contribution will be licensed under the same licensing model as this repository (MIT for code and CC BY 4.0 for benchmark data and documentation).
-
-## Ways To Contribute
-
-- Submit benchmark results with reproducible metadata.
-- Submit device benchmark results for iPhone, iPad, or Mac.
-- Propose new benchmark tasks.
-- Improve methodology documents.
-- Add example integrations for iOS developers.
-- Improve validation and leaderboard tooling.
-
-The official Power contribution path uses the iOS benchmark app described in
-[Community Contribution Model](docs/community-contribution-model.md). App
-0.8.0 build 10 runs the locked adopted-RC1 contract and exports the reviewable
-result; repository tooling adds the contributor manifest without rewriting
-those bytes.
-
-## Current Contribution Stage
-
-Power Benchmark 1.0 public result intake is open. Contributors may submit an
-immutable App 0.8.0 build 10 export plus its contributor-owned manifest through
-the documented Power intake path. The official 1.0 release adopted the frozen
-RC1 source contract, so its versioned directory and App-emitted identities are
-preserved intentionally.
-
-During the current contribution stage:
-
-- benchmark and methodology proposals are welcome;
-- integration and validation tooling is welcome;
-- Power results must use the official App and frozen submission package;
-- historical Pilot and Framework v1 examples remain non-official; and
-- no contributor or CI job may assign its own verified or ranking status.
-
-Community results use evidence levels. Passing structural validation alone
-does not change a formal evidence level or alter the immutable Power 1.0
-release. A valid package merged by a maintainer may appear in the separately
-labeled live community view under the
-[community ranking policy](docs/power-community-ranking.md).
-
-## Benchmark Task Contributions
-
-New benchmark tasks must follow [Benchmark Task Specification](methodology/benchmark-specification.md).
-
-Every benchmark task should include:
-
-- required task metadata
-- objective and background
-- exact input, prompt, IDE context, or measurement setup
-- expected output
-- automatic and manual evaluation criteria
-- pass and failure conditions
-- scoring rubric
-- reproducibility requirements
-- reviewer notes
-
-Place every task in the correct suite directory:
-
-- `benchmarks/suite-a-swift-codegen/`
-- `benchmarks/suite-b-on-device-performance/`
-- `benchmarks/suite-c-xcode-integration/`
-- `benchmarks/suite-d-app-feature-intelligence/`
-- `benchmarks/suite-e-runtime-evaluation/`
-
-Do not mix Swift code generation tasks, app feature intelligence tasks, Xcode workflow tasks, runtime measurements, and on-device performance results.
-
-Do not add tasks that depend on private data, undisclosed model access, or unverifiable scoring.
-
-Suite B is transitioning to the workload-centric v2 draft. Do not propose new
-Suite B tasks that merely isolate one metric such as TTFT or memory. Propose a
-versioned user-experience workload or pipeline profile and identify the common
-metrics it collects. See
-[Suite B Protocol v2](benchmarks/suite-b-on-device-performance/protocol-v2.md).
-
-## Result Contributions
-
-New benchmark results must follow [Benchmark Result Specification](methodology/benchmark-result-specification.md).
-
-Every result must include:
-
-- required result fields
-- task ID and task version
-- model and provider metadata
-- execution date and evaluator
-- score, max score, and pass/fail state
-- contributor license confirmation
-- suite-specific runtime, device, metric, or output metadata where applicable
-
-Submitted results must include enough reproducibility metadata for independent review. If a field is not applicable, use `null` instead of omitting required fields.
-
-For Suite B result submissions, include prompt token band, output token band, warm-up procedure, measurement procedure, measured run count, aggregation method, cold or warm start state, timing boundaries, failed or interrupted run handling, and per-run metrics when available.
-
-Demo or placeholder data must be clearly marked and must not be used for official leaderboard results.
-
-When the official benchmark app is available, app-generated result bundles
-will be the preferred Suite B submission route. Manual submissions will need
-to demonstrate equivalent workload, runner, and raw-evidence compatibility.
-
-The historical Benchmark App can generate an offline Pilot Draft submission after the
-contributor reviews a unified Suite B result. Validate it with
-`scripts/validate_suite_b_submission.py`. A passing package may be reviewed as
-Community Submitted, but it is never accepted as official, verified, or added
-to the default leaderboard automatically.
-
-For repository placement, rename the untouched App export to
-`<submissionID>.json` and add it under `submissions/suite-b/draft/`. See
-[Community Submissions](submissions/README.md) for CI and maintainer review
-commands.
-
-Power 1.0 uses the App's unmodified adopted-RC1 Power result plus a separate
-contributor manifest. Follow the
-[Power 1.0 contributor quickstart](contributor-kit/power-1.0-quickstart.md) to
-build the exact frozen App source, run one physical-device cell, create the
-package, validate it, and open a contributor-owned pull request.
-
-Create a package with:
+Follow the [Power 1.1 quickstart](contributor-kit/power-1.1-quickstart.md). The
+public flow is:
 
 ```bash
-python3 scripts/create_suite_b_power_submission.py \
-  /path/to/app-export.json \
-  --output-root submissions/suite-b/power-1.0.0-rc.1/draft \
-  --contributor YOUR_GITHUB_HANDLE \
-  --conflict-category none \
-  --conflict-statement "No conflict of interest disclosed." \
+python3 scripts/power.py submit /path/to/result.json \
+  --github YOUR_GITHUB_HANDLE \
   --accept-declarations
 ```
 
-Read the current
-[Power 1.0 public-intake guide](docs/power-benchmark-1.0-public-intake.md) and
-the SHA-256-pinned
-[RC1 package definition](docs/power-benchmark-1.0-submission.md) before
-accepting the declarations. Valid Draft evidence remains formally unreviewed
-until a hash-bound review is merged. Once the package itself is merged, it may
-enter the live community view without changing that formal evidence level.
+This creates exactly:
 
-## Data Integrity
+```text
+submissions/suite-b/power-1.1.0/draft/<submission-id>/
+├── submission.json
+└── result.json
+```
 
-Do not invent benchmark results, rankings, device measurements, or performance numbers. Placeholder examples must be clearly labeled as placeholder or demo data.
+Do not edit `result.json`. Review both files, commit only that package, and
+open the pull request from the declared GitHub account. CI checks the package,
+the frozen Power contract, and the live-ranking preview.
 
-## Pull Request Checklist
+The declarations confirm that you ran the benchmark on a physical device, may
+submit the evidence, reviewed public metadata, left the raw result untouched,
+removed personal data, accept CC BY 4.0 for the evidence, and understand that
+submission does not guarantee a rank or trust-level change.
 
-- Documentation is updated.
-- New or moved benchmark content is in the correct suite.
-- New benchmark tasks follow `methodology/benchmark-specification.md`.
-- New benchmark results follow `methodology/benchmark-result-specification.md`.
-- Submitted results include reproducibility metadata.
-- Placeholder data is clearly labeled.
-- JSON files parse successfully and follow `methodology/benchmark-result-specification.md`.
-- Generated leaderboard changes are intentional.
-- License boundaries remain consistent.
+If you deliberately cooled or heated the device, or do not know whether the
+run was assisted, disclose it with `--thermal-assistance`. The package remains
+reviewable evidence but does not enter the ordinary live ranking.
+
+## 2. Improve integration or documentation
+
+Good small contributions include:
+
+- a focused Swift integration recipe;
+- a correction to current public documentation;
+- a reproducibility or validation fix;
+- clearer model, runtime, license, or deployment evidence.
+
+Keep examples copyable and narrow. Do not add a full starter application when
+a short recipe is enough.
+
+## 3. Propose benchmark or Build Research work
+
+Suite A and Suite C remain visible as Build Research. Build is not active in
+Phase 1 and must not be expanded into isolated Swift snippets, API examples,
+or code-completion tasks. A future proposal should evaluate complete software
+delivery and remain a proposal until separately approved.
+
+New Suite B ideas should not create one task per metric. Power workloads
+collect compatible TTFT, prefill, decode, memory, thermal, and failure evidence
+under one versioned execution contract.
+
+Before proposing a new benchmark category, explain why an existing suite,
+workload, metric, or Ship profile cannot represent it.
+
+## Pull-request rules
+
+- Never invent measurements, placeholder ranks, or device evidence.
+- Do not modify pinned release assets or historical raw result bytes.
+- Preserve stable task and workload IDs.
+- Keep generated files synchronized with their source data.
+- Update the current public guide instead of adding a parallel guide.
+- Add a new top-level directory only when
+  [project-structure.md](docs/project-structure.md) permits it.
+- Keep MIT code/examples separate from CC BY 4.0 benchmark data and docs.
+
+Run before opening a pull request:
+
+```bash
+python3 -m unittest discover -s tests -v
+git diff --check
+```
+
+Power result contributors can also run:
+
+```bash
+python3 scripts/power.py validate \
+  submissions/suite-b/power-1.1.0/draft/<submission-id>
+python3 scripts/power.py preview --output /tmp/power-preview
+```
+
+Historical Power 1.0, Pilot, and Framework v1 submission instructions remain
+in their versioned paths for auditability. They are not the current public
+intake route.
+
+## License
+
+By opening a pull request, you agree that your contribution follows the
+repository license boundary: MIT for code and examples, CC BY 4.0 for
+benchmark specifications, data, results, and documentation.

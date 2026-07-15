@@ -17,16 +17,15 @@ trustworthy, reproducible, developer-oriented evaluation standard for
 deploying on-device AI on Apple platforms.
 
 The current Power release is
-[Power Benchmark 1.0](power-benchmark-1.0-finalization.md).
-Power 1.1 RC1 is frozen for new physical-device verification but remains
-non-official and does not alter the active Power 1.0 ranking.
+[Power Benchmark 1.1](power-benchmark-1.1-finalization.md). It adopts the
+frozen Power 1.1 RC1 execution contract and six immutable physical-device
+results under a final ranking policy without rewriting their source identity.
 The completed Power + Ship Pilot v0.1 remains non-official historical evidence
 and will not be tagged or published as a release. B-UX-001 and B-PIPE-001 are
-the only Power 1.0 workloads; the protocol, schema, validator, App,
-physical-device evidence, and governance contracts are complete. The final
-package adopts the immutable RC1 source evidence without rerun because those
-contracts are unchanged. Six results are Maintainer Reference evidence and five
-eligible rows are active in the official workload-specific ranking.
+the only active Power 1.1 workloads; the protocol, schema, validator, App,
+physical-device evidence, and governance contracts are complete. All six
+adopted results are Maintainer Reference evidence and measured-performance
+eligible; five are also recommendation eligible.
 
 **Build is a Phase 2 Research Track.** It remains part of the long-term vision,
 but it is not part of the Phase 1 product, benchmark release, public

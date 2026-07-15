@@ -10,10 +10,12 @@ from pathlib import Path
 from scripts.generate_power_community_ranking import aggregate_contributions
 from scripts.generate_power_community_ranking import build_dataset
 from scripts.generate_power_community_ranking import current_display_cells
+from scripts.generate_power_community_ranking import load_current_community_contributions
 from scripts.generate_power_community_ranking import make_contribution
 from scripts.generate_power_community_ranking import os_minor_family
 from scripts.generate_power_community_ranking import render_leaderboard
 from scripts.validate_power_pr_contributor import validate_contributor
+from scripts.power import create_package
 from tests.test_suite_b_power_result import valid_result
 
 
@@ -197,6 +199,29 @@ class CommunityRankingTests(unittest.TestCase):
         self.assertEqual(cell["primaryMetric"]["value"], 20)
         self.assertEqual(cell["community"]["eligibleContributorCount"], 1)
         self.assertEqual(cell["community"]["status"], "single-contributor")
+
+    def test_assisted_current_submission_is_evidence_but_not_ranked(self) -> None:
+        fixture = next(
+            (ROOT / "results/suite-b-power-1.1.0-rc.1/device-verification/raw").glob(
+                "*b-ux-001*21b5f28f.json"
+            )
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            intake = Path(temporary)
+            create_package(
+                fixture,
+                intake,
+                "Alice",
+                declarations_accepted=True,
+                thermal_assistance="deliberate-cooling",
+                submission_id="11111111-2222-4333-8444-555555555555",
+                created_at="2026-07-15T16:00:00Z",
+            )
+            contribution_item = load_current_community_contributions(intake)[0]
+            self.assertFalse(contribution_item["ordinaryLiveRankingAllowed"])
+            cell = aggregate_contributions([contribution_item])[0]
+            self.assertEqual(cell["community"]["runCount"], 1)
+            self.assertFalse(cell["rankingEligibility"]["active"])
 
     def test_pr_author_must_match_declared_github_handle_case_insensitively(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

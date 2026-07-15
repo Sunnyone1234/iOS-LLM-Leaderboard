@@ -6,12 +6,12 @@ an inference framework.
 
 ## Current status
 
-App `0.13.0` build `16` is the frozen, non-official Power 1.1 RC1 runner. It preserves
-the two Power 1.0 workload IDs, fixtures, measurement boundaries, generation
+App `0.13.0` build `16` is the frozen reference runner adopted by Power 1.1. It preserves
+the two stable Power workload IDs, fixtures, measurement boundaries, generation
 settings, and attempt counts while changing the export responsibility boundary:
 the App always exports technically derivable measurements, and its local
-response-conformance badge is advisory only. Public Power 1.0 remains active;
-this RC App authorizes neither ranking nor publication.
+response-conformance badge is advisory only. The final release independently
+derives measured-performance and recommendation eligibility.
 
 App `0.8.0` build `10` remains the exact reference source for the published
 six-result Maintainer Reference matrix and for reproducing its three existing
@@ -23,11 +23,11 @@ substituted when an exact Power 1.0 reproduction is intended.
 Apps 0.8.0 through 0.11.0 emit the adopted Power 1.0 source result contract
 `suite-b-power-result-1.0.0-rc.1`. App 0.12.0 remains the historical Power 1.1
 draft runner. App 0.13.0 emits `suite-b-power-result-1.1.0-rc.1`. Every raw App export sets
-`officialResultEligible` to `false`; the 1.1 RC requires new physical-device
-verification and explicit release approval before it can affect a ranking. A
+`officialResultEligible` to `false`; no App export assigns its own publication,
+trust, or ranking status. Repository validation and release policy do. A
 picker entry is never evidence by itself.
 
-## Power 1.1 RC1 execution scope
+## Power 1.1 execution scope
 
 The production control surface exposes exactly two workload identities:
 
@@ -145,12 +145,13 @@ App revision.
 Validate an exported file from the repository root with:
 
 ```sh
-python3 scripts/validate_suite_b_power_1_1_rc1_result.py /path/to/result.json \
+python3 scripts/validate_suite_b_power_1_1_final_result.py /path/to/result.json \
   --output /path/to/validation-report.json
 ```
 
-A conforming raw result receives affirmative structural and protocol decisions,
-but ranking and publication remain unauthorized while Power 1.1 is an RC.
+A conforming raw result receives independent structural, protocol, metric,
+behavior, performance-ranking, and recommendation decisions. The App itself
+does not publish or rank the result.
 
 ## Privacy boundary
 

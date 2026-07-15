@@ -1,211 +1,165 @@
 # AGENTS.md
 
-# iOS-LLM-Leaderboard
+Repository-wide conventions for AI coding agents working on
+iOS-LLM-Leaderboard.
 
-This document defines repository-wide development conventions for AI coding agents working on this project.
+## Product scope
 
----
+The long-term architecture is **Build, Power, Ship**.
 
-# Project Vision
+- Phase 1 product: **Power + Ship**.
+- Phase 2 Research Track: **Build**.
+- Do not implement Build protocols, runners, schemas, or rankings unless a
+  later task explicitly approves them.
 
-iOS-LLM-Leaderboard is an open benchmark project for evaluating Large Language Models from an iOS developer's perspective.
+The project is a benchmark and documentation project, not another inference
+framework. Implement infrastructure only when it directly supports benchmark
+creation, execution, validation, visualization, or community contribution.
 
-The project prioritizes:
+Current public status and navigation are defined by:
 
-- credibility
-- reproducibility
-- transparency
-- community contributions
-- long-term maintainability
-- understandable model-centered leaderboard views
-- low-friction official benchmark app submissions
-- focused Swift integration recipes
+- `README.md`
+- `docs/README.md`
+- `docs/project-vision.md`
+- `docs/product-architecture.md`
+- `docs/project-structure.md`
+- `docs/power.md`
 
-Benchmark quality is always more important than benchmark quantity.
+## Non-negotiable evidence rules
 
-The product architecture is defined in:
+- Never invent benchmark results, measurements, ranks, or device evidence.
+- Never simulate device performance and present it as real.
+- Never present placeholder or demo data as official evidence.
+- Never silently rewrite raw result bytes or a released source identity.
+- Preserve failed, cancelled, OOM, and not-run attempts.
+- Keep enough exact model, runtime, device, OS, configuration, workload, and
+  runner metadata to interpret and reproduce a result.
 
-- docs/project-vision.md
-- docs/product-architecture.md
-- docs/community-contribution-model.md
-- docs/framework-v2-transition.md
-- methodology/benchmark-framework-v2.md
-- benchmarks/suite-b-on-device-performance/protocol-v2.md
+If real data is unavailable, label examples clearly as placeholder or demo and
+exclude them from official leaderboard logic.
 
----
+## Current Power rules
 
-# Guiding Principles
+Power 1.1 is the active release. It adopts the frozen Power 1.1 RC1 execution
+contract and source-result schema, then applies the final Power 1.1 ranking
+policy. Source exports therefore retain their RC1 identities.
 
-When making changes:
-
-- Never invent benchmark results.
-- Never fabricate measurements.
-- Never simulate device performance.
-- Never create fake leaderboards.
-- Never present placeholder data as real benchmark data.
-
-If real benchmark data is unavailable, clearly label all examples as placeholder or demo data.
-
----
-
-# Documentation First
-
-During the MVP stage:
-
-- Prefer documentation over implementation.
-- Prefer templates over automation.
-- Prefer clear methodology over benchmark coverage.
-- Avoid implementing complex benchmark infrastructure unless explicitly requested.
-
----
-
-# Repository Organization
-
-The repository follows these conventions:
-
-MIT License
-
-- examples/
-- scripts/
-- future source code
-- future iOS benchmark app
-
-CC BY 4.0
-
-- benchmarks/
-- methodology/
-- benchmark datasets
-- benchmark results
-- leaderboard data
-
-Keep this separation consistent.
-
----
-
-# Suite Organization
-
-All benchmark tasks and methodology must be organized under the correct suite:
-
-- Suite A: Swift Code Generation
-- Suite B: On-device Performance
-- Suite C: Xcode Integration
-- Suite D: App Feature Intelligence
-- Suite E: Runtime Evaluation
-
-Do not mix Swift code generation tasks, app feature intelligence tasks, Xcode workflow tasks, runtime measurements, and on-device performance results.
-
----
-
-# Benchmark Framework Compatibility
-
-Agents must preserve Benchmark Framework v1 compatibility.
-
-When editing benchmark tasks:
-
-- Follow `methodology/benchmark-specification.md`.
-- Preserve stable `task_id` values.
-- Update task versions instead of changing task IDs when prompts, expected outputs, scoring rubrics, or pass/fail criteria change materially.
-- Keep suite-specific task requirements intact.
-
-When editing benchmark results or templates:
-
-- Follow `methodology/benchmark-result-specification.md`.
-- Preserve required result fields.
-- Preserve task and result schema compatibility.
-- Keep demo-placeholder results clearly marked.
-- Never include demo-placeholder results in official leaderboard logic or documentation.
-
-Agents must not invent benchmark results, rankings, or performance numbers.
-
-Framework v2 is currently a design target. Do not present Framework v2 fields,
-tasks, trust levels, or releases as active until their schemas, migration
-rules, and validators are implemented.
-
-For new Suite B design:
+For current Suite B work:
 
 - use versioned workloads and measurement modes;
 - collect TTFT, prefill, decode, memory, and thermal as metrics from compatible
   attempts rather than creating one task per metric;
 - label user-experience workloads and pipeline profiles explicitly;
 - never relabel Pipeline TTFT as user-visible TTFT;
-- preserve every failed, cancelled, OOM, and not-run attempt; and
-- keep pilot results ineligible for official ranking.
+- preserve stable workload IDs;
+- keep metric eligibility separate from structural validity, protocol
+  conformance, behavior verification, and recommendation eligibility;
+- keep exact comparison identity even when the UI groups patch releases; and
+- do not add a global Power score.
 
----
+Current community submissions use `scripts/power.py` and the two-file
+`submissions/suite-b/power-1.1.0/draft/<id>/` package. Historical Power 1.0 and
+Framework v1 tools remain compatibility assets, not alternate public flows.
 
-# Benchmark Philosophy
+## Suite organization
 
-Every benchmark should be:
+Keep A–E visible and keep content in the correct namespace:
 
-- reproducible
-- clearly documented
-- independently reviewable
-- practical for real iOS developers
+- Suite A: Swift Code Generation — Build Research.
+- Suite B: On-device Performance — active Power foundation.
+- Suite C: Xcode Integration — Build Research.
+- Suite D: App Feature Intelligence — possible future Power quality evidence.
+- Suite E: Runtime Evaluation — possible future Ship evidence.
 
-Benchmark tasks should evaluate realistic development workflows instead of artificial coding puzzles whenever possible.
+Do not mix their task ownership. The five namespaces are not equal Phase 1
+priorities and must not be combined into one aggregate score.
 
----
+When editing Framework v1 tasks, follow
+`methodology/benchmark-specification.md`, preserve `task_id`, and increment the
+task version when prompts, expected output, rubric, or pass/fail criteria change
+materially. When editing compatible result templates, follow
+`methodology/benchmark-result-specification.md`.
 
-# Community Contributions
+## Pinned and historical assets
 
-When adding benchmark tasks:
+Before changing a protocol, schema, validator, generator, checksum, review, or
+release file, inspect the release manifests under `benchmarks/**/releases/`.
 
-Include:
+- A SHA-256-pinned asset is immutable.
+- A changed contract receives a new version and path.
+- Historical files may be de-indexed from public documentation but must not be
+  deleted merely to simplify navigation.
+- Generated results must remain reproducible from their retained source data.
 
-- task description
-- benchmark prompt
-- expected behavior
-- scoring rubric
-- reviewer notes
+## Documentation and growth
 
-When adding benchmark results:
+Follow `docs/project-structure.md`.
 
-Always record sufficient metadata so results can be reproduced.
+- Keep one current public guide per subject.
+- Keep one public command per product; Power uses `scripts/power.py`.
+- Update the current guide instead of adding `new`, `latest`, `final`, or `v2`
+  copies.
+- Keep drafts labeled and out of homepage methodology links.
+- Do not add a top-level directory without documenting owner, lifecycle,
+  license, and why an existing directory is insufficient.
+- Do not create duplicate CI or deploy workflows.
+- Prefer focused recipes over duplicated starter apps.
+- Prefer clear methodology and stable evidence over benchmark quantity.
 
-User-facing leaderboard rows may emphasize model names, but the evidence layer
-must preserve the exact model artifact, quantization, runtime, device, OS, and
-inference settings required to interpret the result.
+Documentation may summarize a frozen contract, but it must link to the
+normative asset and must not contradict it.
 
----
+## Repository license boundary
 
-# Coding Guidelines
+MIT:
+
+- code;
+- `examples/`;
+- scripts;
+- current and future source code, including the iOS App.
+
+CC BY 4.0:
+
+- `benchmarks/`;
+- `methodology/`;
+- benchmark datasets and submissions;
+- benchmark results;
+- leaderboard data and documentation.
+
+Keep this separation consistent.
+
+## Coding guidelines
 
 Prefer:
 
-- simple architecture
-- readable documentation
-- incremental improvements
-- modular organization
+- the simplest maintainable solution;
+- readable, incremental changes;
+- deterministic generators;
+- standard-library tooling when practical;
+- small integration recipes;
+- tests that protect public links, evidence integrity, and release identity.
 
 Avoid:
 
-- unnecessary abstractions
-- premature optimization
-- unnecessary dependencies
-- large repository refactors unless explicitly requested
+- unnecessary abstraction or dependencies;
+- premature optimization;
+- parallel public workflows;
+- large repository moves without explicit approval;
+- infrastructure for speculative benchmark categories.
 
----
+Keep documentation synchronized with behavior. Preserve backward compatibility
+when practical, especially for immutable evidence and released schemas.
 
-# AI Agent Guidelines
+## Verification
 
-When multiple implementation choices exist:
+Run checks proportional to the change. For repository-wide changes, run:
 
-- Choose the simplest maintainable solution.
-- Preserve backward compatibility whenever practical.
-- Keep documentation synchronized with repository changes.
-- Keep examples easy to copy into real iOS projects.
-- Design features with community contribution in mind.
-- Prefer small integration recipes over duplicated full starter apps unless a
-  task explicitly requires a complete reference application.
+```bash
+python3 -m unittest discover -s tests -v
+python3 scripts/power.py preview --output /tmp/power-preview
+git diff --check
+```
 
-When uncertain, optimize for clarity, reproducibility, and maintainability rather than feature completeness.
-
----
-
-# Scope
-
-This repository is primarily a benchmark and documentation project.
-
-Its purpose is not to become another LLM framework or inference engine.
-
-Only implement infrastructure that directly supports benchmark creation, execution, validation, visualization, or community contribution.
+For iOS App changes, also resolve packages and build the relevant physical or
+generic iOS Release target. Never claim a device benchmark result from a
+simulator or compiler-only test.

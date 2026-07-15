@@ -2,8 +2,8 @@ const POWER_DATA_URL = "results/suite-b-power-community/normalized-results.json"
 const OFFICIAL_POWER_DATA_URL = "results/suite-b-power-1.1/normalized-results.json";
 const SHIP_DATA_URL = "results/ship-1.0/deployment-profiles.json";
 const MODEL_CATALOG_URL = "models/power-test-catalog.json";
-const CONTRIBUTOR_GUIDE_URL = "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power-1.0-quickstart.md";
-const MODEL_TEST_GUIDE_URL = "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/test-recommended-model.md";
+const CONTRIBUTOR_GUIDE_URL = "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power-1.1-quickstart.md";
+const MODEL_TEST_GUIDE_URL = "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power-1.1-quickstart.md";
 
 const state = {
   power: null,

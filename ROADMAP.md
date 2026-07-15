@@ -1,228 +1,59 @@
 # Roadmap
 
-## Product Priorities
+The project grows in evidence depth, not in the number of benchmark ideas.
 
-The long-term vision is **Build + Power + Ship**, but the tracks are not equal
-delivery priorities.
+## Now: Power 1.1 community coverage
 
-- **Product Phase 1: Power + Ship.** Establish a trustworthy, reproducible,
-  developer-oriented standard for on-device AI deployment on Apple platforms.
-- **Product Phase 2: Build Research Track.** Explore how to evaluate complete
-  iOS software delivery after the Phase 1 standard is credible.
+- keep the two frozen workloads stable;
+- make the physical-device contribution path reliable and short;
+- add independent devices, models, and contributors;
+- preserve exact configuration identity and raw failure evidence;
+- improve model coverage without weakening artifact compatibility checks;
+- keep the live ranking understandable and reproducible.
 
-All execution milestones below through the Power leaderboard and developer
-integration guide belong to Product Phase 1. Phase 1 success is determined
-entirely by Power + Ship evidence; it does not depend on Suite A, Suite C, a
-coding score, or a coding-agent leaderboard.
+Power 1.1 success is broader credible coverage under the existing contract,
+not another protocol revision.
 
-The long-term roadmap follows one dependency chain:
+## Next: complete Ship evidence
 
-> benchmark definition → official benchmark app → community evidence →
-> validated leaderboard → developer integration recipes
+- link deployment profiles to current Power evidence;
+- expand focused Swift integration recipes;
+- record format, download, offline, streaming, cancellation, license, and
+  distribution facts with explicit sources;
+- keep unsupported or unverified claims as `Unknown`;
+- avoid a global Ship score.
 
-Later phases must not be presented as complete before their dependencies are
-validated.
+Ship reuses Power measurements. It does not redefine latency, memory, or
+thermal metrics.
 
-The completed, untagged Pilot v0.1 used maintainer-collected, unmodified
-physical-device exports through the internal Pilot ingestion command. It is
-retained as historical foundation evidence and will not be published as a
-tagged release.
+## Later: Power quality and Ship integration evidence
 
-## Product Phase 1: Power + Ship
+Suite D may provide a future Power quality gate and Suite E may provide future
+Ship integration evidence. Neither is active until a concrete developer need,
+minimal contract, validation path, and maintenance owner are approved.
 
-### Current published standard: Power + Ship 1.0
+## Phase 2 research: Build
 
-[Power Benchmark 1.0](docs/power-benchmark-1.0-finalization.md) and
-[Ship Deployment Profiles 1.0](docs/ship-deployment-profiles.md) are published.
-Power 1.0 freezes exactly these workloads:
-
-- `b-ux-001-short-interaction`;
-- `b-pipe-001-sustained-generation`.
-
-B-PIPE-002 and B-UX-002 remain Experimental. No additional workload, Suite D
-task, Suite E task, global score, or Build deliverable is part of Power 1.0.
-Ship 1.0 remains an evidence profile for the same tested Suite B
-configurations and defines no deployment score.
-
-Public Power intake is open under the exact RC1 source contract adopted by the
-official release. The current operational target is community evidence and
-device coverage, not a protocol or architecture redesign. The completed Pilot
-scope remains documented in [Power + Ship Pilot v0.1](docs/power-ship-pilot-v0.1.md).
-
-### Milestone 0: Vision and Architecture
-
-- Define Power and Ship as the Phase 1 public product.
-- Preserve Build as a Phase 2 Research Track.
-- Define the Benchmark Specification, Community Evidence, and Developer
-  Integration Guide layers.
-- Keep the five Framework v1 suite namespaces independent for compatibility and
-  evidence ownership; do not treat them as equal product tracks.
-- Confirm that the public leaderboard is model-centered while full
-  configuration identity remains available as evidence.
-- Define the role of the official community benchmark app.
-
-### Milestone 1: Framework v2 Design
-
-- Separate workload, task, measurement mode, metric, and result.
-- Define a common result envelope with suite-specific payloads.
-- Define benchmark releases and migration rules.
-- Define model artifact, runtime build, device profile, and inference
-  configuration identities.
-- Define result bundles and raw evidence requirements.
-- Publish a Framework v1 to v2 migration map before changing stable IDs.
-
-Framework v1 remains active until these rules are accepted and implemented.
-
-Progress: Power 1.0 implements the workload, measurement-mode, metric, release,
-result-envelope, raw-evidence, and identity slice required by its two frozen
-workloads. Framework v1 remains active outside that adopted Power slice.
-
-### Milestone 2: Suite B Complete Specification
-
-- Freeze B-UX-001 and B-PIPE-001 as the only Pilot workload candidates.
-- Keep B-PIPE-002 and B-UX-002 Experimental until their documented promotion
-  requirements are satisfied.
-- Define TTFT, prefill, decode, memory, thermal, and failure metrics.
-- Freeze token counting, cache, warm-up, run-count, aggregation, and environment
-  rules.
-- Define a pilot validation plan using one device, model, and runtime.
-
-### Milestone 3: Official iOS Benchmark App MVP
-
-- Target physical iPhone devices first.
-- Use a runtime-neutral adapter architecture.
-- Implement MLX Swift as the first reference adapter.
-- Run benchmark releases without network access during measured phases.
-- Export a result bundle containing summary, raw runs, environment, and
-  workload identity.
-- Allow contributors to review all submitted fields.
-
-Progress: App 0.8.0 build 10 is the Power 1.0 reference App. It loads pinned
-Qwen3 artifacts, runs one warm-up and five measured attempts, captures raw
-token timing, sampled process footprint and thermal boundaries, and exports
-the frozen result envelope. Six unmodified physical-device exports were
-adopted into Power 1.0; five have an eligible primary ranking metric.
-
-### Milestone 4: Validation and Repository Submission
-
-- Add machine-readable JSON Schemas.
-- Validate task, benchmark release, workload hash, and result structure.
-- Recalculate supported metrics from raw event evidence.
-- Add GitHub workflows and contribution templates.
-- Support low-friction result submission from the benchmark app.
-- Generate a pull request or bot-managed repository submission rather than
-  writing directly to the default branch.
-
-Progress: the schema, semantic validator, metric recalculation, immutable
-two-file package, review records, GitHub validation workflow, and local package
-creator are implemented. Public intake is open through pull requests. Direct
-App upload or bot-managed PR creation remains future work.
-
-### Milestone 5: Community Evidence
-
-- Classify results as Draft, Community Submitted, Reproduced, Verified, or
-  Maintainer Reference.
-- Require independent reproduction for the default community ranking.
-- Publish device-coverage gaps so contributors can see which iPhone models
-  still need results.
-- Preserve failed, OOM, interrupted, and unsupported runs as evidence.
-
-Progress: evidence levels and immutable review transitions are implemented.
-The live view now counts independent metric-eligible GitHub contributors per
-exact comparison cell and publishes data-derived coverage gaps. The active
-work is receiving and reviewing the first genuine external submission. No
-formal evidence-level transition is promoted by CI alone.
-
-### Milestone 6: Power Leaderboard
-
-- Generate separate views by device, workload, metric, benchmark release, and
-  evidence level.
-- Display model names prominently.
-- Show a concise tested-profile label in the main view.
-- Put full runtime, quantization, OS, and raw evidence on detail pages.
-- Do not publish a global cross-suite score.
-
-Progress: the published site provides sortable workload-specific Power 1.0
-rankings, configuration details, evidence links, contributor counts, live
-coverage gaps, and no global score. Current official coverage is the
-six-result Maintainer Reference matrix.
-
-### Milestone 7: Ship Profiles and Developer Integration Guide
-
-- Add short Swift recipes for supported runtimes and model profiles.
-- Cover installation, loading, generation, streaming, cancellation, context
-  management, model distribution, and licensing.
-- Publish recommended small-model views only when enough reproduced or verified
-  results exist.
-- Link each model recommendation to a tested reference profile.
-- Avoid maintaining a separate full app for every recommended model.
-- Publish runtime compatibility and deployment facts without duplicating Suite
-  B performance metrics.
-- Represent supported capabilities, constraints, warnings, and unknowns rather
-  than producing a false-precision Ship score.
-
-Progress: Ship Deployment Profiles 1.0 publishes three hash-bound profiles and
-a revision-pinned MLX Swift integration recipe. Offline execution,
-cancellation, bundled distribution, minimum hardware, privacy compliance, and
-App Store readiness remain explicitly `Unknown` until direct evidence exists.
-
-### Milestone 8: Phase 1 Quality and Deployment Coverage
-
-Recommended order:
-
-1. Suite D minimum quality gate for recommended local models.
-2. Suite E runtime integration scorecards that reuse Suite B measurements.
-
-Suite A and Suite C are not part of this milestone or any other Product Phase 1
-success criterion.
-
-## Product Phase 2: Build Research Track
-
-Build is deferred because coding agents, tool interfaces, and development
-workflows are changing extremely quickly. General code generation and agent
-benchmarks are already well explored, while on-device AI deployment lacks a
-mature Apple-platform standard. Expanding into coding-agent evaluation now
-would split project focus before Power + Ship have established credible
-evidence and community value.
-
-Build will not continue as a collection of Swift snippets, API examples, or
-code-completion prompts. Its long-term research question is whether an AI
-software-delivery system can take an iOS product through:
+Suite A and Suite C remain visible as Build Research. Build may eventually
+evaluate complete iOS software delivery:
 
 ```text
-Product Requirement
-        ↓
-Engineering Planning
-        ↓
-Implementation
-        ↓
-Compilation
-        ↓
-Testing
-        ↓
-Simulator Validation
-        ↓
-Accessibility Review
-        ↓
-Privacy Review
-        ↓
-App Store Readiness
+product requirement → plan → implementation → compilation → tests
+→ simulator validation → accessibility → privacy → App Store readiness
 ```
 
-This is a vision record only. Product Phase 1 will not create Build benchmark
-protocols, schemas, runners, or implementation infrastructure. Build should
-receive an implementation plan only after Power + Ship have a credible public
-release and a stable end-to-end iOS delivery problem can be defined.
+Do not implement Build protocols, runners, or rankings during Phase 1. Do not
+reduce Build to isolated Swift snippets, API examples, or code completion.
 
-## Current Immediate Work
+## Ongoing maintenance
 
-- Operate the open Power 1.0 Draft intake and hash-bound review process.
-- Receive the first genuine community physical-device result without modifying
-  the frozen App export.
-- Receive an independent result for an existing exact cell and verify the live
-  `Reproduced` transition.
-- Keep B-PIPE-002, B-UX-002, Suite D, and Suite E outside the 1.0 contract.
-- Add no result to an official ranking without a separate maintainer
-  publication decision.
-- Preserve Power and Ship 1.0 tags, release packages, checksums, and raw
-  evidence as immutable history.
+- one current public guide and one public Power command;
+- one GitHub Pages deploy workflow;
+- immutable pinned release assets;
+- generated views checked against source evidence;
+- A–E suite navigation retained with accurate product roles;
+- historical records kept for auditability but de-indexed from onboarding;
+- no new top-level directory or benchmark category without a documented owner
+  and lifecycle.
+
+See [project structure and growth policy](docs/project-structure.md).

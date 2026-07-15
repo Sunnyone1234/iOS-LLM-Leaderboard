@@ -40,4 +40,4 @@ A cell reaches the live `Reproduced` display at two independent metric-eligible 
 
 An accepted result from a new physical iPhone creates additional device coverage. It is not compared inside an existing exact cell unless every comparison-identity field matches.
 
-See the [Power 1.0 contributor quickstart](../../contributor-kit/power-1.0-quickstart.md) to contribute genuine physical-device evidence.
+See the [Power 1.1 contributor quickstart](../../contributor-kit/power-1.1-quickstart.md) to contribute genuine physical-device evidence.

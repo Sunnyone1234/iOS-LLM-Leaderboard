@@ -24,7 +24,7 @@ class CommunityOnboardingTests(unittest.TestCase):
     def test_site_exposes_contribution_and_coverage_entries(self) -> None:
         index = (ROOT / "index.html").read_text()
         app = (ROOT / "site/app.js").read_text()
-        self.assertIn("contributor-kit/power-1.0-quickstart.md", index)
+        self.assertIn("contributor-kit/power-1.1-quickstart.md", index)
         self.assertIn("github.com/YizeSun/iOS-LLM-Leaderboard/blob/main", index)
         self.assertIn('data-mode="coverage"', index)
         self.assertIn('data-mode="catalog"', index)

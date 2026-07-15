@@ -1,80 +1,49 @@
 # Suite B: On-device Performance
 
-Suite B measures a pinned model artifact and runtime on a physical Apple device.
-It is being redesigned around versioned workloads instead of one task per
-metric.
+Suite B is the active measurement foundation for Power. It measures an exact
+model artifact and runtime on a physical Apple device using versioned workloads
+and measurement modes.
 
-## Status
+## Current release
 
-- Framework v1 remains the repository-wide accepted format.
-- Suite B Protocol v2 remains the design umbrella.
-- `suite-b-power@1.0.0-rc.1` is the frozen, non-official source candidate.
-- `suite-b-power@1.0.0` is the published Power release. It uses exact,
-  hash-bound RC adoption without rerunning or mutating raw evidence.
-- `suite-b-power@1.1.0-draft.1` is a non-official protocol draft. It requires
-  the App to export every technically derivable metric and reserves behavior,
-  metric, ranking, and recommendation decisions for the submission validator.
-  Its independent validator and report contract are implemented as draft,
-  hash-pinned assets. They change no Power 1.0 evidence or active ranking.
-- `suite-b-power@1.1.0-rc.1` freezes the 1.1 result schema, validation report,
-  semantic validator, ranking policy, fixtures, plans, and App 0.13.0 identity.
-  It authorizes RC evidence collection only; ranking, publication, and tagging
-  remain false until physical verification and final maintainer approval.
-- `b-ux-001-short-interaction` and `b-pipe-001-sustained-generation` are the
-  only Power 1.0 workload candidates.
-- `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` remain
-  Experimental and are excluded from Power 1.0 eligibility and comparison.
-- Historical `0.2.0-pilot` results remain non-official and require a new run
-  against the F3/F4 contract; they are never promoted in place.
-- F5 physical-device verification is complete for the declared three-model,
-  one-runtime, one-device matrix.
-- F6 submission and governance contracts are complete and merged.
-- All six adopted physical-device results are Maintainer Reference evidence;
-  five have an eligible primary metric and are active in the default
-  workload-specific ranking.
+`suite-b-power@1.1.0` is published. It adopts the frozen Power 1.1 RC1
+execution contract, finalizes the ranking policy, and binds six immutable
+physical-device results without rewriting their RC1 source identity.
 
-## v2 Structure
+The only active workloads are:
 
-| Category | Purpose | Draft workloads |
-| --- | --- | --- |
-| User experience | Express performance in recognizable app interactions | Short Interaction, Context Assistance |
-| Pipeline | Diagnose scaling, sustained generation, memory, and thermal behavior | Sustained Generation, Input Length Sweep |
+- `b-ux-001-short-interaction@1.1.0-rc.1`;
+- `b-pipe-001-sustained-generation@1.1.0-rc.1`.
 
-Every workload collects one compatible metric set. TTFT, prefill, decode,
-memory, token intervals, thermal observations, and failures are measurements
-from a run rather than separate tasks.
+Every compatible attempt can retain TTFT, prefill, decode, memory, thermal,
+token, behavior, and terminal-outcome evidence. These are metrics and
+observations, not separate benchmark tasks.
 
-Read:
+`b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` remain
+Experimental. Historical Pilot, Framework v1, Power 1.0, draft, and RC assets
+remain under their original identities for audit and reproduction.
 
-- [Suite B Protocol v2](protocol-v2.md)
-- [Power 1.0 frozen protocol candidate](power-1.0-protocol.md)
-- [Power 1.1 protocol draft](power-1.1-protocol.md)
-- [Power 1.1 draft validation reason registry](power-1.1-validation-reasons.json)
-- [Power 1.1 RC1 protocol](power-1.1-rc1-protocol.md)
-- [Power 1.1 RC1 validation reason registry](power-1.1-rc1-validation-reasons.json)
-- [Power 1.1 RC1 ranking policy](power-1.1-rc1-ranking-policy.json)
-- [Power 1.0 environmental observation draft](power-1.0-environment-control.md)
-- [Power 1.0 migration rules](power-1.0-migration.md)
-- [Power 1.0 schema and validator freeze](power-1.0-schema-validator.md)
-- [Power 1.0 RC1 submission guide](../../docs/power-benchmark-1.0-submission.md)
-- [Power 1.0 governance](../../docs/power-benchmark-1.0-governance.md)
-- [Power 1.0 finalization](../../docs/power-benchmark-1.0-finalization.md)
-- [Power 1.0 official leaderboard](../../results/suite-b-power-1.0/LEADERBOARD.md)
+## Start here
+
+- [Short public method](../../docs/power.md)
+- [Power 1.1 final release manifest](releases/suite-b-power-1.1.0.json)
+- [Frozen RC1 protocol](power-1.1-rc1-protocol.md)
+- [Final ranking policy](power-1.1-ranking-policy.json)
+- [Metrics](metrics.md)
+- [Workload manifests](workloads/)
 - [Release history](releases/RELEASE-HISTORY.md)
-- [Suite B Metric Definitions](metrics.md)
-- [Framework v2 Architecture](../../methodology/benchmark-framework-v2.md)
+- [Power 1.1 results](../../results/suite-b-power-1.1/LEADERBOARD.md)
 
-Machine-readable workload manifests live in `workloads/`.
+The unversioned `power-1.1-protocol.md` is a retained draft and is not the
+public or normative current-method link.
 
-Validate them with:
+Validate workload manifests with:
 
 ```bash
 python3 scripts/validate_suite_b_workload.py \
   benchmarks/suite-b-on-device-performance/workloads/*.json
 ```
 
-## Legacy Drafts
-
-The five `suite-b-on-device-performance-00x-*.md` files are Framework v1 metric
-task drafts. They remain for migration history but are superseded by Protocol
-v2 for future Suite B design. They must not be used for official submissions.
+The five `suite-b-on-device-performance-00x-*.md` files are Framework v1
+metric-task drafts retained for migration history. Do not use them for a new
+official submission.
