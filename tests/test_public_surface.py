@@ -96,6 +96,18 @@ class PublicSurfaceTests(unittest.TestCase):
         self.assertIn(".column-help", styles)
         self.assertIn(".column-tooltip", styles)
 
+    def test_power_rows_expose_exact_model_usage(self) -> None:
+        app = (ROOT / "site/app.js").read_text()
+        recipe = (ROOT / "examples/mlx-swift-power/ExactPowerModel.swift").read_text()
+        self.assertIn("Use this exact model", app)
+        self.assertIn("Copy Swift code", app)
+        self.assertIn("Open exact revision", app)
+        self.assertIn("modelRevisionURL", app)
+        self.assertIn("Open Ship profile", app)
+        self.assertIn("metricInterpretation", app)
+        self.assertIn("artifactID: String", recipe)
+        self.assertIn("revision: String", recipe)
+
 
 if __name__ == "__main__":
     unittest.main()

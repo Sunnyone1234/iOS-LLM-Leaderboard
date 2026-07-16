@@ -69,9 +69,34 @@ class CommunityRankingTests(unittest.TestCase):
         self.assertEqual(dataset["officialReferenceResultCount"], 6)
         self.assertEqual(dataset["communityResultCount"], 22)
         self.assertEqual(dataset["cellCount"], 28)
-        self.assertEqual(dataset["activeRankedCellCount"], 19)
+        self.assertEqual(dataset["activeRankedCellCount"], 28)
         self.assertEqual(dataset["contributorCount"], 1)
         self.assertEqual(dataset["reproducedCellCount"], 0)
+
+    def test_legacy_short_interaction_raw_evidence_is_recalculated(self) -> None:
+        dataset = build_dataset()
+        current = current_display_cells(
+            dataset["results"], "b-ux-001-short-interaction"
+        )
+        self.assertEqual(len(current), 11)
+        self.assertTrue(all(row["rankingEligibility"]["active"] for row in current))
+        interpreted = [
+            evidence
+            for row in dataset["results"]
+            for evidence in row["evidence"]
+            if "metricInterpretation" in evidence
+        ]
+        self.assertEqual(len(interpreted), 9)
+        self.assertTrue(all(
+            item["metricInterpretation"]["sourceResultSHA256"]
+            == item["rawSHA256"]
+            for item in interpreted
+        ))
+        self.assertTrue(all(
+            item["metricInterpretation"]["behaviorAffectsPerformanceMetrics"]
+            is False
+            for item in interpreted
+        ))
 
     def test_same_account_counts_once_within_same_cell(self) -> None:
         cells = aggregate_contributions([
@@ -273,7 +298,8 @@ class CommunityRankingTests(unittest.TestCase):
         rendered = render_leaderboard(dataset)
         self.assertIn("Current display: 11 model configurations", rendered)
         self.assertEqual(rendered.count("| Qwen3 1.7B | 4-bit |"), 2)
-        self.assertIn("Current configurations without a rank", rendered)
+        self.assertNotIn("Current configurations without a rank", rendered)
+        self.assertIn("recalculates performance", rendered)
         self.assertIn("Exact patch builds and older App baselines remain", rendered)
         self.assertEqual(
             (ROOT / "results/suite-b-power-community/LEADERBOARD.md").read_text(),

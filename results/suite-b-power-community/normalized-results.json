@@ -1,5 +1,5 @@
 {
-  "activeRankedCellCount": 19,
+  "activeRankedCellCount": 28,
   "aggregateCellCount": 0,
   "benchmarkRelease": {
     "id": "suite-b-power",
@@ -18,6 +18,7 @@
     "highVariationAffectsEligibility": false,
     "highVariationMADPercent": 10.0,
     "independentContributor": "case-insensitive-github-handle-per-comparison-cell",
+    "legacyMetricRecalculation": "power-1.1-legacy-raw-evidence-recalculation-v1",
     "reproducedMinimumContributors": 2
   },
   "reproducedCellCount": 0,
@@ -2988,8 +2989,8 @@
         "contributors": [
           "YizeSun"
         ],
-        "eligibleContributorCount": 0,
-        "eligibleRunCount": 0,
+        "eligibleContributorCount": 1,
+        "eligibleRunCount": 1,
         "primaryMetricVariation": {
           "affectsEligibility": false,
           "high": false,
@@ -3141,7 +3142,13 @@
           "contributor": "YizeSun",
           "createdAt": "2026-07-14T10:12:26Z",
           "evidenceLevel": "unreviewed",
-          "primaryMetricEligible": false,
+          "metricInterpretation": {
+            "behaviorAffectsPerformanceMetrics": false,
+            "id": "power-1.1-legacy-raw-evidence-recalculation-v1",
+            "performancePolicyVersion": "1.1.0",
+            "sourceResultSHA256": "57fbcac6281cc6a373fa701cda7926367b0b58dd5ceb3539a5ad2de4b5dcfa70"
+          },
+          "primaryMetricEligible": true,
           "rawPath": "submissions/suite-b/power-1.0.0-rc.1/draft/619c8f42-8df0-46f5-aca8-de80f955f389/result.json",
           "rawSHA256": "57fbcac6281cc6a373fa701cda7926367b0b58dd5ceb3539a5ad2de4b5dcfa70",
           "resultID": "1554B4B8-074D-4DB2-A67B-C0649F7E3485",
@@ -3151,19 +3158,15 @@
         }
       ],
       "primaryMetric": {
-        "eligible": false,
+        "eligible": true,
         "id": "first_renderable_proxy_ttft_ms@1",
         "summaryField": "medianFirstRenderableProxyTTFTMilliseconds",
-        "value": null
+        "value": 333.52425
       },
       "rankingEligibility": {
-        "active": false,
-        "candidateEligible": false,
-        "reasonCodes": [
-          "insufficient_metric_eligible_attempts",
-          "no_metric_eligible_contribution",
-          "response_conformance_failed"
-        ]
+        "active": true,
+        "candidateEligible": true,
+        "reasonCodes": []
       },
       "sourceEvidenceRelease": {
         "id": "suite-b-power",
@@ -3176,12 +3179,12 @@
         "decodeFirstToLastPercentChange": null,
         "failedMeasuredAttempts": 0,
         "finalThermalState": "nominal",
-        "medianDecodeTokensPerSecond": null,
-        "medianFirstRenderableProxyTTFTMilliseconds": null,
-        "medianPeakMemoryMiB": null,
-        "medianPipelineTTFTMilliseconds": null,
-        "medianPrefillTokensPerSecond": null,
-        "medianRequestCompletionMilliseconds": null,
+        "medianDecodeTokensPerSecond": 64.97868741694988,
+        "medianFirstRenderableProxyTTFTMilliseconds": 333.52425,
+        "medianPeakMemoryMiB": 763.3608932495117,
+        "medianPipelineTTFTMilliseconds": 323.415667,
+        "medianPrefillTokensPerSecond": 207.30833478859142,
+        "medianRequestCompletionMilliseconds": 605.983667,
         "notRunMeasuredAttempts": 0
       },
       "workload": {
@@ -3203,8 +3206,8 @@
         "contributors": [
           "YizeSun"
         ],
-        "eligibleContributorCount": 0,
-        "eligibleRunCount": 0,
+        "eligibleContributorCount": 1,
+        "eligibleRunCount": 1,
         "primaryMetricVariation": {
           "affectsEligibility": false,
           "high": false,
@@ -3356,7 +3359,13 @@
           "contributor": "YizeSun",
           "createdAt": "2026-07-14T09:11:57Z",
           "evidenceLevel": "unreviewed",
-          "primaryMetricEligible": false,
+          "metricInterpretation": {
+            "behaviorAffectsPerformanceMetrics": false,
+            "id": "power-1.1-legacy-raw-evidence-recalculation-v1",
+            "performancePolicyVersion": "1.1.0",
+            "sourceResultSHA256": "e1305059f2118a1ebe40aa99a5a83a36e24b6ce45dc7de8402fa1669e74b6a67"
+          },
+          "primaryMetricEligible": true,
           "rawPath": "submissions/suite-b/power-1.0.0-rc.1/draft/479db88a-2b35-42cb-95db-d0928de2c60f/result.json",
           "rawSHA256": "e1305059f2118a1ebe40aa99a5a83a36e24b6ce45dc7de8402fa1669e74b6a67",
           "resultID": "D7D942A7-E098-4527-96D0-11BADB0D7324",
@@ -3366,19 +3375,15 @@
         }
       ],
       "primaryMetric": {
-        "eligible": false,
+        "eligible": true,
         "id": "first_renderable_proxy_ttft_ms@1",
         "summaryField": "medianFirstRenderableProxyTTFTMilliseconds",
-        "value": null
+        "value": 208.406
       },
       "rankingEligibility": {
-        "active": false,
-        "candidateEligible": false,
-        "reasonCodes": [
-          "insufficient_metric_eligible_attempts",
-          "no_metric_eligible_contribution",
-          "response_conformance_failed"
-        ]
+        "active": true,
+        "candidateEligible": true,
+        "reasonCodes": []
       },
       "sourceEvidenceRelease": {
         "id": "suite-b-power",
@@ -3391,12 +3396,12 @@
         "decodeFirstToLastPercentChange": null,
         "failedMeasuredAttempts": 0,
         "finalThermalState": "nominal",
-        "medianDecodeTokensPerSecond": null,
-        "medianFirstRenderableProxyTTFTMilliseconds": null,
-        "medianPeakMemoryMiB": null,
-        "medianPipelineTTFTMilliseconds": null,
-        "medianPrefillTokensPerSecond": null,
-        "medianRequestCompletionMilliseconds": null,
+        "medianDecodeTokensPerSecond": 62.64202120745628,
+        "medianFirstRenderableProxyTTFTMilliseconds": 208.406,
+        "medianPeakMemoryMiB": 869.0484848022461,
+        "medianPipelineTTFTMilliseconds": 202.758917,
+        "medianPrefillTokensPerSecond": 469.00137625244906,
+        "medianRequestCompletionMilliseconds": 714.161333,
         "notRunMeasuredAttempts": 0
       },
       "workload": {
@@ -3418,8 +3423,8 @@
         "contributors": [
           "YizeSun"
         ],
-        "eligibleContributorCount": 0,
-        "eligibleRunCount": 0,
+        "eligibleContributorCount": 1,
+        "eligibleRunCount": 1,
         "primaryMetricVariation": {
           "affectsEligibility": false,
           "high": false,
@@ -3571,7 +3576,13 @@
           "contributor": "YizeSun",
           "createdAt": "2026-07-14T09:45:30Z",
           "evidenceLevel": "unreviewed",
-          "primaryMetricEligible": false,
+          "metricInterpretation": {
+            "behaviorAffectsPerformanceMetrics": false,
+            "id": "power-1.1-legacy-raw-evidence-recalculation-v1",
+            "performancePolicyVersion": "1.1.0",
+            "sourceResultSHA256": "0e76b00f57117582ac1405c54c4b6af2dc1904f1e7d2b7545558de81776e0fb6"
+          },
+          "primaryMetricEligible": true,
           "rawPath": "submissions/suite-b/power-1.0.0-rc.1/draft/597aaa0e-be36-4031-b599-b52b470360bb/result.json",
           "rawSHA256": "0e76b00f57117582ac1405c54c4b6af2dc1904f1e7d2b7545558de81776e0fb6",
           "resultID": "08099030-B135-4F72-A2E6-A489DEEFFE3F",
@@ -3581,19 +3592,15 @@
         }
       ],
       "primaryMetric": {
-        "eligible": false,
+        "eligible": true,
         "id": "first_renderable_proxy_ttft_ms@1",
         "summaryField": "medianFirstRenderableProxyTTFTMilliseconds",
-        "value": null
+        "value": 533.675417
       },
       "rankingEligibility": {
-        "active": false,
-        "candidateEligible": false,
-        "reasonCodes": [
-          "insufficient_metric_eligible_attempts",
-          "no_metric_eligible_contribution",
-          "response_conformance_failed"
-        ]
+        "active": true,
+        "candidateEligible": true,
+        "reasonCodes": []
       },
       "sourceEvidenceRelease": {
         "id": "suite-b-power",
@@ -3606,12 +3613,12 @@
         "decodeFirstToLastPercentChange": null,
         "failedMeasuredAttempts": 0,
         "finalThermalState": "nominal",
-        "medianDecodeTokensPerSecond": null,
-        "medianFirstRenderableProxyTTFTMilliseconds": null,
-        "medianPeakMemoryMiB": null,
-        "medianPipelineTTFTMilliseconds": null,
-        "medianPrefillTokensPerSecond": null,
-        "medianRequestCompletionMilliseconds": null,
+        "medianDecodeTokensPerSecond": 23.80589955280579,
+        "medianFirstRenderableProxyTTFTMilliseconds": 533.675417,
+        "medianPeakMemoryMiB": 1968.7211151123047,
+        "medianPipelineTTFTMilliseconds": 525.7315,
+        "medianPrefillTokensPerSecond": 180.78744804699213,
+        "medianRequestCompletionMilliseconds": 2148.269,
         "notRunMeasuredAttempts": 0
       },
       "workload": {
@@ -3844,8 +3851,8 @@
         "contributors": [
           "YizeSun"
         ],
-        "eligibleContributorCount": 0,
-        "eligibleRunCount": 0,
+        "eligibleContributorCount": 1,
+        "eligibleRunCount": 1,
         "primaryMetricVariation": {
           "affectsEligibility": false,
           "high": false,
@@ -3997,7 +4004,13 @@
           "contributor": "YizeSun",
           "createdAt": "2026-07-14T10:09:11Z",
           "evidenceLevel": "unreviewed",
-          "primaryMetricEligible": false,
+          "metricInterpretation": {
+            "behaviorAffectsPerformanceMetrics": false,
+            "id": "power-1.1-legacy-raw-evidence-recalculation-v1",
+            "performancePolicyVersion": "1.1.0",
+            "sourceResultSHA256": "d0afa4205dcd08b62023073c3d0be89a1c910b0498d3649b71e2530120f12aa9"
+          },
+          "primaryMetricEligible": true,
           "rawPath": "submissions/suite-b/power-1.0.0-rc.1/draft/ffe23b9e-57e1-4004-9bb3-29dcfad43c38/result.json",
           "rawSHA256": "d0afa4205dcd08b62023073c3d0be89a1c910b0498d3649b71e2530120f12aa9",
           "resultID": "74A3B8CA-7E25-4CE5-8CB6-61823599409F",
@@ -4007,19 +4020,15 @@
         }
       ],
       "primaryMetric": {
-        "eligible": false,
+        "eligible": true,
         "id": "first_renderable_proxy_ttft_ms@1",
         "summaryField": "medianFirstRenderableProxyTTFTMilliseconds",
-        "value": null
+        "value": 180.507292
       },
       "rankingEligibility": {
-        "active": false,
-        "candidateEligible": false,
-        "reasonCodes": [
-          "insufficient_metric_eligible_attempts",
-          "no_metric_eligible_contribution",
-          "response_conformance_failed"
-        ]
+        "active": true,
+        "candidateEligible": true,
+        "reasonCodes": []
       },
       "sourceEvidenceRelease": {
         "id": "suite-b-power",
@@ -4032,12 +4041,12 @@
         "decodeFirstToLastPercentChange": null,
         "failedMeasuredAttempts": 0,
         "finalThermalState": "nominal",
-        "medianDecodeTokensPerSecond": null,
-        "medianFirstRenderableProxyTTFTMilliseconds": null,
-        "medianPeakMemoryMiB": null,
-        "medianPipelineTTFTMilliseconds": null,
-        "medianPrefillTokensPerSecond": null,
-        "medianRequestCompletionMilliseconds": null,
+        "medianDecodeTokensPerSecond": 107.28672894111094,
+        "medianFirstRenderableProxyTTFTMilliseconds": 180.507292,
+        "medianPeakMemoryMiB": 480.5169372558594,
+        "medianPipelineTTFTMilliseconds": 179.219542,
+        "medianPrefillTokensPerSecond": 390.7668165173672,
+        "medianRequestCompletionMilliseconds": 437.594083,
         "notRunMeasuredAttempts": 0
       },
       "workload": {
@@ -4903,8 +4912,8 @@
         "contributors": [
           "YizeSun"
         ],
-        "eligibleContributorCount": 0,
-        "eligibleRunCount": 0,
+        "eligibleContributorCount": 1,
+        "eligibleRunCount": 1,
         "primaryMetricVariation": {
           "affectsEligibility": false,
           "high": false,
@@ -5056,7 +5065,13 @@
           "contributor": "YizeSun",
           "createdAt": "2026-07-14T09:20:02Z",
           "evidenceLevel": "unreviewed",
-          "primaryMetricEligible": false,
+          "metricInterpretation": {
+            "behaviorAffectsPerformanceMetrics": false,
+            "id": "power-1.1-legacy-raw-evidence-recalculation-v1",
+            "performancePolicyVersion": "1.1.0",
+            "sourceResultSHA256": "c95ea635cdcdcd40d1c2652c9b3b47406ce6dfcbdb4c5c3f9a7d87c0978cda81"
+          },
+          "primaryMetricEligible": true,
           "rawPath": "submissions/suite-b/power-1.0.0-rc.1/draft/d7d4245e-7f71-4ab2-883f-54b3c0ee8e88/result.json",
           "rawSHA256": "c95ea635cdcdcd40d1c2652c9b3b47406ce6dfcbdb4c5c3f9a7d87c0978cda81",
           "resultID": "607EB617-A7E8-4BED-80F8-0CEAE76BCA85",
@@ -5066,19 +5081,15 @@
         }
       ],
       "primaryMetric": {
-        "eligible": false,
+        "eligible": true,
         "id": "first_renderable_proxy_ttft_ms@1",
         "summaryField": "medianFirstRenderableProxyTTFTMilliseconds",
-        "value": null
+        "value": 1146.220833
       },
       "rankingEligibility": {
-        "active": false,
-        "candidateEligible": false,
-        "reasonCodes": [
-          "insufficient_metric_eligible_attempts",
-          "no_metric_eligible_contribution",
-          "response_conformance_failed"
-        ]
+        "active": true,
+        "candidateEligible": true,
+        "reasonCodes": []
       },
       "sourceEvidenceRelease": {
         "id": "suite-b-power",
@@ -5091,12 +5102,12 @@
         "decodeFirstToLastPercentChange": null,
         "failedMeasuredAttempts": 0,
         "finalThermalState": "nominal",
-        "medianDecodeTokensPerSecond": null,
-        "medianFirstRenderableProxyTTFTMilliseconds": null,
-        "medianPeakMemoryMiB": null,
-        "medianPipelineTTFTMilliseconds": null,
-        "medianPrefillTokensPerSecond": null,
-        "medianRequestCompletionMilliseconds": null,
+        "medianDecodeTokensPerSecond": 24.39794858314366,
+        "medianFirstRenderableProxyTTFTMilliseconds": 1146.220833,
+        "medianPeakMemoryMiB": 1919.3773651123047,
+        "medianPipelineTTFTMilliseconds": 1136.9375,
+        "medianPrefillTokensPerSecond": 110.85098734354189,
+        "medianRequestCompletionMilliseconds": 2147.763459,
         "notRunMeasuredAttempts": 0
       },
       "workload": {
@@ -5118,8 +5129,8 @@
         "contributors": [
           "YizeSun"
         ],
-        "eligibleContributorCount": 0,
-        "eligibleRunCount": 0,
+        "eligibleContributorCount": 1,
+        "eligibleRunCount": 1,
         "primaryMetricVariation": {
           "affectsEligibility": false,
           "high": false,
@@ -5271,7 +5282,13 @@
           "contributor": "YizeSun",
           "createdAt": "2026-07-14T09:31:50Z",
           "evidenceLevel": "unreviewed",
-          "primaryMetricEligible": false,
+          "metricInterpretation": {
+            "behaviorAffectsPerformanceMetrics": false,
+            "id": "power-1.1-legacy-raw-evidence-recalculation-v1",
+            "performancePolicyVersion": "1.1.0",
+            "sourceResultSHA256": "609e215147bbe197685d6c48b119d689cb76c709d7ce25e1df1fe1b36a661d63"
+          },
+          "primaryMetricEligible": true,
           "rawPath": "submissions/suite-b/power-1.0.0-rc.1/draft/bb15ead8-d9cc-46cd-8259-b2a56466cfed/result.json",
           "rawSHA256": "609e215147bbe197685d6c48b119d689cb76c709d7ce25e1df1fe1b36a661d63",
           "resultID": "A007537A-022C-4776-B023-454958A1D5F4",
@@ -5281,19 +5298,15 @@
         }
       ],
       "primaryMetric": {
-        "eligible": false,
+        "eligible": true,
         "id": "first_renderable_proxy_ttft_ms@1",
         "summaryField": "medianFirstRenderableProxyTTFTMilliseconds",
-        "value": null
+        "value": 1298.424917
       },
       "rankingEligibility": {
-        "active": false,
-        "candidateEligible": false,
-        "reasonCodes": [
-          "insufficient_metric_eligible_attempts",
-          "no_metric_eligible_contribution",
-          "response_conformance_failed"
-        ]
+        "active": true,
+        "candidateEligible": true,
+        "reasonCodes": []
       },
       "sourceEvidenceRelease": {
         "id": "suite-b-power",
@@ -5306,12 +5319,12 @@
         "decodeFirstToLastPercentChange": null,
         "failedMeasuredAttempts": 0,
         "finalThermalState": "nominal",
-        "medianDecodeTokensPerSecond": null,
-        "medianFirstRenderableProxyTTFTMilliseconds": null,
-        "medianPeakMemoryMiB": null,
-        "medianPipelineTTFTMilliseconds": null,
-        "medianPrefillTokensPerSecond": null,
-        "medianRequestCompletionMilliseconds": null,
+        "medianDecodeTokensPerSecond": 38.14439751837466,
+        "medianFirstRenderableProxyTTFTMilliseconds": 1298.424917,
+        "medianPeakMemoryMiB": 858.1578598022461,
+        "medianPipelineTTFTMilliseconds": 1296.149417,
+        "medianPrefillTokensPerSecond": 49.38572766421972,
+        "medianRequestCompletionMilliseconds": 2043.511875,
         "notRunMeasuredAttempts": 0
       },
       "workload": {
@@ -5333,8 +5346,8 @@
         "contributors": [
           "YizeSun"
         ],
-        "eligibleContributorCount": 0,
-        "eligibleRunCount": 0,
+        "eligibleContributorCount": 1,
+        "eligibleRunCount": 1,
         "primaryMetricVariation": {
           "affectsEligibility": false,
           "high": false,
@@ -5486,7 +5499,13 @@
           "contributor": "YizeSun",
           "createdAt": "2026-07-14T09:26:39Z",
           "evidenceLevel": "unreviewed",
-          "primaryMetricEligible": false,
+          "metricInterpretation": {
+            "behaviorAffectsPerformanceMetrics": false,
+            "id": "power-1.1-legacy-raw-evidence-recalculation-v1",
+            "performancePolicyVersion": "1.1.0",
+            "sourceResultSHA256": "d8ee0105b1706f929764235bd7c2186b38bbfe3954a309c1558dfc9084a6348a"
+          },
+          "primaryMetricEligible": true,
           "rawPath": "submissions/suite-b/power-1.0.0-rc.1/draft/6f4ebca9-ab71-44f3-b516-7c6ef056150f/result.json",
           "rawSHA256": "d8ee0105b1706f929764235bd7c2186b38bbfe3954a309c1558dfc9084a6348a",
           "resultID": "90AAC23E-5037-4A82-A8FF-81721AC3578B",
@@ -5496,19 +5515,15 @@
         }
       ],
       "primaryMetric": {
-        "eligible": false,
+        "eligible": true,
         "id": "first_renderable_proxy_ttft_ms@1",
         "summaryField": "medianFirstRenderableProxyTTFTMilliseconds",
-        "value": null
+        "value": 395.102625
       },
       "rankingEligibility": {
-        "active": false,
-        "candidateEligible": false,
-        "reasonCodes": [
-          "insufficient_metric_eligible_attempts",
-          "no_metric_eligible_contribution",
-          "response_conformance_failed"
-        ]
+        "active": true,
+        "candidateEligible": true,
+        "reasonCodes": []
       },
       "sourceEvidenceRelease": {
         "id": "suite-b-power",
@@ -5521,12 +5536,12 @@
         "decodeFirstToLastPercentChange": null,
         "failedMeasuredAttempts": 0,
         "finalThermalState": "nominal",
-        "medianDecodeTokensPerSecond": null,
-        "medianFirstRenderableProxyTTFTMilliseconds": null,
-        "medianPeakMemoryMiB": null,
-        "medianPipelineTTFTMilliseconds": null,
-        "medianPrefillTokensPerSecond": null,
-        "medianRequestCompletionMilliseconds": null,
+        "medianDecodeTokensPerSecond": 50.07554073006533,
+        "medianFirstRenderableProxyTTFTMilliseconds": 395.102625,
+        "medianPeakMemoryMiB": 832.4859848022461,
+        "medianPipelineTTFTMilliseconds": 364.52925,
+        "medianPrefillTokensPerSecond": 194.91676245750295,
+        "medianRequestCompletionMilliseconds": 1040.097458,
         "notRunMeasuredAttempts": 0
       },
       "workload": {
@@ -5548,8 +5563,8 @@
         "contributors": [
           "YizeSun"
         ],
-        "eligibleContributorCount": 0,
-        "eligibleRunCount": 0,
+        "eligibleContributorCount": 1,
+        "eligibleRunCount": 1,
         "primaryMetricVariation": {
           "affectsEligibility": false,
           "high": false,
@@ -5701,7 +5716,13 @@
           "contributor": "YizeSun",
           "createdAt": "2026-07-14T08:35:00Z",
           "evidenceLevel": "unreviewed",
-          "primaryMetricEligible": false,
+          "metricInterpretation": {
+            "behaviorAffectsPerformanceMetrics": false,
+            "id": "power-1.1-legacy-raw-evidence-recalculation-v1",
+            "performancePolicyVersion": "1.1.0",
+            "sourceResultSHA256": "e1336a37128a99fa09c14fa661fdce423479cf35624899183659c80e8bd5e2cc"
+          },
+          "primaryMetricEligible": true,
           "rawPath": "submissions/suite-b/power-1.0.0-rc.1/draft/dbb7e0a9-c6d5-456a-a5a1-70ae56e2f927/result.json",
           "rawSHA256": "e1336a37128a99fa09c14fa661fdce423479cf35624899183659c80e8bd5e2cc",
           "resultID": "7F1BDE49-2104-4D07-BF65-3D6CC423C644",
@@ -5711,19 +5732,15 @@
         }
       ],
       "primaryMetric": {
-        "eligible": false,
+        "eligible": true,
         "id": "first_renderable_proxy_ttft_ms@1",
         "summaryField": "medianFirstRenderableProxyTTFTMilliseconds",
-        "value": null
+        "value": 349.355667
       },
       "rankingEligibility": {
-        "active": false,
-        "candidateEligible": false,
-        "reasonCodes": [
-          "insufficient_metric_eligible_attempts",
-          "no_metric_eligible_contribution",
-          "response_conformance_failed"
-        ]
+        "active": true,
+        "candidateEligible": true,
+        "reasonCodes": []
       },
       "sourceEvidenceRelease": {
         "id": "suite-b-power",
@@ -5736,12 +5753,12 @@
         "decodeFirstToLastPercentChange": null,
         "failedMeasuredAttempts": 0,
         "finalThermalState": "nominal",
-        "medianDecodeTokensPerSecond": null,
-        "medianFirstRenderableProxyTTFTMilliseconds": null,
-        "medianPeakMemoryMiB": null,
-        "medianPipelineTTFTMilliseconds": null,
-        "medianPrefillTokensPerSecond": null,
-        "medianRequestCompletionMilliseconds": null,
+        "medianDecodeTokensPerSecond": 65.59772313426701,
+        "medianFirstRenderableProxyTTFTMilliseconds": 349.355667,
+        "medianPeakMemoryMiB": 930.7829513549805,
+        "medianPipelineTTFTMilliseconds": 179.118209,
+        "medianPrefillTokensPerSecond": 374.1762913837442,
+        "medianRequestCompletionMilliseconds": 1010.278375,
         "notRunMeasuredAttempts": 0
       },
       "workload": {
@@ -5763,8 +5780,8 @@
         "contributors": [
           "YizeSun"
         ],
-        "eligibleContributorCount": 0,
-        "eligibleRunCount": 0,
+        "eligibleContributorCount": 1,
+        "eligibleRunCount": 1,
         "primaryMetricVariation": {
           "affectsEligibility": false,
           "high": false,
@@ -5916,7 +5933,13 @@
           "contributor": "YizeSun",
           "createdAt": "2026-07-14T09:38:06Z",
           "evidenceLevel": "unreviewed",
-          "primaryMetricEligible": false,
+          "metricInterpretation": {
+            "behaviorAffectsPerformanceMetrics": false,
+            "id": "power-1.1-legacy-raw-evidence-recalculation-v1",
+            "performancePolicyVersion": "1.1.0",
+            "sourceResultSHA256": "105af887f0d8b78b402f1804cfdfe1e1a182ea690a829688c095d38f662b0754"
+          },
+          "primaryMetricEligible": true,
           "rawPath": "submissions/suite-b/power-1.0.0-rc.1/draft/93e1b80b-cdcf-486a-bfc1-ed7867d6c5ce/result.json",
           "rawSHA256": "105af887f0d8b78b402f1804cfdfe1e1a182ea690a829688c095d38f662b0754",
           "resultID": "61D737C4-2C72-4856-9D11-91737FEBCEC3",
@@ -5926,19 +5949,15 @@
         }
       ],
       "primaryMetric": {
-        "eligible": false,
+        "eligible": true,
         "id": "first_renderable_proxy_ttft_ms@1",
         "summaryField": "medianFirstRenderableProxyTTFTMilliseconds",
-        "value": null
+        "value": 562.135666
       },
       "rankingEligibility": {
-        "active": false,
-        "candidateEligible": false,
-        "reasonCodes": [
-          "insufficient_metric_eligible_attempts",
-          "no_metric_eligible_contribution",
-          "response_conformance_failed"
-        ]
+        "active": true,
+        "candidateEligible": true,
+        "reasonCodes": []
       },
       "sourceEvidenceRelease": {
         "id": "suite-b-power",
@@ -5951,12 +5970,12 @@
         "decodeFirstToLastPercentChange": null,
         "failedMeasuredAttempts": 0,
         "finalThermalState": "nominal",
-        "medianDecodeTokensPerSecond": null,
-        "medianFirstRenderableProxyTTFTMilliseconds": null,
-        "medianPeakMemoryMiB": null,
-        "medianPipelineTTFTMilliseconds": null,
-        "medianPrefillTokensPerSecond": null,
-        "medianRequestCompletionMilliseconds": null,
+        "medianDecodeTokensPerSecond": 28.821899239315773,
+        "medianFirstRenderableProxyTTFTMilliseconds": 562.135666,
+        "medianPeakMemoryMiB": 1543.5957717895508,
+        "medianPipelineTTFTMilliseconds": 557.820875,
+        "medianPrefillTokensPerSecond": 213.4211508402335,
+        "medianRequestCompletionMilliseconds": 1717.053708,
         "notRunMeasuredAttempts": 0
       },
       "workload": {

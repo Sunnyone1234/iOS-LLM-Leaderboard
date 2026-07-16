@@ -14,6 +14,7 @@ from typing import Any, Iterable
 
 try:
     from scripts.consume_suite_b_power_1_1_report import verify_pair as verify_final_pair
+    from scripts import validate_suite_b_power_1_1_rc1_result as power11
     from scripts.validate_suite_b_power_1_1_final_result import validate as validate_power_1_1_result
     from scripts.validate_suite_b_power_1_1_submission import validate_package as validate_power_1_1_package
     from scripts.validate_suite_b_power_result import validate as validate_power_result
@@ -21,6 +22,7 @@ try:
     from scripts.validate_suite_b_power_submission import validate_package
 except ModuleNotFoundError:
     from consume_suite_b_power_1_1_report import verify_pair as verify_final_pair
+    import validate_suite_b_power_1_1_rc1_result as power11
     from validate_suite_b_power_1_1_final_result import validate as validate_power_1_1_result
     from validate_suite_b_power_1_1_submission import validate_package as validate_power_1_1_package
     from validate_suite_b_power_result import validate as validate_power_result
@@ -76,6 +78,7 @@ THERMAL_ORDER = {
 }
 
 HIGH_VARIATION_MAD_PERCENT = 10.0
+LEGACY_METRIC_RECALCULATION_ID = "power-1.1-legacy-raw-evidence-recalculation-v1"
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -99,6 +102,105 @@ def display_path(path: Path) -> str:
         return path.relative_to(ROOT).as_posix()
     except ValueError:
         return path.as_posix()
+
+
+def recalculate_legacy_metrics(
+    result: dict[str, Any],
+    validation: dict[str, Any],
+    raw_sha256: str,
+) -> dict[str, Any] | None:
+    """Recover performance metrics that the legacy App nulled after a text check.
+
+    Power 1.1 separates measured performance from behavior recommendation. Some
+    Power 1.0 Short Interaction exports retained complete token, timing, memory,
+    and renderability evidence but wrote null derived metrics when the old
+    literal response check failed. This interpretation never changes the raw
+    result. It only derives metrics from that hash-bound evidence using the
+    Power 1.1 calculation boundary.
+    """
+    if result.get("schemaVersion") != "suite-b-power-result-1.0.0-rc.1":
+        return None
+    execution = result.get("execution", {})
+    workload_id = execution.get("workloadID")
+    if workload_id != "b-ux-001-short-interaction":
+        return None
+    if not validation.get("structuralValidity", {}).get("valid"):
+        return None
+    if not validation.get("protocolConformance", {}).get("valid"):
+        return None
+    primary = validation.get("metricEligibility", {}).get(
+        "first_renderable_proxy_ttft_ms@1", {}
+    )
+    if primary.get("eligible"):
+        return None
+    measured_attempts = [
+        attempt for attempt in result.get("attempts", [])
+        if attempt.get("role") == "measured"
+    ]
+    if not measured_attempts or not any(
+        attempt.get("responseConformance", {}).get("status") == "fail"
+        for attempt in measured_attempts
+    ):
+        return None
+
+    errors: list[str] = []
+    reasons: list[str] = []
+    attempt_values: list[dict[str, float | None]] = []
+    for position, attempt in enumerate(result.get("attempts", [])):
+        attempt_values.append(
+            power11._attempt_values(
+                attempt,
+                workload_id,
+                errors,
+                reasons,
+                f"attempts[{position}]",
+            )
+        )
+    if errors:
+        return None
+
+    minimum = result.get("configuration", {}).get(
+        "minimumMetricEligibleMeasuredAttempts", 3
+    )
+    if not isinstance(minimum, int) or minimum < 1:
+        return None
+    measured_pairs = [
+        (attempt, values_by_metric)
+        for attempt, values_by_metric in zip(
+            result.get("attempts", []), attempt_values
+        )
+        if attempt.get("role") == "measured"
+    ]
+    summary: dict[str, float | None] = {}
+    eligibility: dict[str, dict[str, Any]] = {}
+    for metric_id, summary_field in power11.SUMMARY_METRICS.items():
+        if metric_id not in power11.WORKLOADS[workload_id]["metrics"]:
+            continue
+        values = [
+            values_by_metric[metric_id]
+            for attempt, values_by_metric in measured_pairs
+            if attempt.get("outcome") == "completed"
+            and values_by_metric.get(metric_id) is not None
+        ]
+        eligible = len(values) >= minimum
+        summary[summary_field] = statistics.median(values) if eligible else None
+        eligibility[metric_id] = {
+            "eligible": eligible,
+            "eligibleMeasuredAttempts": len(values),
+            "reasonCodes": [] if eligible else ["insufficient_metric_eligible_attempts"],
+        }
+
+    if not eligibility.get("first_renderable_proxy_ttft_ms@1", {}).get("eligible"):
+        return None
+    return {
+        "id": LEGACY_METRIC_RECALCULATION_ID,
+        "sourceResultSHA256": raw_sha256,
+        "sourceSchemaVersion": result["schemaVersion"],
+        "performancePolicyVersion": "1.1.0",
+        "behaviorAffectsPerformanceMetrics": False,
+        "summary": summary,
+        "metricEligibility": eligibility,
+    }
 
 
 def comparison_identity(result: dict[str, Any]) -> dict[str, Any]:
@@ -163,6 +265,9 @@ def make_contribution(
     if not report.get("protocolConformance", {}).get("valid"):
         raise ValueError(f"non-conformant Power result: {raw_path}")
     identity = comparison_identity(result)
+    metric_interpretation = recalculate_legacy_metrics(
+        result, report, raw_sha256
+    )
     return {
         "comparisonID": canonical_sha256(identity),
         "comparisonIdentity": identity,
@@ -178,9 +283,28 @@ def make_contribution(
         "rawSHA256": raw_sha256,
         "result": result,
         "validation": report,
+        "metricInterpretation": metric_interpretation,
         "ordinaryLiveRankingAllowed": ordinary_live_ranking_allowed,
         "ordinaryLiveRankingReason": ordinary_live_ranking_reason,
     }
+
+
+def contribution_metric_value(
+    contribution: dict[str, Any], field: str
+) -> float | int | None:
+    interpretation = contribution.get("metricInterpretation")
+    if interpretation and field in interpretation.get("summary", {}):
+        return interpretation["summary"][field]
+    return contribution["result"]["summary"]["metrics"].get(field)
+
+
+def contribution_metric_eligibility(
+    contribution: dict[str, Any], metric_id: str
+) -> dict[str, Any]:
+    interpretation = contribution.get("metricInterpretation")
+    if interpretation and metric_id in interpretation.get("metricEligibility", {}):
+        return interpretation["metricEligibility"][metric_id]
+    return contribution["validation"]["metricEligibility"].get(metric_id, {})
 
 
 def load_official_contributions(
@@ -329,7 +453,7 @@ def contributor_weighted_metric(
 ) -> tuple[float | None, list[float]]:
     by_contributor: dict[str, list[float]] = defaultdict(list)
     for contribution in contributions:
-        value = contribution["result"]["summary"]["metrics"].get(field)
+        value = contribution_metric_value(contribution, field)
         if value is not None:
             by_contributor[contribution["contributorKey"]].append(float(value))
     contributor_medians = [
@@ -347,7 +471,7 @@ def ineligibility_reason_codes(
         if not item.get("ordinaryLiveRankingAllowed", True):
             reasons.add("ordinary_live_ranking_not_allowed")
 
-        metric = item["validation"]["metricEligibility"].get(primary_metric_id, {})
+        metric = contribution_metric_eligibility(item, primary_metric_id)
         if not metric.get("eligible"):
             reasons.update(metric.get("reasonCodes", []))
 
@@ -418,7 +542,7 @@ def build_cell(contributions: list[dict[str, Any]]) -> dict[str, Any]:
             [
                 item for item in contributions
                 if item.get("ordinaryLiveRankingAllowed", True)
-                and item["validation"]["metricEligibility"].get(eligibility_id, {}).get("eligible")
+                and contribution_metric_eligibility(item, eligibility_id).get("eligible")
             ]
             if eligibility_id
             else contributions
@@ -446,7 +570,7 @@ def build_cell(contributions: list[dict[str, Any]]) -> dict[str, Any]:
     eligible = [
         item for item in contributions
         if item.get("ordinaryLiveRankingAllowed", True)
-        and item["validation"]["metricEligibility"][primary_metric_id]["eligible"]
+        and contribution_metric_eligibility(item, primary_metric_id).get("eligible")
     ]
     primary_value, primary_contributor_values = contributor_weighted_metric(eligible, primary_field)
     primary_variation = relative_mad_percent(primary_contributor_values)
@@ -472,6 +596,16 @@ def build_cell(contributions: list[dict[str, Any]]) -> dict[str, Any]:
             evidence_item["ordinaryLiveRankingReason"] = item.get(
                 "ordinaryLiveRankingReason"
             )
+        if item.get("metricInterpretation"):
+            evidence_item["metricInterpretation"] = {
+                key: item["metricInterpretation"][key]
+                for key in (
+                    "id",
+                    "sourceResultSHA256",
+                    "performancePolicyVersion",
+                    "behaviorAffectsPerformanceMetrics",
+                )
+            }
         evidence.append(evidence_item)
 
     return {
@@ -666,6 +800,7 @@ def build_dataset(
             "highVariationMADPercent": HIGH_VARIATION_MAD_PERCENT,
             "highVariationAffectsEligibility": False,
             "appAttestRequired": False,
+            "legacyMetricRecalculation": LEGACY_METRIC_RECALCULATION_ID,
         },
         "officialReferenceResultCount": sum(
             item["sourceKind"] == "maintainer-reference" for item in contributions
@@ -692,6 +827,7 @@ def render_leaderboard(dataset: dict[str, Any]) -> str:
         "This live view combines the immutable Power 1.1 Maintainer Reference results with valid merged community submissions.",
         "A GitHub account counts once per exact comparison cell and may contribute independently to any number of different cells.",
         "The default table shows the newest App baseline inside each model, device, runtime, and iOS minor family. Exact patch builds and older App baselines remain in normalized evidence and coverage history.",
+        "For legacy Short Interaction exports that retained complete raw timing evidence but nulled derived metrics after the old text check, Power 1.1 recalculates performance without changing the source result or using behavior status as a performance gate.",
         "",
     ]
     sections = (
@@ -755,7 +891,7 @@ def render_leaderboard(dataset: dict[str, Any]) -> str:
                 )
             lines.append("")
     lines.extend([
-        "Power 1.0 and every historical community result remain immutable. This file is a reproducible live derivative of Power 1.1 plus retained merged community evidence.",
+        "Power 1.0 and every historical community result remain immutable. This file is a reproducible live derivative of Power 1.1 plus retained merged community evidence; every legacy metric interpretation is bound to the source result SHA-256.",
         "",
     ])
     return "\n".join(lines)

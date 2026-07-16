@@ -10,8 +10,7 @@ while receiving `not_verified`, for example when it says that a note is
 `securely stored` instead of `safe`.
 
 The draft `short-interaction-response-v2` policy improves deterministic
-coverage without introducing an LLM judge. Its canonical machine-readable
-definition is:
+coverage. Its canonical machine-readable definition is:
 
 - `benchmarks/suite-b-on-device-performance/policies/short-interaction-response-v2.json`
 
@@ -46,7 +45,25 @@ python3 scripts/validate_short_interaction_response_v2.py \
   "Your note is securely stored on this device. It will sync when connectivity returns."
 ```
 
+## Retained two-stage experiment
+
+The project also retains a separate, non-normative GitHub Models experiment:
+
+- stage 1 runs the deterministic v2 policy locally;
+- stage 2 sends only stage-1 `not_verified` responses to
+  `openai/gpt-4.1-mini` for an auditable semantic review; and
+- the hosted judgment records model metadata, prompt hashes, request settings,
+  evidence excerpts, and separate semantic and format decisions.
+
+The implementation is under
+`scripts/experiments/github_models_short_interaction/`. It deliberately does
+not include or depend on the discontinued NLI experiment. Hosted GPT review is
+not currently a Power 1.1 ranking authority and can affect only a future
+behavior-recommendation decision, never TTFT, throughput, memory, thermal, or
+other measured-performance eligibility.
+
 Before activation, the project must verify Swift/Python parity, freeze positive,
-negative, and ambiguous examples, publish the validator/report identities, and
-decide whether historical raw evidence may receive a new report without
+negative, ambiguous, and adversarial examples, publish the validator/report
+identities, define privacy and GitHub Models availability fallbacks, and decide
+whether historical raw evidence may receive a new behavior report without
 mutating its original report.

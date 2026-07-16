@@ -1,0 +1,18 @@
+{"caseID":"verified-canonical","response":"Your note is stored locally on this iPhone while offline. It will sync when the network is back.","expected":"verified","focus":"canonical"}
+{"caseID":"verified-secure-upload","response":"The note remains secure on the device without a connection and uploads once connectivity returns.","expected":"verified","focus":"accepted-paraphrase"}
+{"caseID":"verified-reconnect","response":"Offline, the note stays saved locally; after reconnecting it synchronizes.","expected":"verified","focus":"accepted-paraphrase"}
+{"caseID":"verified-plain-language","response":"I kept the note on your phone, and it will upload after you are online again.","expected":"verified","focus":"accepted-paraphrase"}
+{"caseID":"verified-airplane-mode","response":"The note survives airplane mode on the iPhone and is uploaded after Wi-Fi reconnects.","expected":"verified","focus":"semantic-paraphrase"}
+{"caseID":"verified-network-restored","response":"A local copy remains on the device during the outage; synchronization resumes when service is restored.","expected":"verified","focus":"semantic-paraphrase"}
+{"caseID":"not-verified-local-only","response":"Your note is safe on the phone.","expected":"not_verified","focus":"missing-sync"}
+{"caseID":"not-verified-sync-only","response":"It will sync after the connection returns.","expected":"not_verified","focus":"missing-local-persistence"}
+{"caseID":"not-verified-vague","response":"Done. Everything should be fine.","expected":"not_verified","focus":"vague"}
+{"caseID":"not-verified-pending","response":"The note is stored locally and synchronization is pending.","expected":"not_verified","focus":"missing-connectivity-condition"}
+{"caseID":"not-verified-modal","response":"The note could remain on the device and might sync when the network comes back.","expected":"not_verified","focus":"uncertain-modality"}
+{"caseID":"not-verified-cloud-only","response":"The note is saved in the cloud and will be available when the network returns.","expected":"not_verified","focus":"no-local-offline-claim"}
+{"caseID":"contradicted-not-saved","response":"The note was not saved on the iPhone and cannot be recovered.","expected":"contradicted","focus":"local-contradiction"}
+{"caseID":"contradicted-memory-only","response":"The note exists only in memory and will disappear when the App closes.","expected":"contradicted","focus":"local-contradiction"}
+{"caseID":"contradicted-never-sync","response":"The note stays on the device but will never sync after connectivity returns.","expected":"contradicted","focus":"sync-contradiction"}
+{"caseID":"contradicted-deleted","response":"The note was deleted from the phone, although synchronization will resume online.","expected":"contradicted","focus":"mixed-claims"}
+{"caseID":"contradicted-not-local","response":"The note is on the server, not on your device, and it will not sync later.","expected":"contradicted","focus":"double-contradiction"}
+{"caseID":"contradicted-lexical-overlap","response":"The note is not safe on the device, though it will sync when the network returns.","expected":"contradicted","focus":"negation"}

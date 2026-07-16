@@ -586,7 +586,10 @@ function renderCell(columnConfig, row, index) {
     const eligibility = explanation
       ? `<span class="model-meta unranked-meta" tabindex="0" title="${escapeAttribute(explanation)}" aria-label="No metric-eligible result. ${escapeAttribute(explanation)}">No metric-eligible result</span>`
       : "";
-    return `<td class="model-cell"><span class="model-name">${escapeHtml(model.displayName)}</span><span class="model-meta">${escapeHtml(metadata)}</span>${environment}${eligibility}</td>`;
+    const useModel = row.comparisonID
+      ? `<button class="model-use-link" type="button" data-result="${escapeAttribute(row.comparisonID)}">Use model</button>`
+      : "";
+    return `<td class="model-cell"><span class="model-name">${escapeHtml(model.displayName)}</span><span class="model-meta">${escapeHtml(metadata)}</span>${environment}${eligibility}${useModel}</td>`;
   }
   if (columnConfig.key === "details") {
     const identity = row.comparisonID ?? row.profileID;
@@ -638,6 +641,13 @@ function openDetails(resultID) {
   const runtime = row.configuration.runtime;
   const device = row.configuration.device;
   const workload = row.workload.id;
+  const profile = matchingShipProfile(model);
+  const snippet = swiftLoadSnippet(model);
+  const exactModelURL = modelRevisionURL(model);
+  const interpretationCount = row.evidence.filter(item => item.metricInterpretation).length;
+  const metricSource = interpretationCount > 0
+    ? `Power 1.1 raw-evidence recalculation · ${interpretationCount} hash-bound result${interpretationCount === 1 ? "" : "s"}`
+    : "Recorded by the source result";
   const history = historicalDisplayCells(row);
   const historyMarkup = history.length === 0 ? "" : `
     <h3 class="claim-heading">Related exact cells</h3>
@@ -655,6 +665,21 @@ function openDetails(resultID) {
   elements.dialogContent.innerHTML = `
     <p class="dialog-kicker">Exact tested configuration</p>
     <h2 class="dialog-title">${escapeHtml(model.displayName)} · ${escapeHtml(model.quantization)}</h2>
+    <section class="use-model-panel" aria-labelledby="use-model-title">
+      <div class="use-model-heading">
+        <div>
+          <h3 id="use-model-title">Use this exact model</h3>
+          <p>Load the artifact revision behind this result. Power measurements are evidence, not a guarantee that every deployment concern is resolved.</p>
+        </div>
+        <a class="button button-primary" href="${escapeAttribute(exactModelURL)}" target="_blank" rel="noreferrer">Open exact revision</a>
+      </div>
+      <pre class="swift-snippet"><code>${escapeHtml(snippet)}</code></pre>
+      <div class="use-model-actions">
+        <button class="button button-secondary" type="button" data-copy-swift>Copy Swift code</button>
+        <a class="button button-secondary" href="examples/mlx-swift-power/ExactPowerModel.swift">Open Swift recipe</a>
+        ${profile ? `<button class="button button-secondary" type="button" data-ship-profile="${escapeAttribute(profile.profileID)}">Open Ship profile</button>` : '<span class="power-only-note">Power evidence only · no published Ship profile</span>'}
+      </div>
+    </section>
     <div class="detail-grid">
       ${detailItem("Artifact", `${model.artifactID}@${model.artifactRevision}`)}
       ${detailItem("Workload", workload)}
@@ -669,6 +694,7 @@ function openDetails(resultID) {
       ${detailItem("Reproduction", row.community.status === "reproduced" ? "Reproduced" : "Single contributor")}
       ${detailItem("Primary variation", variationText(row))}
       ${detailItem("Source release", row.sourceEvidenceRelease.version)}
+      ${detailItem("Metric source", metricSource)}
     </div>
     <div class="dialog-links">
       <a class="button button-primary" href="${escapeAttribute(model.sourceURL)}" target="_blank" rel="noreferrer">Model source</a>
@@ -676,7 +702,62 @@ function openDetails(resultID) {
       ${rawLinks(row)}
     </div>
     ${historyMarkup}`;
-  elements.dialog.showModal();
+  const copyButton = elements.dialogContent.querySelector("[data-copy-swift]");
+  if (copyButton) copyButton.addEventListener("click", () => copySwiftSnippet(snippet, copyButton));
+  const profileButton = elements.dialogContent.querySelector("[data-ship-profile]");
+  if (profileButton) profileButton.addEventListener("click", () => openShipDetails(profileButton.dataset.shipProfile));
+  showDetailDialog();
+}
+
+function matchingShipProfile(model) {
+  return state.ship.profiles.find(profile =>
+    profile.configuration.model.artifactID === model.artifactID
+    && profile.configuration.model.artifactRevision === model.artifactRevision
+  );
+}
+
+function modelRevisionURL(model) {
+  try {
+    const url = new URL(model.sourceURL);
+    if (url.hostname === "huggingface.co" && model.artifactRevision) {
+      const existingTree = url.pathname.indexOf("/tree/");
+      if (existingTree >= 0) url.pathname = url.pathname.slice(0, existingTree);
+      url.pathname = `${url.pathname.replace(/\/$/, "")}/tree/${encodeURIComponent(model.artifactRevision)}`;
+      return url.toString();
+    }
+  } catch (error) {
+    console.warn("Invalid model source URL", error);
+  }
+  return model.sourceURL;
+}
+
+function swiftLoadSnippet(model) {
+  return `let model = try await ExactPowerModel.load(
+    artifactID: "${model.artifactID}",
+    revision: "${model.artifactRevision}"
+)
+
+let completion = try await model.stream(
+    prompt: "Explain this feature briefly"
+) { index, tokenID in
+    print(index, tokenID)
+}`;
+}
+
+async function copySwiftSnippet(snippet, button) {
+  const original = button.textContent;
+  try {
+    await navigator.clipboard.writeText(snippet);
+    button.textContent = "Copied";
+  } catch (error) {
+    console.warn("Clipboard unavailable", error);
+    window.prompt("Copy this Swift code", snippet);
+  }
+  window.setTimeout(() => { button.textContent = original; }, 1800);
+}
+
+function showDetailDialog() {
+  if (!elements.dialog.open) elements.dialog.showModal();
 }
 
 function primaryMetricText(row) {
@@ -718,7 +799,7 @@ function openShipDetails(profileID) {
       <a class="button button-secondary" href="docs/ship-deployment-profiles.md">Evidence method</a>
       <a class="button button-secondary" href="${escapeAttribute(model.licenseSourceURL)}" target="_blank" rel="noreferrer">License source</a>
     </div>`;
-  elements.dialog.showModal();
+  showDetailDialog();
 }
 
 function claimCount(row, status) {
