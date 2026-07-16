@@ -122,6 +122,20 @@ class PublicSurfaceTests(unittest.TestCase):
         self.assertIn('state.size === "all"', app)
         self.assertIn('elements.size.addEventListener("change"', app)
 
+    def test_leaderboard_defaults_to_dark_and_preserves_theme_choice(self) -> None:
+        index = (ROOT / "index.html").read_text()
+        app = (ROOT / "site/app.js").read_text()
+        styles = (ROOT / "site/styles.css").read_text()
+        self.assertIn('<html lang="en" data-theme="dark">', index)
+        self.assertIn('id="theme-select"', index)
+        self.assertIn('value="dark"', index)
+        self.assertIn('value="light"', index)
+        self.assertIn('color-scheme: dark', styles)
+        self.assertIn(':root[data-theme="light"]', styles)
+        self.assertIn('const THEME_STORAGE_KEY = "ios-llm-leaderboard-theme"', app)
+        self.assertIn("function applyTheme(theme, persist = false)", app)
+        self.assertIn('elements.theme.addEventListener("change"', app)
+
 
 if __name__ == "__main__":
     unittest.main()

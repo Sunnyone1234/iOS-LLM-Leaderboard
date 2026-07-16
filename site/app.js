@@ -4,6 +4,7 @@ const SHIP_DATA_URL = "results/ship-1.0/deployment-profiles.json";
 const MODEL_CATALOG_URL = "models/power-test-catalog.json";
 const CONTRIBUTOR_GUIDE_URL = "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power-1.1-quickstart.md";
 const MODEL_TEST_GUIDE_URL = "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power-1.1-quickstart.md";
+const THEME_STORAGE_KEY = "ios-llm-leaderboard-theme";
 
 const state = {
   power: null,
@@ -163,6 +164,7 @@ const elements = {
   device: document.querySelector("#device-filter"),
   runtime: document.querySelector("#runtime-filter"),
   size: document.querySelector("#size-filter"),
+  theme: document.querySelector("#theme-select"),
   contextLabel: document.querySelector("#context-label"),
   contextDescription: document.querySelector("#context-description"),
   dialog: document.querySelector("#detail-dialog"),
@@ -175,6 +177,20 @@ const elements = {
 };
 
 let activeColumnHelp = null;
+
+function applyTheme(theme, persist = false) {
+  const selected = theme === "light" ? "light" : "dark";
+  document.documentElement.dataset.theme = selected;
+  elements.theme.value = selected;
+  document.querySelector('meta[name="theme-color"]').setAttribute("content", selected === "dark" ? "#131210" : "#ffffff");
+  if (persist) {
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, selected);
+    } catch (_) {
+      // The visible theme still changes when persistent storage is unavailable.
+    }
+  }
+}
 
 async function loadEvidence() {
   try {
@@ -949,6 +965,7 @@ elements.search.addEventListener("input", event => { state.query = event.target.
 elements.device.addEventListener("change", event => { state.device = event.target.value; renderBoard(); });
 elements.runtime.addEventListener("change", event => { state.runtime = event.target.value; renderBoard(); });
 elements.size.addEventListener("change", event => { state.size = event.target.value; renderBoard(); });
+elements.theme.addEventListener("change", event => applyTheme(event.target.value, true));
 document.querySelector(".dialog-close").addEventListener("click", () => elements.dialog.close());
 elements.dialog.addEventListener("click", event => {
   if (event.target === elements.dialog) elements.dialog.close();
@@ -962,4 +979,5 @@ document.addEventListener("keydown", event => {
 window.addEventListener("resize", () => hideColumnHelp());
 window.addEventListener("scroll", () => hideColumnHelp(), true);
 
+applyTheme(document.documentElement.dataset.theme);
 loadEvidence();
