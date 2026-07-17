@@ -108,6 +108,34 @@ class PublicSurfaceTests(unittest.TestCase):
         self.assertIn("artifactID: String", recipe)
         self.assertIn("revision: String", recipe)
 
+    def test_model_parameter_size_filter_is_available_across_views(self) -> None:
+        index = (ROOT / "index.html").read_text()
+        app = (ROOT / "site/app.js").read_text()
+        self.assertIn('id="size-filter"', index)
+        self.assertIn('value="up-to-1b"', index)
+        self.assertIn('value="1b-to-2b"', index)
+        self.assertIn('value="2b-to-4b"', index)
+        self.assertIn('value="over-4b"', index)
+        self.assertIn('value="unknown"', index)
+        self.assertIn("function modelParameterBillions(model)", app)
+        self.assertIn("function modelSizeBucket(model)", app)
+        self.assertIn('state.size === "all"', app)
+        self.assertIn('elements.size.addEventListener("change"', app)
+
+    def test_leaderboard_defaults_to_dark_and_preserves_theme_choice(self) -> None:
+        index = (ROOT / "index.html").read_text()
+        app = (ROOT / "site/app.js").read_text()
+        styles = (ROOT / "site/styles.css").read_text()
+        self.assertIn('<html lang="en" data-theme="dark">', index)
+        self.assertIn('id="theme-select"', index)
+        self.assertIn('value="dark"', index)
+        self.assertIn('value="light"', index)
+        self.assertIn('color-scheme: dark', styles)
+        self.assertIn(':root[data-theme="light"]', styles)
+        self.assertIn('const THEME_STORAGE_KEY = "ios-llm-leaderboard-theme"', app)
+        self.assertIn("function applyTheme(theme, persist = false)", app)
+        self.assertIn('elements.theme.addEventListener("change"', app)
+
 
 if __name__ == "__main__":
     unittest.main()

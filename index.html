@@ -1,15 +1,28 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Sortable, reproducible on-device language model results from physical iPhones.">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#131210">
   <title>iOS LLM Leaderboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="site/styles.css?v=14">
+  <script>
+    (() => {
+      try {
+        const savedTheme = localStorage.getItem("ios-llm-leaderboard-theme");
+        if (savedTheme === "dark" || savedTheme === "light") {
+          document.documentElement.dataset.theme = savedTheme;
+          document.querySelector('meta[name="theme-color"]').setAttribute("content", savedTheme === "dark" ? "#131210" : "#ffffff");
+        }
+      } catch (_) {
+        // Dark remains the safe default when storage is unavailable.
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="site/styles.css?v=16">
 </head>
 <body>
   <a class="skip-link" href="#leaderboard">Skip to leaderboard</a>
@@ -22,6 +35,13 @@
         <a href="results/suite-b-power-community/normalized-results.json">Data</a>
         <a class="contribute-link" href="https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power-1.1-quickstart.md" target="_blank" rel="noreferrer">Contribute a result</a>
         <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard" target="_blank" rel="noreferrer">GitHub ↗</a>
+        <label class="theme-control">
+          <span class="sr-only">Appearance</span>
+          <select id="theme-select" aria-label="Appearance">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+          </select>
+        </label>
       </div>
     </nav>
   </header>
@@ -62,6 +82,17 @@
           <label>
             <span class="sr-only">Filter by runtime</span>
             <select id="runtime-filter" aria-label="Filter by runtime"><option value="all">All runtimes</option></select>
+          </label>
+          <label class="size-control">
+            <span class="sr-only">Filter by model parameter size</span>
+            <select id="size-filter" aria-label="Filter by model parameter size" title="Base-model parameter count from published model identity, not download size">
+              <option value="all">All model sizes</option>
+              <option value="up-to-1b">Up to 1B parameters</option>
+              <option value="1b-to-2b">Over 1B to 2B</option>
+              <option value="2b-to-4b">Over 2B to 4B</option>
+              <option value="over-4b">Over 4B parameters</option>
+              <option value="unknown">Size not recorded</option>
+            </select>
           </label>
         </div>
       </div>
@@ -110,6 +141,6 @@
 
   <div class="column-tooltip" id="column-tooltip" role="tooltip" hidden></div>
 
-  <script type="module" src="site/app.js?v=16"></script>
+  <script type="module" src="site/app.js?v=18"></script>
 </body>
 </html>

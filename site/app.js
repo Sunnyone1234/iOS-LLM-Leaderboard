@@ -4,6 +4,7 @@ const SHIP_DATA_URL = "results/ship-1.0/deployment-profiles.json";
 const MODEL_CATALOG_URL = "models/power-test-catalog.json";
 const CONTRIBUTOR_GUIDE_URL = "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power-1.1-quickstart.md";
 const MODEL_TEST_GUIDE_URL = "https://github.com/YizeSun/iOS-LLM-Leaderboard/blob/main/contributor-kit/power-1.1-quickstart.md";
+const THEME_STORAGE_KEY = "ios-llm-leaderboard-theme";
 
 const state = {
   power: null,
@@ -15,6 +16,7 @@ const state = {
   query: "",
   device: "all",
   runtime: "all",
+  size: "all",
 };
 
 const COLUMN_HELP = Object.freeze({
@@ -161,6 +163,8 @@ const elements = {
   search: document.querySelector("#model-search"),
   device: document.querySelector("#device-filter"),
   runtime: document.querySelector("#runtime-filter"),
+  size: document.querySelector("#size-filter"),
+  theme: document.querySelector("#theme-select"),
   contextLabel: document.querySelector("#context-label"),
   contextDescription: document.querySelector("#context-description"),
   dialog: document.querySelector("#detail-dialog"),
@@ -173,6 +177,20 @@ const elements = {
 };
 
 let activeColumnHelp = null;
+
+function applyTheme(theme, persist = false) {
+  const selected = theme === "light" ? "light" : "dark";
+  document.documentElement.dataset.theme = selected;
+  elements.theme.value = selected;
+  document.querySelector('meta[name="theme-color"]').setAttribute("content", selected === "dark" ? "#131210" : "#ffffff");
+  if (persist) {
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, selected);
+    } catch (_) {
+      // The visible theme still changes when persistent storage is unavailable.
+    }
+  }
+}
 
 async function loadEvidence() {
   try {
@@ -444,9 +462,33 @@ function filterRows(rows, config) {
     const searchable = `${model.displayName} ${model.artifactID} ${model.quantization} ${runtime.name}`.toLowerCase();
     const runtimeKey = `${runtime.name}@${runtime.version}`;
     return (!query || searchable.includes(query))
+      && (state.size === "all" || modelSizeBucket(model) === state.size)
       && (config.kind === "catalog" || state.device === "all" || device.machineIdentifier === state.device)
       && (config.kind === "catalog" || state.runtime === "all" || runtimeKey === state.runtime);
   });
+}
+
+function modelParameterBillions(model) {
+  const candidates = [
+    model.parameterSizeClass,
+    model.baseModelID,
+    model.displayName,
+    model.artifactID,
+  ];
+  for (const candidate of candidates) {
+    const match = String(candidate ?? "").match(/(?:^|[-_/\s])(\d+(?:\.\d+)?)\s*[bB](?=$|[-_/\s])/);
+    if (match) return Number(match[1]);
+  }
+  return null;
+}
+
+function modelSizeBucket(model) {
+  const billions = modelParameterBillions(model);
+  if (billions == null || !Number.isFinite(billions)) return "unknown";
+  if (billions <= 1) return "up-to-1b";
+  if (billions <= 2) return "1b-to-2b";
+  if (billions <= 4) return "2b-to-4b";
+  return "over-4b";
 }
 
 function sortRows(rows, config) {
@@ -922,6 +964,8 @@ document.querySelectorAll(".mode-tab").forEach(button => button.addEventListener
 elements.search.addEventListener("input", event => { state.query = event.target.value; renderBoard(); });
 elements.device.addEventListener("change", event => { state.device = event.target.value; renderBoard(); });
 elements.runtime.addEventListener("change", event => { state.runtime = event.target.value; renderBoard(); });
+elements.size.addEventListener("change", event => { state.size = event.target.value; renderBoard(); });
+elements.theme.addEventListener("change", event => applyTheme(event.target.value, true));
 document.querySelector(".dialog-close").addEventListener("click", () => elements.dialog.close());
 elements.dialog.addEventListener("click", event => {
   if (event.target === elements.dialog) elements.dialog.close();
@@ -935,4 +979,5 @@ document.addEventListener("keydown", event => {
 window.addEventListener("resize", () => hideColumnHelp());
 window.addEventListener("scroll", () => hideColumnHelp(), true);
 
+applyTheme(document.documentElement.dataset.theme);
 loadEvidence();
