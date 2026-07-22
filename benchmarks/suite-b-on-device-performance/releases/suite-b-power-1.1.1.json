@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "suite-b-power-release-manifest-1.1.1",
+  "releaseID": "suite-b-power",
+  "releaseVersion": "1.1.1",
+  "preparedAt": "2026-07-22T15:07:46Z",
+  "approvedAt": "2026-07-22T15:07:46Z",
+  "status": "published",
+  "officialResultEligible": true,
+  "rankingAuthorized": true,
+  "publicationAuthorized": true,
+  "previousPublishedRelease": "1.1.0",
+  "contractAdoption": {
+    "method": "additive-exact-runner-compatibility-policy",
+    "sourceRelease": {
+      "id": "suite-b-power",
+      "version": "1.1.0"
+    },
+    "protocolSemanticsChanged": false,
+    "resultSchemaChanged": false,
+    "referenceAppChanged": false,
+    "compatibleRunnerPolicyAdded": true,
+    "rankingPolicyChanged": false,
+    "validationReportSchemaChanged": false,
+    "newExecutionRequired": true,
+    "rawEvidenceMutationAllowed": false,
+    "sourceIdentitiesRemainVisible": true
+  },
+  "protocol": {
+    "id": "suite-b-power",
+    "adoptedVersion": "1.1.0-rc.1"
+  },
+  "resultContract": {
+    "sourceResultSchemaID": "suite-b-power-result-1.1.0-rc.1",
+    "baseValidatorID": "suite-b-power-validator",
+    "baseValidatorVersion": "1.1.0",
+    "baseValidationReportSchemaID": "suite-b-power-validation-report-1.1.0",
+    "runnerCompatibilityPolicyID": "suite-b-power-runner-compatibility",
+    "runnerCompatibilityPolicyVersion": "1.1.1",
+    "compatibleResultValidatorVersion": "1.1.1",
+    "submissionValidatorVersion": "1.1.1",
+    "rankingPolicyID": "suite-b-power-ranking-policy",
+    "rankingPolicyVersion": "1.1.0"
+  },
+  "referenceApp": {
+    "id": "ios-reference-benchmark-app",
+    "version": "0.13.0",
+    "build": "16",
+    "sourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c"
+  },
+  "compatibleRunners": [
+    {
+      "approvalID": "ios-compatible-app-0.16.0-build-19",
+      "id": "ios-reference-benchmark-app",
+      "version": "0.16.0",
+      "build": "19",
+      "sourceCommit": "792d5e2974c3e3f131343071bb2e9d90b3231b32"
+    }
+  ],
+  "compatibilityBoundary": {
+    "exactRunnerIdentityRequired": true,
+    "exactRuntimeIdentityRequired": true,
+    "olderUnapprovedRunnersReinterpreted": false,
+    "laterRunnerCommitsAutomaticallyApproved": false,
+    "measurementProtocolReusedWithoutModification": true,
+    "rawResultBytesPreserved": true
+  },
+  "activationRecord": {
+    "approvedBy": "YizeSun",
+    "approvedAt": "2026-07-22T15:07:46Z",
+    "appReleaseBuildSucceeded": true,
+    "appUnitTestsSucceeded": true,
+    "runnerIdentityStableAcrossNonAppCommits": true
+  },
+  "pinnedAssets": [
+    {
+      "role": "source-release-manifest",
+      "path": "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.0.json",
+      "sha256": "22dcdbb5960fdf3641b8034aefd2e407d5731bdc371a14c13463e7458326a49e"
+    },
+    {
+      "role": "runner-compatibility-policy",
+      "path": "benchmarks/suite-b-on-device-performance/power-1.1-compatible-runners-1.1.1.json",
+      "sha256": "616f70641f2e4f304ca4932aa1c3ce21895a60598c789942a04323d5b232464a"
+    },
+    {
+      "role": "runner-compatibility-policy-schema",
+      "path": "schemas/suite-b-power-compatible-runners-1.1.1.schema.json",
+      "sha256": "077b902e41026ec923cc4cb3a7943aab710f2442355db681b392f3012eea3b07"
+    },
+    {
+      "role": "compatible-result-validator",
+      "path": "scripts/validate_suite_b_power_1_1_compatible_result.py",
+      "sha256": "172011f30946b60eba59546c74215709b81d1fe162fd8af1da47264abb2aeff6"
+    },
+    {
+      "role": "submission-validator",
+      "path": "scripts/validate_suite_b_power_1_1_submission.py",
+      "sha256": "695b69be12aa265cf99062184b9d1c625aaa4fa2178bb1cb6743a7ad01f38d8d"
+    },
+    {
+      "role": "public-power-command",
+      "path": "scripts/power.py",
+      "sha256": "6ea27a4d6cddd704eec497dfbf3256e27001a399be775dd7c91700f4d77d1e73"
+    },
+    {
+      "role": "community-ranking-generator",
+      "path": "scripts/generate_power_community_ranking.py",
+      "sha256": "22d68a0200eaa42eb11ed56b98e85afe8b7227bedf44587375880b21e47f8cd2"
+    },
+    {
+      "role": "trusted-pr-triage",
+      "path": "scripts/triage_power_submission_pr.py",
+      "sha256": "2fc05fcf7d1f4e6cbdd30e52349df69c6953cb21d9101ceb73f0516f32728882"
+    }
+  ]
+}

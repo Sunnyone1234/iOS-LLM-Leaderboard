@@ -6,8 +6,15 @@ an inference framework.
 
 ## Current status
 
-App `0.15.0` build `18` adds contributor-owned GitHub PR creation and trusted
-repository intake triage while retaining the draft
+App `0.17.0` build `20` separates measurement from result review and upload in
+native Test and Results tabs. It checks the repository's SHA-256-bound current
+compatibility policy at launch, foreground entry, and immediately before model
+preparation, measurement, or submission. An unavailable policy or unapproved
+current runner fails closed for new measurement; an unapproved selected result
+fails closed for submission. Frozen local results remain reviewable and
+shareable in every state. It retains the contributor-owned GitHub PR creation,
+safe result recovery, and selectable local history introduced by earlier Apps
+while retaining the draft
 `short-interaction-response-v2` behavior preview. It retains the frozen Power
 1.1 workload IDs, fixtures, measurement boundaries, generation settings,
 attempt counts, and source-result schema identity. Its App version, build, and
@@ -30,7 +37,7 @@ substituted when an exact Power 1.0 reproduction is intended.
 
 Apps 0.8.0 through 0.11.0 emit the adopted Power 1.0 source result contract
 `suite-b-power-result-1.0.0-rc.1`. App 0.12.0 remains the historical Power 1.1
-draft runner. Apps 0.13.0 through 0.15.0 emit
+draft runner. Apps 0.13.0 through 0.17.0 emit
 `suite-b-power-result-1.1.0-rc.1`. Every raw App export sets
 `officialResultEligible` to `false`; no App export assigns its own publication,
 trust, or ranking status. Repository validation and release policy do. A
@@ -45,7 +52,7 @@ The production control surface exposes exactly two workload identities:
 
 The loader rejects any other plan identity or version. Experimental
 `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` resources are
-retained for repository history and compatibility, but App 0.15.0 cannot
+retained for repository history and compatibility, but App 0.17.0 cannot
 execute them through its production controls.
 
 The three pinned Qwen3 profiles have Maintainer Reference evidence:
@@ -54,7 +61,7 @@ The three pinned Qwen3 profiles have Maintainer Reference evidence:
 - `mlx-community/Qwen3-1.7B-4bit`;
 - `mlx-community/Qwen3-4B-3bit`.
 
-App 0.15.0 also exposes eight pinned artifacts with accepted single-contributor
+App 0.17.0 also exposes eight pinned artifacts with accepted single-contributor
 physical-iPhone community evidence:
 
 - `mlx-community/Llama-3.2-1B-Instruct-4bit`;
@@ -82,6 +89,8 @@ same process-level measurement session.
 
 The App admits a measurement only when all frozen conditions are satisfied:
 
+- the exact App and runtime identity is approved by the current verified
+  compatibility policy;
 - a physical iPhone is used;
 - the App is a Release build with no debugger attached;
 - Low Power Mode is off;
@@ -138,8 +147,10 @@ unresolved checkpoint cannot be overwritten by starting another run.
 ## Result export and validation
 
 Results are written atomically under the App Documents directory in
-`PowerBenchmarkResults/` and can be reviewed and shared locally. A configured
-build can also create a contributor-owned GitHub pull request. The App builds
+`PowerBenchmarkResults/`. The Test tab owns preparation and measurement; the
+Results tab lists every valid stored result and owns review, raw sharing, and
+submission. Selecting an older result never recalculates or rewrites it. A
+configured build can also create a contributor-owned GitHub pull request. The App builds
 the current two-file Power 1.1 package, verifies that the saved result bytes
 still match the completed in-memory result, preserves `result.json`
 byte-for-byte, and saves a local copy under `PowerSubmissionPackages/`.
@@ -153,9 +164,15 @@ guide available but disables the direct-submit button.
 
 The feature changes no frozen validation rule. App 0.13.0 build 16 at its exact
 source commit remains the only Power 1.1 reference runner identity. Results
-from App 0.14.0, App 0.15.0, or any later unapproved source identity are retained locally but
-are rejected as `runner_incompatible` by current Power 1.1 intake; accepting a
-new runner requires an explicitly versioned future contract.
+from an App runner not listed by the current versioned compatibility policy are
+retained locally but rejected as `runner_incompatible`. Power 1.1's original
+App 0.13.0 reference identity remains immutable; later exact runner identities
+must be approved by a separate, versioned compatibility policy.
+
+The mutable `power-compatible-runners-current.json` file is discovery metadata
+only. It identifies a versioned published policy and its SHA-256 digest. The App
+downloads and verifies that immutable policy before matching exact runner and
+runtime fields; the discovery file is not itself a validation contract.
 
 Ambient room temperature and its source, case state, placement, and thermal
 assistance can be recorded as optional local observations. The App can copy a

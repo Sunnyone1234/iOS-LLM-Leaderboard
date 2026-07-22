@@ -15,14 +15,10 @@ official App → one physical-device run → untouched result export
 
 A configured App can create the contributor-owned fork, evidence commit, and
 pull request through GitHub device authorization. It never writes directly to
-`main`. Builds without the public OAuth Client ID use the CLI to create the
-same two-file package:
-
-```bash
-python3 scripts/power.py submit /path/to/result.json \
-  --github YOUR_GITHUB_HANDLE \
-  --accept-declarations
-```
+`main`. App 0.17.0 builds without the public OAuth Client ID may export the raw
+result for backup, but must be configured and rebuilt before submission. The
+retained `scripts/power.py` command is pinned to compatibility policy 1.1.1
+and is not a bypass for a runner added by policy 1.1.2.
 
 The package lives under
 `submissions/suite-b/power-1.1.0/draft/<submission-id>/`. `result.json` is
@@ -45,12 +41,20 @@ name, personal prompts, user documents, or unrelated app data.
 ## Validation and publication
 
 CI validates package shape, raw hash binding, contributor declarations, the
-frozen Power contract, duplicate identity, and a live-ranking preview. Clean
+frozen Power contract, the versioned exact-runner allowlist, duplicate
+identity, and a live-ranking preview. Clean
 evidence-only PRs are labeled `power:auto-accept` and may auto-merge after
 required checks. Valid conflict or environmental-assistance disclosures route
 to `power:manual-review`; invalid, incompatible, duplicated, or mixed-scope
 PRs route to `power:rejected`. Validation does not mutate the result, assign
 Maintainer Reference status, or change an immutable release.
+
+The original App 0.13.0 reference remains valid. Current policy 1.1.2 also
+accepts App 0.16.0 build 19 and App 0.17.0 build 20 only at their approved App
+source commits and runtime identity. App 0.15.0 evidence remains
+`runner_incompatible`; a second
+contributor or manual review cannot convert an unapproved runner into valid
+evidence.
 
 Merging a valid package makes it eligible for the live community evidence view
 when its primary metric and ordinary thermal policy are eligible. Deliberate

@@ -6,12 +6,27 @@ on:
       - "submissions/suite-b/power-1.1.0/**"
       - "submissions/suite-b/power-1.0.0-rc.1/**"
       - "schemas/suite-b-power-submission-1.1.0.schema.json"
+      - "schemas/suite-b-power-compatible-runners-1.1.1.schema.json"
+      - "schemas/suite-b-power-compatible-runners-1.1.2.schema.json"
+      - "benchmarks/suite-b-on-device-performance/power-1.1-compatible-runners-1.1.1.json"
+      - "benchmarks/suite-b-on-device-performance/power-1.1-compatible-runners-1.1.2.json"
+      - "benchmarks/suite-b-on-device-performance/power-compatible-runners-current.json"
+      - "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.1.json"
+      - "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.2.json"
       - "scripts/power.py"
+      - "scripts/power_1_1_2.py"
+      - "scripts/validate_suite_b_power_1_1_compatible_result.py"
+      - "scripts/validate_suite_b_power_1_1_compatible_result_1_1_2.py"
       - "scripts/validate_suite_b_power_1_1_submission.py"
+      - "scripts/validate_suite_b_power_1_1_submission_1_1_2.py"
       - "scripts/generate_power_community_ranking.py"
+      - "scripts/generate_power_community_ranking_1_1_2.py"
       - "scripts/validate_power_pr_contributor.py"
       - "scripts/triage_power_submission_pr.py"
+      - "scripts/triage_power_submission_pr_1_1_2.py"
       - "tests/test_power_community_ranking.py"
+      - "tests/test_power_1_1_compatible_runners.py"
+      - "tests/test_power_1_1_2_compatible_runners.py"
       - "tests/test_community_onboarding.py"
       - "tests/test_power_model_catalog.py"
       - "tests/test_public_surface.py"
@@ -32,7 +47,22 @@ on:
     paths:
       - "submissions/suite-b/power-1.1.0/**"
       - "submissions/suite-b/power-1.0.0-rc.1/**"
+      - "schemas/suite-b-power-compatible-runners-1.1.1.schema.json"
+      - "schemas/suite-b-power-compatible-runners-1.1.2.schema.json"
+      - "benchmarks/suite-b-on-device-performance/power-1.1-compatible-runners-1.1.1.json"
+      - "benchmarks/suite-b-on-device-performance/power-1.1-compatible-runners-1.1.2.json"
+      - "benchmarks/suite-b-on-device-performance/power-compatible-runners-current.json"
+      - "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.1.json"
+      - "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.2.json"
+      - "scripts/power.py"
+      - "scripts/power_1_1_2.py"
+      - "scripts/validate_suite_b_power_1_1_compatible_result.py"
+      - "scripts/validate_suite_b_power_1_1_compatible_result_1_1_2.py"
+      - "scripts/validate_suite_b_power_1_1_submission.py"
+      - "scripts/validate_suite_b_power_1_1_submission_1_1_2.py"
       - "scripts/generate_power_community_ranking.py"
+      - "scripts/generate_power_community_ranking_1_1_2.py"
+      - "scripts/triage_power_submission_pr_1_1_2.py"
       - "results/suite-b-power-community/**"
       - "results/suite-b-power-1.0/**"
       - "results/suite-b-power-1.1/**"
@@ -70,11 +100,11 @@ jobs:
           git diff --name-only --diff-filter=AM "$BASE_SHA" "$HEAD_SHA" -- 'submissions/suite-b/power-1.1.0/draft/*/submission.json' 'submissions/suite-b/power-1.0.0-rc.1/draft/*/submission.json' > /tmp/power-submission-manifests.txt
           python3 scripts/validate_power_pr_contributor.py --expected-contributor "$PR_AUTHOR" --paths-file /tmp/power-submission-manifests.txt
       - name: Test community ranking rules
-        run: python3 -m unittest tests.test_power_submission_1_1 tests.test_power_submission_pr_triage tests.test_power_community_ranking tests.test_community_onboarding tests.test_power_model_catalog tests.test_public_surface -v
+        run: python3 -m unittest tests.test_power_1_1_compatible_runners tests.test_power_1_1_2_compatible_runners tests.test_power_submission_1_1 tests.test_power_submission_pr_triage tests.test_power_community_ranking tests.test_community_onboarding tests.test_power_model_catalog tests.test_public_surface -v
       - name: Validate current Power 1.1 intake
-        run: python3 scripts/validate_suite_b_power_1_1_submission.py submissions/suite-b/power-1.1.0/draft --output /tmp/suite-b-power-1.1-intake-report.json
+        run: python3 scripts/validate_suite_b_power_1_1_submission_1_1_2.py submissions/suite-b/power-1.1.0/draft --output /tmp/suite-b-power-1.1-intake-report.json
       - name: Generate community ranking preview
-        run: python3 scripts/generate_power_community_ranking.py --output /tmp/power-community-ranking
+        run: python3 scripts/generate_power_community_ranking_1_1_2.py --output /tmp/power-community-ranking
       - name: Upload ranking preview
         uses: actions/upload-artifact@v4
         with:
@@ -104,7 +134,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Regenerate live community ranking
-        run: python3 scripts/generate_power_community_ranking.py
+        run: python3 scripts/generate_power_community_ranking_1_1_2.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

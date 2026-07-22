@@ -1,6 +1,6 @@
 import Foundation
 
-struct PowerResultBundle: Encodable, Sendable, Equatable {
+struct PowerResultBundle: Codable, Sendable, Equatable {
     let schemaVersion: String
     let resultID: UUID
     let createdAt: Date
@@ -16,14 +16,14 @@ struct PowerResultBundle: Encodable, Sendable, Equatable {
     let attempts: [Attempt]
     let summary: Summary
 
-    struct BenchmarkRelease: Encodable, Sendable, Equatable {
+    struct BenchmarkRelease: Codable, Sendable, Equatable {
         let id: String
         let version: String
         let protocolID: String
         let protocolVersion: String
     }
 
-    struct Execution: Encodable, Sendable, Equatable {
+    struct Execution: Codable, Sendable, Equatable {
         let sessionID: UUID
         let workloadID: String
         let workloadVersion: String
@@ -37,7 +37,7 @@ struct PowerResultBundle: Encodable, Sendable, Equatable {
         let appSourceCommit: String
     }
 
-    struct Configuration: Encodable, Sendable, Equatable {
+    struct Configuration: Codable, Sendable, Equatable {
         let warmupAttempts: Int
         let measuredAttempts: Int
         let minimumMetricEligibleMeasuredAttempts: Int
@@ -108,7 +108,7 @@ struct PowerResultBundle: Encodable, Sendable, Equatable {
         }
     }
 
-    struct Model: Encodable, Sendable, Equatable {
+    struct Model: Codable, Sendable, Equatable {
         let displayName: String
         let baseModelID: String
         let artifactID: String
@@ -152,7 +152,7 @@ struct PowerResultBundle: Encodable, Sendable, Equatable {
         }
     }
 
-    struct Runtime: Encodable, Sendable, Equatable {
+    struct Runtime: Codable, Sendable, Equatable {
         let name: String
         let version: String
         let resolvedRevision: String
@@ -160,7 +160,7 @@ struct PowerResultBundle: Encodable, Sendable, Equatable {
         let dependencyVersions: [String: String]
     }
 
-    struct Device: Encodable, Sendable, Equatable {
+    struct Device: Codable, Sendable, Equatable {
         let displayName: String
         let machineIdentifier: String
         let systemName: String
@@ -169,7 +169,7 @@ struct PowerResultBundle: Encodable, Sendable, Equatable {
         let physicalMemoryBytes: UInt64
     }
 
-    struct Environment: Encodable, Sendable, Equatable {
+    struct Environment: Codable, Sendable, Equatable {
         let buildConfiguration: String
         let debuggerAttached: Bool
         let lowPowerModeEnabled: Bool
@@ -205,7 +205,7 @@ struct PowerResultBundle: Encodable, Sendable, Equatable {
         }
     }
 
-    struct ModelPreparation: Encodable, Sendable, Equatable {
+    struct ModelPreparation: Codable, Sendable, Equatable {
         let artifactID: String
         let artifactRevision: String
         let cacheVerificationMethod: String
@@ -217,7 +217,7 @@ struct PowerResultBundle: Encodable, Sendable, Equatable {
         let preparedAt: Date
     }
 
-    struct Attempt: Encodable, Sendable, Equatable {
+    struct Attempt: Codable, Sendable, Equatable {
         let runIndex: Int
         let role: String
         let outcome: String
@@ -264,12 +264,12 @@ struct PowerResultBundle: Encodable, Sendable, Equatable {
         }
     }
 
-    struct ResponseConformance: Encodable, Sendable, Equatable {
+    struct ResponseConformance: Codable, Sendable, Equatable {
         let status: String
         let reasonCodes: [String]
     }
 
-    struct TimingEvidence: Encodable, Sendable, Equatable {
+    struct TimingEvidence: Codable, Sendable, Equatable {
         let generationStartNanoseconds: UInt64?
         let promptEvaluationNanoseconds: UInt64?
         let requestCompletionNanoseconds: UInt64?
@@ -296,13 +296,13 @@ struct PowerResultBundle: Encodable, Sendable, Equatable {
         }
     }
 
-    struct ThermalEvidence: Encodable, Sendable, Equatable {
+    struct ThermalEvidence: Codable, Sendable, Equatable {
         let before: String
         let after: String
         let transitions: [ThermalTransition]
     }
 
-    struct Metrics: Encodable, Sendable, Equatable {
+    struct Metrics: Codable, Sendable, Equatable {
         let pipelineTTFTMilliseconds: Double?
         let firstRenderableProxyTTFTMilliseconds: Double?
         let requestCompletionMilliseconds: Double?
@@ -356,12 +356,12 @@ struct PowerResultBundle: Encodable, Sendable, Equatable {
         }
     }
 
-    struct Summary: Encodable, Sendable, Equatable {
+    struct Summary: Codable, Sendable, Equatable {
         let terminalCounts: TerminalCounts
         let metrics: SummaryMetrics
     }
 
-    struct TerminalCounts: Encodable, Sendable, Equatable {
+    struct TerminalCounts: Codable, Sendable, Equatable {
         let completed: Int
         let failed: Int
         let cancelled: Int
@@ -370,7 +370,7 @@ struct PowerResultBundle: Encodable, Sendable, Equatable {
         let earlyEOS: Int
     }
 
-    struct SummaryMetrics: Encodable, Sendable, Equatable {
+    struct SummaryMetrics: Codable, Sendable, Equatable {
         let medianPipelineTTFTMilliseconds: Double?
         let medianFirstRenderableProxyTTFTMilliseconds: Double?
         let medianRequestCompletionMilliseconds: Double?

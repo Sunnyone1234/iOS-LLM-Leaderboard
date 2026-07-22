@@ -15,7 +15,7 @@ from typing import Any, Iterable
 try:
     from scripts.consume_suite_b_power_1_1_report import verify_pair as verify_final_pair
     from scripts import validate_suite_b_power_1_1_rc1_result as power11
-    from scripts.validate_suite_b_power_1_1_final_result import validate as validate_power_1_1_result
+    from scripts.validate_suite_b_power_1_1_compatible_result import validate as validate_power_1_1_result
     from scripts.validate_suite_b_power_1_1_submission import validate_package as validate_power_1_1_package
     from scripts.validate_suite_b_power_result import validate as validate_power_result
     from scripts.validate_suite_b_power_reviews import validate_reviews
@@ -23,7 +23,7 @@ try:
 except ModuleNotFoundError:
     from consume_suite_b_power_1_1_report import verify_pair as verify_final_pair
     import validate_suite_b_power_1_1_rc1_result as power11
-    from validate_suite_b_power_1_1_final_result import validate as validate_power_1_1_result
+    from validate_suite_b_power_1_1_compatible_result import validate as validate_power_1_1_result
     from validate_suite_b_power_1_1_submission import validate_package as validate_power_1_1_package
     from validate_suite_b_power_result import validate as validate_power_result
     from validate_suite_b_power_reviews import validate_reviews
@@ -256,8 +256,19 @@ def make_contribution(
     ordinary_live_ranking_allowed: bool = True,
     ordinary_live_ranking_reason: str | None = None,
 ) -> dict[str, Any]:
+    runner_compatibility = None
     if result.get("schemaVersion") == "suite-b-power-result-1.1.0-rc.1":
-        report = validate_power_1_1_result(result, raw_sha256)
+        compatible_report = validate_power_1_1_result(result, raw_sha256)
+        if not compatible_report.get("valid"):
+            reasons = compatible_report.get("runnerCompatibility", {}).get(
+                "reasonCodes", []
+            )
+            detail = ", ".join(reasons) if reasons else "validation failed"
+            raise ValueError(
+                f"incompatible Power 1.1 result ({detail}): {raw_path}"
+            )
+        runner_compatibility = compatible_report["runnerCompatibility"]
+        report = compatible_report["powerResultValidation"]
     else:
         report = validate_power_result(result)
     if not report.get("structuralValidity", {}).get("valid"):
@@ -283,6 +294,7 @@ def make_contribution(
         "rawSHA256": raw_sha256,
         "result": result,
         "validation": report,
+        "runnerCompatibility": runner_compatibility,
         "metricInterpretation": metric_interpretation,
         "ordinaryLiveRankingAllowed": ordinary_live_ranking_allowed,
         "ordinaryLiveRankingReason": ordinary_live_ranking_reason,
@@ -605,6 +617,11 @@ def build_cell(contributions: list[dict[str, Any]]) -> dict[str, Any]:
                     "performancePolicyVersion",
                     "behaviorAffectsPerformanceMetrics",
                 )
+            }
+        if item.get("runnerCompatibility"):
+            evidence_item["runnerCompatibility"] = {
+                key: item["runnerCompatibility"].get(key)
+                for key in ("approvalID", "matchType")
             }
         evidence.append(evidence_item)
 

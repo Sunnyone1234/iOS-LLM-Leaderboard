@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "suite-b-power-compatible-runners-index-1.0",
+  "currentPolicy": {
+    "policyVersion": "1.1.2",
+    "path": "benchmarks/suite-b-on-device-performance/power-1.1-compatible-runners-1.1.2.json",
+    "sha256": "aa60839915f6bf081e25933b61ff73d1cf226f7b07170dba59a65ee44de7c6af"
+  }
+}

@@ -226,6 +226,7 @@ protocol LanguageModelRuntime: Sendable {
 
 protocol ModelPreparingRuntime: LanguageModelRuntime {
     func prepare(plan: PilotPlan) async -> ModelPreparationEvidence
+    func releaseModel() async
     func calibrateInputLengthFixtures(
         targets: [Int]
     ) async throws -> [InputLengthFixtureCalibration]
@@ -234,6 +235,10 @@ protocol ModelPreparingRuntime: LanguageModelRuntime {
         question: String,
         targets: [Int]
     ) async throws -> [InputLengthFixtureCalibration]
+}
+
+extension ModelPreparingRuntime {
+    func releaseModel() async {}
 }
 
 struct InputLengthFixtureCalibration: Sendable, Equatable {

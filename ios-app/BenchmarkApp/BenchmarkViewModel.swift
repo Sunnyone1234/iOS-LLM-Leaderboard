@@ -89,11 +89,13 @@ final class BenchmarkViewModel {
     private(set) var workloadRegistry: SuiteBPlanRegistry?
     private(set) var latestUnifiedResult: SuiteBResultBundle?
     private(set) var latestPowerResult: PowerResultBundle?
+    private(set) var storedPowerResults: [ResultStore.StoredPowerResult] = []
     private(set) var recoveryNotice: String?
     private(set) var submissionFileURL: URL?
     private(set) var submissionError: String?
     private(set) var powerSubmissionPackageURL: URL?
     private(set) var githubSubmissionPhase: GitHubSubmissionPhase = .idle
+    private(set) var currentRunnerEligibility: PowerEligibility = .checking
     var submissionConflictCategory: SubmissionConflictCategory = .none
     var submissionConflictStatement = ""
     var submissionThermalAssistance: SubmissionThermalAssistance = .none
@@ -108,14 +110,20 @@ final class BenchmarkViewModel {
     private(set) var selectedModelProfile: ProductionModelProfile = .small
 
     private let runtime: any ModelPreparingRuntime
-    private let resultStore = ResultStore()
+    private let resultStore: ResultStore
+    private let compatibilityPolicyFetcher: any PowerCompatibilityPolicyFetching
     private let powerCheckpointStore = PowerSessionCheckpointStore()
+    private var compatibilityPolicy: PowerCompatibilityPolicy?
 
     init(
         runtime: any ModelPreparingRuntime = MLXSwiftRuntime(),
-        loadedPlan: LoadedPilotPlan? = nil
+        loadedPlan: LoadedPilotPlan? = nil,
+        resultStore: ResultStore = ResultStore(),
+        compatibilityPolicyFetcher: any PowerCompatibilityPolicyFetching = GitHubPowerCompatibilityPolicyClient()
     ) {
         self.runtime = runtime
+        self.resultStore = resultStore
+        self.compatibilityPolicyFetcher = compatibilityPolicyFetcher
         if let loadedPlan {
             self.loadedPlan = loadedPlan
             selectedModelProfile = ProductionModelProfile.matching(
@@ -138,6 +146,7 @@ final class BenchmarkViewModel {
 
     var canPrepare: Bool {
         loadedPlan != nil
+            && currentRunnerEligibility.isApproved
             && preparationPhase != .preparing
             && phase != .running
             && preparationPhase != .restartRequired
@@ -157,6 +166,7 @@ final class BenchmarkViewModel {
 
     var canRun: Bool {
         phase != .running
+            && currentRunnerEligibility.isApproved
             && !isCalibratingInputLengths
             && !isRunningInputSweep
             && !isCalibratingContext
@@ -166,7 +176,7 @@ final class BenchmarkViewModel {
     }
 
     // Experimental registry entries remain for historical compatibility, but
-    // App 0.15.0 cannot execute them through the Power control surface.
+    // App 0.17.0 cannot execute them through the Power control surface.
     var canCalibrateInputLengths: Bool {
         false
     }
@@ -240,16 +250,68 @@ final class BenchmarkViewModel {
         }
         return latestPowerResult != nil
             && resultFileURL != nil
+            && selectedResultEligibility.isApproved
             && acceptsPowerSubmissionDeclarations
             && githubSubmissionConfigured
             && disclosureComplete
             && submissionIdle
     }
 
+    var selectedPowerResultID: UUID? { latestPowerResult?.resultID }
+
+    var selectedResultEligibility: PowerEligibility {
+        guard let latestPowerResult else { return .noResult }
+        switch currentRunnerEligibility {
+        case .checking:
+            return .checking
+        case .unavailable(let message):
+            return .unavailable(message: message)
+        case .approved, .notApproved:
+            guard let compatibilityPolicy else {
+                return .unavailable(
+                    message: "No verified Power compatibility policy is loaded."
+                )
+            }
+            let identity = PowerRunnerIdentity(result: latestPowerResult)
+            if let approval = compatibilityPolicy.approval(for: identity) {
+                return .approved(
+                    policyVersion: compatibilityPolicy.policyVersion,
+                    approvalID: approval.approvalID
+                )
+            }
+            return .notApproved(policyVersion: compatibilityPolicy.policyVersion)
+        case .noResult:
+            return .noResult
+        }
+    }
+
+    var canSelectStoredPowerResult: Bool {
+        guard phase != .running else { return false }
+        switch githubSubmissionPhase {
+        case .authorizing, .publishing:
+            return false
+        case .idle, .completed, .failed:
+            return true
+        }
+    }
+
+    func selectStoredPowerResult(id: UUID) {
+        guard canSelectStoredPowerResult,
+              id != selectedPowerResultID,
+              let stored = storedPowerResults.first(where: { $0.id == id })
+        else { return }
+        applyStoredPowerResult(
+            stored,
+            notice: "Selected a validated saved Power result. GitHub submission will reuse its original JSON bytes."
+        )
+    }
+
     func submitLatestPowerResultToGitHub() async {
         guard let result = latestPowerResult,
               let resultFileURL,
               acceptsPowerSubmissionDeclarations else { return }
+        await refreshCompatibilityPolicy()
+        guard selectedResultEligibility.isApproved else { return }
         do {
             guard let clientID = Bundle.main.object(
                 forInfoDictionaryKey: "GitHubOAuthClientID"
@@ -257,6 +319,7 @@ final class BenchmarkViewModel {
                 throw GitHubSubmissionClient.ClientError.missingClientID
             }
             let client = try GitHubSubmissionClient(clientID: clientID)
+            await releasePreparedModelForSubmission()
             let authorization = try await client.startAuthorization()
             githubSubmissionPhase = .authorizing(
                 code: authorization.userCode,
@@ -394,6 +457,8 @@ final class BenchmarkViewModel {
     }
 
     func prepareModel() async {
+        guard canPrepare else { return }
+        await refreshCompatibilityPolicy()
         guard canPrepare, let plan = loadedPlan?.plan else { return }
         preparationPhase = .preparing
         let evidence = await runtime.prepare(plan: plan)
@@ -432,6 +497,8 @@ final class BenchmarkViewModel {
         currentThermalState = liveEnvironment.thermalState
         batteryState = liveEnvironment.batteryState
         batteryLevelPercent = liveEnvironment.batteryLevelPercent
+        guard canRun else { return }
+        await refreshCompatibilityPolicy()
         guard canRun,
               let loadedPlan,
               let modelPreparation else { return }
@@ -476,9 +543,13 @@ final class BenchmarkViewModel {
                 session: session,
                 context: context
             )
-            resultFileURL = try await resultStore.save(bundle)
+            let savedURL = try await resultStore.save(bundle)
+            resultFileURL = savedURL
             try await powerCheckpointStore.clear()
             latestPowerResult = bundle
+            recordStoredPowerResult(
+                .init(result: bundle, fileURL: savedURL)
+            )
             latestUnifiedResult = nil
             submissionFileURL = nil
             result = nil
@@ -505,9 +576,13 @@ final class BenchmarkViewModel {
                 session: recovered.session,
                 context: recovered.context
             )
-            resultFileURL = try await resultStore.save(bundle)
+            let savedURL = try await resultStore.save(bundle)
+            resultFileURL = savedURL
             try await powerCheckpointStore.clear()
             latestPowerResult = bundle
+            recordStoredPowerResult(
+                .init(result: bundle, fileURL: savedURL)
+            )
             result = nil
             latestUnifiedResult = nil
             recoveryNotice = "Recovered an interrupted Power session without discarding planned attempts."
@@ -524,6 +599,23 @@ final class BenchmarkViewModel {
         }
     }
 
+    func restoreLatestPowerResultIfNeeded() async {
+        guard phase != .running else { return }
+        do {
+            storedPowerResults = try await resultStore.loadPowerResults()
+            guard !storedPowerResults.isEmpty else { return }
+            let selected = selectedPowerResultID.flatMap { selectedID in
+                storedPowerResults.first(where: { $0.id == selectedID })
+            } ?? storedPowerResults[0]
+            applyStoredPowerResult(
+                selected,
+                notice: "Restored \(storedPowerResults.count) validated Power result(s) from local storage. The newest result is selected; choosing another result never rewrites its JSON bytes."
+            )
+        } catch {
+            recoveryNotice = "A saved Power result exists but could not be restored safely: \(error.localizedDescription)"
+        }
+    }
+
     func refreshThermalState() {
         let environment = DeviceEnvironment.current
         currentThermalState = SystemMeasurements.thermalState
@@ -532,6 +624,37 @@ final class BenchmarkViewModel {
         buildConfiguration = BuildMetadata.configuration
         batteryState = environment.batteryState
         batteryLevelPercent = environment.batteryLevelPercent
+    }
+
+    func refreshCompatibilityPolicy() async {
+        currentRunnerEligibility = .checking
+        do {
+            let policy = try await compatibilityPolicyFetcher
+                .fetchCurrentPolicy()
+            compatibilityPolicy = policy
+            guard let plan = loadedPlan?.plan,
+                  let identity = PowerRunnerIdentity(plan: plan) else {
+                currentRunnerEligibility = .unavailable(
+                    message: "This build does not contain a valid runner source identity."
+                )
+                return
+            }
+            if let approval = policy.approval(for: identity) {
+                currentRunnerEligibility = .approved(
+                    policyVersion: policy.policyVersion,
+                    approvalID: approval.approvalID
+                )
+            } else {
+                currentRunnerEligibility = .notApproved(
+                    policyVersion: policy.policyVersion
+                )
+            }
+        } catch {
+            compatibilityPolicy = nil
+            currentRunnerEligibility = .unavailable(
+                message: error.localizedDescription
+            )
+        }
     }
 
     func calibrateInputLengths() async {
@@ -832,6 +955,45 @@ final class BenchmarkViewModel {
         reviewedResult = false
         confirmsNoPersonalData = false
         agreesToRepositoryLicense = false
+    }
+
+    private func releasePreparedModelForSubmission() async {
+        await runtime.releaseModel()
+        modelPreparation = nil
+        preparationPhase = .notPrepared
+    }
+
+    private func recordStoredPowerResult(
+        _ stored: ResultStore.StoredPowerResult
+    ) {
+        storedPowerResults.removeAll { $0.id == stored.id }
+        storedPowerResults.append(stored)
+        storedPowerResults.sort {
+            if $0.result.createdAt != $1.result.createdAt {
+                return $0.result.createdAt > $1.result.createdAt
+            }
+            return $0.result.resultID.uuidString < $1.result.resultID.uuidString
+        }
+    }
+
+    private func applyStoredPowerResult(
+        _ stored: ResultStore.StoredPowerResult,
+        notice: String
+    ) {
+        latestPowerResult = stored.result
+        resultFileURL = stored.fileURL
+        latestUnifiedResult = nil
+        result = nil
+        submissionFileURL = nil
+        powerSubmissionPackageURL = nil
+        githubSubmissionPhase = .idle
+        acceptsPowerSubmissionDeclarations = false
+        let measured = stored.result.attempts.filter { $0.role == "measured" }
+        phase = .completed(
+            measuredAttempts: measured.count,
+            failedAttempts: measured.filter { $0.outcome != "completed" }.count
+        )
+        recoveryNotice = notice
     }
 
     private static func failureMessage(_ attempt: BenchmarkAttempt) -> String {

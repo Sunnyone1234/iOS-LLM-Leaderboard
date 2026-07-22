@@ -12,7 +12,8 @@ community packages remain visible under their original identity.
 A current result enters the live dataset after its two-file Power 1.1 package:
 
 1. is opened by the GitHub account named in `contributor.githubHandle`;
-2. passes package, hash, source-result, and protocol validation; and
+2. passes package, hash, source-result, exact-runner compatibility, and
+   protocol validation; and
 3. is merged into `main` by the repository's evidence-only automation or a
    maintainer.
 
@@ -24,7 +25,7 @@ packages in one PR and assigns one of three outcomes:
 | --- | --- | --- |
 | `power:auto-accept` | Evidence-only additions; author binding, hashes, declarations, frozen protocol, primary metric, ordinary environment, and duplicate checks all pass; no conflict is disclosed | Squash-merge after required checks |
 | `power:manual-review` | The package is structurally valid, but a conflict or thermal/environmental assistance is disclosed | Preserve the evidence for maintainer review; do not auto-merge |
-| `power:rejected` | Invalid/missing files, non-submission changes, contributor mismatch, protocol or primary-metric failure, duplicate evidence, or more than ten packages | Fail intake and do not merge |
+| `power:rejected` | Invalid/missing files, non-submission changes, contributor mismatch, unapproved runner identity, protocol or primary-metric failure, duplicate evidence, or more than ten packages | Fail intake and do not merge |
 
 The merge worker runs only after trusted intake and commit-identity workflows
 complete. It attempts the squash merge only for an open, non-draft PR carrying
@@ -62,6 +63,11 @@ fields match, including:
 Changing one field creates a different exact cell. The website may group patch
 releases for a simpler default display, but exact evidence identities remain
 separate in the dataset.
+
+Compatibility policy 1.1.2 preserves the App 0.13.0 reference and exact App
+0.16.0 build 19 approval, then adds only the exact App 0.17.0 build 20
+source/runtime identity. It does not reinterpret App 0.14.0 or 0.15.0 evidence
+and it does not pre-approve later App commits.
 
 ## Contributor counting
 
@@ -102,7 +108,10 @@ Generated files:
 - `results/suite-b-power-community/LEADERBOARD.md`;
 - `results/suite-b-power-community/COVERAGE.md`.
 
-Run the same generator locally with `python3 scripts/power.py preview`.
+Maintainers can request the same current preview through the **Power community
+ranking** workflow. The retained public `scripts/power.py preview` command is
+an immutable Power 1.1.1 asset; trusted CI uses the separately pinned 1.1.2
+adapter without changing that historical command.
 
 The live view does not grant a formal evidence-level transition. Verified and
 Maintainer Reference remain separate review and release decisions.

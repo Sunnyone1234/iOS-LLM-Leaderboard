@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ios-llm-leaderboard:schema:suite-b-power-compatible-runners:1.1.1",
+  "title": "Suite B Power 1.1 compatible runner policy 1.1.1",
+  "description": "Exact runner and runtime identities authorized to produce Power 1.1 source results without changing the adopted execution protocol or result schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "policyID",
+    "policyVersion",
+    "status",
+    "benchmarkRelease",
+    "protocolSemanticsChanged",
+    "resultSchemaChanged",
+    "rawEvidenceMutationAllowed",
+    "approvedRunners"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "suite-b-power-compatible-runners-1.1.1"
+    },
+    "policyID": {
+      "const": "suite-b-power-runner-compatibility"
+    },
+    "policyVersion": {
+      "const": "1.1.1"
+    },
+    "status": {
+      "const": "published"
+    },
+    "benchmarkRelease": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "policyVersion", "sourceRelease"],
+      "properties": {
+        "id": { "const": "suite-b-power" },
+        "policyVersion": { "const": "1.1.1" },
+        "sourceRelease": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "version"],
+          "properties": {
+            "id": { "const": "suite-b-power" },
+            "version": { "const": "1.1.0" }
+          }
+        }
+      }
+    },
+    "protocolSemanticsChanged": { "const": false },
+    "resultSchemaChanged": { "const": false },
+    "rawEvidenceMutationAllowed": { "const": false },
+    "approvedRunners": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/runner" }
+    }
+  },
+  "$defs": {
+    "runner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approvalID",
+        "kind",
+        "runnerID",
+        "runnerVersion",
+        "appVersion",
+        "appBuild",
+        "appSourceCommit",
+        "runtime"
+      ],
+      "properties": {
+        "approvalID": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9.-]+$"
+        },
+        "kind": {
+          "enum": ["reference", "compatible"]
+        },
+        "runnerID": {
+          "const": "ios-reference-benchmark-app"
+        },
+        "runnerVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "appVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "appBuild": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "appSourceCommit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "runtime": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "version",
+            "resolvedRevision",
+            "backend",
+            "dependencyVersions"
+          ],
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "version": { "type": "string", "minLength": 1 },
+            "resolvedRevision": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "backend": { "type": "string", "minLength": 1 },
+            "dependencyVersions": {
+              "type": "object",
+              "minProperties": 1,
+              "additionalProperties": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

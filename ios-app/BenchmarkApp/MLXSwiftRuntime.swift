@@ -1,6 +1,7 @@
 import Foundation
 import CryptoKit
 import HuggingFace
+import MLX
 import MLXLLM
 import MLXLMCommon
 import Tokenizers
@@ -190,6 +191,13 @@ actor MLXSwiftRuntime: ModelPreparingRuntime {
         processIsolationGate: ModelProcessIsolationGate = .shared
     ) {
         self.processIsolationGate = processIsolationGate
+    }
+
+    func releaseModel() async {
+        modelContainer = nil
+        loadedModelIdentity = nil
+        preparedPlan = nil
+        Memory.clearCache()
     }
 
     func prepare(plan: PilotPlan) async -> ModelPreparationEvidence {

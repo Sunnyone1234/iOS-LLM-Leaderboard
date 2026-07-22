@@ -13,11 +13,13 @@ from pathlib import Path
 try:
     from scripts import generate_power_community_ranking as ranking
     from scripts import validate_suite_b_power_1_1_final_result as final
+    from scripts import validate_suite_b_power_1_1_compatible_result as compatible
     from scripts.validate_suite_b_power_1_1_submission import validate_package, validate_path
     from scripts.validate_suite_b_power_1_1_rc1_result import _validate_schema
 except ModuleNotFoundError:
     import generate_power_community_ranking as ranking
     import validate_suite_b_power_1_1_final_result as final
+    import validate_suite_b_power_1_1_compatible_result as compatible
     from validate_suite_b_power_1_1_submission import validate_package, validate_path
     from validate_suite_b_power_1_1_rc1_result import _validate_schema
 
@@ -70,11 +72,19 @@ def create_package(
     result_bytes = result_path.read_bytes()
     result = json.loads(result_bytes)
     digest = hashlib.sha256(result_bytes).hexdigest()
-    result_report = final.validate(result, digest)
+    compatibility_report = compatible.validate(result, digest)
+    result_report = compatibility_report["powerResultValidation"]
     if not result_report.get("structuralValidity", {}).get("valid"):
         raise ValueError("result is structurally invalid under Power 1.1")
     if not result_report.get("protocolConformance", {}).get("valid"):
         raise ValueError("result is not protocol-conformant under Power 1.1")
+    if not compatibility_report.get("runnerCompatibility", {}).get("compatible"):
+        raise ValueError("result runner is not approved under Power 1.1 policy 1.1.1")
+    if compatibility_report.get("errors"):
+        raise RuntimeError(
+            "Power 1.1 compatibility validation failed: "
+            + "; ".join(compatibility_report["errors"])
+        )
     shape_errors = final.validate_report_shape(result_report)
     if shape_errors:
         raise RuntimeError("invalid final validation report: " + "; ".join(shape_errors))

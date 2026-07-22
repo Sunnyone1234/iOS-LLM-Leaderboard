@@ -1,40 +1,59 @@
 import Foundation
 
 actor ResultStore {
+    struct StoredPowerResult: Sendable, Equatable {
+        let result: PowerResultBundle
+        let fileURL: URL
+
+        var id: UUID { result.resultID }
+    }
+
+    private let documentsDirectory: URL?
+
+    init(documentsDirectory: URL? = nil) {
+        self.documentsDirectory = documentsDirectory
+    }
+
     func save(_ package: PowerSubmissionPackage) throws -> URL {
-        let root = try FileManager.default.url(
-            for: .documentDirectory,
-            in: .userDomainMask,
-            appropriateFor: nil,
-            create: true
-        ).appending(path: "PowerSubmissionPackages", directoryHint: .isDirectory)
+        let root = try documentsRoot().appending(
+            path: "PowerSubmissionPackages",
+            directoryHint: .isDirectory
+        )
+        try FileManager.default.createDirectory(
+            at: root,
+            withIntermediateDirectories: true
+        )
         let directory = root.appending(
             path: package.submissionID.uuidString.lowercased(),
             directoryHint: .isDirectory
         )
+        let stagingDirectory = root.appending(
+            path: ".\(package.submissionID.uuidString.lowercased()).\(UUID().uuidString.lowercased()).tmp",
+            directoryHint: .isDirectory
+        )
         try FileManager.default.createDirectory(
-            at: directory,
+            at: stagingDirectory,
             withIntermediateDirectories: true
         )
+        defer { try? FileManager.default.removeItem(at: stagingDirectory) }
         try package.resultData.write(
-            to: directory.appending(path: "result.json"),
-            options: [.atomic, .withoutOverwriting]
+            to: stagingDirectory.appending(path: "result.json"),
+            options: .atomic
         )
         try package.manifestData.write(
-            to: directory.appending(path: "submission.json"),
-            options: [.atomic, .withoutOverwriting]
+            to: stagingDirectory.appending(path: "submission.json"),
+            options: .atomic
+        )
+        try FileManager.default.moveItem(
+            at: stagingDirectory,
+            to: directory
         )
         return directory
     }
 
     func save(_ result: PowerResultBundle) throws -> URL {
         try result.validateForExport()
-        let directory = try FileManager.default.url(
-            for: .documentDirectory,
-            in: .userDomainMask,
-            appropriateFor: nil,
-            create: true
-        ).appending(path: "PowerBenchmarkResults", directoryHint: .isDirectory)
+        let directory = try powerResultsDirectory()
         try FileManager.default.createDirectory(
             at: directory,
             withIntermediateDirectories: true
@@ -58,6 +77,70 @@ actor ResultStore {
         ]
         try encoder.encode(result).write(to: url, options: .atomic)
         return url
+    }
+
+    func loadLatestPowerResult() throws -> StoredPowerResult? {
+        try loadPowerResults().first
+    }
+
+    func loadPowerResults() throws -> [StoredPowerResult] {
+        let directory = try powerResultsDirectory()
+        guard FileManager.default.fileExists(atPath: directory.path) else {
+            return []
+        }
+        let urls = try FileManager.default.contentsOfDirectory(
+            at: directory,
+            includingPropertiesForKeys: [.isRegularFileKey],
+            options: [.skipsHiddenFiles]
+        ).filter {
+            $0.pathExtension.lowercased() == "json"
+                && ((try? $0.resourceValues(forKeys: [.isRegularFileKey]))
+                    .flatMap(\.isRegularFile) ?? false)
+        }
+        guard !urls.isEmpty else { return [] }
+
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        var results: [StoredPowerResult] = []
+        var lastError: Error?
+        for url in urls {
+            do {
+                let result = try decoder.decode(
+                    PowerResultBundle.self,
+                    from: Data(contentsOf: url)
+                )
+                try result.validateForExport()
+                results.append(StoredPowerResult(result: result, fileURL: url))
+            } catch {
+                lastError = error
+            }
+        }
+        if !results.isEmpty {
+            return results.sorted {
+                if $0.result.createdAt != $1.result.createdAt {
+                    return $0.result.createdAt > $1.result.createdAt
+                }
+                return $0.result.resultID.uuidString < $1.result.resultID.uuidString
+            }
+        }
+        throw lastError ?? CocoaError(.fileReadCorruptFile)
+    }
+
+    private func documentsRoot() throws -> URL {
+        if let documentsDirectory { return documentsDirectory }
+        return try FileManager.default.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
+    }
+
+    private func powerResultsDirectory() throws -> URL {
+        try documentsRoot().appending(
+            path: "PowerBenchmarkResults",
+            directoryHint: .isDirectory
+        )
     }
 
     func save(_ submission: CommunitySubmissionBundle) throws -> URL {

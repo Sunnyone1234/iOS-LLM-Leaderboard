@@ -12,16 +12,18 @@ from typing import Any
 
 try:
     from scripts import validate_suite_b_power_1_1_final_result as final
+    from scripts import validate_suite_b_power_1_1_compatible_result as compatible
     from scripts.validate_suite_b_power_1_1_rc1_result import _validate_schema
 except ModuleNotFoundError:
     import validate_suite_b_power_1_1_final_result as final
+    import validate_suite_b_power_1_1_compatible_result as compatible
     from validate_suite_b_power_1_1_rc1_result import _validate_schema
 
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = ROOT / "schemas/suite-b-power-submission-1.1.0.schema.json"
 VALIDATOR_ID = "suite-b-power-submission-validator"
-VALIDATOR_VERSION = "1.1.0"
+VALIDATOR_VERSION = "1.1.1"
 ALLOWED_PACKAGE_FILES = {"submission.json", "result.json"}
 DECLARATIONS = {
     "ranOnPhysicalDevice",
@@ -40,15 +42,20 @@ def sha256_bytes(value: bytes) -> str:
 
 def _empty_report(package: Path) -> dict[str, Any]:
     return {
-        "schemaVersion": "suite-b-power-submission-validation-report-1.1.0",
+        "schemaVersion": "suite-b-power-submission-validation-report-1.1.1",
         "package": package.as_posix(),
         "submissionID": None,
         "resultID": None,
-        "benchmarkRelease": {"id": "suite-b-power", "version": "1.1.0"},
+        "benchmarkRelease": {
+            "id": "suite-b-power",
+            "version": "1.1.1",
+            "sourceRelease": {"id": "suite-b-power", "version": "1.1.0"},
+        },
         "validator": {"id": VALIDATOR_ID, "version": VALIDATOR_VERSION},
         "overallStatus": "invalid",
         "packageIntegrity": {"valid": False, "reasonCodes": []},
         "contributorDeclarations": {"valid": False, "reasonCodes": []},
+        "runnerCompatibility": None,
         "powerResultValidation": None,
         "ordinaryLiveRankingEligibility": {
             "eligible": False,
@@ -134,8 +141,11 @@ def validate_package(package: Path) -> dict[str, Any]:
             errors.append(f"result.{field} does not match result.json")
             integrity_reasons.append("result_reference_mismatch")
 
-    power_report = final.validate(result, identity["sha256"])
+    compatible_report = compatible.validate(result, identity["sha256"])
+    report["runnerCompatibility"] = compatible_report["runnerCompatibility"]
+    power_report = compatible_report["powerResultValidation"]
     report["powerResultValidation"] = power_report
+    errors.extend(compatible_report.get("errors", []))
     shape_errors = final.validate_report_shape(power_report)
     if shape_errors:
         errors.extend(f"Power validation report: {error}" for error in shape_errors)
@@ -143,6 +153,8 @@ def validate_package(package: Path) -> dict[str, Any]:
         errors.append("result.json is structurally invalid")
     if not power_report.get("protocolConformance", {}).get("valid"):
         errors.append("result.json is not protocol-conformant")
+    if not compatible_report.get("runnerCompatibility", {}).get("compatible"):
+        errors.append("result.json runner is not approved by compatibility policy 1.1.1")
 
     report["packageIntegrity"] = {
         "valid": not integrity_reasons,
@@ -186,9 +198,13 @@ def validate_path(path: Path) -> dict[str, Any]:
             )
             reports.append(invalid)
     return {
-        "schemaVersion": "suite-b-power-intake-report-1.1.0",
+        "schemaVersion": "suite-b-power-intake-report-1.1.1",
         "generatedAt": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-        "benchmarkRelease": {"id": "suite-b-power", "version": "1.1.0"},
+        "benchmarkRelease": {
+            "id": "suite-b-power",
+            "version": "1.1.1",
+            "sourceRelease": {"id": "suite-b-power", "version": "1.1.0"},
+        },
         "trustLevelChanged": False,
         "valid": all(item["overallStatus"] != "invalid" for item in reports),
         "entries": reports,

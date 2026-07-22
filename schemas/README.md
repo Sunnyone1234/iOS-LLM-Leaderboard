@@ -11,6 +11,8 @@ manifest is immutable.
   validation decisions.
 - `suite-b-power-submission-1.1.0.schema.json` — current two-file contributor
   manifest bound to an untouched source export.
+- `suite-b-power-compatible-runners-1.1.2.schema.json` — current exact
+  runner/runtime compatibility-policy contract used by trusted intake.
 
 The source result retains its RC1 schema identity because Power 1.1 adopted
 the frozen execution contract instead of relabeling raw evidence. The current
@@ -34,5 +36,7 @@ Before editing a schema, check all manifests under
 `benchmarks/**/releases/`. If a manifest pins its SHA-256, create a new
 versioned schema rather than changing the existing file.
 
-Current contributors should use `python3 scripts/power.py`; they should not
-construct schema documents manually.
+Current App 0.17.0 contributors should use the configured App's direct GitHub
+submission. The retained `scripts/power.py` command remains available for the
+runner identities covered by its pinned Power 1.1.1 policy. Contributors
+should not construct schema documents manually.

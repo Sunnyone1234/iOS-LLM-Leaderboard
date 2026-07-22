@@ -33,7 +33,7 @@ It affects recommendation eligibility only.
 
 ## Version and evidence boundary
 
-Power 1.1 and its existing validation reports remain immutable. The App 0.15
+Power 1.1 and its existing validation reports remain immutable. The App 0.16
 local preview and the standalone draft evaluator consume the same policy file,
 but no v2 assessment becomes official until a versioned validator/report
 release, review matrix, and maintainer approval are complete.

@@ -165,6 +165,9 @@ def classify(
                     .get("recommendationEligibility", {})
                     .get("eligible")
                 ),
+                "runnerApprovalID": package_report.get(
+                    "runnerCompatibility", {}
+                ).get("approvalID"),
             }
             report["packages"].append(package_summary)
 
