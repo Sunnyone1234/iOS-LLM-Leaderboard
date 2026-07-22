@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "suite-b-power-release-manifest-1.1.4",
+  "releaseID": "suite-b-power",
+  "releaseVersion": "1.1.4",
+  "preparedAt": "2026-07-22T22:55:00Z",
+  "approvedAt": "2026-07-22T22:55:00Z",
+  "status": "published",
+  "officialResultEligible": true,
+  "rankingAuthorized": true,
+  "publicationAuthorized": true,
+  "previousPublishedRelease": "1.1.3",
+  "contractAdoption": {
+    "method": "additive-exact-runner-compatibility-policy",
+    "sourceRelease": {
+      "id": "suite-b-power",
+      "version": "1.1.0"
+    },
+    "protocolSemanticsChanged": false,
+    "resultSchemaChanged": false,
+    "referenceAppChanged": false,
+    "compatibleRunnerPolicyAdded": true,
+    "compatibleRunnerPolicyExtended": true,
+    "rankingPolicyChanged": false,
+    "validationReportSchemaChanged": false,
+    "newExecutionRequired": true,
+    "rawEvidenceMutationAllowed": false,
+    "sourceIdentitiesRemainVisible": true
+  },
+  "protocol": {
+    "id": "suite-b-power",
+    "adoptedVersion": "1.1.0-rc.1"
+  },
+  "resultContract": {
+    "sourceResultSchemaID": "suite-b-power-result-1.1.0-rc.1",
+    "baseValidatorID": "suite-b-power-validator",
+    "baseValidatorVersion": "1.1.0",
+    "baseValidationReportSchemaID": "suite-b-power-validation-report-1.1.0",
+    "runnerCompatibilityPolicyID": "suite-b-power-runner-compatibility",
+    "runnerCompatibilityPolicyVersion": "1.1.4",
+    "compatibleResultValidatorVersion": "1.1.4",
+    "submissionValidatorVersion": "1.1.4",
+    "rankingPolicyID": "suite-b-power-ranking-policy",
+    "rankingPolicyVersion": "1.1.0"
+  },
+  "referenceApp": {
+    "id": "ios-reference-benchmark-app",
+    "version": "0.13.0",
+    "build": "16",
+    "sourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c"
+  },
+  "compatibleRunners": [
+    {
+      "approvalID": "ios-compatible-app-0.16.0-build-19",
+      "id": "ios-reference-benchmark-app",
+      "version": "0.16.0",
+      "build": "19",
+      "sourceCommit": "792d5e2974c3e3f131343071bb2e9d90b3231b32"
+    },
+    {
+      "approvalID": "ios-compatible-app-0.17.0-build-20",
+      "id": "ios-reference-benchmark-app",
+      "version": "0.17.0",
+      "build": "20",
+      "sourceCommit": "7e99fb060454f5f59e4255d04981d38eeec732f0"
+    },
+    {
+      "approvalID": "ios-compatible-app-0.17.0-build-20-main",
+      "id": "ios-reference-benchmark-app",
+      "version": "0.17.0",
+      "build": "20",
+      "sourceCommit": "508eaec469b5cc0f2556d464b22d056ec7c15b03"
+    },
+    {
+      "approvalID": "ios-compatible-app-0.18.0-build-21-main",
+      "id": "ios-reference-benchmark-app",
+      "version": "0.18.0",
+      "build": "21",
+      "sourceCommit": "8920a423f4b4abff4e34a2d8a128a3962899258e"
+    }
+  ],
+  "compatibilityBoundary": {
+    "exactRunnerIdentityRequired": true,
+    "exactRuntimeIdentityRequired": true,
+    "olderApprovedRunnersRemainApproved": true,
+    "olderUnapprovedRunnersReinterpreted": false,
+    "laterRunnerCommitsAutomaticallyApproved": false,
+    "measurementProtocolReusedWithoutModification": true,
+    "rawResultBytesPreserved": true
+  },
+  "discovery": {
+    "path": "benchmarks/suite-b-on-device-performance/power-compatible-runners-current.json",
+    "normative": false,
+    "mutable": true,
+    "policyDigestRequired": true
+  },
+  "activationRecord": {
+    "approvedBy": "YizeSun",
+    "approvedAt": "2026-07-22T22:55:00Z",
+    "appReleaseBuildSucceeded": true,
+    "appUnitTestsSucceeded": true,
+    "runnerIdentityStableAcrossNonAppCommits": true
+  },
+  "pinnedAssets": [
+    {
+      "role": "source-release-manifest",
+      "path": "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.0.json",
+      "sha256": "22dcdbb5960fdf3641b8034aefd2e407d5731bdc371a14c13463e7458326a49e"
+    },
+    {
+      "role": "previous-runner-compatibility-policy",
+      "path": "benchmarks/suite-b-on-device-performance/power-1.1-compatible-runners-1.1.3.json",
+      "sha256": "02fada8f162d917c1422ca78cf5bdb9a494eac1d2df0411062849db28be38d69"
+    },
+    {
+      "role": "runner-compatibility-policy",
+      "path": "benchmarks/suite-b-on-device-performance/power-1.1-compatible-runners-1.1.4.json",
+      "sha256": "767ede5517bb26e1beb0bdeaa15e92325c0f9d90652de2926cf4e2840020f89d"
+    },
+    {
+      "role": "runner-compatibility-policy-schema",
+      "path": "schemas/suite-b-power-compatible-runners-1.1.4.schema.json",
+      "sha256": "564941e78e70fdad3b24e5ca2cdb4219f1b9b3f7c6e6405c2e1e56818934ae4a"
+    },
+    {
+      "role": "compatible-result-validator-adapter",
+      "path": "scripts/validate_suite_b_power_1_1_compatible_result_1_1_4.py",
+      "sha256": "7bbeefb58c0393988889a9374de9958e052e02bb6db8127edee5f7f2d7aa8510"
+    },
+    {
+      "role": "submission-validator-adapter",
+      "path": "scripts/validate_suite_b_power_1_1_submission_1_1_4.py",
+      "sha256": "dfc73f9a11835d1f5c4e9b7c67e95522e1d625d166be916d2d8ac7bc9c7e83d6"
+    },
+    {
+      "role": "community-ranking-generator-adapter",
+      "path": "scripts/generate_power_community_ranking_1_1_4.py",
+      "sha256": "f3b68b30d5a584a5d29f78604d03fb337ccf3fa49256dca876ef5c3649c2daba"
+    },
+    {
+      "role": "trusted-pr-triage-adapter",
+      "path": "scripts/triage_power_submission_pr_1_1_4.py",
+      "sha256": "e913148172b9dc92b0ae89652bdb546ffd5c758d65e0aa8b5f3012e03493ea8b"
+    },
+    {
+      "role": "versioned-cli-implementation-adapter",
+      "path": "scripts/power_1_1_4.py",
+      "sha256": "92d165980dbefb97402d561d93e1d6e2cf374940d5b61aaa499666c0633ca9e5"
+    }
+  ]
+}

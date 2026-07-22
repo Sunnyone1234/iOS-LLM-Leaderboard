@@ -6,14 +6,14 @@ and measurement modes.
 
 ## Current release
 
-`suite-b-power@1.1.3` is the current compatibility-policy release. Its 1.1.0
+`suite-b-power@1.1.4` is the current compatibility-policy release. Its 1.1.0
 source release adopts the frozen Power 1.1 RC1 execution contract, finalizes
 the ranking policy, and binds six immutable physical-device results without
 rewriting their RC1 source identity. Patch 1.1.1 changes no measurement or
-result schema. Patches 1.1.1 through 1.1.3 add and extend an exact
-approved-runner policy for community intake. Patch 1.1.3 adds the App 0.17.0
-source identity produced when its protected pull request entered `main`; it
-changes no App bytes and requires no new measurement.
+result schema. Patches 1.1.1 through 1.1.4 add and extend an exact
+approved-runner policy for community intake. Patch 1.1.4 approves App 0.18.0
+build 21 at the exact protected-merge source commit after its submission-path
+fixes passed App, intake, identity, and ranking checks.
 
 The only active workloads are:
 
@@ -31,9 +31,9 @@ remain under their original identities for audit and reproduction.
 ## Start here
 
 - [Short public method](../../docs/power.md)
-- [Power 1.1 current compatibility release](releases/suite-b-power-1.1.3.json)
+- [Power 1.1 current compatibility release](releases/suite-b-power-1.1.4.json)
 - [Power 1.1 source release manifest](releases/suite-b-power-1.1.0.json)
-- [Compatible-runner policy](power-1.1-compatible-runners-1.1.3.json)
+- [Compatible-runner policy](power-1.1-compatible-runners-1.1.4.json)
 - [Frozen RC1 protocol](power-1.1-rc1-protocol.md)
 - [Final ranking policy](power-1.1-ranking-policy.json)
 - [Metrics](metrics.md)

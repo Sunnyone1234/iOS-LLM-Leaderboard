@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "suite-b-power-compatible-runners-1.1.4",
+  "policyID": "suite-b-power-runner-compatibility",
+  "policyVersion": "1.1.4",
+  "status": "published",
+  "benchmarkRelease": {
+    "id": "suite-b-power",
+    "policyVersion": "1.1.4",
+    "sourceRelease": {
+      "id": "suite-b-power",
+      "version": "1.1.0"
+    }
+  },
+  "protocolSemanticsChanged": false,
+  "resultSchemaChanged": false,
+  "rawEvidenceMutationAllowed": false,
+  "approvedRunners": [
+    {
+      "approvalID": "ios-reference-app-0.13.0-build-16",
+      "kind": "reference",
+      "runnerID": "ios-reference-benchmark-app",
+      "runnerVersion": "0.13.0",
+      "appVersion": "0.13.0",
+      "appBuild": "16",
+      "appSourceCommit": "f5b863cc0ca4d82d987cd9779f8875939d7bf90c",
+      "runtime": {
+        "name": "MLX Swift LM",
+        "version": "3.31.4",
+        "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+        "backend": "MLX/Metal",
+        "dependencyVersions": {
+          "mlx-swift": "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+          "swift-huggingface": "swift-huggingface 0.9.0",
+          "swift-transformers": "swift-transformers 1.3.0"
+        }
+      }
+    },
+    {
+      "approvalID": "ios-compatible-app-0.16.0-build-19",
+      "kind": "compatible",
+      "runnerID": "ios-reference-benchmark-app",
+      "runnerVersion": "0.16.0",
+      "appVersion": "0.16.0",
+      "appBuild": "19",
+      "appSourceCommit": "792d5e2974c3e3f131343071bb2e9d90b3231b32",
+      "runtime": {
+        "name": "MLX Swift LM",
+        "version": "3.31.4",
+        "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+        "backend": "MLX/Metal",
+        "dependencyVersions": {
+          "mlx-swift": "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+          "swift-huggingface": "swift-huggingface 0.9.0",
+          "swift-transformers": "swift-transformers 1.3.0"
+        }
+      }
+    },
+    {
+      "approvalID": "ios-compatible-app-0.17.0-build-20",
+      "kind": "compatible",
+      "runnerID": "ios-reference-benchmark-app",
+      "runnerVersion": "0.17.0",
+      "appVersion": "0.17.0",
+      "appBuild": "20",
+      "appSourceCommit": "7e99fb060454f5f59e4255d04981d38eeec732f0",
+      "runtime": {
+        "name": "MLX Swift LM",
+        "version": "3.31.4",
+        "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+        "backend": "MLX/Metal",
+        "dependencyVersions": {
+          "mlx-swift": "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+          "swift-huggingface": "swift-huggingface 0.9.0",
+          "swift-transformers": "swift-transformers 1.3.0"
+        }
+      }
+    },
+    {
+      "approvalID": "ios-compatible-app-0.17.0-build-20-main",
+      "kind": "compatible",
+      "runnerID": "ios-reference-benchmark-app",
+      "runnerVersion": "0.17.0",
+      "appVersion": "0.17.0",
+      "appBuild": "20",
+      "appSourceCommit": "508eaec469b5cc0f2556d464b22d056ec7c15b03",
+      "runtime": {
+        "name": "MLX Swift LM",
+        "version": "3.31.4",
+        "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+        "backend": "MLX/Metal",
+        "dependencyVersions": {
+          "mlx-swift": "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+          "swift-huggingface": "swift-huggingface 0.9.0",
+          "swift-transformers": "swift-transformers 1.3.0"
+        }
+      }
+    },
+    {
+      "approvalID": "ios-compatible-app-0.18.0-build-21-main",
+      "kind": "compatible",
+      "runnerID": "ios-reference-benchmark-app",
+      "runnerVersion": "0.18.0",
+      "appVersion": "0.18.0",
+      "appBuild": "21",
+      "appSourceCommit": "8920a423f4b4abff4e34a2d8a128a3962899258e",
+      "runtime": {
+        "name": "MLX Swift LM",
+        "version": "3.31.4",
+        "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+        "backend": "MLX/Metal",
+        "dependencyVersions": {
+          "mlx-swift": "0.31.6@0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+          "swift-huggingface": "swift-huggingface 0.9.0",
+          "swift-transformers": "swift-transformers 1.3.0"
+        }
+      }
+    }
+  ]
+}

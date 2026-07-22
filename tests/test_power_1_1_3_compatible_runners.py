@@ -22,7 +22,6 @@ from tests.test_power_1_1_compatible_runners import digest
 ROOT = Path(__file__).resolve().parents[1]
 SUITE = ROOT / "benchmarks/suite-b-on-device-performance"
 POLICY_PATH = SUITE / "power-1.1-compatible-runners-1.1.3.json"
-INDEX_PATH = SUITE / "power-compatible-runners-current.json"
 RELEASE_PATH = SUITE / "releases/suite-b-power-1.1.3.json"
 APP_MAIN_SOURCE_COMMIT = "508eaec469b5cc0f2556d464b22d056ec7c15b03"
 
@@ -34,7 +33,7 @@ def compatible_017_main_result() -> dict:
 
 
 class PowerOneOneThreeCompatibleRunnerTests(unittest.TestCase):
-    def test_release_assets_and_discovery_digest_are_valid(self) -> None:
+    def test_release_assets_are_pinned(self) -> None:
         self.assertEqual(verify_compatibility_assets(), [])
         release = json.loads(RELEASE_PATH.read_text())
         self.assertEqual(release["releaseVersion"], "1.1.3")
@@ -43,12 +42,9 @@ class PowerOneOneThreeCompatibleRunnerTests(unittest.TestCase):
         self.assertFalse(release["contractAdoption"]["resultSchemaChanged"])
         self.assertTrue(release["contractAdoption"]["newExecutionRequired"])
 
-        index = json.loads(INDEX_PATH.read_text())
-        current = index["currentPolicy"]
-        self.assertEqual(current["policyVersion"], "1.1.3")
-        self.assertEqual(current["path"], POLICY_PATH.relative_to(ROOT).as_posix())
         self.assertEqual(
-            current["sha256"], hashlib.sha256(POLICY_PATH.read_bytes()).hexdigest()
+            hashlib.sha256(POLICY_PATH.read_bytes()).hexdigest(),
+            "02fada8f162d917c1422ca78cf5bdb9a494eac1d2df0411062849db28be38d69",
         )
 
     def test_main_app_commit_remains_in_ios_history_when_available(self) -> None:

@@ -15,7 +15,7 @@ official App → one physical-device run → untouched result export
 
 A configured App can create the contributor-owned fork, evidence commit, and
 pull request through GitHub device authorization. It never writes directly to
-`main`. App 0.17.0 builds without the public OAuth Client ID may export the raw
+`main`. App 0.18.0 builds without the public OAuth Client ID may export the raw
 result for backup, but must be configured and rebuilt before submission. The
 retained `scripts/power.py` command is pinned to compatibility policy 1.1.1
 and is not a bypass for a runner added by a later compatibility policy.
@@ -49,11 +49,11 @@ to `power:manual-review`; invalid, incompatible, duplicated, or mixed-scope
 PRs route to `power:rejected`. Validation does not mutate the result, assign
 Maintainer Reference status, or change an immutable release.
 
-The original App 0.13.0 reference remains valid. Current policy 1.1.3 also
-accepts App 0.16.0 build 19 and App 0.17.0 build 20 only at their approved App
-source commits and runtime identity, including the App 0.17.0 source commit
-produced by its protected merge into `main`. App 0.15.0 evidence remains
-`runner_incompatible`; a second
+The original App 0.13.0 reference remains valid. Current policy 1.1.4 also
+accepts App 0.16.0 build 19, both approved App 0.17.0 build 20 identities, and
+App 0.18.0 build 21 only at protected-merge commit
+`8920a423f4b4abff4e34a2d8a128a3962899258e` with its exact runtime identity.
+App 0.15.0 evidence remains `runner_incompatible`; a second
 contributor or manual review cannot convert an unapproved runner into valid
 evidence.
 

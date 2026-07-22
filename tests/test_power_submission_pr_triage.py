@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from scripts import triage_power_submission_pr_1_1_3 as current_triage
+from scripts import triage_power_submission_pr_1_1_4 as current_triage
 from scripts.power import create_package
 
 
@@ -30,7 +30,7 @@ class PowerSubmissionPRTriageTests(unittest.TestCase):
             ROOT / ".github/workflows/power-submission-triage.yml"
         ).read_text()
         self.assertIn(
-            "python3 -m scripts.triage_power_submission_pr_1_1_3", workflow
+            "python3 -m scripts.triage_power_submission_pr_1_1_4", workflow
         )
         self.assertNotIn("python3 scripts/triage_power_submission_pr.py", workflow)
 

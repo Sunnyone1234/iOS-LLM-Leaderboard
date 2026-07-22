@@ -30,6 +30,7 @@ jobs:
           tests.test_power_1_1_compatible_runners
           tests.test_power_1_1_2_compatible_runners
           tests.test_power_1_1_3_compatible_runners
+          tests.test_power_1_1_4_compatible_runners
           tests.test_power_submission_1_1
           tests.test_power_submission_pr_triage
           tests.test_power_community_ranking
@@ -48,7 +49,7 @@ jobs:
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          python3 -m scripts.triage_power_submission_pr_1_1_3 \
+          python3 -m scripts.triage_power_submission_pr_1_1_4 \
             --base "$BASE_SHA" \
             --head "refs/remotes/origin/power-intake-${PR_NUMBER}" \
             --expected-contributor "$PR_AUTHOR" \

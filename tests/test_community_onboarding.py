@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 from scripts.generate_power_community_ranking import render_coverage
-from scripts.generate_power_community_ranking_1_1_3 import build_dataset
+from scripts.generate_power_community_ranking_1_1_4 import build_dataset
 
 
 ROOT = Path(__file__).resolve().parents[1]

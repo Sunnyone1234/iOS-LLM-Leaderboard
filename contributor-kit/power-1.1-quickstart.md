@@ -12,14 +12,14 @@ live Power ranking.
 
 The frozen reference remains Benchmark App 0.13.0 build 16 at source commit
 `f5b863cc0ca4d82d987cd9779f8875939d7bf90c`. Current compatibility policy
-1.1.3 preserves Benchmark App 0.16.0 build 19 and approves Benchmark App
-0.17.0 build 20 at the reviewed App commit and its source-equivalent `main`
-commit `508eaec469b5cc0f2556d464b22d056ec7c15b03`. The App embeds the latest commit
+1.1.4 preserves Benchmark App 0.16.0 build 19 and both approved Benchmark App
+0.17.0 build 20 identities, then approves Benchmark App 0.18.0 build 21 at
+protected-merge commit `8920a423f4b4abff4e34a2d8a128a3962899258e`. The App embeds the latest commit
 that changed `ios-app/`, so repository documentation and ranking updates do not
 silently change its runner identity.
 
 For a new run, build the current `main` checkout and verify the App displays
-version 0.17.0 and shows **Approved for Power 1.1.3**:
+version 0.18.0 and shows **Approved for Power 1.1.4**:
 
 ```bash
 git clone https://github.com/YOUR_GITHUB_HANDLE/iOS-LLM-Leaderboard.git
@@ -62,7 +62,7 @@ review.
 
 ## Run and submit more than one result
 
-App 0.17.0 saves every completed or safely recovered Power result as a separate
+App 0.18.0 saves every completed or safely recovered Power result as a separate
 immutable JSON file in its Documents `PowerBenchmarkResults` directory. An App
 launch validates all saved files, selects the newest one by default, and shows
 the collection in the **Results** tab. Selecting an older entry changes
@@ -85,10 +85,10 @@ result ID, or session ID is rejected. Use **Share Raw Power JSON** to keep an
 external backup; uninstalling the App removes its iOS sandbox and local
 history.
 
-App 0.17.0 requires a configured GitHub OAuth Client ID for the supported
+App 0.18.0 requires a configured GitHub OAuth Client ID for the supported
 submission route. A development build without that configuration may still
 share the untouched raw JSON as a backup, but it cannot create the contributor
-manifest or PR. Do not send an App 0.17.0 result through the retained
+manifest or PR. Do not send an App 0.18.0 result through the retained
 `scripts/power.py` command: that command is an immutable Power 1.1.1 asset and
 correctly rejects runners added by later policies. Configure the public Client ID
 and rebuild the App instead.
