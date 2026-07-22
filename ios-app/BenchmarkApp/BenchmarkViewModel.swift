@@ -176,7 +176,8 @@ final class BenchmarkViewModel {
     }
 
     // Experimental registry entries remain for historical compatibility, but
-    // App 0.17.0 cannot execute them through the Power control surface.
+    // current production Apps cannot execute them through the Power control
+    // surface.
     var canCalibrateInputLengths: Bool {
         false
     }

@@ -87,7 +87,7 @@ struct RunBenchmarkView: View {
             } header: {
                 Text("Power Benchmark 1.1")
             } footer: {
-                Text("Power 1.1 measurement contract · behavior preview v2 draft · App 0.17.0")
+                Text("Power 1.1 measurement contract · behavior preview v2 draft · App \(BuildMetadata.appVersion)")
             }
 
             Section {

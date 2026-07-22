@@ -6,7 +6,7 @@ an inference framework.
 
 ## Current status
 
-App `0.17.0` build `20` separates measurement from result review and upload in
+App `0.18.0` build `21` separates measurement from result review and upload in
 native Test and Results tabs. It checks the repository's SHA-256-bound current
 compatibility policy at launch, foreground entry, and immediately before model
 preparation, measurement, or submission. An unavailable policy or unapproved
@@ -37,7 +37,7 @@ substituted when an exact Power 1.0 reproduction is intended.
 
 Apps 0.8.0 through 0.11.0 emit the adopted Power 1.0 source result contract
 `suite-b-power-result-1.0.0-rc.1`. App 0.12.0 remains the historical Power 1.1
-draft runner. Apps 0.13.0 through 0.17.0 emit
+draft runner. Apps 0.13.0 through 0.18.0 emit
 `suite-b-power-result-1.1.0-rc.1`. Every raw App export sets
 `officialResultEligible` to `false`; no App export assigns its own publication,
 trust, or ranking status. Repository validation and release policy do. A
@@ -52,7 +52,7 @@ The production control surface exposes exactly two workload identities:
 
 The loader rejects any other plan identity or version. Experimental
 `b-pipe-002-input-length-sweep` and `b-ux-002-context-assistance` resources are
-retained for repository history and compatibility, but App 0.17.0 cannot
+retained for repository history and compatibility, but App 0.18.0 cannot
 execute them through its production controls.
 
 The three pinned Qwen3 profiles have Maintainer Reference evidence:
@@ -61,7 +61,7 @@ The three pinned Qwen3 profiles have Maintainer Reference evidence:
 - `mlx-community/Qwen3-1.7B-4bit`;
 - `mlx-community/Qwen3-4B-3bit`.
 
-App 0.17.0 also exposes eight pinned artifacts with accepted single-contributor
+App 0.18.0 also exposes eight pinned artifacts with accepted single-contributor
 physical-iPhone community evidence:
 
 - `mlx-community/Llama-3.2-1B-Instruct-4bit`;
@@ -156,8 +156,13 @@ still match the completed in-memory result, preserves `result.json`
 byte-for-byte, and saves a local copy under `PowerSubmissionPackages/`.
 
 Direct GitHub submission uses OAuth device flow and requests `public_repo` for
-the one submission session. The token is held only in memory. Register an OAuth
-App, enable Device Flow, and supply its public client ID as the
+the one submission session. The returned scope is checked before any repository
+write, and the token is held only in memory. For an existing contributor fork,
+the App verifies that it belongs to this upstream repository, synchronizes its
+`main` branch through GitHub's merge-upstream API, and creates the submission
+branch from the synchronized fork commit. API errors identify the failing
+method and path plus GitHub's request ID without exposing the token. Register
+an OAuth App, enable Device Flow, and supply its public client ID as the
 `GITHUB_OAUTH_CLIENT_ID` Xcode build setting. Do not add a client secret to the
 iOS project. A build without this setting keeps raw sharing and the contributor
 guide available but disables the direct-submit button.

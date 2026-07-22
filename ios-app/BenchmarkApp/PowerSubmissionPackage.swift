@@ -156,6 +156,13 @@ struct PowerSubmissionPackage: Sendable {
         guard try encoder.encode(result) == resultData else {
             throw PackageError.resultBytesChanged
         }
+        guard let rawResult = try JSONSerialization.jsonObject(
+            with: resultData
+        ) as? [String: Any],
+              let rawResultID = rawResult["resultID"] as? String,
+              UUID(uuidString: rawResultID) == result.resultID else {
+            throw PackageError.resultBytesChanged
+        }
         let digest = SHA256.hash(data: resultData)
             .map { String(format: "%02x", $0) }
             .joined()
@@ -179,7 +186,7 @@ struct PowerSubmissionPackage: Sendable {
             result: .init(
                 sha256: digest,
                 schemaVersion: result.schemaVersion,
-                resultID: result.resultID.uuidString.lowercased(),
+                resultID: rawResultID,
                 workloadID: result.execution.workloadID,
                 artifactID: result.model.artifactID,
                 artifactRevision: result.model.artifactRevision,

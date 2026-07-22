@@ -51,7 +51,7 @@ class PowerOneOneThreeCompatibleRunnerTests(unittest.TestCase):
             current["sha256"], hashlib.sha256(POLICY_PATH.read_bytes()).hexdigest()
         )
 
-    def test_main_app_commit_is_latest_ios_source_when_history_is_available(self) -> None:
+    def test_main_app_commit_remains_in_ios_history_when_available(self) -> None:
         policy = json.loads(POLICY_PATH.read_text())
         main_runner = next(
             runner
@@ -67,14 +67,12 @@ class PowerOneOneThreeCompatibleRunnerTests(unittest.TestCase):
         )
         if available.returncode != 0:
             return
-        latest_ios_commit = subprocess.run(
-            ["git", "log", "--no-merges", "-1", "--format=%H", "--", "ios-app"],
+        ancestor = subprocess.run(
+            ["git", "merge-base", "--is-ancestor", APP_MAIN_SOURCE_COMMIT, "HEAD"],
             cwd=ROOT,
-            check=True,
             capture_output=True,
-            text=True,
-        ).stdout.strip()
-        self.assertEqual(main_runner["appSourceCommit"], latest_ios_commit)
+        )
+        self.assertEqual(ancestor.returncode, 0)
 
     def test_branch_and_main_app_017_identities_are_accepted(self) -> None:
         branch_result = compatible_017_result()

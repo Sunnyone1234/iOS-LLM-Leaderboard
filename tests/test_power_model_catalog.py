@@ -94,8 +94,8 @@ class PowerModelCatalogTests(unittest.TestCase):
             self.assertIn(f'artifactId: "{model["artifactID"]}"', swift)
             self.assertIn(f'artifactRevision: "{model["artifactRevision"]}"', swift)
         project = (ROOT / "ios-app" / "BenchmarkApp.xcodeproj" / "project.pbxproj").read_text()
-        self.assertEqual(project.count("MARKETING_VERSION = 0.17.0;"), 2)
-        self.assertEqual(project.count("CURRENT_PROJECT_VERSION = 20;"), 2)
+        self.assertEqual(project.count("MARKETING_VERSION = 0.18.0;"), 2)
+        self.assertEqual(project.count("CURRENT_PROJECT_VERSION = 21;"), 2)
         self.assertIn(
             'git -C \\"$SRCROOT/..\\" log -1 --format=%H -- ios-app',
             project,

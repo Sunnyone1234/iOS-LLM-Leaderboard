@@ -468,7 +468,14 @@ final class PowerReferenceAppTests: XCTestCase {
         )
         XCTAssertEqual(
             (manifest["result"] as? [String: Any])?["resultID"] as? String,
-            result.resultID.uuidString.lowercased()
+            result.resultID.uuidString
+        )
+        let rawResult = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: rawBytes) as? [String: Any]
+        )
+        XCTAssertEqual(
+            (manifest["result"] as? [String: Any])?["resultID"] as? String,
+            rawResult["resultID"] as? String
         )
 
         let documents = FileManager.default.temporaryDirectory.appending(
@@ -667,6 +674,268 @@ final class PowerReferenceAppTests: XCTestCase {
                     renderabilityTrace: renderabilityTrace
                 )
             )
+        )
+    }
+}
+
+private final class GitHubStubURLProtocol: URLProtocol, @unchecked Sendable {
+    nonisolated(unsafe) static var handler: (@Sendable (URLRequest) throws -> (
+        HTTPURLResponse, Data
+    ))?
+
+    override class func canInit(with request: URLRequest) -> Bool { true }
+
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
+        request
+    }
+
+    override func startLoading() {
+        guard let handler = Self.handler else {
+            client?.urlProtocol(
+                self,
+                didFailWithError: URLError(.unsupportedURL)
+            )
+            return
+        }
+        do {
+            var handledRequest = request
+            if handledRequest.httpBody == nil,
+               let stream = handledRequest.httpBodyStream {
+                stream.open()
+                defer { stream.close() }
+                var body = Data()
+                var buffer = [UInt8](repeating: 0, count: 4_096)
+                while stream.hasBytesAvailable {
+                    let count = stream.read(
+                        &buffer,
+                        maxLength: buffer.count
+                    )
+                    guard count > 0 else { break }
+                    body.append(buffer, count: count)
+                }
+                handledRequest.httpBody = body
+            }
+            let (response, data) = try handler(handledRequest)
+            client?.urlProtocol(
+                self,
+                didReceive: response,
+                cacheStoragePolicy: .notAllowed
+            )
+            client?.urlProtocol(self, didLoad: data)
+            client?.urlProtocolDidFinishLoading(self)
+        } catch {
+            client?.urlProtocol(self, didFailWithError: error)
+        }
+    }
+
+    override func stopLoading() {}
+}
+
+private final class GitHubRequestRecorder: @unchecked Sendable {
+    private let lock = NSLock()
+    private var requests: [URLRequest] = []
+
+    func record(_ request: URLRequest) {
+        lock.lock()
+        requests.append(request)
+        lock.unlock()
+    }
+
+    func snapshot() -> [URLRequest] {
+        lock.lock()
+        defer { lock.unlock() }
+        return requests
+    }
+}
+
+final class GitHubSubmissionClientTests: XCTestCase {
+    override func tearDown() {
+        GitHubStubURLProtocol.handler = nil
+        super.tearDown()
+    }
+
+    func testExistingForkIsSyncedBeforeBranchCreation() async throws {
+        let recorder = GitHubRequestRecorder()
+        GitHubStubURLProtocol.handler = { request in
+            recorder.record(request)
+            let method = request.httpMethod ?? "GET"
+            let path = try XCTUnwrap(request.url?.path)
+            let object: Any
+            switch (method, path) {
+            case ("GET", "/repos/YizeSun/iOS-LLM-Leaderboard"):
+                object = ["default_branch": "main"]
+            case ("GET", "/repos/Sunnyone1234/iOS-LLM-Leaderboard"):
+                object = [
+                    "default_branch": "main",
+                    "fork": true,
+                    "full_name": "Sunnyone1234/iOS-LLM-Leaderboard",
+                    "parent": [
+                        "full_name": "YizeSun/iOS-LLM-Leaderboard",
+                    ],
+                ]
+            case ("POST", "/repos/Sunnyone1234/iOS-LLM-Leaderboard/merge-upstream"):
+                object = [
+                    "message": "Successfully synced",
+                    "merge_type": "fast-forward",
+                    "base_branch": "main",
+                ]
+            case ("GET", "/repos/Sunnyone1234/iOS-LLM-Leaderboard/git/ref/heads/main"):
+                object = ["object": ["sha": "fork-main-sha"]]
+            case ("GET", "/repos/Sunnyone1234/iOS-LLM-Leaderboard/git/commits/fork-main-sha"):
+                object = ["tree": ["sha": "fork-main-tree"]]
+            case ("POST", "/repos/Sunnyone1234/iOS-LLM-Leaderboard/git/refs"):
+                object = ["object": ["sha": "fork-main-sha"]]
+            case ("POST", "/repos/Sunnyone1234/iOS-LLM-Leaderboard/git/blobs"):
+                object = ["sha": "blob-sha"]
+            case ("POST", "/repos/Sunnyone1234/iOS-LLM-Leaderboard/git/trees"):
+                object = ["sha": "submission-tree"]
+            case ("POST", "/repos/Sunnyone1234/iOS-LLM-Leaderboard/git/commits"):
+                object = ["sha": "submission-commit"]
+            case ("PATCH", let path) where path.contains("/git/refs/heads/power-submission-"):
+                object = ["object": ["sha": "submission-commit"]]
+            case ("POST", "/repos/YizeSun/iOS-LLM-Leaderboard/pulls"):
+                object = ["html_url": "https://github.com/YizeSun/iOS-LLM-Leaderboard/pull/999"]
+            default:
+                throw URLError(.resourceUnavailable)
+            }
+            return try Self.response(for: request, object: object)
+        }
+
+        let client = try GitHubSubmissionClient(
+            clientID: "client-id",
+            session: Self.stubSession()
+        )
+        let package = PowerSubmissionPackage(
+            submissionID: UUID(
+                uuidString: "11111111-2222-4333-8444-555555555555"
+            )!,
+            manifestData: Data("manifest".utf8),
+            resultData: Data("result".utf8)
+        )
+        let url = try await client.publish(
+            package: package,
+            contributor: "Sunnyone1234",
+            token: "token"
+        )
+        XCTAssertEqual(url.absoluteString, "https://github.com/YizeSun/iOS-LLM-Leaderboard/pull/999")
+
+        let requests = recorder.snapshot()
+        let operations = requests.map {
+            "\($0.httpMethod ?? "GET") \($0.url?.path ?? "")"
+        }
+        let syncIndex = try XCTUnwrap(
+            operations.firstIndex(
+                of: "POST /repos/Sunnyone1234/iOS-LLM-Leaderboard/merge-upstream"
+            )
+        )
+        let branchIndex = try XCTUnwrap(
+            operations.firstIndex(
+                of: "POST /repos/Sunnyone1234/iOS-LLM-Leaderboard/git/refs"
+            )
+        )
+        XCTAssertLessThan(syncIndex, branchIndex)
+
+        let branchRequest = requests[branchIndex]
+        let branchBody = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: try XCTUnwrap(branchRequest.httpBody))
+                as? [String: Any]
+        )
+        XCTAssertEqual(branchBody["sha"] as? String, "fork-main-sha")
+
+        let treeRequest = try XCTUnwrap(
+            requests.first {
+                $0.httpMethod == "POST"
+                    && $0.url?.path.hasSuffix("/git/trees") == true
+            }
+        )
+        let treeBody = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: try XCTUnwrap(treeRequest.httpBody))
+                as? [String: Any]
+        )
+        XCTAssertEqual(treeBody["base_tree"] as? String, "fork-main-tree")
+    }
+
+    func testOAuthTokenMustGrantPublicRepositoryScope() async throws {
+        GitHubStubURLProtocol.handler = { request in
+            try Self.response(
+                for: request,
+                object: [
+                    "access_token": "token",
+                    "scope": "read:user",
+                    "token_type": "bearer",
+                ]
+            )
+        }
+        let client = try GitHubSubmissionClient(
+            clientID: "client-id",
+            session: Self.stubSession()
+        )
+        let authorization = GitHubDeviceAuthorization(
+            deviceCode: "device-code",
+            userCode: "ABCD-EFGH",
+            verificationURL: URL(string: "https://github.com/login/device")!,
+            expiresIn: 10,
+            interval: 0
+        )
+        do {
+            _ = try await client.waitForAccessToken(authorization)
+            XCTFail("A token without public_repo or repo must be rejected")
+        } catch {
+            XCTAssertTrue(error.localizedDescription.contains("public repository write access"))
+            XCTAssertTrue(error.localizedDescription.contains("read:user"))
+        }
+    }
+
+    func testAPIFailureNamesOperationAndRequestID() async throws {
+        GitHubStubURLProtocol.handler = { request in
+            let response = try XCTUnwrap(
+                HTTPURLResponse(
+                    url: try XCTUnwrap(request.url),
+                    statusCode: 404,
+                    httpVersion: nil,
+                    headerFields: ["X-GitHub-Request-Id": "TEST:1234"]
+                )
+            )
+            return (
+                response,
+                try JSONSerialization.data(withJSONObject: ["message": "Not Found"])
+            )
+        }
+        let client = try GitHubSubmissionClient(
+            clientID: "client-id",
+            session: Self.stubSession()
+        )
+        do {
+            _ = try await client.authenticatedUser(token: "token")
+            XCTFail("The API request must fail")
+        } catch {
+            XCTAssertTrue(error.localizedDescription.contains("GET /user"))
+            XCTAssertTrue(error.localizedDescription.contains("404"))
+            XCTAssertTrue(error.localizedDescription.contains("TEST:1234"))
+        }
+    }
+
+    private static func stubSession() -> URLSession {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [GitHubStubURLProtocol.self]
+        return URLSession(configuration: configuration)
+    }
+
+    private static func response(
+        for request: URLRequest,
+        object: Any
+    ) throws -> (HTTPURLResponse, Data) {
+        let response = try XCTUnwrap(
+            HTTPURLResponse(
+                url: try XCTUnwrap(request.url),
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: ["Content-Type": "application/json"]
+            )
+        )
+        return (
+            response,
+            try JSONSerialization.data(withJSONObject: object)
         )
     }
 }

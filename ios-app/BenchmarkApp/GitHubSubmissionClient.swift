@@ -9,26 +9,50 @@ struct GitHubDeviceAuthorization: Sendable, Equatable {
 }
 
 actor GitHubSubmissionClient {
-    enum ClientError: LocalizedError {
+    enum ClientError: LocalizedError, Sendable {
         case missingClientID
         case invalidResponse
-        case requestFailed(Int, String)
+        case requestFailed(
+            status: Int,
+            operation: String,
+            message: String,
+            requestID: String?
+        )
         case authorizationExpired
         case authorizationDenied
+        case insufficientOAuthScope(String)
+        case unexpectedForkRepository(String)
 
         var errorDescription: String? {
             switch self {
             case .missingClientID:
-                "Direct GitHub submission is not configured in this build."
+                return "Direct GitHub submission is not configured in this build."
             case .invalidResponse:
-                "GitHub returned an unreadable response."
-            case .requestFailed(let status, let message):
-                "GitHub request failed (\(status)): \(message)"
+                return "GitHub returned an unreadable response."
+            case .requestFailed(
+                let status,
+                let operation,
+                let message,
+                let requestID
+            ):
+                let requestSuffix = requestID.map { " [request \($0)]" } ?? ""
+                return "GitHub \(operation) failed (\(status)): \(message)\(requestSuffix)"
             case .authorizationExpired:
-                "GitHub authorization expired. Start the submission again."
+                return "GitHub authorization expired. Start the submission again."
             case .authorizationDenied:
-                "GitHub authorization was cancelled."
+                return "GitHub authorization was cancelled."
+            case .insufficientOAuthScope(let scope):
+                return "GitHub authorized without public repository write access (scope: \(scope)). Revoke this OAuth App authorization in GitHub, then authorize it again with public_repo access."
+            case .unexpectedForkRepository(let repository):
+                return "GitHub account already has \(repository), but it is not a fork of YizeSun/iOS-LLM-Leaderboard. Rename or remove that repository before submitting."
             }
+        }
+
+        var statusCode: Int? {
+            guard case .requestFailed(let status, _, _, _) = self else {
+                return nil
+            }
+            return status
         }
     }
 
@@ -50,10 +74,12 @@ actor GitHubSubmissionClient {
 
     private struct TokenResponse: Decodable {
         let accessToken: String?
+        let scope: String?
         let error: String?
 
         enum CodingKeys: String, CodingKey {
             case accessToken = "access_token"
+            case scope
             case error
         }
     }
@@ -61,7 +87,31 @@ actor GitHubSubmissionClient {
     private struct User: Decodable { let login: String }
     private struct Repository: Decodable {
         let defaultBranch: String
-        enum CodingKeys: String, CodingKey { case defaultBranch = "default_branch" }
+        let fork: Bool?
+        let parent: RepositoryIdentity?
+        let source: RepositoryIdentity?
+
+        enum CodingKeys: String, CodingKey {
+            case defaultBranch = "default_branch"
+            case fork
+            case parent
+            case source
+        }
+    }
+    private struct RepositoryIdentity: Decodable {
+        let fullName: String
+        enum CodingKeys: String, CodingKey { case fullName = "full_name" }
+    }
+    private struct ForkSyncResult: Decodable {
+        let message: String
+        let mergeType: String
+        let baseBranch: String
+
+        enum CodingKeys: String, CodingKey {
+            case message
+            case mergeType = "merge_type"
+            case baseBranch = "base_branch"
+        }
     }
     private struct GitReference: Decodable {
         let object: GitObject
@@ -122,7 +172,21 @@ actor GitHubSubmissionClient {
                     "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
                 ]
             )
-            if let token = response.accessToken { return token }
+            if let token = response.accessToken {
+                let grantedScope = response.scope ?? ""
+                let scopes = Set(
+                    grantedScope
+                        .lowercased()
+                        .split { $0 == "," || $0.isWhitespace }
+                        .map(String.init)
+                )
+                guard scopes.contains("public_repo") || scopes.contains("repo") else {
+                    throw ClientError.insufficientOAuthScope(
+                        grantedScope.isEmpty ? "none" : grantedScope
+                    )
+                }
+                return token
+            }
             switch response.error {
             case "authorization_pending": continue
             case "slow_down": interval += 5
@@ -147,37 +211,34 @@ actor GitHubSubmissionClient {
         let upstream: Repository = try await apiRequest(
             path: "/repos/\(upstreamOwner)/\(repositoryName)", token: token
         )
-        let _: Repository? = try? await apiRequest(
-            path: "/repos/\(upstreamOwner)/\(repositoryName)/forks",
-            method: "POST",
-            token: token,
-            body: ["default_branch_only": true]
-        ) as Repository
-        try await waitForFork(owner: contributor, token: token)
-
+        let repositoryOwner = try await prepareWritableRepository(
+            contributor: contributor,
+            upstreamDefaultBranch: upstream.defaultBranch,
+            token: token
+        )
         let base: GitReference = try await apiRequest(
-            path: "/repos/\(upstreamOwner)/\(repositoryName)/git/ref/heads/\(upstream.defaultBranch)",
+            path: "/repos/\(repositoryOwner)/\(repositoryName)/git/ref/heads/\(upstream.defaultBranch)",
             token: token
         )
         let baseCommit: GitCommit = try await apiRequest(
-            path: "/repos/\(upstreamOwner)/\(repositoryName)/git/commits/\(base.object.sha)",
+            path: "/repos/\(repositoryOwner)/\(repositoryName)/git/commits/\(base.object.sha)",
             token: token
         )
         let branch = "power-submission-\(package.submissionID.uuidString.lowercased())"
         let _: GitReference = try await apiRequest(
-            path: "/repos/\(contributor)/\(repositoryName)/git/refs",
+            path: "/repos/\(repositoryOwner)/\(repositoryName)/git/refs",
             method: "POST",
             token: token,
             body: ["ref": "refs/heads/\(branch)", "sha": base.object.sha]
         )
         let resultBlob = try await createBlob(
-            package.resultData, owner: contributor, token: token
+            package.resultData, owner: repositoryOwner, token: token
         )
         let manifestBlob = try await createBlob(
-            package.manifestData, owner: contributor, token: token
+            package.manifestData, owner: repositoryOwner, token: token
         )
         let tree: CreatedTree = try await apiRequest(
-            path: "/repos/\(contributor)/\(repositoryName)/git/trees",
+            path: "/repos/\(repositoryOwner)/\(repositoryName)/git/trees",
             method: "POST",
             token: token,
             body: [
@@ -189,7 +250,7 @@ actor GitHubSubmissionClient {
             ]
         )
         let commit: CreatedCommit = try await apiRequest(
-            path: "/repos/\(contributor)/\(repositoryName)/git/commits",
+            path: "/repos/\(repositoryOwner)/\(repositoryName)/git/commits",
             method: "POST",
             token: token,
             body: [
@@ -199,7 +260,7 @@ actor GitHubSubmissionClient {
             ]
         )
         let _: GitReference = try await apiRequest(
-            path: "/repos/\(contributor)/\(repositoryName)/git/refs/heads/\(branch)",
+            path: "/repos/\(repositoryOwner)/\(repositoryName)/git/refs/heads/\(branch)",
             method: "PATCH",
             token: token,
             body: ["sha": commit.sha]
@@ -219,18 +280,75 @@ actor GitHubSubmissionClient {
         return pullRequest.htmlURL
     }
 
-    private func waitForFork(owner: String, token: String) async throws {
-        for _ in 0..<30 {
-            do {
-                let _: Repository = try await apiRequest(
-                    path: "/repos/\(owner)/\(repositoryName)", token: token
-                )
-                return
-            } catch {
-                try await Task.sleep(for: .seconds(2))
-            }
+    private func prepareWritableRepository(
+        contributor: String,
+        upstreamDefaultBranch: String,
+        token: String
+    ) async throws -> String {
+        guard contributor.caseInsensitiveCompare(upstreamOwner) != .orderedSame else {
+            return upstreamOwner
         }
-        throw ClientError.requestFailed(408, "GitHub fork was not ready in time")
+
+        var fork = try await repositoryIfPresent(owner: contributor, token: token)
+        if fork == nil {
+            let _: Repository = try await apiRequest(
+                path: "/repos/\(upstreamOwner)/\(repositoryName)/forks",
+                method: "POST",
+                token: token,
+                body: ["default_branch_only": true]
+            )
+            fork = try await waitForFork(owner: contributor, token: token)
+        }
+        guard let fork, isExpectedFork(fork) else {
+            throw ClientError.unexpectedForkRepository(
+                "\(contributor)/\(repositoryName)"
+            )
+        }
+        let _: ForkSyncResult = try await apiRequest(
+            path: "/repos/\(contributor)/\(repositoryName)/merge-upstream",
+            method: "POST",
+            token: token,
+            body: ["branch": upstreamDefaultBranch]
+        )
+        return contributor
+    }
+
+    private func repositoryIfPresent(
+        owner: String,
+        token: String
+    ) async throws -> Repository? {
+        do {
+            return try await apiRequest(
+                path: "/repos/\(owner)/\(repositoryName)", token: token
+            )
+        } catch let error as ClientError where error.statusCode == 404 {
+            return nil
+        }
+    }
+
+    private func isExpectedFork(_ repository: Repository) -> Bool {
+        let expected = "\(upstreamOwner)/\(repositoryName)"
+        let upstream = repository.parent?.fullName ?? repository.source?.fullName
+        return repository.fork == true
+            && upstream?.caseInsensitiveCompare(expected) == .orderedSame
+    }
+
+    private func waitForFork(owner: String, token: String) async throws -> Repository {
+        for _ in 0..<30 {
+            if let repository = try await repositoryIfPresent(
+                owner: owner,
+                token: token
+            ) {
+                return repository
+            }
+            try await Task.sleep(for: .seconds(2))
+        }
+        throw ClientError.requestFailed(
+            status: 408,
+            operation: "GET /repos/\(owner)/\(repositoryName)",
+            message: "GitHub fork was not ready in time",
+            requestID: nil
+        )
     }
 
     private func createBlob(_ data: Data, owner: String, token: String) async throws -> GitBlob {
@@ -286,8 +404,10 @@ actor GitHubSubmissionClient {
         guard 200..<300 ~= http.statusCode else {
             let message = (try? JSONSerialization.jsonObject(with: data) as? [String: Any])?["message"] as? String
             throw ClientError.requestFailed(
-                http.statusCode,
-                message ?? String(data: data, encoding: .utf8) ?? "Unknown error"
+                status: http.statusCode,
+                operation: "\(request.httpMethod ?? "REQUEST") \(request.url?.path ?? "GitHub API")",
+                message: message ?? String(data: data, encoding: .utf8) ?? "Unknown error",
+                requestID: http.value(forHTTPHeaderField: "X-GitHub-Request-Id")
             )
         }
         do {
