@@ -46,7 +46,7 @@ packaging, licensing, limitations, and unknowns.
 
 | Product | Status | What is public |
 | --- | --- | --- |
-| Power 2 | Activation candidate | Text performance × physical iPhone cell; automated checks pass and exact Official build 3 physical validation is pending |
+| Power 2 | Activation candidate | Text performance × physical iPhone cell; automated checks pass and exact Official build 4 physical validation is pending |
 | Ship 1.0 | Published separately | Deployment profiles and a focused MLX Swift recipe derived separately from accepted Power 1.0 evidence |
 | Build | Research | Long-term complete-software-delivery research; no protocols or ranking yet |
 

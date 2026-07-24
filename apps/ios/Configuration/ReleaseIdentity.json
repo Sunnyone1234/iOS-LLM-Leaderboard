@@ -1,5 +1,5 @@
 {
-  "build": "3",
+  "build": "4",
   "buildKinds": {
     "certification": {
       "bundleIdentifier": "org.iosllmleaderboard.power2.certification",

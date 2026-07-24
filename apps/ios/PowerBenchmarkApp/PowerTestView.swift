@@ -34,6 +34,10 @@ struct PowerTestView: View {
                     value: PowerAppBuildIdentity.kind.displayName
                 )
                 LabeledContent(
+                    "App source",
+                    value: sourceRevisionDisplay
+                )
+                LabeledContent(
                     "Bundle",
                     value: PowerAppBuildIdentity.bundleIdentifier
                 )
@@ -129,20 +133,14 @@ struct PowerTestView: View {
     }
 
     private var lockedReason: String {
-        switch PowerAppBuildIdentity.kind {
-        case .developer:
-            return "Developer builds can inspect the App but cannot produce "
-                + "or submit ranking evidence."
-        case .official:
-            return "This Official build remains locked until its generated "
-                + "App release candidate and active Runner certificate agree."
-        case .invalid:
-            return "The compiled build kind does not match the embedded "
-                + "PowerBuildKind declaration."
-        case .certification:
-            return "Certification requires POWER_SOURCE_REVISION to be the "
-                + "exact generated App component-manifest SHA-256."
-        }
+        PowerAppBuildIdentity.measurementLockReason
+            ?? "The App release identity is unavailable."
+    }
+
+    private var sourceRevisionDisplay: String {
+        let revision = PowerAppBuildIdentity.sourceRevision
+        guard !revision.isEmpty else { return "Missing" }
+        return abbreviated(revision)
     }
 
     private var runButtonTitle: String {

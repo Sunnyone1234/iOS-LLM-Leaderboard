@@ -2,4 +2,5 @@
 // Personal Team IDs belong only in the optional ignored include.
 #include "ReleaseIdentity.generated.xcconfig"
 DEVELOPMENT_TEAM =
+POWER_SOURCE_REVISION =
 #include? "LocalSigning.xcconfig"

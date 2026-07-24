@@ -104,7 +104,7 @@ class Power2CandidateTests(unittest.TestCase):
 
         self.assertEqual(
             app_candidate["build"],
-            "3",
+            "4",
         )
         self.assertEqual(
             app_candidate["verification"]["genericIOSReleaseBuild"],

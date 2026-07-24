@@ -20,7 +20,7 @@ Power 2 is in its final activation checkpoint. The text-generation-performance
 Program, physical-iPhone Target, four exact model artifacts, Runner
 certificate, App shell, trusted intake, and ranking engine are implemented.
 Automated checks and generic Official/Certification Release builds pass.
-The exact Official build 3 physical-device end-to-end result is still required
+The exact Official build 4 physical-device end-to-end result is still required
 before an immutable App release and `products/power/current.json` can be issued.
 
 Until those two records are issued together:

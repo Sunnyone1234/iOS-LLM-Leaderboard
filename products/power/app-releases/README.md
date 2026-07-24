@@ -11,9 +11,9 @@ certificate it may support.
 The candidate is not installable authority. A supported release record is
 issued only after its Runner certificate is active, generic iOS builds pass,
 and the exact Official physical-device rehearsal is reviewed. The Runner
-certificate is active and the build 3 generic build gate passes. Prior
+certificate is active and the build 4 generic build gate passes. Prior
 Official build 2 end-to-end rehearsals remain retained audit evidence; the
-exact Official build 3 physical-device result is still pending. Immutable App
+exact Official build 4 physical-device result is still pending. Immutable App
 release issuance and public intake activation remain pending. Personal Team
 IDs never enter this directory.
 

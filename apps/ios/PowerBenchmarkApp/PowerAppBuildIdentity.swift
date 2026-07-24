@@ -69,19 +69,48 @@ enum PowerAppBuildIdentity {
     }
 
     static var measurementAvailable: Bool {
-        certificationMeasurementAvailable || officialReleaseAvailable
+        measurementLockReason == nil
     }
 
     static var certificationMeasurementAvailable: Bool {
-        isCertificationBuild
-            && isValidSourceRevision(sourceRevision)
-            && !Power2ProductIdentity.appReleaseAvailable
+        isCertificationBuild && measurementLockReason == nil
     }
 
     static var officialReleaseAvailable: Bool {
-        isOfficialBuild
-            && isValidSourceRevision(sourceRevision)
-            && Power2ProductIdentity.appReleaseAvailable
+        isOfficialBuild && measurementLockReason == nil
+    }
+
+    static var measurementLockReason: String? {
+        switch kind {
+        case .invalid:
+            return "The compiled build kind does not match the embedded "
+                + "PowerBuildKind declaration."
+        case .developer:
+            return "Developer builds can inspect the App but cannot produce "
+                + "or submit ranking evidence."
+        case .certification:
+            guard isValidSourceRevision(sourceRevision) else {
+                return "POWER_SOURCE_REVISION is missing or invalid. "
+                    + "Build from the generated App component-manifest "
+                    + "SHA-256."
+            }
+            guard !Power2ProductIdentity.appReleaseAvailable else {
+                return "Certification measurement is closed because the "
+                    + "Official App release candidate is available."
+            }
+            return nil
+        case .official:
+            guard isValidSourceRevision(sourceRevision) else {
+                return "POWER_SOURCE_REVISION is missing or invalid. "
+                    + "The Xcode local signing configuration must provide "
+                    + "the generated App component-manifest SHA-256."
+            }
+            guard Power2ProductIdentity.appReleaseAvailable else {
+                return "The generated Official App release candidate is "
+                    + "not available."
+            }
+            return nil
+        }
     }
 
     private static var marketingVersion: String {

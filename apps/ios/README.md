@@ -110,7 +110,7 @@ release steps only after the raw evidence and physical run have been reviewed.
 
 The reviewed Certification evidence has issued the active Runner certificate.
 `PowerOfficial` is a separately shared scheme and Bundle ID. Build the exact
-Official build 3 candidate with its generated App component-manifest digest:
+Official build 4 candidate with its generated App component-manifest digest:
 
 ```bash
 APP_SOURCE_REVISION="$(
@@ -138,7 +138,7 @@ python3 scripts/review_power2_app_release_result.py \
 ```
 
 The candidate review report is always non-publishable and non-ranking. A pass
-for exact build 3 authorizes the immutable App release step; it does not open
+for exact build 4 authorizes the immutable App release step; it does not open
 intake by itself. The maintainer then dry-runs the single atomic command:
 
 ```bash

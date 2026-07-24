@@ -130,12 +130,8 @@ class Power2AppShellTests(unittest.TestCase):
         self.assertIn("PowerSourceRevision", identity)
         self.assertIn("isValidSourceRevision", identity)
         self.assertIn(
-            "exact generated App component-manifest SHA-256",
-            (
-                APP_ROOT
-                / "PowerBenchmarkApp"
-                / "PowerTestView.swift"
-            ).read_text(encoding="utf-8"),
+            "generated App component-manifest ",
+            identity,
         )
         self.assertIn("<key>PowerSourceRevision</key>", info_plist)
         self.assertIn(
@@ -204,6 +200,12 @@ class Power2AppShellTests(unittest.TestCase):
         self.assertNotIn("DEVELOPMENT_TEAM =", project)
         self.assertIn("LocalSigning.xcconfig", signing)
         self.assertIn("ReleaseIdentity.generated.xcconfig", signing)
+        self.assertIn("POWER_SOURCE_REVISION =", signing)
+        self.assertNotIn('POWER_SOURCE_REVISION = "";', project)
+        self.assertLess(
+            signing.index("POWER_SOURCE_REVISION ="),
+            signing.index('#include? "LocalSigning.xcconfig"'),
+        )
         self.assertNotIn("CURRENT_PROJECT_VERSION =", project)
         self.assertNotIn("MARKETING_VERSION =", project)
         self.assertIn(
@@ -223,6 +225,10 @@ class Power2AppShellTests(unittest.TestCase):
         self.assertIn("case certification", identity)
         self.assertIn("case official", identity)
         self.assertIn("declaredKind == compiledKind", identity)
+        self.assertIn("measurementLockReason", identity)
+        self.assertIn("App source", (
+            APP_ROOT / "PowerBenchmarkApp" / "PowerTestView.swift"
+        ).read_text(encoding="utf-8"))
         self.assertIn(
             "PowerAppBuildIdentity.officialReleaseAvailable",
             model,

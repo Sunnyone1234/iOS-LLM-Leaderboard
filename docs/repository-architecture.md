@@ -2,10 +2,10 @@
 
 > **Status: architecture implemented; final activation checkpoint.** The
 > `products/power/` Power 2 candidate, four exact model artifacts, active
-> source- and physical-evidence-bound Runner certificate, build 3 Official App
+> source- and physical-evidence-bound Runner certificate, build 4 Official App
 > candidate, trusted intake, and ranking engine exist. Automated checks and
 > generic Official/Certification Release builds pass. The exact Official
-> build 3 physical-device end-to-end result, immutable App release, and atomic
+> build 4 physical-device end-to-end result, immutable App release, and atomic
 > `current.json` issuance remain. Public intake is fail-closed until then.
 > Power 1.1 is a historical archive, not a compatibility path. This migration
 > does not activate Build or make image, 3D, iPad, or macOS Programs available.
@@ -67,9 +67,9 @@ design capacity, not implemented products.
 | Exact model artifacts | Four revision- and content-pinned rerun candidates; no old rank imported | `models/registry.json` and `models/artifacts/` |
 | New validation engine | Structural, digest, contract, model, trust, contributor, behavior, recommendation, and per-metric gates implemented behind the inactive candidate | `scripts/lib/power2/` |
 | Runner implementation | Runner Core, Program Module, iPhone Target Adapter, evidence layer, and fixed-dependency MLX Runtime Adapter implemented; automated checks, generic iOS Certification build, physical Certification run, and raw review pass for the exact certified digest | `apps/PowerRunnerKit/` and `products/power/runner-certificates/power2-runner-87f62feecc2b.json` |
-| App implementation | Buildable, fail-closed iOS App Shell plus Results Store, Submission Kit, direct GitHub contributor client, saved-result selection, Certification path, and Official path implemented; generic Official/Certification build 3 Release checks pass; the exact build 3 physical rehearsal remains pending | `apps/ios/` and `apps/PowerAppKit/` |
+| App implementation | Buildable, fail-closed iOS App Shell plus Results Store, Submission Kit, direct GitHub contributor client, saved-result selection, Certification path, and Official path implemented; generic Official/Certification build 4 Release checks pass; the exact build 4 physical rehearsal remains pending | `apps/ios/` and `apps/PowerAppKit/` |
 | Two-file package, trusted PR routing, and ranking derivation | Implemented and tested; not public while candidate gates remain closed | `scripts/lib/power2/`, `scripts/triage_power2_submission_pr.py` |
-| Runner certificate and App release | Active immutable Runner certificate issued from retained physical evidence; prior Official build 2 rehearsals remain audit evidence; build 3 immutable App release waits only for its exact physical run | `products/power/runner-certificates/power2-runner-87f62feecc2b.json`, `products/power/app-releases/candidate.json` |
+| Runner certificate and App release | Active immutable Runner certificate issued from retained physical evidence; prior Official build 2 rehearsals remain audit evidence; build 4 immutable App release waits only for its exact physical run | `products/power/runner-certificates/power2-runner-87f62feecc2b.json`, `products/power/app-releases/candidate.json` |
 | CI intake rehearsal | Trusted-main PR #42 was classified `auto_accept` by the base-repository Power 2 workflow; its build 2 evidence remains non-publishable and non-ranking | `products/power/rehearsals/pr-42/` |
 | Physical evidence and public ranking | Runner Certification and exact Official App rehearsal evidence retained; public experiment reruns, accepted evidence, and ranking remain pending | Candidate blockers remain explicit |
 | Public Power flow | One Power 2 CLI and contribution guide; intake remains closed until final atomic activation | `scripts/power`, `contributor-kit/power.md` |

@@ -105,8 +105,8 @@ python3 scripts/repoctl.py validate-power-package PACKAGE \
 A successful result means that the candidate contract stack is internally
 complete and independent from Power 1.1. It reports four exact rerun-candidate
 models, an active source- and physical-evidence-bound Runner certificate, and
-a closed App build 3 release candidate. Automated verification passes; the
-exact build 3 physical-device end-to-end checkpoint remains pending.
+a closed App build 4 release candidate. Automated verification passes; the
+exact build 4 physical-device end-to-end checkpoint remains pending.
 The certification catalog check additionally proves that the App's closed
 smoke-test catalog is a deterministic projection of those pinned assets; it
 does not certify a run.
@@ -114,7 +114,7 @@ does not certify a run.
 fail-closed until the immutable App release and active pointer are issued
 together.
 
-After the exact build 3 raw result is exported, the complete activation dry
+After the exact build 4 raw result is exported, the complete activation dry
 run is:
 
 ```bash

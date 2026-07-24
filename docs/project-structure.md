@@ -38,7 +38,7 @@ Do not add a new top-level directory unless none of these owns the content:
 - `models/` — model catalogs and compatibility metadata;
 - `products/` — versioned Product, Program, Target, and policy contracts;
   currently contains the Power 2 activation state, including its active
-  Runner certificate and closed App build 3 release candidate; owned by
+  Runner certificate and closed App build 4 release candidate; owned by
   product and methodology maintainers, CC BY 4.0, and immutable once released;
 - `results/` — raw and generated evidence by release;
 - `schemas/` — machine-readable contracts;

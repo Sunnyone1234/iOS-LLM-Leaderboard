@@ -41,11 +41,11 @@
   },
   "appCandidate": {
     "path": "apps/ios/component-manifest.json",
-    "sha256": "e0e704f8bc6e22cb743952e7a02e3dfbd80fdb95f2618b7f495b9d6b1bac0db6"
+    "sha256": "63aaba5bd9d9d81f19ee17ad589bf019620d2443615cae723ac5558ecb4d2e5c"
   },
   "appReleaseCandidate": {
     "path": "products/power/app-releases/candidate.json",
-    "sha256": "c3f4e22df42cb78c2f78cca0c82f163477c93288e832fe193d6b6a173f45a009"
+    "sha256": "801d1de9f112cf53da197cf238a8c6b1f343faa19b4893b4963844973f0fe152"
   },
   "appReleaseRehearsalEvidence": [
     {
@@ -85,8 +85,8 @@
   },
   "appRelease": null,
   "activationBlockers": [
-    "complete automated verification and a physical-device rehearsal for Official build 3",
-    "issue an immutable App release for Official build 3",
+    "complete a physical-device rehearsal for Official build 4",
+    "issue an immutable App release for Official build 4",
     "replace this candidate pointer with an immutable released stack",
     "publish products/power/current.json and open intake together"
   ]

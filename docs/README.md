@@ -16,7 +16,7 @@ Start here rather than reading every historical decision record.
 
 - [Repository architecture and migration](repository-architecture.md) —
   approved modules, invariants, audit, implemented activation candidate, and
-  the remaining exact Official build 3 physical-device gate
+  the remaining exact Official build 4 physical-device gate
 
 ## Normative and audit records
 

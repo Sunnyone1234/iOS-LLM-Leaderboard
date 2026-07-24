@@ -21,18 +21,18 @@ Certification evidence. The App candidate binds the complete App component
 manifest, exact release-candidate stack, future Official bundle identity, and
 the active Runner certificate it may support. No App release has been issued.
 
-The automated candidate suite, both build 3 generic iOS configurations, Runner
+The automated candidate suite, both build 4 generic iOS configurations, Runner
 physical-device smoke, and raw-result review pass for the exact recorded
 digests. The generator contains an identity checkpoint, so any stack, Runner,
 or App digest change automatically returns the affected state to `pending`.
 Prior Official build 2 rehearsals and their raw results, App component
 manifests, and non-publishable reviews remain retained audit evidence. The
-exact build 3 physical-device end-to-end rehearsal is still pending. The App
+exact build 4 physical-device end-to-end rehearsal is still pending. The App
 remains a candidate until that result passes and the immutable release and
 public intake are activated together.
 
 The candidate is intentionally fail-closed. `current.json` must not be created
-until the exact build 3 physical-device result passes and the immutable App
+until the exact build 4 physical-device result passes and the immutable App
 release is issued.
 
 Power 1.1 files are not dependencies of this product tree.
