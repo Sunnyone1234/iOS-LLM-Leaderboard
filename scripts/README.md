@@ -19,10 +19,11 @@ historical audit assets only.
 
 ## Current implementation tools
 
-- `repoctl.py verify-power-candidate` verifies the clean-break Power 2
-  activation candidate, every pinned candidate asset, fixture digest, Target,
-  policy, model-cohort boundary, and the absence of active Power 1.1
-  dependencies. It is a maintainer migration command and does not open intake.
+- `repoctl.py verify-power-candidate` verifies the retained clean-break
+  candidate plus the active Power 2 pointer, immutable App release, activation
+  evidence, every pinned asset, and the absence of active Power 1.1
+  dependencies. The historical command name is retained for CI check
+  continuity; verification is read-only.
 - `repoctl.py activate-power` reviews one exact Official physical-device
   result and renders the immutable App release, retained raw evidence,
   `current.json`, and active registry as one set. It is a dry run unless
@@ -87,7 +88,7 @@ Before changing a release-specific script, check whether a manifest under
 `benchmarks/**/releases/` pins its SHA-256. Create a new versioned asset instead
 of altering a pinned file.
 
-## Power 2 activation candidate
+## Power 2 active state
 
 The current review command is:
 
@@ -102,27 +103,16 @@ python3 scripts/repoctl.py validate-power-package PACKAGE \
   --validator-source-revision GIT_SHA
 ```
 
-A successful result means that the candidate contract stack is internally
-complete and independent from Power 1.1. It reports four exact rerun-candidate
-models, an active source- and physical-evidence-bound Runner certificate, and
-a closed App build 4 release candidate. Automated verification passes; the
-exact build 4 physical-device end-to-end checkpoint remains pending.
-The certification catalog check additionally proves that the App's closed
-smoke-test catalog is a deterministic projection of those pinned assets; it
-does not certify a run.
-`scripts/power` already targets only Power 2. Public intake remains
-fail-closed until the immutable App release and active pointer are issued
-together.
+A successful result means that the active contract stack is internally
+complete and independent from Power 1.1. It verifies four exact model
+artifacts, the source- and physical-evidence-bound Runner certificate,
+supported Official build 4 App release, retained activation result and review,
+and open public intake. The certification catalog remains a deterministic
+projection of the pinned assets. `scripts/power` targets only Power 2.
 
-After the exact build 4 raw result is exported, the complete activation dry
-run is:
-
-```bash
-python3 scripts/repoctl.py activate-power /path/to/raw-result.json \
-  --reviewed-at 2026-07-24T12:00:00Z \
-  --activated-at 2026-07-24T12:01:00Z \
-  --validator-source-revision "$(git rev-parse HEAD)"
-```
+`repoctl.py activate-power` remains a one-time, fail-closed issuance command.
+After `current.json` exists it refuses to issue a second initial activation;
+future changes require a new versioned release process.
 
 Only after reviewing that output should a maintainer repeat it with `--write`.
 The resulting files are reviewed and merged together; there is no partial

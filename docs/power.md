@@ -16,24 +16,19 @@ Power Evidence
 
 ## Current status
 
-Power 2 is in its final activation checkpoint. The text-generation-performance
-Program, physical-iPhone Target, four exact model artifacts, Runner
-certificate, App shell, trusted intake, and ranking engine are implemented.
-Automated checks and generic Official/Certification Release builds pass.
-The exact Official build 4 physical-device end-to-end result is still required
-before an immutable App release and `products/power/current.json` can be issued.
+Power 2 is active. The text-generation-performance Program,
+physical-iPhone Target, four exact model artifacts, certified Runner,
+supported Official build 4 App release, trusted intake, and ranking engine
+form one pinned stack. Automated checks, generic Release builds, and the exact
+Official physical-device end-to-end rehearsal passed before activation.
 
-Until those two records are issued together:
-
-- public intake remains closed;
-- Developer and Certification builds cannot produce ranking evidence;
-- the Official build is a non-publishable release candidate; and
-- Power 1.1 remains only a read-only historical release, not a compatibility
-  input to Power 2.
-
-The authoritative activation state is
-[`products/power/candidate.json`](../products/power/candidate.json). After
-activation, the only public pointer is `products/power/current.json`.
+The authoritative public pointer is
+[`products/power/current.json`](../products/power/current.json). It opens
+public intake and pins the measurement stack, Runner components and
+certificate, supported App release, and activation evidence atomically.
+Developer and Certification builds cannot produce ranking evidence. Power 1.1
+remains a read-only historical release and is not a compatibility input to
+Power 2.
 
 ## Benchmark cell
 

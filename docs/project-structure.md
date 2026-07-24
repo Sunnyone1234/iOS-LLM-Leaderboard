@@ -5,9 +5,8 @@ or contribute to.
 
 This file describes the current repository structure. The
 [repository architecture and migration](repository-architecture.md) defines
-the approved target and final activation gate. The `products/power/` tree is
-hash-pinned; while `current.json` is absent, its candidate contracts must not
-be treated as open public intake.
+the approved target and completed activation. The `products/power/` tree is
+hash-pinned; `current.json` is the only active public Power pointer.
 
 ## Four layers
 
@@ -37,8 +36,8 @@ Do not add a new top-level directory unless none of these owns the content:
 - `methodology/` — cross-suite benchmark conventions;
 - `models/` — model catalogs and compatibility metadata;
 - `products/` — versioned Product, Program, Target, and policy contracts;
-  currently contains the Power 2 activation state, including its active
-  Runner certificate and closed App build 4 release candidate; owned by
+  currently contains the active Power 2 pointer, certified Runner, supported
+  App build 4 release, and retained candidates; owned by
   product and methodology maintainers, CC BY 4.0, and immutable once released;
 - `results/` — raw and generated evidence by release;
 - `schemas/` — machine-readable contracts;
@@ -55,9 +54,9 @@ migration.
 Existing `benchmarks/` remains the Power 1.1 archive and Suite-history plane;
 it cannot own a product-neutral Program × Target registry, runner
 certificates, and atomic product pointers without preserving the coupling this
-migration is removing. The candidate remains fail-closed until
-`products/power/current.json` and its immutable App release are issued
-together.
+migration is removing. `products/power/current.json` and its immutable App
+release were issued together; retained candidates remain audit records rather
+than alternate public pointers.
 
 The existing `ios-app/` is a historical Power 1.1 application. `apps/` is
 needed because the approved Target model extends beyond

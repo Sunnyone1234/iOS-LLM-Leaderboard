@@ -1389,19 +1389,197 @@ def _verify_model_registry(
     return len(entries)
 
 
+def _verify_active_power_state(
+    registry: dict[str, Any],
+    candidate: dict[str, Any],
+    *,
+    program_reference: dict[str, Any],
+    target_reference: dict[str, Any],
+    documents: list[tuple[str, dict[str, Any]]],
+) -> str:
+    """Verify the one immutable active pointer and its retained release."""
+
+    if (
+        registry.get("schemaVersion") != "power-product-registry-1.0.0"
+        or registry.get("status") != "active"
+        or registry.get("publicIntakeOpen") is not True
+        or registry.get("currentStack") != POWER_CURRENT_PATH
+    ):
+        raise VerificationError("Power registry is not a valid active registry")
+
+    current_path = _repo_path(POWER_CURRENT_PATH)
+    current = _load_json(current_path)
+    documents.append((POWER_CURRENT_PATH, current))
+    if (
+        current.get("schemaVersion") != "power-stack-pointer-1.0.0"
+        or current.get("productID") != "power"
+        or current.get("status") != "active"
+        or current.get("publicIntakeOpen") is not True
+        or current.get("stackID") != candidate.get("stackID")
+    ):
+        raise VerificationError("Power current pointer is not active")
+
+    expected_references = {
+        "measurementStack": candidate.get("measurementStack"),
+        "runnerComponents": candidate.get("runnerCandidate"),
+        "runnerCertificate": candidate.get("runnerCertificate"),
+    }
+    for name, expected in expected_references.items():
+        if current.get(name) != expected:
+            raise VerificationError(
+                f"Power current pointer {name} does not match the candidate"
+            )
+
+    app_reference = current.get("appRelease")
+    if not isinstance(app_reference, dict):
+        raise VerificationError("Power current pointer has no App release")
+    app_release_path = _verify_pinned_asset(
+        app_reference, "active App release"
+    )
+    app_release = _load_json(app_release_path)
+    documents.append(
+        (str(app_release_path.relative_to(ROOT)), app_release)
+    )
+
+    app_candidate_reference = candidate.get("appReleaseCandidate")
+    if not isinstance(app_candidate_reference, dict):
+        raise VerificationError("Power candidate has no App release candidate")
+    app_candidate_path = _verify_pinned_asset(
+        app_candidate_reference, "retained App release candidate"
+    )
+    app_candidate = _load_json(app_candidate_path)
+    runner_certificate_path = _verify_pinned_asset(
+        candidate["runnerCertificate"], "active Runner certificate"
+    )
+    runner_certificate = _load_json(runner_certificate_path)
+    certificate_id = runner_certificate.get("certificateID")
+    if (
+        app_release.get("schemaVersion") != "power-app-release-1.0.0"
+        or app_release.get("productID") != "power"
+        or app_release.get("state") != "supported"
+        or app_release.get("version") != app_candidate.get("version")
+        or app_release.get("build") != app_candidate.get("build")
+        or app_release.get("sourceRevision")
+        != app_candidate.get("sourceRevision")
+        or app_release.get("bundleIdentifier")
+        != app_candidate.get("bundleIdentifier")
+        or app_release.get("buildConfiguration") != "Official"
+        or app_release.get("embeddedMeasurementStack")
+        != candidate.get("measurementStack")
+        or app_release.get("supportedRunnerCertificateIDs")
+        != [certificate_id]
+        or app_release.get("verification")
+        != {
+            "sourceAndDependencyIntegrity": "pass",
+            "genericIOSReleaseBuild": "pass",
+            "physicalDeviceEndToEndRehearsal": "pass",
+            "rawResultReview": "pass",
+        }
+    ):
+        raise VerificationError("active App release identity is inconsistent")
+
+    app_components = app_release.get("appComponents")
+    if (
+        not isinstance(app_components, dict)
+        or app_components.get("sha256")
+        != candidate.get("appCandidate", {}).get("sha256")
+    ):
+        raise VerificationError(
+            "active App release component identity is inconsistent"
+        )
+    component_path = _verify_pinned_asset(
+        app_components, "active App component manifest"
+    )
+    documents.append(
+        (str(component_path.relative_to(ROOT)), _load_json(component_path))
+    )
+
+    release_evidence = app_release.get("releaseEvidence")
+    if (
+        not isinstance(release_evidence, dict)
+        or current.get("activationEvidence") != release_evidence
+    ):
+        raise VerificationError(
+            "Power activation evidence does not match the App release"
+        )
+    result_path = _verify_pinned_asset(
+        release_evidence.get("result", {}), "App release result"
+    )
+    review_path = _verify_pinned_asset(
+        release_evidence.get("review", {}), "App release review"
+    )
+    result = _load_json(result_path)
+    review = _load_json(review_path)
+    documents.extend(
+        (
+            (str(result_path.relative_to(ROOT)), result),
+            (str(review_path.relative_to(ROOT)), review),
+        )
+    )
+    expected_app_identity = {
+        "version": app_release.get("version"),
+        "build": app_release.get("build"),
+        "sourceRevision": app_release.get("sourceRevision"),
+        "embeddedMeasurementStackSHA256":
+            candidate.get("measurementStack", {}).get("sha256"),
+    }
+    if (
+        result.get("appRelease") != expected_app_identity
+        or result.get("runnerCertificateID") != certificate_id
+        or review.get("status") != "pass"
+        or review.get("physicalDeviceEndToEndRehearsal") != "pass"
+        or review.get("classification") != "auto-accept"
+        or review.get("publishable") is not False
+        or review.get("rankingEligible") is not False
+        or review.get("sourceResultSHA256")
+        != release_evidence["result"].get("sha256")
+    ):
+        raise VerificationError("active App release evidence is inconsistent")
+
+    programs = registry.get("programs")
+    targets = registry.get("targets")
+    if (
+        not isinstance(programs, list)
+        or programs
+        != [
+            {
+                "id": program_reference.get("id"),
+                "manifest": program_reference.get("path"),
+                "status": "active",
+                "currentVersion": program_reference.get("version"),
+            }
+        ]
+        or not isinstance(targets, list)
+        or targets
+        != [
+            {
+                "id": target_reference.get("id"),
+                "manifest": target_reference.get("path"),
+                "status": "active",
+                "currentVersion": target_reference.get("version"),
+            }
+        ]
+    ):
+        raise VerificationError("active Power registry versions are inconsistent")
+
+    return str(app_release.get("releaseID"))
+
+
 def verify_power_candidate() -> dict[str, Any]:
+    """Verify the retained clean-break candidate and active state, if issued."""
+
     registry_path = _repo_path(POWER_REGISTRY_PATH)
     registry = _load_json(registry_path)
-    if registry.get("status") != "migration-draft":
-        raise VerificationError("Power registry is not a migration draft")
-    if registry.get("publicIntakeOpen") is not False:
-        raise VerificationError("Power public intake must remain closed")
-    if registry.get("currentStack") is not None:
-        raise VerificationError("Power currentStack must remain null before cutover")
-    if _repo_path(POWER_CURRENT_PATH).exists():
-        raise VerificationError(
-            "products/power/current.json must not exist before activation"
-        )
+    active = _repo_path(POWER_CURRENT_PATH).exists()
+    if not active:
+        if registry.get("status") != "migration-draft":
+            raise VerificationError("Power registry is not a migration draft")
+        if registry.get("publicIntakeOpen") is not False:
+            raise VerificationError("Power public intake must remain closed")
+        if registry.get("currentStack") is not None:
+            raise VerificationError(
+                "Power currentStack must remain null before cutover"
+            )
 
     candidate_path_value = registry.get("candidateStack")
     if not isinstance(candidate_path_value, str):
@@ -1583,12 +1761,22 @@ def verify_power_candidate() -> dict[str, Any]:
     schema_count = _verify_schema_set(documents_by_path)
     _verify_workload_measurement_modes(contract, documents_by_path)
     _verify_workload_response_contracts(contract, documents_by_path)
+
+    active_release_id: str | None = None
+    if active:
+        active_release_id = _verify_active_power_state(
+            registry,
+            candidate,
+            program_reference=program_reference,
+            target_reference=target_reference,
+            documents=documents,
+        )
     _reject_legacy_references(documents)
 
     return {
-        "status": "valid-migration-draft",
+        "status": "valid-active" if active else "valid-migration-draft",
         "stackID": candidate.get("stackID"),
-        "publicIntakeOpen": False,
+        "publicIntakeOpen": active,
         "program": (
             f"{program_reference.get('id')}@"
             f"{program_reference.get('version')}"
@@ -1608,7 +1796,8 @@ def verify_power_candidate() -> dict[str, Any]:
             runner_certification_candidate_id,
         "appReleaseCandidate": app_release_candidate_id,
         "runnerCertified": True,
-        "appReleased": False,
+        "appReleased": active,
+        "appRelease": active_release_id,
     }
 
 
@@ -1619,7 +1808,7 @@ def _build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
     subparsers.add_parser(
         "verify-power-candidate",
-        help="verify the inactive clean-break Power candidate stack",
+        help="verify the clean-break Power candidate and active state",
     )
     validate_parser = subparsers.add_parser(
         "validate-power-package",

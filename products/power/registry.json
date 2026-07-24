@@ -1,24 +1,25 @@
 {
-  "schemaVersion": "power-product-registry-1.0.0-draft.1",
-  "productID": "power",
-  "status": "migration-draft",
-  "publicIntakeOpen": false,
-  "currentStack": null,
+  "activatedAt": "2026-07-24T21:28:16Z",
   "candidateStack": "products/power/candidate.json",
+  "currentStack": "products/power/current.json",
+  "productID": "power",
   "programs": [
     {
+      "currentVersion": "2.0.0-draft.2",
       "id": "text-generation-performance",
-      "status": "migration-draft",
-      "candidateVersion": "2.0.0-draft.2",
-      "manifest": "products/power/programs/text-generation-performance/versions/2.0.0-draft.2/manifest.json"
+      "manifest": "products/power/programs/text-generation-performance/versions/2.0.0-draft.2/manifest.json",
+      "status": "active"
     }
   ],
+  "publicIntakeOpen": true,
+  "schemaVersion": "power-product-registry-1.0.0",
+  "status": "active",
   "targets": [
     {
+      "currentVersion": "1.0.0-draft.1",
       "id": "apple-iphone-physical",
-      "status": "migration-draft",
-      "candidateVersion": "1.0.0-draft.1",
-      "manifest": "products/power/targets/apple-iphone-physical/versions/1.0.0-draft.1/manifest.json"
+      "manifest": "products/power/targets/apple-iphone-physical/versions/1.0.0-draft.1/manifest.json",
+      "status": "active"
     }
   ]
 }

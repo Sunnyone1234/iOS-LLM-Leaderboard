@@ -27,7 +27,7 @@ Current public status and navigation are defined by:
 - `docs/product-architecture.md`
 - `docs/project-structure.md`
 - `docs/repository-architecture.md` for the implemented target architecture,
-  current migration state, and activation gates
+  current architecture and activation state
 - `docs/power.md`
 
 The Power 2 migration is a clean break. Do not add active Power 1.1 readers,
@@ -50,11 +50,11 @@ exclude them from official leaderboard logic.
 
 ## Current Power rules
 
-Power 2 is a clean-break activation candidate. Its public intake remains
-fail-closed until the exact Official build 3 physical-device checkpoint,
-immutable App release, and `products/power/current.json` are complete.
-Power 1.0 and 1.1 are historical audit assets and must not be referenced by an
-active App, pointer, validator, workflow, package, or ranking.
+Power 2 is the active clean-break release. Public intake uses the exact stack
+and supported Official App release pinned by `products/power/current.json`.
+Developer and Certification builds remain non-publishable. Power 1.0 and 1.1
+are historical audit assets and must not be referenced by an active App,
+pointer, validator, workflow, package, or ranking.
 
 For current Power work:
 

@@ -1,0 +1,39 @@
+{
+  "appComponents": {
+    "path": "products/power/app-releases/evidence/982ed291-5583-4e20-9873-176887b413cc/app-component-manifest.json",
+    "sha256": "63aaba5bd9d9d81f19ee17ad589bf019620d2443615cae723ac5558ecb4d2e5c"
+  },
+  "build": "4",
+  "buildConfiguration": "Official",
+  "bundleIdentifier": "org.iosllmleaderboard.power2",
+  "embeddedMeasurementStack": {
+    "path": "products/power/stacks/power-text-iphone-2.0.0-rc.1/manifest.json",
+    "sha256": "a92a208324af0ea85c092e1cf04248c669f01c588c9f0d0b724e4c40a1014642"
+  },
+  "issuedAt": "2026-07-24T21:28:16Z",
+  "productID": "power",
+  "releaseEvidence": {
+    "result": {
+      "path": "products/power/app-releases/evidence/982ed291-5583-4e20-9873-176887b413cc/result.json",
+      "sha256": "65fcaacac72942c3be8412abde0ffb54e618f69e82f05919cee35dc2895b0ce0"
+    },
+    "review": {
+      "path": "products/power/app-releases/evidence/982ed291-5583-4e20-9873-176887b413cc/review.json",
+      "sha256": "6ee8c0d05ff5b37e6a7529819a7d384cf90c8102f6fe6358e47ebc15026bfb46"
+    }
+  },
+  "releaseID": "power-app-2.0.0-build.4-63aaba5bd9d9",
+  "schemaVersion": "power-app-release-1.0.0",
+  "sourceRevision": "63aaba5bd9d9d81f19ee17ad589bf019620d2443615cae723ac5558ecb4d2e5c",
+  "state": "supported",
+  "supportedRunnerCertificateIDs": [
+    "power2-runner-87f62feecc2b"
+  ],
+  "verification": {
+    "genericIOSReleaseBuild": "pass",
+    "physicalDeviceEndToEndRehearsal": "pass",
+    "rawResultReview": "pass",
+    "sourceAndDependencyIntegrity": "pass"
+  },
+  "version": "2.0.0"
+}

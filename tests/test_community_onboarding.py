@@ -36,7 +36,8 @@ class CommunityOnboardingTests(unittest.TestCase):
             app,
         )
         self.assertIn("products/power/current.json", app)
-        self.assertIn("Public intake remains fail-closed", app)
+        self.assertIn("Power 2 · Public intake open", app)
+        self.assertIn("Public intake is open", index)
 
     def test_quickstart_pins_app_identity_and_raw_export(self) -> None:
         guide = (ROOT / "contributor-kit/power-1.0-quickstart.md").read_text()

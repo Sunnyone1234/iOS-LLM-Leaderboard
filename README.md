@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <img alt="Power 2 activation candidate" src="https://img.shields.io/badge/Power_2-activation_candidate-bf8700?style=flat-square">
+  <img alt="Power 2 active" src="https://img.shields.io/badge/Power_2-active-238636?style=flat-square">
   <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/releases/tag/ship-1.0.0"><img alt="Ship 1.0" src="https://img.shields.io/badge/Ship-1.0-a94747?style=flat-square"></a>
   <a href="https://github.com/YizeSun/iOS-LLM-Leaderboard/actions/workflows/power-community-ranking.yml"><img alt="Power community ranking checks" src="https://github.com/YizeSun/iOS-LLM-Leaderboard/actions/workflows/power-community-ranking.yml/badge.svg?branch=main"></a>
   <a href="https://yizesun.github.io/iOS-LLM-Leaderboard/"><img alt="Leaderboard live" src="https://img.shields.io/badge/leaderboard-live-238636?style=flat-square"></a>
@@ -46,17 +46,19 @@ packaging, licensing, limitations, and unknowns.
 
 | Product | Status | What is public |
 | --- | --- | --- |
-| Power 2 | Activation candidate | Text performance × physical iPhone cell; automated checks pass and exact Official build 4 physical validation is pending |
+| Power 2 | Active | Text performance × physical iPhone cell; Official build 4, immutable App release, and public intake are active |
 | Ship 1.0 | Published separately | Deployment profiles and a focused MLX Swift recipe derived separately from accepted Power 1.0 evidence |
 | Build | Research | Long-term complete-software-delivery research; no protocols or ranking yet |
 
 Power 2 is a clean replacement rather than a compatibility release. Its
 Program, physical-iPhone Target, exact models, Runner certificate, App
 identity, intake policy, and ranking policy form one hash-pinned stack.
-Public intake stays closed until the immutable Official App release and
-`products/power/current.json` are issued together. Power 1.1 evidence and
-release manifests remain a read-only historical archive and are never input
-to the Power 2 App, validator, workflow, or ranking.
+The immutable Official App release and
+[`products/power/current.json`](products/power/current.json) were issued
+together after the exact build 4 physical-device rehearsal passed. Public
+Power 2 intake is open. Power 1.1 evidence and release manifests remain a
+read-only historical archive and are never input to the Power 2 App,
+validator, workflow, or ranking.
 
 Ship 1.0 is not part of Power 1.1 and is not produced by a benchmark run. Its
 separate publication uses accepted Power 1.0 measurements as cited source
@@ -100,9 +102,8 @@ duplicates, and ranking eligibility, then labels it for automatic acceptance,
 manual review, or rejection. Merging adds evidence to the live community view; it does
 not rewrite an immutable release or automatically establish reproduction.
 
-During the final activation checkpoint, the same path remains fail-closed for
-public evidence. The quickstart clearly identifies the required Official App
-release; Developer and Certification builds cannot submit ranking evidence.
+Only the supported Official App release can submit ranking evidence.
+Developer and Certification builds remain non-publishable.
 
 Other useful contributions include focused Swift integration recipes,
 documentation corrections, validators, and clearly scoped Build Research

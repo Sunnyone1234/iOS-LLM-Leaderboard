@@ -1,12 +1,12 @@
 # Repository architecture and migration
 
-> **Status: architecture implemented; final activation checkpoint.** The
-> `products/power/` Power 2 candidate, four exact model artifacts, active
-> source- and physical-evidence-bound Runner certificate, build 4 Official App
-> candidate, trusted intake, and ranking engine exist. Automated checks and
-> generic Official/Certification Release builds pass. The exact Official
-> build 4 physical-device end-to-end result, immutable App release, and atomic
-> `current.json` issuance remain. Public intake is fail-closed until then.
+> **Status: architecture implemented and Power 2 active.** The
+> `products/power/` active pointer, four exact model artifacts,
+> source- and physical-evidence-bound Runner certificate, supported build 4
+> Official App release, trusted intake, and ranking engine exist. Automated,
+> generic Release, and exact Official physical-device checks passed before the
+> immutable App release and `current.json` were issued atomically. Public
+> intake is open.
 > Power 1.1 is a historical archive, not a compatibility path. This migration
 > does not activate Build or make image, 3D, iPad, or macOS Programs available.
 
@@ -61,23 +61,23 @@ design capacity, not implemented products.
 
 | Area | State | Authority |
 | --- | --- | --- |
-| Power 2.0 Product, text Program, physical-iPhone Target, and policies | Candidate implemented and hash-pinned | `products/power/candidate.json` |
+| Power 2.0 Product, text Program, physical-iPhone Target, and policies | Active and hash-pinned | `products/power/current.json` |
 | Evidence envelope, text payload, submission, validation, and review shapes | Draft.2 candidate implemented and pinned by the Program manifest | `products/power/programs/text-generation-performance/versions/2.0.0-draft.2/manifest.json` |
 | Candidate integrity and clean-break boundary | Enforced | `python3 scripts/repoctl.py verify-power-candidate` |
 | Exact model artifacts | Four revision- and content-pinned rerun candidates; no old rank imported | `models/registry.json` and `models/artifacts/` |
-| New validation engine | Structural, digest, contract, model, trust, contributor, behavior, recommendation, and per-metric gates implemented behind the inactive candidate | `scripts/lib/power2/` |
+| New validation engine | Structural, digest, contract, model, trust, contributor, behavior, recommendation, and per-metric gates active | `scripts/lib/power2/` |
 | Runner implementation | Runner Core, Program Module, iPhone Target Adapter, evidence layer, and fixed-dependency MLX Runtime Adapter implemented; automated checks, generic iOS Certification build, physical Certification run, and raw review pass for the exact certified digest | `apps/PowerRunnerKit/` and `products/power/runner-certificates/power2-runner-87f62feecc2b.json` |
-| App implementation | Buildable, fail-closed iOS App Shell plus Results Store, Submission Kit, direct GitHub contributor client, saved-result selection, Certification path, and Official path implemented; generic Official/Certification build 4 Release checks pass; the exact build 4 physical rehearsal remains pending | `apps/ios/` and `apps/PowerAppKit/` |
-| Two-file package, trusted PR routing, and ranking derivation | Implemented and tested; not public while candidate gates remain closed | `scripts/lib/power2/`, `scripts/triage_power2_submission_pr.py` |
-| Runner certificate and App release | Active immutable Runner certificate issued from retained physical evidence; prior Official build 2 rehearsals remain audit evidence; build 4 immutable App release waits only for its exact physical run | `products/power/runner-certificates/power2-runner-87f62feecc2b.json`, `products/power/app-releases/candidate.json` |
+| App implementation | iOS App Shell, Results Store, Submission Kit, direct GitHub contributor client, saved-result selection, Certification path, and supported Official build 4 path implemented; generic and exact physical checks pass | `apps/ios/` and `apps/PowerAppKit/` |
+| Two-file package, trusted PR routing, and ranking derivation | Implemented, tested, and open for supported Official evidence | `scripts/lib/power2/`, `scripts/triage_power2_submission_pr.py` |
+| Runner certificate and App release | Active immutable Runner certificate and supported build 4 App release issued from retained physical evidence; prior Official build 2 rehearsals remain audit evidence | `products/power/runner-certificates/power2-runner-87f62feecc2b.json`, `products/power/app-releases/power-app-2.0.0-build.4-63aaba5bd9d9.json` |
 | CI intake rehearsal | Trusted-main PR #42 was classified `auto_accept` by the base-repository Power 2 workflow; its build 2 evidence remains non-publishable and non-ranking | `products/power/rehearsals/pr-42/` |
-| Physical evidence and public ranking | Runner Certification and exact Official App rehearsal evidence retained; public experiment reruns, accepted evidence, and ranking remain pending | Candidate blockers remain explicit |
-| Public Power flow | One Power 2 CLI and contribution guide; intake remains closed until final atomic activation | `scripts/power`, `contributor-kit/power.md` |
+| Physical evidence and public ranking | Runner Certification and exact Official App activation evidence retained; public intake is open and ranking awaits community contributions | `products/power/current.json` |
+| Public Power flow | One active Power 2 CLI and contribution guide | `scripts/power`, `contributor-kit/power.md` |
 
-The candidate is a contract review surface, not an invitation to submit
-results. Publishing `products/power/current.json` before the model, runner,
-App, CI, physical reruns, and contributor rehearsal are complete is a
-verification error.
+The retained candidate is a contract review and audit surface, not a second
+public pointer. `products/power/current.json` was published only after the
+model, Runner, App, CI, physical rehearsal, and contributor rehearsal gates
+completed.
 
 ## Relationship formulas
 
@@ -907,5 +907,7 @@ refactor.
 - No unapproved Program, Target, Build protocol, or placeholder evidence is
   presented as active.
 
-Until every applicable item passes, this document remains a migration
-blueprint rather than a description of current repository behavior.
+The initial Power 2 activation items now pass. The phase plan above remains as
+the migration audit record; independent reproductions, community reruns, and
+later historical-plane cleanup are post-activation work rather than blockers
+for the active pointer.

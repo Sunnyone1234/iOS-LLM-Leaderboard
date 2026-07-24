@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import tempfile
 import unittest
 from pathlib import Path
 
@@ -26,10 +25,10 @@ def load_json(path: Path) -> dict:
 
 
 class Power2CandidateTests(unittest.TestCase):
-    def test_candidate_stack_is_complete_but_inactive(self) -> None:
+    def test_active_stack_is_complete(self) -> None:
         summary = repoctl.verify_power_candidate()
 
-        self.assertEqual(summary["status"], "valid-migration-draft")
+        self.assertEqual(summary["status"], "valid-active")
         self.assertEqual(
             summary["program"],
             "text-generation-performance@2.0.0-draft.2",
@@ -46,22 +45,37 @@ class Power2CandidateTests(unittest.TestCase):
         self.assertEqual(summary["appComponents"], 4)
         self.assertTrue(summary["appShellImplemented"])
         self.assertTrue(summary["runnerCertified"])
-        self.assertFalse(summary["appReleased"])
-        self.assertFalse(summary["publicIntakeOpen"])
+        self.assertTrue(summary["appReleased"])
+        self.assertTrue(summary["publicIntakeOpen"])
+        self.assertEqual(
+            summary["appRelease"],
+            "power-app-2.0.0-build.4-63aaba5bd9d9",
+        )
 
-    def test_certified_runner_remains_in_closed_candidate_stack(self) -> None:
+    def test_active_pointer_preserves_the_certified_runner(self) -> None:
         registry = load_json(ROOT / "products" / "power" / "registry.json")
         candidate = load_json(ROOT / registry["candidateStack"])
+        current = load_json(ROOT / registry["currentStack"])
         measurement_stack = load_json(
             ROOT / candidate["measurementStack"]["path"]
         )
 
-        self.assertIsNone(registry["currentStack"])
-        self.assertFalse(registry["publicIntakeOpen"])
+        self.assertEqual(
+            registry["currentStack"], "products/power/current.json"
+        )
+        self.assertTrue(registry["publicIntakeOpen"])
         self.assertFalse(candidate["publicIntakeOpen"])
         self.assertEqual(
             measurement_stack["runnerCertificate"],
             candidate["runnerCertificate"],
+        )
+        self.assertEqual(
+            current["runnerCertificate"],
+            candidate["runnerCertificate"],
+        )
+        self.assertEqual(
+            current["runnerComponents"],
+            candidate["runnerCandidate"],
         )
         runner_certificate = load_json(
             ROOT / candidate["runnerCertificate"]["path"]
@@ -92,111 +106,63 @@ class Power2CandidateTests(unittest.TestCase):
         self.assertIsNone(candidate["appRelease"])
         self.assertIsNotNone(candidate["runnerCandidate"])
         self.assertIsNotNone(candidate["appCandidate"])
-        self.assertFalse(
+        self.assertTrue(
             (ROOT / "products" / "power" / "current.json").exists()
         )
 
-    def test_prior_official_app_rehearsal_is_retained(self) -> None:
-        candidate = load_json(ROOT / "products" / "power" / "candidate.json")
-        app_candidate = load_json(
-            ROOT / candidate["appReleaseCandidate"]["path"]
+    def test_supported_app_release_retains_exact_activation_evidence(
+        self,
+    ) -> None:
+        current = load_json(ROOT / "products/power/current.json")
+        app_release = load_json(
+            ROOT / current["appRelease"]["path"]
         )
 
+        self.assertEqual(app_release["state"], "supported")
+        self.assertEqual(app_release["build"], "4")
         self.assertEqual(
-            app_candidate["build"],
-            "4",
+            app_release["sourceRevision"],
+            "63aaba5bd9d9d81f19ee17ad589bf019620d2443615cae723ac5558ecb4d2e5c",
         )
         self.assertEqual(
-            app_candidate["verification"]["genericIOSReleaseBuild"],
+            app_release["verification"]["genericIOSReleaseBuild"],
             "pass",
         )
         self.assertEqual(
-            app_candidate["verification"][
+            app_release["verification"][
                 "physicalDeviceEndToEndRehearsal"
             ],
-            "pending",
+            "pass",
         )
-        self.assertIn(
-            "complete a physical-device end-to-end rehearsal",
-            app_candidate["releaseBlockedBy"],
+        self.assertEqual(
+            current["activationEvidence"],
+            app_release["releaseEvidence"],
         )
-        prior_evidence = [
-            evidence
-            for evidence in candidate["appReleaseRehearsalEvidence"]
-            if evidence["appComponents"]["sha256"]
-            != candidate["appCandidate"]["sha256"]
-        ]
-        self.assertEqual(len(prior_evidence), 2)
-        result = load_json(ROOT / prior_evidence[-1]["result"]["path"])
-        review = load_json(ROOT / prior_evidence[-1]["review"]["path"])
-        self.assertEqual(result["appRelease"]["build"], "2")
+        result = load_json(
+            ROOT / app_release["releaseEvidence"]["result"]["path"]
+        )
+        review = load_json(
+            ROOT / app_release["releaseEvidence"]["review"]["path"]
+        )
+        self.assertEqual(
+            result["resultID"],
+            "982ED291-5583-4E20-9873-176887B413CC",
+        )
+        self.assertEqual(result["appRelease"]["build"], "4")
         self.assertEqual(review["status"], "pass")
         self.assertEqual(review["classification"], "auto-accept")
         self.assertFalse(review["publishable"])
         self.assertFalse(review["rankingEligible"])
 
-    def test_activation_rejects_a_prior_build_without_writing(self) -> None:
-        prior_result = (
-            ROOT
-            / "products"
-            / "power"
-            / "app-releases"
-            / "evidence"
-            / "15eb974a-e8de-44e1-80c9-0758ad7fc95b"
-            / "result.json"
-        )
+    def test_activation_is_one_time(self) -> None:
+        current = load_json(ROOT / "products/power/current.json")
+        result = ROOT / current["activationEvidence"]["result"]["path"]
         with self.assertRaisesRegex(
             activation.Power2ActivationError,
-            (
-                "did not pass the closed App release review: "
-                "classification=reject; "
-                "reasonCodes=app-release-not-supported; "
-                "failedChecks=appRelease"
-            ),
+            "Power current pointer already exists; activation is one-time",
         ):
             activation.render_activation(
-                prior_result,
-                reviewed_at="2026-07-24T00:00:00Z",
-                activated_at="2026-07-24T00:01:00Z",
-                validator_source_revision=(
-                    "4407a3776636e6c1a3a5892f78a3f4a841cecac7"
-                ),
-            )
-        self.assertFalse(
-            (ROOT / "products" / "power" / "current.json").exists()
-        )
-
-    def test_activation_renders_the_complete_exact_candidate_set(self) -> None:
-        """Exercise the success path with a clearly synthetic in-memory copy."""
-
-        candidate = load_json(ROOT / "products/power/candidate.json")
-        app_candidate = load_json(
-            ROOT / candidate["appReleaseCandidate"]["path"]
-        )
-        result = load_json(
-            ROOT
-            / "products/power/app-releases/evidence"
-            / "15eb974a-e8de-44e1-80c9-0758ad7fc95b"
-            / "result.json"
-        )
-        result["resultID"] = "00000000-0000-4000-8000-000000000042"
-        result["appRelease"] = {
-            "version": app_candidate["version"],
-            "build": app_candidate["build"],
-            "sourceRevision": app_candidate["sourceRevision"],
-            "embeddedMeasurementStackSHA256": (
-                candidate["measurementStack"]["sha256"]
-            ),
-        }
-
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "synthetic-result.json"
-            path.write_text(
-                json.dumps(result, sort_keys=True, separators=(",", ":")),
-                encoding="utf-8",
-            )
-            rendered = activation.render_activation(
-                path,
+                result,
                 reviewed_at="2026-07-24T00:00:00Z",
                 activated_at="2026-07-24T00:01:00Z",
                 validator_source_revision=(
@@ -204,19 +170,26 @@ class Power2CandidateTests(unittest.TestCase):
                 ),
             )
 
-        self.assertEqual(rendered.summary["status"], "ready")
-        self.assertEqual(rendered.summary["fileCount"], 6)
-        self.assertTrue(rendered.summary["publicIntakeOpen"])
-        current = json.loads(
-            rendered.files[activation.CURRENT_PATH].decode("utf-8")
-        )
+    def test_active_pointer_binds_every_release_reference(self) -> None:
+        current = load_json(ROOT / "products/power/current.json")
         self.assertEqual(current["status"], "active")
         self.assertTrue(current["publicIntakeOpen"])
-        self.assertEqual(
-            current["appRelease"],
-            rendered.summary["appRelease"],
-        )
-        self.assertFalse(activation.CURRENT_PATH.exists())
+        for key in (
+            "measurementStack",
+            "runnerComponents",
+            "runnerCertificate",
+            "appRelease",
+        ):
+            reference = current[key]
+            self.assertEqual(
+                reference["sha256"],
+                repoctl._sha256(ROOT / reference["path"]),
+            )
+        for reference in current["activationEvidence"].values():
+            self.assertEqual(
+                reference["sha256"],
+                repoctl._sha256(ROOT / reference["path"]),
+            )
 
     def test_active_candidate_json_has_no_power_1_dispatch(self) -> None:
         active_json = [

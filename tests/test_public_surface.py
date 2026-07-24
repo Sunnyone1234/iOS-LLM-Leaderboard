@@ -72,7 +72,7 @@ class PublicSurfaceTests(unittest.TestCase):
         )
         self.assertIn("stroke-dasharray", diagram)
 
-    def test_repository_architecture_migration_is_indexed_but_not_active(self) -> None:
+    def test_repository_architecture_records_active_power_2(self) -> None:
         docs_index = (ROOT / "docs/README.md").read_text()
         blueprint = (ROOT / "docs/repository-architecture.md").read_text()
         structure = (ROOT / "docs/project-structure.md").read_text()
@@ -83,7 +83,8 @@ class PublicSurfaceTests(unittest.TestCase):
             "Benchmark Cell = Program Version × Target Profile Version",
             blueprint,
         )
-        self.assertIn("final activation checkpoint", blueprint)
+        self.assertIn("Power 2 active", blueprint)
+        self.assertIn("public intake is open", blueprint)
         self.assertIn("No backward-compatibility layer", blueprint)
         self.assertIn(
             "There are no compatibility readers, schema adapters, policy adapters",
@@ -93,7 +94,10 @@ class PublicSurfaceTests(unittest.TestCase):
             "Every active result was newly generated under Power 2.0",
             blueprint,
         )
-        self.assertIn("treated as open public intake", structure)
+        self.assertIn(
+            "`current.json` is the only active public Power pointer",
+            structure,
+        )
 
     def test_only_one_workflow_deploys_github_pages(self) -> None:
         workflows = (ROOT / ".github/workflows").glob("*.yml")

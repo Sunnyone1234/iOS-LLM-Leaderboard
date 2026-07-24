@@ -18,12 +18,11 @@ deployment-guidance product. They may reference the same exact configuration,
 but Power does not contain Ship and a Power test does not produce a Ship
 profile.
 
-Power 2 is the implemented clean-break architecture and is in its final
-activation checkpoint. Its first benchmark cell combines the text-generation
-performance Program with the physical-iPhone Target. The exact Runner is
-certified; App build 4 automated and generic Release checks pass; the exact
-Official build 4 physical-device end-to-end result remains required before
-the immutable App release and active public pointer are issued together.
+Power 2 is the active clean-break architecture. Its first benchmark cell
+combines the text-generation performance Program with the physical-iPhone
+Target. The exact Runner is certified, Official build 4 passed automated,
+generic Release, and physical-device end-to-end checks, and the immutable App
+release and active public pointer were issued together.
 
 [Power Benchmark 1.1](power-benchmark-1.1-finalization.md) and the completed
 [Phase 1 Evidence Pilot v0.1](power-ship-pilot-v0.1.md) remain historical

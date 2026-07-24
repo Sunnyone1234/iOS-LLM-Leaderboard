@@ -18,9 +18,9 @@ python3 scripts/power submit /path/to/result.json \
   --accept-declarations
 ```
 
-The Power 2 public intake remains fail-closed during its final build 3
-physical-device checkpoint. The same guide becomes the public contribution
-path when the immutable App release and active pointer are issued.
+Power 2 public intake is open for results produced by the supported Official
+App release pinned by `products/power/current.json`. Developer and
+Certification builds remain non-publishable.
 
 ## Other contributions
 

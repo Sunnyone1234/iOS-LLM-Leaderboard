@@ -4,9 +4,10 @@ Power accepts evidence produced by an exact supported Official App release on
 a physical iPhone. A source-built Developer App is useful for code and UI
 work, but cannot create ranking evidence.
 
-> **Activation note:** the Power 2 stack is in its final build 3
-> physical-device checkpoint. Public result intake stays fail-closed until the
-> immutable App release and `products/power/current.json` are issued together.
+> **Current release:** public Power 2 intake is open. The supported Official
+> App release and exact stack are pinned by
+> [`products/power/current.json`](../products/power/current.json). Developer
+> and Certification builds remain non-publishable.
 
 ## App flow
 

@@ -163,7 +163,7 @@ function renderSummary() {
     ? "Power 2"
     : "Power 2 · activation checkpoint";
   elements.footerStatus.textContent = state.active
-    ? "Power 2 · Accepted community evidence"
+    ? "Power 2 · Public intake open"
     : "Power 2 · Public intake remains fail-closed";
 }
 
