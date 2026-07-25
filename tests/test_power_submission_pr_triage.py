@@ -48,7 +48,14 @@ class PowerSubmissionPRTriageTests(unittest.TestCase):
         self.assertIn('head="$HEAD_OWNER:$HEAD_BRANCH"', auto_merge)
         self.assertIn("statusCheckRollup", auto_merge)
         self.assertIn("PR's current", auto_merge)
-        self.assertIn("Unable to resolve an open pull request", auto_merge)
+        self.assertIn(
+            "github.event.workflow_run.head_repository.id", auto_merge
+        )
+        self.assertIn(
+            "github.event.workflow_run.head_branch", auto_merge
+        )
+        self.assertNotIn("github.run_id", auto_merge)
+        self.assertIn("a peer run may already have merged", auto_merge)
 
     def make_package(
         self,

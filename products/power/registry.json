@@ -1,7 +1,8 @@
 {
-  "activatedAt": "2026-07-24T21:28:16Z",
+  "activatedAt": "2026-07-25T13:07:58Z",
   "candidateStack": "products/power/candidate.json",
   "currentStack": "products/power/current.json",
+  "nextRelease": "products/power/next.json",
   "productID": "power",
   "programs": [
     {

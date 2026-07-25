@@ -1,0 +1,31 @@
+{
+  "appComponents": {
+    "path": "products/power/app-releases/evidence/candidate-a9b1c359107c/app-component-manifest.json",
+    "sha256": "a9b1c359107c0806b023c61f190b4ce49c61ee1cf7da2cc59bafea8435493c8f"
+  },
+  "build": "5",
+  "buildConfiguration": "Official",
+  "bundleIdentifier": "org.iosllmleaderboard.power2",
+  "embeddedMeasurementStack": {
+    "path": "products/power/stacks/power-text-iphone-2.0.0-rc.2/manifest.json",
+    "sha256": "77a8a6b12c9008e9680d8cbfd41a867b4873680a9745172bee4e108f445b47b7"
+  },
+  "productID": "power",
+  "releaseBlockedBy": [
+    "complete and review the exact physical-device Official App rehearsal",
+    "publish the immutable App release and current pointer atomically"
+  ],
+  "releaseID": "power-app-2.0.0-candidate-a9b1c359107c",
+  "schemaVersion": "power-app-release-candidate-1.0.0-draft.1",
+  "sourceRevision": "a9b1c359107c0806b023c61f190b4ce49c61ee1cf7da2cc59bafea8435493c8f",
+  "state": "candidate",
+  "supportedRunnerCertificateIDs": [
+    "power2-runner-ac490be49347"
+  ],
+  "verification": {
+    "genericIOSReleaseBuild": "pass",
+    "physicalDeviceEndToEndRehearsal": "pending",
+    "sourceAndDependencyIntegrity": "pass"
+  },
+  "version": "2.0.0"
+}

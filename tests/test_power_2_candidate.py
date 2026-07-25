@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import hashlib
 import json
+import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from scripts import repoctl
-from scripts.lib.power2 import activation
+from scripts.lib.power2 import activation, next_activation
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -25,6 +28,34 @@ def load_json(path: Path) -> dict:
 
 
 class Power2CandidateTests(unittest.TestCase):
+    def staged_next_release(self) -> dict:
+        completed = load_json(
+            ROOT / "products" / "power" / "next.json"
+        )
+        staged = {
+            **completed,
+            "state": "app-release-rehearsal-required",
+            "baseRelease": {
+                "path": "products/power/current.json",
+                "sha256": repoctl._sha256(
+                    ROOT / "products/power/current.json"
+                ),
+            },
+            "appRelease": None,
+        }
+        staged.pop("activatedAt", None)
+        staged.pop("activationEvidence", None)
+        return staged
+
+    def staged_next_loader(self, staged: dict):
+        def loader(path: Path, label: str) -> dict:
+            del label
+            if path == next_activation.NEXT_PATH:
+                return staged
+            return load_json(path)
+
+        return loader
+
     def test_active_stack_is_complete(self) -> None:
         summary = repoctl.verify_power_candidate()
 
@@ -42,14 +73,32 @@ class Power2CandidateTests(unittest.TestCase):
         self.assertEqual(summary["registeredModels"], 4)
         self.assertEqual(summary["runnerComponents"], 5)
         self.assertTrue(summary["runtimeAdapterImplemented"])
-        self.assertEqual(summary["appComponents"], 4)
+        self.assertEqual(summary["appComponents"], 6)
         self.assertTrue(summary["appShellImplemented"])
         self.assertTrue(summary["runnerCertified"])
         self.assertTrue(summary["appReleased"])
         self.assertTrue(summary["publicIntakeOpen"])
         self.assertEqual(
             summary["appRelease"],
-            "power-app-2.0.0-build.4-63aaba5bd9d9",
+            "power-app-2.0.0-build.5-a9b1c359107c",
+        )
+        self.assertEqual(
+            summary["nextReleaseState"],
+            "activated",
+        )
+        self.assertEqual(
+            summary["nextRunnerCertificate"],
+            "power2-runner-ac490be49347",
+        )
+        next_release = load_json(
+            ROOT / "products" / "power" / "next.json"
+        )
+        next_app_candidate = load_json(
+            ROOT / next_release["appReleaseCandidate"]["path"]
+        )
+        self.assertEqual(
+            summary["nextAppReleaseCandidate"],
+            next_app_candidate["releaseID"],
         )
 
     def test_active_pointer_preserves_the_certified_runner(self) -> None:
@@ -57,7 +106,7 @@ class Power2CandidateTests(unittest.TestCase):
         candidate = load_json(ROOT / registry["candidateStack"])
         current = load_json(ROOT / registry["currentStack"])
         measurement_stack = load_json(
-            ROOT / candidate["measurementStack"]["path"]
+            ROOT / current["measurementStack"]["path"]
         )
 
         self.assertEqual(
@@ -67,24 +116,16 @@ class Power2CandidateTests(unittest.TestCase):
         self.assertFalse(candidate["publicIntakeOpen"])
         self.assertEqual(
             measurement_stack["runnerCertificate"],
-            candidate["runnerCertificate"],
-        )
-        self.assertEqual(
             current["runnerCertificate"],
-            candidate["runnerCertificate"],
-        )
-        self.assertEqual(
-            current["runnerComponents"],
-            candidate["runnerCandidate"],
         )
         runner_certificate = load_json(
-            ROOT / candidate["runnerCertificate"]["path"]
+            ROOT / current["runnerCertificate"]["path"]
         )
         self.assertEqual(runner_certificate["state"], "active")
         self.assertEqual(
             runner_certificate["certificateID"],
             "power2-runner-"
-            + candidate["runnerCandidate"]["sha256"][:12],
+            + current["runnerComponents"]["sha256"][:12],
         )
         self.assertEqual(
             runner_certificate["verification"][
@@ -119,10 +160,10 @@ class Power2CandidateTests(unittest.TestCase):
         )
 
         self.assertEqual(app_release["state"], "supported")
-        self.assertEqual(app_release["build"], "4")
+        self.assertEqual(app_release["build"], "5")
         self.assertEqual(
             app_release["sourceRevision"],
-            "63aaba5bd9d9d81f19ee17ad589bf019620d2443615cae723ac5558ecb4d2e5c",
+            "a9b1c359107c0806b023c61f190b4ce49c61ee1cf7da2cc59bafea8435493c8f",
         )
         self.assertEqual(
             app_release["verification"]["genericIOSReleaseBuild"],
@@ -146,9 +187,9 @@ class Power2CandidateTests(unittest.TestCase):
         )
         self.assertEqual(
             result["resultID"],
-            "982ED291-5583-4E20-9873-176887B413CC",
+            "F38B67EC-5347-4F35-B4CD-895A0595E9B1",
         )
-        self.assertEqual(result["appRelease"]["build"], "4")
+        self.assertEqual(result["appRelease"]["build"], "5")
         self.assertEqual(review["status"], "pass")
         self.assertEqual(review["classification"], "auto-accept")
         self.assertFalse(review["publishable"])
@@ -169,6 +210,148 @@ class Power2CandidateTests(unittest.TestCase):
                     "4407a3776636e6c1a3a5892f78a3f4a841cecac7"
                 ),
             )
+
+    def test_next_activation_rejects_superseded_rehearsal(self) -> None:
+        superseded = load_json(
+            ROOT
+            / "products"
+            / "power"
+            / "app-releases"
+            / "evidence"
+            / "656cf217-8ef5-4ccd-bb18-cb34062d4b7c"
+            / "record.json"
+        )
+        result = ROOT / superseded["result"]["path"]
+        staged = self.staged_next_release()
+        with (
+            mock.patch.object(
+                next_activation,
+                "_load",
+                side_effect=self.staged_next_loader(staged),
+            ),
+            mock.patch.object(
+                next_activation,
+                "review_result",
+                return_value={
+                    "status": "reject",
+                    "physicalDeviceEndToEndRehearsal": "fail",
+                    "classification": "reject",
+                    "publishable": False,
+                    "rankingEligible": False,
+                    "reasonCodes": ["superseded-app-release-rehearsal"],
+                    "diagnostics": [],
+                },
+            ),
+        ):
+            with self.assertRaisesRegex(
+                next_activation.Power2NextActivationError,
+                "did not pass the closed App release review",
+            ):
+                next_activation.render_next_activation(
+                    result,
+                    reviewed_at="2026-07-25T15:00:00Z",
+                    activated_at="2026-07-25T15:01:00Z",
+                    validator_source_revision=(
+                        "b70019ff2b807a204702e1b59e8a31362b767515"
+                    ),
+                )
+
+    def test_next_activation_renders_one_atomic_upgrade_set(self) -> None:
+        next_release = self.staged_next_release()
+        candidate = load_json(
+            ROOT / next_release["appReleaseCandidate"]["path"]
+        )
+        certificate = load_json(
+            ROOT / next_release["runnerCertificate"]["path"]
+        )
+        result = {
+            "resultID": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+            "appRelease": {
+                "version": candidate["version"],
+                "build": candidate["build"],
+                "sourceRevision": candidate["sourceRevision"],
+                "embeddedMeasurementStackSHA256":
+                    next_release["measurementStack"]["sha256"],
+            },
+            "runnerCertificateID": certificate["certificateID"],
+        }
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            tempfile.TemporaryDirectory(dir=ROOT) as output_directory,
+        ):
+            result_path = Path(directory) / "synthetic-render-fixture.json"
+            result_bytes = (
+                json.dumps(result, indent=2, sort_keys=True) + "\n"
+            ).encode()
+            result_path.write_bytes(result_bytes)
+            review = {
+                "status": "pass",
+                "physicalDeviceEndToEndRehearsal": "pass",
+                "classification": "auto-accept",
+                "publishable": False,
+                "rankingEligible": False,
+                "sourceResultSHA256":
+                    hashlib.sha256(result_bytes).hexdigest(),
+                "appRelease": result["appRelease"],
+                "runnerCertificateID":
+                    result["runnerCertificateID"],
+            }
+            with (
+                mock.patch.object(
+                    next_activation,
+                    "_load",
+                    side_effect=self.staged_next_loader(next_release),
+                ),
+                mock.patch.object(
+                    next_activation,
+                    "review_result",
+                    return_value=review,
+                ),
+                mock.patch.object(
+                    next_activation,
+                    "APP_RELEASE_ROOT",
+                    Path(output_directory),
+                ),
+                mock.patch.object(
+                    next_activation,
+                    "APP_EVIDENCE_ROOT",
+                    Path(output_directory) / "evidence",
+                ),
+            ):
+                rendered = next_activation.render_next_activation(
+                    result_path,
+                    reviewed_at="2026-07-25T15:00:00Z",
+                    activated_at="2026-07-25T15:01:00Z",
+                    validator_source_revision=(
+                        "b70019ff2b807a204702e1b59e8a31362b767515"
+                    ),
+                )
+
+        self.assertEqual(rendered.summary["status"], "ready")
+        self.assertTrue(rendered.summary["publicIntakeOpen"])
+        advanced_current = json.loads(
+            rendered.files[
+                ROOT / "products" / "power" / "current.json"
+            ]
+        )
+        advanced_plan = json.loads(
+            rendered.files[
+                ROOT / "products" / "power" / "next.json"
+            ]
+        )
+        self.assertEqual(advanced_plan["state"], "activated")
+        self.assertEqual(
+            advanced_plan["appRelease"],
+            advanced_current["appRelease"],
+        )
+        self.assertEqual(
+            advanced_plan["activationEvidence"],
+            advanced_current["activationEvidence"],
+        )
+        self.assertNotEqual(
+            advanced_plan["baseRelease"]["path"],
+            "products/power/current.json",
+        )
 
     def test_active_pointer_binds_every_release_reference(self) -> None:
         current = load_json(ROOT / "products/power/current.json")

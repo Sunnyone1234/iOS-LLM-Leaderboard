@@ -5,7 +5,7 @@ public enum PowerRunnerLimits {
     public static let maximumRenderabilityProbeEvents = 32
 }
 
-public struct PowerTargetSnapshot: Sendable, Equatable {
+public struct PowerTargetSnapshot: Codable, Sendable, Equatable {
     public let isPhysicalDevice: Bool
     public let device: PowerDeviceIdentity
     public let batteryLevel: Double
@@ -131,7 +131,7 @@ public struct PowerRunnerAttemptRequest: Sendable, Equatable {
     }
 }
 
-public struct PowerRunnerAttemptRecord: Sendable, Equatable {
+public struct PowerRunnerAttemptRecord: Codable, Sendable, Equatable {
     public let index: Int
     public let phase: PowerAttemptPhase
     public let outcome: PowerAttemptOutcome
@@ -201,7 +201,7 @@ public struct PowerRunnerAttemptRecord: Sendable, Equatable {
     }
 }
 
-public struct PowerRunnerSession: Sendable, Equatable {
+public struct PowerRunnerSession: Codable, Sendable, Equatable {
     public let startedAt: String
     public let endedAt: String
     public let targetAtStart: PowerTargetSnapshot
@@ -226,10 +226,44 @@ public struct PowerRunnerSession: Sendable, Equatable {
     }
 }
 
+public struct PowerRunnerSessionStart: Codable, Sendable, Equatable {
+    public let startedAt: String
+    public let targetAtStart: PowerTargetSnapshot
+    public let runtimeIdentity: PowerRuntimeIdentity
+    public let expectedAttemptCount: Int
+
+    public init(
+        startedAt: String,
+        targetAtStart: PowerTargetSnapshot,
+        runtimeIdentity: PowerRuntimeIdentity,
+        expectedAttemptCount: Int
+    ) {
+        self.startedAt = startedAt
+        self.targetAtStart = targetAtStart
+        self.runtimeIdentity = runtimeIdentity
+        self.expectedAttemptCount = expectedAttemptCount
+    }
+}
+
+public struct PowerRunnerSessionCompletion: Codable, Sendable, Equatable {
+    public let endedAt: String
+    public let thermalStateAtEnd: PowerThermalState
+
+    public init(
+        endedAt: String,
+        thermalStateAtEnd: PowerThermalState
+    ) {
+        self.endedAt = endedAt
+        self.thermalStateAtEnd = thermalStateAtEnd
+    }
+}
+
 /// A checkpoint sink can persist an active attempt before runtime execution.
 /// On relaunch it can convert an unfinished active attempt into retained
 /// cancellation/failure evidence rather than dropping it.
 public protocol PowerAttemptCheckpointSink: Sendable {
+    func beginSession(_ start: PowerRunnerSessionStart) async throws
+
     func markAttemptStarted(
         index: Int,
         phase: PowerAttemptPhase,
@@ -238,4 +272,16 @@ public protocol PowerAttemptCheckpointSink: Sendable {
     ) async throws
 
     func record(_ attempt: PowerRunnerAttemptRecord) async throws
+
+    func finishSession(
+        _ completion: PowerRunnerSessionCompletion
+    ) async throws
+}
+
+public extension PowerAttemptCheckpointSink {
+    func beginSession(_ start: PowerRunnerSessionStart) async throws {}
+
+    func finishSession(
+        _ completion: PowerRunnerSessionCompletion
+    ) async throws {}
 }

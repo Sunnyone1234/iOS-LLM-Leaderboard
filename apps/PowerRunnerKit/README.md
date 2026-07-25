@@ -1,8 +1,8 @@
 # PowerRunnerKit
 
-PowerRunnerKit is the candidate Power 2 measurement implementation. It is a
-Swift package so the measurement-critical modules can be built and tested
-without SwiftUI, GitHub OAuth, or the current Power 1.1 App target.
+PowerRunnerKit is the Power 2 measurement implementation. It is a Swift package
+so measurement-critical modules can be built and tested without SwiftUI or
+GitHub OAuth.
 
 The package deliberately separates:
 
@@ -14,9 +14,12 @@ The package deliberately separates:
 - `PowerMLXRuntime` — exact MLX/Tokenizer dependency identity, immutable model
   revision loading, and token-stream adaptation.
 
-The Runtime Adapter is implemented but the runner is not certified. No runner
-certificate may be issued until the App integration and certification tests
-pass and physical-device evidence is reviewed.
+The active release keeps its certified `component-manifest.json` bytes
+unchanged. Ongoing source work is hashed into the separate
+`candidate-component-manifest.json`, so editing Runner code cannot silently
+rewrite the active release identity. Any changed digest requires a new
+certificate after generic builds, package tests, and reviewed physical-device
+Certification evidence pass.
 
 Run:
 

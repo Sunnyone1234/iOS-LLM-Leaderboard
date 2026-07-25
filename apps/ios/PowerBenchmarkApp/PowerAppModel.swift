@@ -4,7 +4,9 @@ import PowerAppleTarget
 import PowerEvidence
 import PowerGitHubSubmission
 import PowerMLXRuntime
+import PowerReleasePreflight
 import PowerResultsStore
+import PowerRunCheckpointStore
 import PowerRunnerCore
 import PowerSubmissionKit
 import PowerTextProgram
@@ -56,6 +58,8 @@ final class PowerAppModel {
     var results: [StoredPowerResult] = []
     var selectedResultID: UUID?
     var resultLoadError: String?
+    var checkpointRecoveryNotice: String?
+    var checkpointRecoveryError: String?
     var isLoadingResults = false
     var selectedModelID =
         Power2CandidateCatalog.models.first?.id ?? ""
@@ -68,13 +72,20 @@ final class PowerAppModel {
     var submissionEnvironmentNotes = ""
     var acceptsSubmissionDeclarations = false
     var submissionState: SubmissionState = .idle
+    var releaseEligibility: PowerReleaseEligibility =
+        PowerAppBuildIdentity.isOfficialBuild ? .checking : .notRequired
 
     @ObservationIgnored
     private var runTask: Task<Void, Never>?
     @ObservationIgnored
     private var submissionTask: Task<Void, Never>?
+    @ObservationIgnored
+    private var didAttemptCheckpointRecovery = false
+    @ObservationIgnored
+    private let releasePreflight = PowerReleasePreflight()
 
     let store: PowerResultsStore
+    private let checkpointDirectory: URL
 
     init() {
         let fileManager = FileManager.default
@@ -88,6 +99,10 @@ final class PowerAppModel {
                 isDirectory: true
             )
         )
+        checkpointDirectory = documents.appendingPathComponent(
+            "Power2ActiveRun",
+            isDirectory: true
+        )
     }
 
     var selectedResult: StoredPowerResult? {
@@ -99,11 +114,24 @@ final class PowerAppModel {
 
     var measurementAvailable: Bool {
         PowerAppBuildIdentity.measurementAvailable
+            && (
+                !PowerAppBuildIdentity.isOfficialBuild
+                    || releaseEligibility.permitsOfficialUse
+            )
     }
 
     var submissionAvailable: Bool {
         PowerAppBuildIdentity.officialReleaseAvailable
-            && Power2ProductIdentity.appReleaseAvailable
+            && releaseEligibility == .current
+    }
+
+    var measurementLockReason: String? {
+        if let localReason = PowerAppBuildIdentity.measurementLockReason {
+            return localReason
+        }
+        guard PowerAppBuildIdentity.isOfficialBuild else { return nil }
+        return releaseEligibility.message
+            ?? "The current Power release has not been confirmed."
     }
 
     var selectedResultMatchesCurrentRelease: Bool {
@@ -168,6 +196,44 @@ final class PowerAppModel {
         }
     }
 
+    @discardableResult
+    func refreshReleaseEligibility() async -> Bool {
+        guard PowerAppBuildIdentity.isOfficialBuild else {
+            releaseEligibility = .notRequired
+            return true
+        }
+        guard let appRelease = PowerAppBuildIdentity.appRelease else {
+            releaseEligibility = .updateRequired(
+                "This source-built App has no complete release declaration. "
+                    + "Update the repository and rebuild."
+            )
+            return false
+        }
+        releaseEligibility = .checking
+        let checkedEligibility = await releasePreflight.check(
+            declaration: .init(
+                stackID: Power2ProductIdentity.stackID,
+                appVersion: appRelease.version,
+                appBuild: appRelease.build,
+                appSourceRevision: appRelease.sourceRevision,
+                embeddedMeasurementStackSHA256:
+                    appRelease.embeddedMeasurementStackSHA256,
+                runnerCertificateID:
+                    Power2CandidateCatalog.runnerCertificateID,
+                bundleIdentifier:
+                    PowerAppBuildIdentity.bundleIdentifier
+            )
+        )
+        if checkedEligibility == .current {
+            releaseEligibility = .current
+        } else if PowerAppBuildIdentity.releaseRehearsalEnabled {
+            releaseEligibility = .releaseCandidate
+        } else {
+            releaseEligibility = checkedEligibility
+        }
+        return releaseEligibility.permitsOfficialUse
+    }
+
     func startRun() {
         guard measurementAvailable, !runState.isRunning else {
             return
@@ -200,6 +266,10 @@ final class PowerAppModel {
     func reloadResults() async {
         isLoadingResults = true
         defer { isLoadingResults = false }
+        if !didAttemptCheckpointRecovery {
+            didAttemptCheckpointRecovery = true
+            await recoverInterruptedRun()
+        }
         do {
             results = try await store.list()
             resultLoadError = nil
@@ -218,6 +288,14 @@ final class PowerAppModel {
     private func performRun() async {
         defer { runTask = nil }
         do {
+            if PowerAppBuildIdentity.isOfficialBuild {
+                guard await refreshReleaseEligibility() else {
+                    throw RunError.releaseUnavailable(
+                        measurementLockReason
+                            ?? "The current Power release is unavailable."
+                    )
+                }
+            }
             guard
                 let model = selectedModel,
                 let workloadDefinition = selectedWorkload,
@@ -246,9 +324,29 @@ final class PowerAppModel {
                 workload: workload,
                 fixture: fixture
             )
+            let resultID = UUID()
+            let checkpointStore = try PowerRunCheckpointStore(
+                directory: checkpointDirectory,
+                context: .init(
+                    resultID: resultID,
+                    program: Power2CandidateCatalog.program,
+                    target: Power2CandidateCatalog.target,
+                    runnerCertificateID:
+                        Power2CandidateCatalog.runnerCertificateID,
+                    appRelease: appRelease,
+                    model: model.identity,
+                    workload: workload,
+                    workloadSHA256: workloadDefinition.sha256,
+                    thermalAssistance: thermalAssistance
+                )
+            )
 
             runState = .running
-            let runner = PowerRunner(runtime: runtime, target: target)
+            let runner = PowerRunner(
+                runtime: runtime,
+                target: target,
+                checkpointSink: checkpointStore
+            )
             let session = try await runner.run(requests: requests)
             let payload = try PowerTextProgramModule.makePayload(
                 workload: workload,
@@ -257,7 +355,7 @@ final class PowerAppModel {
             )
             let snapshot = session.targetAtStart
             let envelope = PowerEvidenceEnvelope(
-                resultID: UUID(),
+                resultID: resultID,
                 createdAt: session.startedAt,
                 program: Power2CandidateCatalog.program,
                 target: Power2CandidateCatalog.target,
@@ -282,6 +380,13 @@ final class PowerAppModel {
 
             runState = .saving
             let stored = try await store.save(envelope: envelope)
+            do {
+                try await checkpointStore.discard()
+            } catch {
+                checkpointRecoveryNotice =
+                    "The result was saved, but its completed checkpoint "
+                    + "will be cleaned up on the next launch."
+            }
             await reloadResults()
             selectedResultID = stored.id
             runState = .completed(stored.id)
@@ -298,9 +403,39 @@ final class PowerAppModel {
         }
     }
 
+    private func recoverInterruptedRun() async {
+        do {
+            guard let recovery = try PowerRunCheckpointStore.recover(
+                from: checkpointDirectory
+            ) else {
+                return
+            }
+            if let envelope = recovery.envelope {
+                let stored = try await store.save(envelope: envelope)
+                selectedResultID = stored.id
+                runState = .completed(stored.id)
+            }
+            try PowerRunCheckpointStore.discardCheckpoint(
+                in: checkpointDirectory
+            )
+            checkpointRecoveryNotice = recovery.notice
+            checkpointRecoveryError = nil
+        } catch {
+            checkpointRecoveryError =
+                "The interrupted Power run checkpoint could not be "
+                + "recovered: \(error.localizedDescription)"
+        }
+    }
+
     private func performSubmission() async {
         defer { submissionTask = nil }
         do {
+            guard await refreshReleaseEligibility() else {
+                throw SubmissionError.releaseUnavailable(
+                    measurementLockReason
+                        ?? "The current Power release is unavailable."
+                )
+            }
             guard
                 submissionAvailable,
                 selectedResultMatchesCurrentRelease,
@@ -357,6 +492,7 @@ final class PowerAppModel {
 private enum RunError: LocalizedError {
     case incompleteBuildIdentity
     case physicalDeviceRequired
+    case releaseUnavailable(String)
 
     var errorDescription: String? {
         switch self {
@@ -365,15 +501,23 @@ private enum RunError: LocalizedError {
                 + "build with an exact generated App source identity."
         case .physicalDeviceRequired:
             "Power testing can run only on a physical iPhone."
+        case .releaseUnavailable(let message):
+            message
         }
     }
 }
 
 private enum SubmissionError: LocalizedError {
     case unavailable
+    case releaseUnavailable(String)
 
     var errorDescription: String? {
-        "This build or selected result is not eligible for the current "
-            + "Power submission flow."
+        switch self {
+        case .unavailable:
+            "This build or selected result is not eligible for the current "
+                + "Power submission flow."
+        case .releaseUnavailable(let message):
+            message
+        }
     }
 }

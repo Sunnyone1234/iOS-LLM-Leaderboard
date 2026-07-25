@@ -11,6 +11,14 @@ let package = Package(
     products: [
         .library(name: "PowerResultsStore", targets: ["PowerResultsStore"]),
         .library(
+            name: "PowerRunCheckpointStore",
+            targets: ["PowerRunCheckpointStore"]
+        ),
+        .library(
+            name: "PowerReleasePreflight",
+            targets: ["PowerReleasePreflight"]
+        ),
+        .library(
             name: "PowerSubmissionKit",
             targets: ["PowerSubmissionKit"]
         ),
@@ -32,6 +40,24 @@ let package = Package(
                 ),
             ]
         ),
+        .target(
+            name: "PowerRunCheckpointStore",
+            dependencies: [
+                .product(
+                    name: "PowerEvidence",
+                    package: "PowerRunnerKit"
+                ),
+                .product(
+                    name: "PowerRunnerCore",
+                    package: "PowerRunnerKit"
+                ),
+                .product(
+                    name: "PowerTextProgram",
+                    package: "PowerRunnerKit"
+                ),
+            ]
+        ),
+        .target(name: "PowerReleasePreflight"),
         .target(
             name: "PowerSubmissionKit",
             dependencies: [
@@ -65,6 +91,28 @@ let package = Package(
                     package: "PowerRunnerKit"
                 ),
             ]
+        ),
+        .testTarget(
+            name: "PowerRunCheckpointStoreTests",
+            dependencies: [
+                "PowerRunCheckpointStore",
+                .product(
+                    name: "PowerEvidence",
+                    package: "PowerRunnerKit"
+                ),
+                .product(
+                    name: "PowerRunnerCore",
+                    package: "PowerRunnerKit"
+                ),
+                .product(
+                    name: "PowerTextProgram",
+                    package: "PowerRunnerKit"
+                ),
+            ]
+        ),
+        .testTarget(
+            name: "PowerReleasePreflightTests",
+            dependencies: ["PowerReleasePreflight"]
         ),
         .testTarget(
             name: "PowerSubmissionKitTests",

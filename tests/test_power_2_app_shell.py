@@ -68,11 +68,13 @@ class Power2AppShellTests(unittest.TestCase):
             / "PowerBenchmarkApp"
             / "PowerAppModel.swift"
         ).read_text(encoding="utf-8")
-        self.assertIn("static let appReleaseAvailable = true", identity)
+        self.assertNotIn("isReleaseCandidate", identity)
+        self.assertNotIn("appReleaseAvailable", identity)
         self.assertNotIn("publicIntakeOpen", identity)
         self.assertNotIn("submissionRehearsalAvailable", identity)
+        self.assertIn("releaseEligibility == .current", model)
         self.assertIn(
-            "Power2ProductIdentity.appReleaseAvailable",
+            "PowerAppBuildIdentity.releaseRehearsalEnabled",
             model,
         )
         self.assertNotIn("publicIntakeOpen", model)
@@ -102,7 +104,7 @@ class Power2AppShellTests(unittest.TestCase):
                 f'id: "{model["registryEntryID"]}"',
                 catalog,
             )
-        self.assertIn("power2-runner-", catalog)
+        self.assertIn("power2-runner-ac490be49347", catalog)
 
     def test_certification_build_is_isolated_and_source_bound(self) -> None:
         project = (APP_PROJECT / "project.pbxproj").read_text(
@@ -139,7 +141,8 @@ class Power2AppShellTests(unittest.TestCase):
             info_plist,
         )
         self.assertIn("AppleIPhoneTargetAdapter()", model)
-        self.assertIn("PowerRunner(runtime: runtime, target: target)", model)
+        self.assertIn("let runner = PowerRunner(", model)
+        self.assertIn("checkpointSink: checkpointStore", model)
         self.assertIn("PowerEvidenceEnvelope(", model)
         self.assertIn("store.save(envelope: envelope)", model)
 
@@ -191,6 +194,9 @@ class Power2AppShellTests(unittest.TestCase):
             / "PowerBenchmarkApp"
             / "PowerAppBuildIdentity.swift"
         ).read_text(encoding="utf-8")
+        info_plist = (
+            APP_ROOT / "PowerBenchmarkApp" / "Info.plist"
+        ).read_text(encoding="utf-8")
         model = (
             APP_ROOT
             / "PowerBenchmarkApp"
@@ -201,6 +207,12 @@ class Power2AppShellTests(unittest.TestCase):
         self.assertIn("LocalSigning.xcconfig", signing)
         self.assertIn("ReleaseIdentity.generated.xcconfig", signing)
         self.assertIn("POWER_SOURCE_REVISION =", signing)
+        self.assertIn("POWER_RELEASE_REHEARSAL = NO", signing)
+        self.assertIn("<key>PowerReleaseRehearsal</key>", info_plist)
+        self.assertIn(
+            "<string>$(POWER_RELEASE_REHEARSAL)</string>",
+            info_plist,
+        )
         self.assertNotIn('POWER_SOURCE_REVISION = "";', project)
         self.assertLess(
             signing.index("POWER_SOURCE_REVISION ="),
@@ -226,6 +238,7 @@ class Power2AppShellTests(unittest.TestCase):
         self.assertIn("case official", identity)
         self.assertIn("declaredKind == compiledKind", identity)
         self.assertIn("measurementLockReason", identity)
+        self.assertIn("releaseRehearsalEnabled", identity)
         self.assertIn("App source", (
             APP_ROOT / "PowerBenchmarkApp" / "PowerTestView.swift"
         ).read_text(encoding="utf-8"))
@@ -233,6 +246,7 @@ class Power2AppShellTests(unittest.TestCase):
             "PowerAppBuildIdentity.officialReleaseAvailable",
             model,
         )
+        self.assertIn("releaseEligibility == .current", model)
 
         generated = subprocess.run(
             [

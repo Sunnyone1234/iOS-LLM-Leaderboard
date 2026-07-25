@@ -2,96 +2,96 @@
 
 ## Goal
 
-Let iOS developers contribute reviewable physical-device evidence without
-manually constructing benchmark JSON or learning the whole repository.
+Let iOS developers contribute reviewable physical-device Power evidence
+without hand-writing benchmark JSON or learning the repository control plane.
 
-## Current flow
+The only current public result path is Power 2:
 
 ```text
-official App → one physical-device run → untouched result export
-→ contributor manifest → pull request → CI validation
-→ automatic acceptance or maintainer review → live community view
+current source checkout
+→ locally signed Official configuration
+→ physical-iPhone run
+→ immutable two-file package
+→ contributor-owned pull request
+→ trusted base-repository intake
+→ Accepted / manual review / rejected
+→ deterministic ranking view
 ```
 
-A configured App can create the contributor-owned fork, evidence commit, and
-pull request through GitHub device authorization. It never writes directly to
-`main`. App 0.18.0 builds without the public OAuth Client ID may export the raw
-result for backup, but must be configured and rebuilt before submission. The
-retained `scripts/power.py` command is pinned to compatibility policy 1.1.1
-and is not a bypass for a runner added by a later compatibility policy.
+Power 1.0, Power 1.1, and Framework v1 packages, tools, and review records are
+read-only audit assets. They are not compatibility inputs or alternate public
+submission paths.
 
-The package lives under
-`submissions/suite-b/power-1.1.0/draft/<submission-id>/`. `result.json` is
-byte-for-byte the App export. `submission.json` binds it to the final Power 1.1
-release, contributor, conflict disclosure, environment disclosure, and license
-declarations.
+## Two pull-request lanes
 
-The pull-request author must match the declared GitHub handle. App Attest,
-UDID, serial number, and persistent device fingerprints are not required.
+Result PRs and ordinary repository PRs are intentionally separate.
 
-## Privacy boundary
+| Lane | Scope | Automation |
+| --- | --- | --- |
+| Power evidence | Only complete UUID-named `result.json` + `submission.json` packages under the current Power 2 submission root | Trusted intake may label and automatically merge |
+| Code, docs, policy, App, or infrastructure | Normal focused repository changes; never mixed with result packages | Normal review and required checks; no evidence auto-accept |
 
-Expected public technical fields include device model, OS version/build, App
-and benchmark release, model artifact and runtime identity, inference settings,
-raw measurements, thermal observations, failures, and integrity hashes.
+This separation prevents a submitted result from executing contributor code
+and prevents evidence-only automation from merging unrelated repository
+changes.
 
-The App and package must not collect Apple ID, serial number, UDID, device
-name, personal prompts, user documents, or unrelated app data.
+## Source-built identity and trust
 
-## Validation and publication
+Contributors build and sign the supported Official configuration locally with
+their own Apple Team ID. Team identity is not benchmark identity. The App
+embeds the repository-generated App release declaration, but a local build
+cannot cryptographically prove that its installed binary came from unmodified
+source.
 
-CI validates package shape, raw hash binding, contributor declarations, the
-frozen Power contract, the versioned exact-runner allowlist, duplicate
-identity, and a live-ranking preview. Clean
-evidence-only PRs are labeled `power:auto-accept` and may auto-merge after
-required checks. Valid conflict or environmental-assistance disclosures route
-to `power:manual-review`; invalid, incompatible, duplicated, or mixed-scope
-PRs route to `power:rejected`. Validation does not mutate the result, assign
-Maintainer Reference status, or change an immutable release.
+The trust language is therefore:
 
-The original App 0.13.0 reference remains valid. Current policy 1.1.4 also
-accepts App 0.16.0 build 19, both approved App 0.17.0 build 20 identities, and
-App 0.18.0 build 21 only at protected-merge commit
-`8920a423f4b4abff4e34a2d8a128a3962899258e` with its exact runtime identity.
-App 0.15.0 evidence remains `runner_incompatible`; a second
-contributor or manual review cannot convert an unapproved runner into valid
-evidence.
-
-Merging a valid package makes it eligible for the live community evidence view
-when its primary metric and ordinary thermal policy are eligible. Deliberate
-cooling, deliberate heating, other assistance, or unknown assistance is
-retained but not included in the ordinary live ranking.
-
-## Evidence language
-
-| Display or evidence term | Meaning |
+| Evidence state | Meaning |
 | --- | --- |
-| Unreviewed | Valid merged package without a formal trust transition |
-| Single contributor | One metric-eligible GitHub account in an exact cell |
-| Reproduced | Two or more independent eligible accounts in an exact cell |
-| Community aggregate | Three or more independent eligible accounts |
-| Verified | A separate formal review confirms the required release and evidence rules |
-| Maintainer Reference | Maintainer-run reference evidence published by a release decision |
+| Accepted | One eligible contributor supplied self-declared source-built evidence whose bytes, identities, declarations, and current contracts pass trusted CI |
+| Reproduced | Two independent eligible GitHub accounts supplied matching evidence in the exact comparison cell |
+| Contributor-weighted | Three or more independent eligible accounts permit per-contributor reduction before cross-contributor aggregation |
 
-The live `Reproduced` label is a deterministic contributor-count fact. It does
-not silently rewrite the formal trust level.
+`Accepted` is not a verified-binary claim. Independent reproduction is the
+first confidence increase. No contributor, App field, label, or manual button
+may self-assign `Reproduced`.
 
-One case-insensitive GitHub account counts once per exact comparison cell and
-may contribute to any number of different cells. Repeated eligible runs are
-retained, then reduced to one per-contributor median before cross-contributor
-aggregation.
+One case-insensitive GitHub account counts once per exact cell. Repeated valid
+runs remain evidence and are reduced to one per-contributor median before
+cross-contributor aggregation.
 
-## Automation boundary
+## Privacy and evidence boundary
 
-The in-App flow preserves the two-file evidence boundary, contributor
-ownership, and public validation. Automatic merge applies only to new package
-files that pass all ordinary ranking gates. Disclosed conflicts and assisted
-environments remain human decisions; frozen runner incompatibility and invalid
-evidence cannot be overridden by the App.
+Expected public technical fields include exact device model, OS version/build,
+App release declaration, Program, Target, workload, model artifact, Runtime,
+Runner certificate, inference settings, attempts, failures, timing, memory,
+thermal observations, and integrity hashes.
 
-Historical Framework v1 and Power 1.0 submission paths remain in versioned
-directories for auditability. They are not the current public contribution
-route.
+The package must not collect Apple ID, serial number, UDID, device name,
+personal prompts, user documents, or unrelated App data. `result.json` is
+preserved byte-for-byte. `submission.json` adds the contributor identity,
+conflict and environment disclosures, declarations, and CC BY 4.0 acceptance.
 
-See [Power 1.1 quickstart](../contributor-kit/power-1.1-quickstart.md) and
-[live ranking policy](power-community-ranking.md).
+## Trusted automation boundary
+
+The App creates a new fork branch from the exact current upstream head and
+opens a result-only PR. It never updates the contributor fork's default branch.
+
+`pull_request_target` intake executes only trusted base-branch code. Candidate
+files are fetched as data and never executed. Intake validates:
+
+- the current two-file package shape and immutable result digest;
+- the contributor/PR-author binding and required declarations;
+- exact current Program, Target, workload, model, Runtime, Runner certificate,
+  and App release declarations;
+- physical-device and admission requirements;
+- duplicate result/session identity;
+- structural, protocol, behavior, recommendation, and per-metric eligibility;
+- result-only PR scope.
+
+Clean ordinary evidence receives `power:auto-accept`; disclosures requiring a
+human decision receive `power:manual-review`; hard failures receive
+`power:rejected`. Accepted failures, cancellations, OOMs, and metric-ineligible
+attempts remain evidence even when they cannot supply a ranking metric.
+
+See the [Power contributor guide](../contributor-kit/power.md) for the user
+flow and [Power ranking policy](power-community-ranking.md) for aggregation.

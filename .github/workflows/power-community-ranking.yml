@@ -62,16 +62,14 @@ jobs:
           tests.test_power_2_runner_components
           tests.test_power_2_app_shell
           -v
-      - name: Validate current Power packages
-        env:
-          VALIDATOR_SOURCE_REVISION: ${{ github.sha }}
-        run: >-
-          python3 scripts/power validate
-          submissions/power/text-generation-performance/2.0.0/draft
-          --validator-source-revision "$VALIDATOR_SOURCE_REVISION"
       - name: Generate community ranking preview
         env:
           VALIDATOR_SOURCE_REVISION: ${{ github.sha }}
+        # Result-only PRs are authoritatively gated by Power submission
+        # triage. Ranking generation must retain and explicitly exclude
+        # packages from superseded releases instead of making every future
+        # product release fail because historical draft evidence is no longer
+        # current.
         run: >-
           python3 scripts/power preview
           --output /tmp/power-community-ranking

@@ -63,7 +63,7 @@ const COLUMN_HELP = Object.freeze({
   runtime: "Exact inference runtime version recorded by the result.",
   value: "Primary metric for the selected workload. The arrow shows ranking direction.",
   contributors: "Distinct GitHub contributors; one account counts once per exact cell.",
-  state: "Accepted at one contributor, reproduced at two, contributor-weighted at three.",
+  state: "Accepted self-declared evidence at one contributor, independently reproduced at two, contributor-weighted at three.",
   details: "Complete comparison identity and immutable source-result hashes.",
 });
 

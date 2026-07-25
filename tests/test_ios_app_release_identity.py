@@ -224,7 +224,7 @@ class IOSAppReleaseIdentityTests(unittest.TestCase):
         for name in adapters[:3]:
             self.assertNotIn(name, ranking_workflow)
         self.assertNotIn(Path(adapters[3]).stem, triage_workflow)
-        self.assertIn("scripts/power validate", ranking_workflow)
+        self.assertNotIn("scripts/power validate", ranking_workflow)
         self.assertIn("scripts/power preview", ranking_workflow)
         self.assertIn("scripts/triage_power2_submission_pr.py", triage_workflow)
 

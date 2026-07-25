@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Generate the digest manifest for candidate Power 2 Swift runner modules."""
+"""Generate the digest manifest for the next Power 2 Runner candidate.
+
+The active Runner manifest is a released identity and must not be rewritten
+when source development continues. This generator writes a separate,
+lifecycle-neutral candidate manifest. Certification and release state belong
+to the release plan and Runner certificate, not to this source digest.
+"""
 
 from __future__ import annotations
 
@@ -13,7 +19,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_ROOT = ROOT / "apps/PowerRunnerKit"
-OUTPUT_PATH = PACKAGE_ROOT / "component-manifest.json"
+OUTPUT_PATH = PACKAGE_ROOT / "candidate-component-manifest.json"
 PACKAGE_MANIFEST_PATH = PACKAGE_ROOT / "Package.swift"
 COMPONENTS = {
     "evidenceEnvelope": "PowerEvidence",
@@ -57,9 +63,8 @@ def _component(name: str) -> dict[str, Any]:
 
 def render_manifest() -> str:
     value = {
-        "schemaVersion": "power-runner-component-manifest-1.0.0-draft.1",
+        "schemaVersion": "power-runner-component-manifest-1.0.0",
         "productID": "power",
-        "status": "migration-draft",
         "packageManifest": {
             "path": _relative(PACKAGE_MANIFEST_PATH),
             "sha256": _sha256(PACKAGE_MANIFEST_PATH),
@@ -76,11 +81,6 @@ def render_manifest() -> str:
             key: _component(module)
             for key, module in COMPONENTS.items()
         },
-        "completeForCertification": False,
-        "certificationBlockers": [
-            "run a physical-device smoke test",
-            "review raw physical-device evidence",
-        ],
     }
     return json.dumps(value, indent=2, sort_keys=True) + "\n"
 
@@ -106,7 +106,8 @@ def main(argv: list[str] | None = None) -> int:
             actual = ""
         if actual != expected:
             print(
-                "error: apps/PowerRunnerKit/component-manifest.json is stale",
+                "error: apps/PowerRunnerKit/"
+                "candidate-component-manifest.json is stale",
                 file=sys.stderr,
             )
             return 1

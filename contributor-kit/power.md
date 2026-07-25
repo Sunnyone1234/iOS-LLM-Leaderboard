@@ -1,8 +1,10 @@
 # Contribute a Power result
 
-Power accepts evidence produced by an exact supported Official App release on
-a physical iPhone. A source-built Developer App is useful for code and UI
-work, but cannot create ranking evidence.
+Power accepts evidence produced on a physical iPhone by the exact supported
+Official source configuration. Contributors build and sign it locally. The
+embedded App release identity is therefore a self-declaration, not
+cryptographic attestation of the installed binary. A Developer configuration
+is useful for code and UI work, but cannot create ranking evidence.
 
 > **Current release:** public Power 2 intake is open. The supported Official
 > App release and exact stack are pinned by
@@ -11,7 +13,9 @@ work, but cannot create ranking evidence.
 
 ## App flow
 
-1. Install the current supported **Power Benchmark** Official build.
+1. Check out the current repository revision and build the supported
+   **Power Benchmark** Official configuration according to the linked release
+   instructions.
 2. Open **Test**, choose one registered model and workload, then prepare the
    model.
 3. Run the benchmark on a physical iPhone. Do not edit the saved result.
@@ -76,13 +80,17 @@ The result is labeled:
 - `power:rejected` — a hard gate or result-only scope rule failed.
 
 Acceptance and ranking are separate. Valid failures, cancellations, OOMs, or
-metric-ineligible attempts remain evidence. One contributor creates accepted
-evidence, two distinct contributors reproduce an exact comparison cell, and
-three enable contributor-weighted aggregation. There is no global Power score.
+metric-ineligible attempts remain evidence. A single eligible contributor
+creates **Accepted** evidence based on the contributor's declarations and
+trusted validation of the submitted bytes; this is not a verified-binary
+claim. Two distinct eligible contributors make the exact comparison cell
+**Reproduced**, and three enable contributor-weighted aggregation. There is no
+global Power score.
 
 ## Before asking for help
 
-- Confirm the App says **Official**, not Developer or Certification.
+- Confirm the App says **Official (source-built)**, not Developer or
+  Certification.
 - Confirm you selected the intended saved result in **Results**.
 - Do not reformat or resave `result.json`.
 - Keep code/documentation changes in a separate pull request from evidence.

@@ -25,19 +25,19 @@ reproducibility. It must not leak into the contributor entry path.
 Do not add a new top-level directory unless none of these owns the content:
 
 - `benchmarks/` — suite specifications and release contracts;
-- `apps/` — candidate App shell and independently digestible runner modules;
+- `apps/` — active App shell and independently digestible runner modules;
   owned by App and runner maintainers, MIT licensed, source-evolving with
   released identities and component digests retained;
 - `contributor-kit/` — the current short contribution path plus clearly
   labeled historical guides;
 - `docs/` — product, governance, current methods, and retained decisions;
 - `examples/` — focused integration recipes;
-- `ios-app/` — official benchmark runner;
+- `ios-app/` — historical Power 1.1 App source, audit only;
 - `methodology/` — cross-suite benchmark conventions;
 - `models/` — model catalogs and compatibility metadata;
 - `products/` — versioned Product, Program, Target, and policy contracts;
   currently contains the active Power 2 pointer, certified Runner, supported
-  App build 4 release, and retained candidates; owned by
+  App build 5 release, and retained candidates; owned by
   product and methodology maintainers, CC BY 4.0, and immutable once released;
 - `results/` — raw and generated evidence by release;
 - `schemas/` — machine-readable contracts;
@@ -62,8 +62,9 @@ The existing `ios-app/` is a historical Power 1.1 application. `apps/` is
 needed because the approved Target model extends beyond
 one iPhone project and requires the App shell, Runner Core, Program Modules,
 Target Adapters, Runtime Adapters, and evidence serialization to be separately
-testable and digestible. Candidate code under `apps/` is not certified or
-public merely because it exists.
+testable and digestible. Source under `apps/` is not certified merely because
+it exists; immutable App releases and Runner certificates identify released
+snapshots.
 
 ## Rules that prevent growth from becoming bloat
 

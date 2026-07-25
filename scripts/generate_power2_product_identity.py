@@ -16,7 +16,7 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CANDIDATE_PATH = ROOT / "products/power/candidate.json"
+NEXT_PATH = ROOT / "products/power/next.json"
 CURRENT_PATH = ROOT / "products/power/current.json"
 OUTPUT_PATH = ROOT / "apps/ios/Power2ProductIdentity.generated.swift"
 
@@ -40,10 +40,20 @@ def _reference(value: Any, field: str) -> dict[str, str]:
 
 
 def load_product_identity() -> dict[str, Any]:
-    source_path = CURRENT_PATH if CURRENT_PATH.exists() else CANDIDATE_PATH
+    source_path = NEXT_PATH if NEXT_PATH.exists() else CURRENT_PATH
     value = json.loads(source_path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
         raise ValueError("Power product pointer must be a JSON object")
+    if (
+        source_path == NEXT_PATH
+        and value.get("state") == "activated"
+    ):
+        source_path = CURRENT_PATH
+        value = json.loads(source_path.read_text(encoding="utf-8"))
+        if not isinstance(value, dict):
+            raise ValueError(
+                "active Power product pointer must be a JSON object"
+            )
     status = value.get("status")
     if source_path == CURRENT_PATH:
         if (
@@ -53,23 +63,24 @@ def load_product_identity() -> dict[str, Any]:
         ):
             raise ValueError("unsupported active Power product pointer")
         runner_key = "runnerComponents"
-        app_key = "appRelease"
     else:
+        next_state = value.get("state")
         if (
             value.get("schemaVersion")
-            != "power-stack-pointer-1.0.0-draft.1"
-            or status != "migration-draft"
+            != "power-release-plan-1.0.0"
+            or status is not None
+            or next_state not in (
+                "runner-certification-required",
+                "app-release-rehearsal-required",
+            )
             or value.get("publicIntakeOpen") is not False
             or value.get("appRelease") is not None
         ):
-            raise ValueError("unsupported Power migration candidate")
-        runner_key = "runnerCandidate"
-        app_key = "appReleaseCandidate"
+            raise ValueError("unsupported next Power release plan")
+        runner_key = "runnerComponents"
     _string(value.get("stackID"), "stackID")
     _reference(value.get("measurementStack"), "measurementStack")
     _reference(value.get(runner_key), runner_key)
-    _reference(value.get("runnerCertificate"), "runnerCertificate")
-    _reference(value.get(app_key), app_key)
     value["_runnerReferenceKey"] = runner_key
     return value
 
@@ -87,9 +98,6 @@ enum Power2ProductIdentity {{
     static let measurementStackSHA256 = "{stack['sha256']}"
     static let runnerComponentsManifestPath = "{runner['path']}"
     static let runnerComponentsManifestSHA256 = "{runner['sha256']}"
-    // A release candidate may be rehearsed before trusted public intake opens.
-    // Repository validation decides whether any produced result is accepted.
-    static let appReleaseAvailable = true
 }}
 """
 

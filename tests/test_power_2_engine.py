@@ -15,9 +15,9 @@ from scripts import triage_power2_submission_pr as triage
 from scripts.review_power2_app_release_result import (
     review_result as review_app_release_result,
 )
-from scripts.review_power2_certification_result import review_result
 from scripts.lib.power2 import json_schema
 from scripts.lib.power2.engine import (
+    Power2ValidationError,
     ROOT,
     load_candidate_app_release_review_context,
     load_candidate_certification_review_context,
@@ -592,102 +592,80 @@ class Power2EngineTests(unittest.TestCase):
         self.assertIn("app-release-not-supported", report["reasonCodes"])
         self.assertIn("public-intake-closed", report["reasonCodes"])
 
-    def test_certification_review_opens_only_candidate_review_gates(
+    def test_certification_review_closes_after_certificate_issuance(
         self,
     ) -> None:
-        review_context = load_candidate_certification_review_context()
-        result = self.make_result()
-        result["runnerCertificateID"] = (
-            review_context.runner_certificate["certificateID"]
-        )
-        result["appRelease"] = {
-            "version": review_context.app_release["version"],
-            "build": review_context.app_release["build"],
-            "sourceRevision":
-                review_context.app_release["sourceRevision"],
-            "embeddedMeasurementStackSHA256":
-                review_context.measurement_stack_sha256,
-        }
-        result["runtime"] = review_context.runner_certificate["runtime"]
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "certification-result.json"
-            path.write_text(
-                json.dumps(result, indent=2, sort_keys=True) + "\n",
-                encoding="utf-8",
-            )
-            report = review_result(
-                path,
-                evaluated_at=EVALUATED_AT,
-                validator_source_revision=VALIDATOR_SOURCE_REVISION,
-            )
+        with self.assertRaises(Power2ValidationError):
+            load_candidate_certification_review_context()
 
-        self.assertEqual(report["status"], "pass")
-        self.assertEqual(report["physicalDeviceSmokeRun"], "pass")
-        self.assertEqual(report["rawResultReview"], "pass")
-        self.assertEqual(
-            report["validator"]["sourceRevision"],
-            VALIDATOR_SOURCE_REVISION,
-        )
-        self.assertFalse(report["publishable"])
-        self.assertFalse(report["rankingEligible"])
-        self.assertEqual(
-            report["checks"]["runnerCertificate"]["status"],
-            "pass",
-        )
-        self.assertEqual(
-            report["checks"]["appRelease"]["status"],
-            "pass",
-        )
-
-    def test_app_release_review_opens_only_official_review_gates(
+    def test_app_release_review_closes_after_activation(
         self,
     ) -> None:
-        review_context = load_candidate_app_release_review_context()
-        result = self.make_result()
-        result["runnerCertificateID"] = (
-            review_context.runner_certificate["certificateID"]
+        with self.assertRaises(Power2ValidationError):
+            load_candidate_app_release_review_context()
+
+    def test_ranking_preview_excludes_superseded_retained_package(
+        self,
+    ) -> None:
+        retained_submission_id = "34A91509-406A-4948-95A3-54B82E7760A9"
+        submissions_root = (
+            ROOT
+            / "submissions"
+            / "power"
+            / "text-generation-performance"
+            / "2.0.0"
+            / "draft"
         )
-        result["appRelease"] = {
-            "version": review_context.app_release["version"],
-            "build": review_context.app_release["build"],
-            "sourceRevision":
-                review_context.app_release["sourceRevision"],
-            "embeddedMeasurementStackSHA256":
-                review_context.measurement_stack_sha256,
-        }
-        result["runtime"] = review_context.runner_certificate["runtime"]
         with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "official-result.json"
-            path.write_text(
-                json.dumps(result, indent=2, sort_keys=True) + "\n",
-                encoding="utf-8",
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    str(ROOT / "scripts" / "power"),
+                    "preview",
+                    "--submissions-root",
+                    str(submissions_root),
+                    "--output",
+                    directory,
+                    "--generated-at",
+                    EVALUATED_AT,
+                    "--validator-source-revision",
+                    VALIDATOR_SOURCE_REVISION,
+                ],
+                cwd=ROOT,
+                check=False,
+                capture_output=True,
+                text=True,
             )
-            report = review_app_release_result(
-                path,
-                evaluated_at=EVALUATED_AT,
-                validator_source_revision=VALIDATOR_SOURCE_REVISION,
+            self.assertEqual(
+                completed.returncode,
+                0,
+                completed.stderr or completed.stdout,
+            )
+            dataset = json.loads(
+                (Path(directory) / "ranking.json").read_text()
             )
 
-        self.assertEqual(report["status"], "pass")
-        self.assertEqual(
-            report["physicalDeviceEndToEndRehearsal"],
-            "pass",
+        retained = next(
+            contribution
+            for contribution in dataset["excluded"]
+            if contribution["submissionID"] == retained_submission_id
         )
-        self.assertFalse(report["publishable"])
-        self.assertFalse(report["rankingEligible"])
-        self.assertEqual(
-            report["checks"]["runnerCertificate"]["status"],
-            "pass",
+        self.assertEqual(retained["classification"], "reject")
+        self.assertIn(
+            "app-release-not-supported",
+            retained["reasonCodes"],
         )
-        self.assertEqual(
-            report["checks"]["appRelease"]["status"],
-            "pass",
+        self.assertIn(
+            "runner-certificate-not-active",
+            retained["reasonCodes"],
         )
 
     def test_power2_command_line_entries_run_directly(self) -> None:
         for relative_path in (
+            "scripts/issue_power_next_runner_certificate.py",
             "scripts/review_power2_app_release_result.py",
             "scripts/review_power2_certification_result.py",
+            "scripts/stage_power_next_app_release.py",
             "scripts/triage_power2_submission_pr.py",
         ):
             with self.subTest(script=relative_path):

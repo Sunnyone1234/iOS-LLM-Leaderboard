@@ -1,34 +1,34 @@
 {
-  "activatedAt": "2026-07-24T21:28:16Z",
+  "activatedAt": "2026-07-25T13:07:58Z",
   "activationEvidence": {
     "result": {
-      "path": "products/power/app-releases/evidence/982ed291-5583-4e20-9873-176887b413cc/result.json",
-      "sha256": "65fcaacac72942c3be8412abde0ffb54e618f69e82f05919cee35dc2895b0ce0"
+      "path": "products/power/app-releases/evidence/f38b67ec-5347-4f35-b4cd-895a0595e9b1/result.json",
+      "sha256": "74810efe6dc82781ca017596d96c90be67f8d66c8e80a00ab8bf51e39a922e2a"
     },
     "review": {
-      "path": "products/power/app-releases/evidence/982ed291-5583-4e20-9873-176887b413cc/review.json",
-      "sha256": "6ee8c0d05ff5b37e6a7529819a7d384cf90c8102f6fe6358e47ebc15026bfb46"
+      "path": "products/power/app-releases/evidence/f38b67ec-5347-4f35-b4cd-895a0595e9b1/review.json",
+      "sha256": "2e073b9277ec3281a449ae8a05b45985a344ce95497c5cc5963eefcf62bc8d02"
     }
   },
   "appRelease": {
-    "path": "products/power/app-releases/power-app-2.0.0-build.4-63aaba5bd9d9.json",
-    "sha256": "8282d7073b7799e34df28bce1761bb47fa59fad7a5ece7c63feb34576e13c42f"
+    "path": "products/power/app-releases/power-app-2.0.0-build.5-a9b1c359107c.json",
+    "sha256": "a01a9b90bf70e6839d44d11a6168147ae8e980d5ce297bb2371f74849c56fc84"
   },
   "measurementStack": {
-    "path": "products/power/stacks/power-text-iphone-2.0.0-rc.1/manifest.json",
-    "sha256": "a92a208324af0ea85c092e1cf04248c669f01c588c9f0d0b724e4c40a1014642"
+    "path": "products/power/stacks/power-text-iphone-2.0.0-rc.2/manifest.json",
+    "sha256": "77a8a6b12c9008e9680d8cbfd41a867b4873680a9745172bee4e108f445b47b7"
   },
   "productID": "power",
   "publicIntakeOpen": true,
   "runnerCertificate": {
-    "path": "products/power/runner-certificates/power2-runner-87f62feecc2b.json",
-    "sha256": "5d4827d658d65766f8a68ff823f26f3dc2634be8c21dec95d6ea105183aabfc9"
+    "path": "products/power/runner-certificates/power2-runner-ac490be49347.json",
+    "sha256": "ccdd21aae88b88a385bca35241f40b96646fb88a9340df040991480e32c61610"
   },
   "runnerComponents": {
-    "path": "apps/PowerRunnerKit/component-manifest.json",
-    "sha256": "87f62feecc2b3fca994cc4f40214aed9876f1477c51fdb7c56c6945eb6b03ee2"
+    "path": "products/power/runner-certificates/evidence/83ecb818-e1f7-4118-80c9-1df9e6fbe8fe/runner-component-manifest.json",
+    "sha256": "ac490be49347ccf2fe6931aa4327921def04b664563afcec4e2809b201cffb1b"
   },
   "schemaVersion": "power-stack-pointer-1.0.0",
-  "stackID": "power-text-iphone-2.0.0-rc.1",
+  "stackID": "power-text-iphone-2.0.0-rc.2",
   "status": "active"
 }

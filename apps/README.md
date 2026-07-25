@@ -13,22 +13,22 @@ Lifecycle:
 - UI-only changes may reuse an existing certificate when its support record
   permits that App release.
 
-This root is necessary because the approved Target model is not limited to one
+This root is necessary because the Target model is not limited to one
 iPhone App. Shared shell, evidence, runner, Program, Target, and Runtime
 components must remain separately reviewable as iPad and macOS Targets are
-added. The current `ios-app/` remains the public Power 1.1 application during
-migration. Nothing under `apps/` is public or certified until the Power 2
-candidate is atomically released.
+added. `ios-app/` is retained historical Power 1.1 source; it is not the public
+App or an active compatibility path.
 
-Current migration contents:
+Current Power 2 contents:
 
 - `PowerRunnerKit/` — Power 2 evidence, Runner Core, text Program Module,
   Apple iPhone Target Adapter, and fixed-dependency MLX Runtime Adapter;
-- `PowerAppKit/` — result persistence, two-file submission packaging, and
-  direct GitHub contribution support. These non-measurement modules are kept
-  outside the runner-certificate digest;
-- `ios/` — the buildable, fail-closed candidate iOS App Shell, generated
-  identity/catalog, local-signing boundary, explicit Developer,
-  Certification, and Official build kinds, and physical-iPhone-only
-  certification smoke-test scheme. Candidate evidence stays local and cannot
-  enter public intake; this is not a released or certified App target.
+- `PowerAppKit/` — exact-byte result persistence, interrupted-run checkpoints,
+  remote current-release preflight, two-file packaging, and GitHub submission;
+- `ios/` — the active iOS App Shell with Test and Results tabs, generated
+  identities/catalog, local-signing boundary, and explicit Developer,
+  Certification, and Official source configurations.
+
+The active immutable Runner certificate and App release remain under
+`products/power/`. Editing measurement or App source does not mutate them; it
+starts a new certificate/App-release candidate.

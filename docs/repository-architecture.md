@@ -2,11 +2,16 @@
 
 > **Status: architecture implemented and Power 2 active.** The
 > `products/power/` active pointer, four exact model artifacts,
-> source- and physical-evidence-bound Runner certificate, supported build 4
+> source- and physical-evidence-bound Runner certificate, supported build 5
 > Official App release, trusted intake, and ranking engine exist. Automated,
 > generic Release, and exact Official physical-device checks passed before the
 > immutable App release and `current.json` were issued atomically. Public
-> intake is open.
+> intake is open. The separate `next.json` cycle certified
+> `power2-runner-ac490be49347`, froze Official build 5 replacement source
+> `a9b1c359…`, reviewed its exact physical-device App rehearsal, and completed
+> atomic activation. The preceding `bf5362…` rehearsal passed but is retained as
+> superseded, non-publishable evidence because its compiled candidate
+> lifecycle state would have kept submission closed after activation.
 > Power 1.1 is a historical archive, not a compatibility path. This migration
 > does not activate Build or make image, 3D, iPad, or macOS Programs available.
 
@@ -66,18 +71,26 @@ design capacity, not implemented products.
 | Candidate integrity and clean-break boundary | Enforced | `python3 scripts/repoctl.py verify-power-candidate` |
 | Exact model artifacts | Four revision- and content-pinned rerun candidates; no old rank imported | `models/registry.json` and `models/artifacts/` |
 | New validation engine | Structural, digest, contract, model, trust, contributor, behavior, recommendation, and per-metric gates active | `scripts/lib/power2/` |
-| Runner implementation | Runner Core, Program Module, iPhone Target Adapter, evidence layer, and fixed-dependency MLX Runtime Adapter implemented; automated checks, generic iOS Certification build, physical Certification run, and raw review pass for the exact certified digest | `apps/PowerRunnerKit/` and `products/power/runner-certificates/power2-runner-87f62feecc2b.json` |
-| App implementation | iOS App Shell, Results Store, Submission Kit, direct GitHub contributor client, saved-result selection, Certification path, and supported Official build 4 path implemented; generic and exact physical checks pass | `apps/ios/` and `apps/PowerAppKit/` |
+| Runner implementation | Runner Core, Program Module, iPhone Target Adapter, evidence layer, and fixed-dependency MLX Runtime Adapter implemented; automated checks, generic iOS Certification build, physical Certification run, and raw review pass for the exact active digest | `apps/PowerRunnerKit/` and `products/power/runner-certificates/power2-runner-ac490be49347.json` |
+| App implementation | iOS App Shell, Results Store, Submission Kit, direct GitHub contributor client, saved-result selection, Certification path, and supported Official build 5 path implemented; generic and exact physical checks pass | `apps/ios/` and `apps/PowerAppKit/` |
 | Two-file package, trusted PR routing, and ranking derivation | Implemented, tested, and open for supported Official evidence | `scripts/lib/power2/`, `scripts/triage_power2_submission_pr.py` |
-| Runner certificate and App release | Active immutable Runner certificate and supported build 4 App release issued from retained physical evidence; prior Official build 2 rehearsals remain audit evidence | `products/power/runner-certificates/power2-runner-87f62feecc2b.json`, `products/power/app-releases/power-app-2.0.0-build.4-63aaba5bd9d9.json` |
+| Runner certificate and App release | Active immutable `ac490…` Runner certificate and supported build 5 `a9b1c359…` App release issued from retained physical evidence; prior releases and rehearsals remain audit evidence | `products/power/runner-certificates/power2-runner-ac490be49347.json`, `products/power/app-releases/power-app-2.0.0-build.5-a9b1c359107c.json` |
 | CI intake rehearsal | Trusted-main PR #42 was classified `auto_accept` by the base-repository Power 2 workflow; its build 2 evidence remains non-publishable and non-ranking | `products/power/rehearsals/pr-42/` |
 | Physical evidence and public ranking | Runner Certification and exact Official App activation evidence retained; public intake is open and ranking awaits community contributions | `products/power/current.json` |
 | Public Power flow | One active Power 2 CLI and contribution guide | `scripts/power`, `contributor-kit/power.md` |
+| Next release cycle | Completed build 5 plan binds the reviewed `ac490…` Runner certificate, rc.2 stack, lifecycle-neutral immutable App component snapshot, passing replacement physical rehearsal, and atomic activation; the earlier `bf5362…` rehearsal remains superseded audit evidence | `products/power/next.json`, `products/power/app-releases/candidates/`, `products/power/app-releases/evidence/f38b67ec-5347-4f35-b4cd-895a0595e9b1/` |
 
 The retained candidate is a contract review and audit surface, not a second
 public pointer. `products/power/current.json` was published only after the
 model, Runner, App, CI, physical rehearsal, and contributor rehearsal gates
 completed.
+
+`current.json` and `next.json` have intentionally different jobs. The former
+is the sole public authority. The latter may advance through closed review
+gates, but cannot authorize submission or ranking. Runner evidence, its
+certificate, the new measurement stack, and the App source snapshot are
+frozen before the next physical test so the tested identity cannot drift
+between review and activation.
 
 ## Relationship formulas
 
@@ -280,9 +293,12 @@ release. The measurement stack contains the Program, Target, policies, Model
 Catalog and runner certificate; it never contains the App release. This avoids
 a hash cycle when the App embeds the measurement-stack digest.
 
-During migration, `candidate.json` fills the review role and `current.json`
-must remain absent so draft assets cannot be mistaken for an active release.
-Neither pointer duplicates workload or admission rules.
+The retained `candidate.json` records the initial migration and is historical
+after first activation. Ongoing work uses `next.json`: a fail-closed release
+plan that pins the active base release, the unchanged measurement stack, the
+next Runner source manifest, and the next App build. `current.json` remains
+the sole public authority until every physical review gate has passed and a
+new immutable release is moved into place atomically.
 
 The repository contract is read directly by Python. Only language-specific App
 identity is generated:

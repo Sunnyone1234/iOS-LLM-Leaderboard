@@ -3,12 +3,9 @@
 // not embedded; trusted repository CI remains authoritative.
 
 enum Power2ProductIdentity {
-    static let stackID = "power-text-iphone-2.0.0-rc.1"
-    static let measurementStackPath = "products/power/stacks/power-text-iphone-2.0.0-rc.1/manifest.json"
-    static let measurementStackSHA256 = "a92a208324af0ea85c092e1cf04248c669f01c588c9f0d0b724e4c40a1014642"
-    static let runnerComponentsManifestPath = "apps/PowerRunnerKit/component-manifest.json"
-    static let runnerComponentsManifestSHA256 = "87f62feecc2b3fca994cc4f40214aed9876f1477c51fdb7c56c6945eb6b03ee2"
-    // A release candidate may be rehearsed before trusted public intake opens.
-    // Repository validation decides whether any produced result is accepted.
-    static let appReleaseAvailable = true
+    static let stackID = "power-text-iphone-2.0.0-rc.2"
+    static let measurementStackPath = "products/power/stacks/power-text-iphone-2.0.0-rc.2/manifest.json"
+    static let measurementStackSHA256 = "77a8a6b12c9008e9680d8cbfd41a867b4873680a9745172bee4e108f445b47b7"
+    static let runnerComponentsManifestPath = "products/power/runner-certificates/evidence/83ecb818-e1f7-4118-80c9-1df9e6fbe8fe/runner-component-manifest.json"
+    static let runnerComponentsManifestSHA256 = "ac490be49347ccf2fe6931aa4327921def04b664563afcec4e2809b201cffb1b"
 }

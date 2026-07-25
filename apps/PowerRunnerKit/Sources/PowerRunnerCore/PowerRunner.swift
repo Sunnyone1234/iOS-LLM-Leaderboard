@@ -35,6 +35,14 @@ public struct PowerRunner: Sendable {
         let runtimeIdentity = await runtime.identity
         var attempts: [PowerRunnerAttemptRecord] = []
         var stopReason: PowerAttemptFailure?
+        try await checkpointSink?.beginSession(
+            .init(
+                startedAt: startedAt,
+                targetAtStart: targetAtStart,
+                runtimeIdentity: runtimeIdentity,
+                expectedAttemptCount: requests.count
+            )
+        )
 
         for request in requests {
             if let stopReason {
@@ -45,7 +53,7 @@ public struct PowerRunner: Sendable {
                     failure: stopReason
                 )
                 attempts.append(record)
-                try? await checkpointSink?.record(record)
+                try await checkpointSink?.record(record)
                 continue
             }
 
@@ -62,7 +70,7 @@ public struct PowerRunner: Sendable {
                     failure: failure
                 )
                 attempts.append(record)
-                try? await checkpointSink?.record(record)
+                try await checkpointSink?.record(record)
                 continue
             }
 
@@ -135,11 +143,16 @@ public struct PowerRunner: Sendable {
             attempts.append(record)
         }
 
+        let completion = PowerRunnerSessionCompletion(
+            endedAt: timestamp(),
+            thermalStateAtEnd: await target.currentThermalState()
+        )
+        try await checkpointSink?.finishSession(completion)
         return PowerRunnerSession(
             startedAt: startedAt,
-            endedAt: timestamp(),
+            endedAt: completion.endedAt,
             targetAtStart: targetAtStart,
-            thermalStateAtEnd: await target.currentThermalState(),
+            thermalStateAtEnd: completion.thermalStateAtEnd,
             runtimeIdentity: runtimeIdentity,
             attempts: attempts
         )

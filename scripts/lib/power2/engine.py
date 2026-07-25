@@ -17,6 +17,8 @@ from . import json_schema
 ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_CANDIDATE_PATH = ROOT / "products" / "power" / "candidate.json"
 DEFAULT_CURRENT_PATH = ROOT / "products" / "power" / "current.json"
+DEFAULT_NEXT_PATH = ROOT / "products" / "power" / "next.json"
+APP_COMPONENT_PATH = ROOT / "apps" / "ios" / "component-manifest.json"
 ALLOWED_PACKAGE_FILES = {"submission.json", "result.json"}
 VALIDATOR_NAME = "power-intake-engine"
 VALIDATOR_VERSION = "2.0.0-draft.2"
@@ -296,79 +298,108 @@ def load_product_context(
 
 
 def load_candidate_certification_review_context(
-    candidate_path: Path = DEFAULT_CANDIDATE_PATH,
+    candidate_path: Path = DEFAULT_NEXT_PATH,
 ) -> ValidationContext:
-    """Open only the candidate gates needed to review smoke-test evidence.
+    """Open only the next-release gates needed to review smoke evidence.
 
     This context is intentionally separate from public intake. It accepts the
-    closed Certification build identity and candidate Runner certificate so a
-    maintainer can review one physical-device result before either identity is
-    released.
+    source-bound Certification App and synthetic candidate certificate ID so
+    a maintainer can review one physical-device result before a new Runner
+    certificate or App release exists.
     """
 
-    context = load_candidate_context(candidate_path)
+    context = load_product_context()
     candidate = _load_json(candidate_path)
-    runner_reference = candidate.get("runnerCertificationCandidate")
-    certification_stack_reference = candidate.get(
-        "certificationCandidateStack"
-    )
-    certification_app_reference = candidate.get(
-        "certificationAppCandidate"
-    )
+    if (
+        candidate.get("schemaVersion") != "power-release-plan-1.0.0"
+        or candidate.get("state") != "runner-certification-required"
+        or candidate.get("publicIntakeOpen") is not False
+        or candidate.get("runnerCertificate") is not None
+        or candidate.get("appRelease") is not None
+    ):
+        raise Power2ValidationError(
+            "next Power release is not at the Runner certification gate"
+        )
+    runner_reference = candidate.get("runnerComponents")
+    measurement_stack_reference = candidate.get("measurementStack")
     if not isinstance(runner_reference, dict):
         raise Power2ValidationError(
-            "candidate has no Runner certification candidate"
+            "next release has no Runner component identity"
         )
-    if not isinstance(certification_stack_reference, dict):
+    if not isinstance(measurement_stack_reference, dict):
         raise Power2ValidationError(
-            "candidate has no Certification measurement stack"
+            "next release has no measurement stack"
         )
-    if not isinstance(certification_app_reference, dict):
-        raise Power2ValidationError(
-            "candidate has no Certification App identity"
-        )
-    _, runner_candidate = _load_reference(
+    _, runner_manifest = _load_reference(
         runner_reference,
-        "Runner certification candidate",
+        "next Runner components",
     )
     _verify_reference_file(
-        certification_stack_reference,
-        "Certification measurement stack",
+        measurement_stack_reference,
+        "next-release measurement stack",
     )
-    _verify_reference_file(
-        certification_app_reference,
-        "Certification App identity",
-    )
-    if runner_candidate.get("state") != "candidate":
+    if (
+        runner_manifest.get("schemaVersion")
+        != "power-runner-component-manifest-1.0.0"
+    ):
         raise Power2ValidationError(
-            "Runner certification record is not a candidate"
+            "next Runner component manifest is unsupported"
         )
-    certificate_id = runner_candidate.get("certificateID")
+    certificate_id = candidate.get("runnerCertificationCandidateID")
     if not isinstance(certificate_id, str):
         raise Power2ValidationError(
-            "Runner certification candidate has no certificate ID"
+            "next release has no Runner certification candidate ID"
         )
-
-    review_runner = dict(runner_candidate)
-    review_runner["state"] = "active"
+    runtime_reference = runner_manifest.get("runtimeIdentity")
+    if not isinstance(runtime_reference, dict):
+        raise Power2ValidationError(
+            "next Runner component manifest has no runtime identity"
+        )
+    _, runtime = _load_reference(
+        runtime_reference,
+        "next Runner runtime identity",
+    )
+    app_identity = candidate.get("app")
+    if not isinstance(app_identity, dict):
+        raise Power2ValidationError("next release has no App identity")
+    app_source_revision = _sha256_file(APP_COMPONENT_PATH)
+    review_runner = {
+        "state": "active",
+        "certificateID": certificate_id,
+        "programManifestSHA256":
+            context.program_reference.get("sha256"),
+        "targetManifestSHA256":
+            context.target_reference.get("sha256"),
+        "runnerComponents": runner_reference,
+        "runtime": {
+            key: runtime[key]
+            for key in (
+                "name",
+                "version",
+                "resolvedRevision",
+                "backend",
+                "configuration",
+            )
+        },
+    }
     review_app = {
         "state": "supported",
         "version": "2.0.0-certification",
-        "build": "1",
-        "sourceRevision": certification_app_reference["sha256"],
+        "build": app_identity.get("build"),
+        "sourceRevision": app_source_revision,
         "supportedRunnerCertificateIDs": [certificate_id],
     }
     return replace(
         context,
         public_intake_open=True,
-        measurement_stack_sha256=certification_stack_reference["sha256"],
+        measurement_stack_sha256=measurement_stack_reference["sha256"],
         runner_certificate=review_runner,
         app_release=review_app,
     )
 
 
 def load_candidate_app_release_review_context(
-    candidate_path: Path = DEFAULT_CANDIDATE_PATH,
+    candidate_path: Path = DEFAULT_NEXT_PATH,
 ) -> ValidationContext:
     """Open only the gates needed for the closed Official App rehearsal.
 
@@ -378,8 +409,26 @@ def load_candidate_app_release_review_context(
     reviewed without making that result publishable or ranking-eligible.
     """
 
-    context = load_candidate_context(candidate_path)
     candidate = _load_json(candidate_path)
+    if (
+        candidate.get("schemaVersion") != "power-release-plan-1.0.0"
+        or candidate.get("state") != "app-release-rehearsal-required"
+        or candidate.get("publicIntakeOpen") is not False
+        or candidate.get("appRelease") is not None
+    ):
+        raise Power2ValidationError(
+            "next Power release is not at the Official App rehearsal gate"
+        )
+    measurement_reference = candidate.get("measurementStack")
+    if not isinstance(measurement_reference, dict):
+        raise Power2ValidationError(
+            "next Power release has no measurement stack"
+        )
+    _, measurement_stack = _load_reference(
+        measurement_reference,
+        "next-release measurement stack",
+    )
+    context = _load_pointer_context(candidate_path)
     app_reference = candidate.get("appReleaseCandidate")
     if not isinstance(app_reference, dict):
         raise Power2ValidationError(
@@ -398,6 +447,10 @@ def load_candidate_app_release_review_context(
     if (
         not isinstance(certificate_id, str)
         or certificate.get("state") != "active"
+        or candidate.get("runnerCertificate")
+        != measurement_stack.get("runnerCertificate")
+        or certificate.get("runnerComponents")
+        != candidate.get("runnerComponents")
     ):
         raise Power2ValidationError(
             "App rehearsal has no active Runner certificate"
@@ -406,6 +459,8 @@ def load_candidate_app_release_review_context(
         app_candidate.get("state") != "candidate"
         or app_candidate.get("embeddedMeasurementStack")
         != candidate.get("measurementStack")
+        or app_candidate.get("appComponents", {}).get("sha256")
+        != app_candidate.get("sourceRevision")
         or app_candidate.get("supportedRunnerCertificateIDs")
         != [certificate_id]
     ):

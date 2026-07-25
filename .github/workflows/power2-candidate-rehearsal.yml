@@ -1,4 +1,4 @@
-name: Power 2 candidate rehearsal
+name: Power release integrity
 
 on:
   pull_request:
@@ -13,7 +13,7 @@ on:
       - "scripts/generate_power_app_component_manifest.py"
       - "scripts/generate_power_app_release_identity.py"
       - "scripts/generate_power_mlx_dependency_identity.py"
-      - "scripts/generate_power_release_candidates.py"
+      - "scripts/generate_power_next_release.py"
       - "scripts/generate_power_runner_component_manifest.py"
       - "scripts/lib/power2/**"
       - "scripts/repoctl.py"
@@ -34,7 +34,7 @@ permissions:
 
 jobs:
   verify:
-    name: Verify closed Power 2 candidate
+    name: Verify active and next Power releases
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
@@ -48,10 +48,10 @@ jobs:
           python3 scripts/generate_power_app_release_identity.py --check
           python3 scripts/generate_power_mlx_dependency_identity.py --check
           python3 scripts/generate_power_runner_component_manifest.py --check
+          python3 scripts/generate_power_next_release.py --check
           python3 scripts/generate_power2_app_catalog.py --check
           python3 scripts/generate_power2_product_identity.py --check
           python3 scripts/generate_power_app_component_manifest.py --check
-          python3 scripts/generate_power_release_candidates.py --check
           python3 scripts/repoctl.py verify-power-candidate
       - name: Test Power 2 control plane
         run: >-

@@ -46,7 +46,7 @@ packaging, licensing, limitations, and unknowns.
 
 | Product | Status | What is public |
 | --- | --- | --- |
-| Power 2 | Active | Text performance × physical iPhone cell; Official build 4, immutable App release, and public intake are active |
+| Power 2 | Active | Text performance × physical iPhone cell; Official build 5, immutable App release, and public intake are active |
 | Ship 1.0 | Published separately | Deployment profiles and a focused MLX Swift recipe derived separately from accepted Power 1.0 evidence |
 | Build | Research | Long-term complete-software-delivery research; no protocols or ranking yet |
 
@@ -55,7 +55,7 @@ Program, physical-iPhone Target, exact models, Runner certificate, App
 identity, intake policy, and ranking policy form one hash-pinned stack.
 The immutable Official App release and
 [`products/power/current.json`](products/power/current.json) were issued
-together after the exact build 4 physical-device rehearsal passed. Public
+together after the exact build 5 physical-device rehearsal passed. Public
 Power 2 intake is open. Power 1.1 evidence and release manifests remain a
 read-only historical archive and are never input to the Power 2 App,
 validator, workflow, or ranking.
@@ -102,8 +102,12 @@ duplicates, and ranking eligibility, then labels it for automatic acceptance,
 manual review, or rejection. Merging adds evidence to the live community view; it does
 not rewrite an immutable release or automatically establish reproduction.
 
-Only the supported Official App release can submit ranking evidence.
-Developer and Certification builds remain non-publishable.
+Only the supported **Official (source-built)** configuration can submit
+ranking evidence. Its embedded release identity is self-declared by the
+locally signed build; trusted CI validates the declaration and evidence bytes,
+not the installed binary. A single eligible contribution is **Accepted**.
+Only an independent matching contribution raises the cell to **Reproduced**.
+Developer and Certification configurations remain non-publishable.
 
 Other useful contributions include focused Swift integration recipes,
 documentation corrections, validators, and clearly scoped Build Research

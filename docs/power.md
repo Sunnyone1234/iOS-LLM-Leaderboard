@@ -18,7 +18,7 @@ Power Evidence
 
 Power 2 is active. The text-generation-performance Program,
 physical-iPhone Target, four exact model artifacts, certified Runner,
-supported Official build 4 App release, trusted intake, and ranking engine
+supported Official build 5 source configuration, trusted intake, and ranking engine
 form one pinned stack. Automated checks, generic Release builds, and the exact
 Official physical-device end-to-end rehearsal passed before activation.
 
@@ -26,9 +26,21 @@ The authoritative public pointer is
 [`products/power/current.json`](../products/power/current.json). It opens
 public intake and pins the measurement stack, Runner components and
 certificate, supported App release, and activation evidence atomically.
-Developer and Certification builds cannot produce ranking evidence. Power 1.1
-remains a read-only historical release and is not a compatibility input to
-Power 2.
+Developer and Certification configurations cannot produce ranking evidence.
+The Official configuration is built and signed locally, so its embedded
+release identity is a contributor declaration rather than binary attestation.
+Power 1.1 remains a read-only historical release and is not a compatibility
+input to Power 2.
+
+Release development is isolated from that public authority. The completed
+[`next.json`](../products/power/next.json) records the reviewed
+`power2-runner-ac490be49347` certificate, rc.2 stack, immutable Official build
+5 candidate, exact physical-device result, and atomic activation. The prior
+candidate's passing rehearsal exposed a compiled lifecycle-state defect before
+activation; its exact result and review remain retained as non-publishable
+superseded evidence. The replacement source keeps lifecycle authority outside
+its component digest, so the exact tested source became current without
+recompilation.
 
 ## Benchmark cell
 
@@ -74,9 +86,16 @@ user-visible first-renderable time. There is no global Power score.
 Each view compares only an exact compatible comparison identity. One
 case-insensitive GitHub account counts once per cell:
 
-- one distinct contributor: accepted evidence;
-- two: independently reproduced;
+- one distinct contributor: **Accepted** self-declared source-built evidence;
+- two: **Reproduced** by independent contributors;
 - three or more: contributor-weighted aggregation.
+
+Trusted CI validates the declaration, immutable result bytes, current stack,
+and intake rules. It does not prove that a locally signed binary was compiled
+from unmodified source. `Accepted` therefore means admissible single-
+contributor evidence, not independently verified performance. Confidence
+increases only when another eligible GitHub account independently reproduces
+the exact comparison cell.
 
 The UI may group a compatible display family, but exact OS build, model
 revision, runtime, inference configuration, workload, measurement mode, and
@@ -114,7 +133,7 @@ This page explains the method. Machine authority is versioned and pinned by:
 - the [Power candidate/current pointer](../products/power/);
 - the [text Program manifest](../products/power/programs/text-generation-performance/versions/2.0.0-draft.2/manifest.json);
 - the [physical-iPhone Target](../products/power/targets/apple-iphone-physical/versions/1.0.0-draft.1/manifest.json);
-- the [Runner certificate](../products/power/runner-certificates/power2-runner-87f62feecc2b.json);
+- the [Runner certificate](../products/power/runner-certificates/power2-runner-ac490be49347.json);
 - the versioned [intake](../products/power/policies/intake/1.0.0-draft.1.json)
   and [ranking](../products/power/policies/ranking/1.0.0-draft.2.json)
   policies; and

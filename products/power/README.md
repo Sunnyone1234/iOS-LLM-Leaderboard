@@ -21,11 +21,12 @@ Certification evidence. The immutable App release binds the complete App
 component manifest, exact stack, Official bundle identity, and supported
 Runner certificate.
 
-The automated suite, both build 4 generic iOS configurations, Runner
-physical-device smoke, exact Official build 4 rehearsal, and raw-result review
+The automated suite, generic iOS configurations, Runner
+physical-device smoke, exact Official build 5 rehearsal, and raw-result review
 pass for the recorded digests. The immutable App release and `current.json`
 were issued atomically, so public intake is open. Prior candidates and
-Official build 2 rehearsals remain retained, non-publishable audit evidence.
+Official build 2 and build 4 releases remain retained audit history; superseded
+rehearsals remain explicitly non-publishable.
 
 `candidate.json` remains the pre-activation audit surface. Any future stack,
 Runner, or App digest change requires a new versioned candidate and release;

@@ -1,0 +1,100 @@
+{
+  "appRelease": {
+    "build": "5",
+    "embeddedMeasurementStackSHA256": "77a8a6b12c9008e9680d8cbfd41a867b4873680a9745172bee4e108f445b47b7",
+    "sourceRevision": "a9b1c359107c0806b023c61f190b4ce49c61ee1cf7da2cc59bafea8435493c8f",
+    "version": "2.0.0"
+  },
+  "checks": {
+    "appRelease": {
+      "reasonCodes": [],
+      "status": "pass"
+    },
+    "behaviorConformance": {
+      "reasonCodes": [
+        "behavior-not-verified"
+      ],
+      "status": "manual-review"
+    },
+    "contractConformance": {
+      "reasonCodes": [],
+      "status": "pass"
+    },
+    "contributor": {
+      "reasonCodes": [],
+      "status": "pass"
+    },
+    "digestIntegrity": {
+      "reasonCodes": [],
+      "status": "pass"
+    },
+    "intakeState": {
+      "reasonCodes": [],
+      "status": "pass"
+    },
+    "metricEligibility": {
+      "decode_first_to_last_percent_change": {
+        "reasonCodes": [
+          "metric-not-defined-for-workload"
+        ],
+        "status": "not-applicable"
+      },
+      "decode_tokens_per_second": {
+        "reasonCodes": [],
+        "status": "pass"
+      },
+      "first_renderable_ms": {
+        "reasonCodes": [],
+        "status": "pass"
+      },
+      "peak_physical_footprint_mib": {
+        "reasonCodes": [],
+        "status": "pass"
+      },
+      "pipeline_ttft_ms": {
+        "reasonCodes": [],
+        "status": "pass"
+      },
+      "prefill_tokens_per_second": {
+        "reasonCodes": [],
+        "status": "pass"
+      },
+      "request_completion_ms": {
+        "reasonCodes": [],
+        "status": "pass"
+      }
+    },
+    "recommendationEligibility": {
+      "reasonCodes": [
+        "behavior-not-verified"
+      ],
+      "status": "manual-review"
+    },
+    "runnerCertificate": {
+      "reasonCodes": [],
+      "status": "pass"
+    },
+    "structuralValidity": {
+      "reasonCodes": [],
+      "status": "pass"
+    }
+  },
+  "classification": "auto-accept",
+  "diagnostics": [
+    "behavior: verified=0, contradicted=0, not-verified=5, required=3"
+  ],
+  "physicalDeviceEndToEndRehearsal": "pass",
+  "publishable": false,
+  "rankingEligible": false,
+  "reasonCodes": [],
+  "reviewedAt": "2026-07-25T13:07:38Z",
+  "runnerCertificateID": "power2-runner-ac490be49347",
+  "schemaVersion": "power-app-release-review-1.0.0-draft.1",
+  "sourceResultSHA256": "74810efe6dc82781ca017596d96c90be67f8d66c8e80a00ab8bf51e39a922e2a",
+  "status": "pass",
+  "validator": {
+    "name": "power-intake-engine",
+    "sourceRevision": "6cfd424d7a7cdb8910c268065686a232b44e6c55",
+    "version": "2.0.0-draft.2"
+  }
+}

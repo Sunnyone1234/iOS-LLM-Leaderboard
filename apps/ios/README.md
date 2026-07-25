@@ -1,193 +1,187 @@
-# Power 2 iOS App candidate
+# Power 2 iOS App
 
-This directory now contains the clean Power 2 candidate App Shell. It has
-separate Test and Results tabs, consumes the generated product identity, and
-uses `PowerAppKit` for exact-byte result storage. It links the complete
-candidate `PowerRunnerKit` implementation so generic iOS Release builds verify
-the real dependency graph.
+This is the active Power 2 App Shell. It provides separate **Test** and
+**Results** tabs, consumes generated stack/catalog identity, runs the certified
+Power components, stores each evidence envelope independently, and opens
+result-only GitHub pull requests.
 
-The project has three explicit build kinds:
+The historical Power 1.1 App remains under `ios-app/` for audit only. It is
+not imported, converted, or submitted here.
 
-- **Developer** — the normal Debug and Release configurations, displayed on
-  device as **Power Benchmark Dev**. It can inspect the App and local UI but
-  cannot measure or submit ranking evidence.
-- **Certification** — the maintainer-only physical-device smoke-test
-  configuration. It can write candidate evidence but cannot submit or rank it.
-- **Official** — the contribution configuration. An exact generated App
-  candidate may measure and create a real result-only pull request. Trusted
-  repository state, rather than a lifecycle flag compiled into the binary,
-  decides whether that result is a non-publishable rehearsal or accepted
-  public evidence.
+## Build configurations
 
-The compiled kind and the `PowerBuildKind` value embedded in `Info.plist` must
-agree. Overriding one build setting cannot turn a Developer build into an
-Official build.
+| Configuration | Purpose | Measurement | Public submission |
+| --- | --- | ---: | ---: |
+| Developer | Code, UI, and integration work | No | No |
+| Certification | Maintainer physical-device checkpoint for a new Runner/App candidate | Candidate evidence only | No |
+| Official | Current community source configuration | Yes, only while remote current-release preflight passes | Yes, subject to trusted CI |
 
-App version, build number, Bundle IDs, and the distinct on-device names have
-one tracked source:
-`apps/ios/Configuration/ReleaseIdentity.json`. Regenerate the Xcode settings
-after changing it:
+The compiled build kind and `PowerBuildKind` in `Info.plist` must agree.
+Changing a signing team or one build setting cannot promote Developer to
+Official.
 
-```bash
-python3 scripts/generate_power_app_release_identity.py
-```
+## Source-built identity boundary
 
-The generated configuration, source identity, App component manifest, result
-envelope, and repository validator are hash-bound. Do not type those values
-again in the Xcode project or release-candidate generator.
+Contributors sign the App locally with their own Apple Team ID. The Team ID is
+deliberately outside benchmark identity. An Official configuration embeds the
+generated App release declaration, but this is a self-declaration by the local
+build, not cryptographic attestation of the installed binary.
 
-Apple signing is deliberately outside the pinned project. Copy the example
-once and edit only the ignored local file:
+Before every Official measurement and submission, the App downloads:
+
+1. `products/power/current.json`; and
+2. the App release file referenced by it.
+
+It verifies the referenced file SHA-256, then compares the active stack, App
+version/build/source declaration, Bundle ID, and Runner certificate. Intake
+closed, remote mismatch, invalid hash, or unavailable network locks both
+measurement and submission. Repository CI remains the acceptance authority.
+
+One eligible result is displayed as **Accepted**. Only an independently
+contributed matching result raises the exact cell to **Reproduced**.
+
+## Build the current Official configuration
+
+Use the current `main` revision. Do not use a feature branch whose App or
+Runner source has changed unless you are performing the release process below.
+
+Create the ignored local signing file:
 
 ```bash
 cp apps/ios/Configuration/LocalSigning.example.xcconfig \
   apps/ios/Configuration/LocalSigning.xcconfig
 ```
 
-Then replace `YOUR_TEAM_ID` and
-`CURRENT_APP_COMPONENT_MANIFEST_SHA256` in `LocalSigning.xcconfig`. Obtain the
-second value with:
+Set your Apple Team ID and the exact tracked App component-manifest digest:
 
-```bash
-shasum -a 256 apps/ios/component-manifest.json
+```text
+DEVELOPMENT_TEAM = YOUR_TEAM_ID
+POWER_SOURCE_REVISION = output of:
+  shasum -a 256 apps/ios/component-manifest.json
 ```
 
-That local source-revision line is what makes **Run** in Xcode produce the
-exact Certification or Official candidate instead of a deliberately locked
-build with an unspecified source identity. Do not select a team in the Xcode
-target editor because that writes a personal `DEVELOPMENT_TEAM` back into the
-hashed project file. `Signing.xcconfig` is tracked and pinned;
-`LocalSigning.xcconfig` is ignored and never enters an App, Runner, Program,
-Target, or measurement identity.
+Open:
 
-The separate `PowerCertification` scheme is a maintainer-only physical-iPhone
-smoke-test path. It executes the exact models, workloads, Runner, Program, and
-Target pinned by the activation candidate and saves a candidate evidence envelope
-locally. It is compiled only for `iphoneos`, requires the exact generated App
-component-manifest SHA-256 at build time, and cannot submit or rank the
-resulting evidence:
-
-```bash
-APP_SOURCE_REVISION="$(
-  shasum -a 256 apps/ios/component-manifest.json | awk '{print $1}'
-)"
-xcodebuild \
-  -project apps/ios/PowerBenchmarkApp.xcodeproj \
-  -scheme PowerCertification \
-  -configuration Certification \
-  -destination 'platform=iOS,name=YOUR_IPHONE' \
-  POWER_SOURCE_REVISION="$APP_SOURCE_REVISION" \
-  build
+```text
+apps/ios/PowerBenchmarkApp.xcodeproj
 ```
 
-Do not archive, distribute, or describe this build as a released benchmark
-App. Its `2.0.0-certification` identity and candidate certificate ID exist only
-to bind pre-release physical-device review to exact source. Unlike a Git commit
-alone, the component manifest covers the complete App shell, generated
-candidate files, support modules, Xcode project, build schemes, dependency
-locks, and shared signing boundary; personal signing remains outside it.
+Select the shared `PowerOfficial` scheme, your physical iPhone, and Run. The
+App must show:
 
-To complete the physical-device checkpoint:
+- `Build kind: Official (source-built)`;
+- the expected stack and App source declaration; and
+- `Supported release identity declared by this source-built App`.
 
-1. Build and install the `PowerCertification` scheme on a physical iPhone
-   using the exact `POWER_SOURCE_REVISION` command above.
-2. Open **Test**, select a pinned model and workload, prepare the model, and
-   run the Certification smoke test without thermal assistance.
-3. Open **Results**, select the newly completed result, and use **Share Raw
-   Power JSON**. Do not edit, reformat, or resave the exported bytes.
-4. Give the exported JSON to a maintainer. The maintainer reviews it with:
+If the release check says update required, pull current `main`, regenerate the
+tracked files if instructed by repository checks, rebuild, and retry. Do not
+override the check.
 
-   ```bash
-   python3 scripts/review_power2_certification_result.py \
-     /path/to/raw-result.json \
-     --evaluated-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-     --validator-source-revision "$(git rev-parse HEAD)"
-   ```
+## Local signing
 
-This review is closed candidate evidence. A passing report is still
-non-publishable and non-ranking; it authorizes the later certificate and App
-release steps only after the raw evidence and physical run have been reviewed.
+Tracked identity is generated from:
 
-The reviewed Certification evidence has issued the active Runner certificate.
-`PowerOfficial` is a separately shared scheme and Bundle ID. Build the exact
-Official build 4 candidate with its generated App component-manifest digest:
-
-```bash
-APP_SOURCE_REVISION="$(
-  shasum -a 256 apps/ios/component-manifest.json | awk '{print $1}'
-)"
-xcodebuild \
-  -project apps/ios/PowerBenchmarkApp.xcodeproj \
-  -scheme PowerOfficial \
-  -configuration Official \
-  -destination 'platform=iOS,name=YOUR_IPHONE' \
-  POWER_SOURCE_REVISION="$APP_SOURCE_REVISION" \
-  build
+```text
+apps/ios/Configuration/ReleaseIdentity.json
 ```
 
-This exact candidate can run a benchmark and create a real result-only pull
-request while intake remains closed. Trusted CI treats it as non-publishable
-and non-ranking until the immutable App release and active pointer exist.
-Export the newly completed raw JSON without editing it and review it with:
+Regenerate its Xcode settings with:
 
 ```bash
-python3 scripts/review_power2_app_release_result.py \
-  /path/to/raw-result.json \
-  --evaluated-at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-  --validator-source-revision "$(git rev-parse HEAD)"
+python3 scripts/generate_power_app_release_identity.py
 ```
 
-The candidate review report is always non-publishable and non-ranking. A pass
-for exact build 4 authorizes the immutable App release step; it does not open
-intake by itself. The maintainer then dry-runs the single atomic command:
+`Signing.xcconfig` and all generated identities are tracked and hashed.
+`LocalSigning.xcconfig` is ignored and contains only personal signing plus the
+current component digest. Never select a personal team in the target editor,
+because that writes it into the hashed project.
 
-```bash
-python3 scripts/repoctl.py activate-power /path/to/raw-result.json \
-  --reviewed-at 2026-07-24T12:00:00Z \
-  --activated-at 2026-07-24T12:01:00Z \
-  --validator-source-revision "$(git rev-parse HEAD)"
+Maintainers performing the closed physical rehearsal of a staged next release
+also set:
+
+```text
+POWER_RELEASE_REHEARSAL = YES
 ```
 
-After reviewing the output, repeat with `--write`. That one reviewed change
-retains the exact raw bytes and review, issues the immutable App release, and
-opens `current.json` and the registry together. Evidence from older App builds
-remains visible and shareable, but the Submit action accepts only a result
-whose complete App release identity equals the running Official build.
+The tracked default is `NO`. This local flag permits measurement against the
+already frozen candidate while `current.json` still names the prior release,
+but it never permits GitHub submission. It is deliberately outside the App
+component digest so the exact same source becomes submission-capable when its
+immutable App release and `current.json` are activated; public authority still
+comes only from the remote current pointer.
 
-The scheme's presence and local signing do not authorize acceptance: the
-generated release identity and trusted repository pointer remain
-authoritative. A contributor may install the distributed Official build or
-build the exact `PowerOfficial` scheme from current source with their own
-Apple Team ID. The Team ID is deliberately outside measurement identity and
-does not affect admission. Building the normal Developer scheme remains
-measurement-locked regardless of who signs it.
+## Result durability
 
-The Results tab stores every completed Power 2 envelope independently and lets
-the user select the exact saved result to share or submit. Direct GitHub
-submission is fully connected to those stored bytes, uses OAuth Device Flow,
-creates a new UUID branch directly from the current upstream head, writes only
-the two-file Power 2 package, and opens a pull request. It never synchronizes
-or modifies the contributor fork's default branch. The App does not compile
-repository intake lifecycle into its source identity; trusted CI remains
-fail-closed unless the immutable App release and public intake are active.
+The App writes each completed envelope once under its Power 2 Results Store.
+The Results tab can select and submit any saved result, not only the last run.
 
-The `ios-app/` tree is a historical Power 1.1 App. No Power 1.1 result is
-imported, converted, displayed, or submitted by this candidate.
+During a run, `PowerRunCheckpointStore` atomically records:
 
-`Power2ProductIdentity.generated.swift` is generated from the candidate
-pointer before release and the active product pointer after cutover. It
-centralizes immutable stack identity without compiling repository intake
-state, Program, Target, policy, or compatibility versions into handwritten
-Swift:
+- the exact session context;
+- the active attempt before Runtime execution;
+- each terminal attempt record; and
+- session completion.
+
+After a process termination, the active attempt is recovered as failed with an
+explicit interruption code and later attempts are preserved as not-run. The
+App never guesses that an unknown termination was OOM. Once the final immutable
+envelope is saved, the checkpoint is removed.
+
+## GitHub submission
+
+The Results tab preserves the selected raw result byte-for-byte. OAuth Device
+Flow creates a contributor-owned branch from the exact upstream head, writes
+only the current two-file package, and opens a PR. It never synchronizes or
+modifies the fork's default branch.
+
+Result PRs must remain separate from code or documentation changes. Trusted
+base-repository CI reads contributor files as data and decides automatic
+acceptance, manual review, or rejection.
+
+## Changing App or Runner source
+
+An existing App release and Runner certificate are immutable. Source edits do
+not update them in place. Released component manifests are retained by their
+release evidence; changed Runner source is generated into
+`candidate-component-manifest.json`, while changed App source is generated
+into `apps/ios/component-manifest.json` and frozen before rehearsal. Both are
+bound by a fail-closed `products/power/next.json` plan before activation.
+
+1. Make the focused source change.
+2. Update tests and current documentation.
+3. Increment the App build and regenerate dependency identity, the Runner
+   candidate manifest, `next.json`, the App catalog/product identity, and the
+   App component manifest.
+4. Run Swift package tests and generic iOS Certification/Official builds.
+5. If measurement components changed, build `PowerCertification` on a
+   physical iPhone, run the exact checkpoint, export untouched evidence, and
+   review it with `review_power2_certification_result.py` before issuing a new
+   Runner certificate.
+6. Set `POWER_RELEASE_REHEARSAL = YES` only in ignored
+   `LocalSigning.xcconfig`, build `PowerOfficial` on a physical iPhone,
+   perform the App release checkpoint, and review the untouched evidence.
+7. Issue versioned immutable Runner, stack, and App release records, then move
+   `current.json` in the same reviewed commit. Never modify the previous
+   certificate or App release.
+8. Confirm the old App now fails remote preflight and the new App passes.
+
+The exact commands and remaining gates are recorded in
+[`docs/repository-architecture.md`](../../docs/repository-architecture.md).
+
+## Verification
 
 ```bash
-python3 scripts/generate_power2_product_identity.py --check
-```
-
-`Power2CandidateCatalog.generated.swift` is generated from the same candidate
-hash chain plus its Program and model registry. It embeds only the exact
-certification catalog and pinned workload/fixture bytes:
-
-```bash
+swift test --package-path apps/PowerRunnerKit
+swift test --package-path apps/PowerAppKit
+python3 scripts/generate_power_app_release_identity.py --check
+python3 scripts/generate_power_mlx_dependency_identity.py --check
+python3 scripts/generate_power_runner_component_manifest.py --check
+python3 scripts/generate_power_next_release.py --check
 python3 scripts/generate_power2_app_catalog.py --check
+python3 scripts/generate_power2_product_identity.py --check
+python3 scripts/generate_power_app_component_manifest.py --check
+python3 scripts/repoctl.py verify-power-candidate
 ```
+
+A compiler or simulator run never counts as physical-device benchmark
+evidence.

@@ -368,15 +368,34 @@ def _verify_runner_candidate(
     )
     manifest = _load_json(manifest_path)
     documents.append((str(manifest_path.relative_to(ROOT)), manifest))
-    if (
-        manifest.get("schemaVersion")
-        != "power-runner-component-manifest-1.0.0-draft.1"
-    ):
+    schema_version = manifest.get("schemaVersion")
+    if schema_version not in {
+        "power-runner-component-manifest-1.0.0-draft.1",
+        "power-runner-component-manifest-1.0.0",
+    }:
         raise VerificationError(
             "candidate runner has an unsupported component manifest"
         )
-    if manifest.get("status") != "migration-draft":
+    if (
+        schema_version
+        == "power-runner-component-manifest-1.0.0-draft.1"
+        and manifest.get("status") != "migration-draft"
+    ):
         raise VerificationError("candidate runner is not a migration draft")
+    if (
+        schema_version == "power-runner-component-manifest-1.0.0"
+        and any(
+            key in manifest
+            for key in (
+                "status",
+                "completeForCertification",
+                "certificationBlockers",
+            )
+        )
+    ):
+        raise VerificationError(
+            "lifecycle-neutral Runner manifest contains release state"
+        )
 
     package_reference = manifest.get("packageManifest")
     if not isinstance(package_reference, dict):
@@ -476,15 +495,17 @@ def _verify_runner_candidate(
 
     runtime_adapter = components.get("runtimeAdapter")
     runtime_implemented = isinstance(runtime_adapter, dict)
-    complete = manifest.get("completeForCertification")
-    if complete is True and not runtime_implemented:
-        raise VerificationError(
-            "runner cannot be complete without a Runtime Adapter"
-        )
-    if complete is not False:
-        raise VerificationError(
-            "migration candidate must remain incomplete before certification"
-        )
+    if schema_version.endswith("-draft.1"):
+        complete = manifest.get("completeForCertification")
+        if complete is True and not runtime_implemented:
+            raise VerificationError(
+                "runner cannot be complete without a Runtime Adapter"
+            )
+        if complete is not False:
+            raise VerificationError(
+                "migration candidate must remain incomplete "
+                "before certification"
+            )
     return len(expected_roots), runtime_implemented
 
 
@@ -610,6 +631,26 @@ def _verify_app_candidate(
                 / "PowerAppKit"
                 / "Sources"
                 / "PowerGitHubSubmission"
+            ).glob("*.swift")
+        },
+        "releasePreflight": {
+            path.resolve()
+            for path in (
+                ROOT
+                / "apps"
+                / "PowerAppKit"
+                / "Sources"
+                / "PowerReleasePreflight"
+            ).glob("*.swift")
+        },
+        "runCheckpointStore": {
+            path.resolve()
+            for path in (
+                ROOT
+                / "apps"
+                / "PowerAppKit"
+                / "Sources"
+                / "PowerRunCheckpointStore"
             ).glob("*.swift")
         },
     }
@@ -1415,20 +1456,61 @@ def _verify_active_power_state(
         or current.get("productID") != "power"
         or current.get("status") != "active"
         or current.get("publicIntakeOpen") is not True
-        or current.get("stackID") != candidate.get("stackID")
     ):
         raise VerificationError("Power current pointer is not active")
 
-    expected_references = {
-        "measurementStack": candidate.get("measurementStack"),
-        "runnerComponents": candidate.get("runnerCandidate"),
-        "runnerCertificate": candidate.get("runnerCertificate"),
-    }
-    for name, expected in expected_references.items():
-        if current.get(name) != expected:
-            raise VerificationError(
-                f"Power current pointer {name} does not match the candidate"
-            )
+    current_stack_path = _verify_pinned_asset(
+        current.get("measurementStack", {}),
+        "active measurement stack",
+    )
+    current_stack = _load_json(current_stack_path)
+    current_runner_path = _verify_pinned_asset(
+        current.get("runnerComponents", {}),
+        "active Runner components",
+    )
+    current_runner = _load_json(current_runner_path)
+    runner_certificate_path = _verify_pinned_asset(
+        current.get("runnerCertificate", {}),
+        "active Runner certificate",
+    )
+    runner_certificate = _load_json(runner_certificate_path)
+    documents.extend(
+        (
+            (
+                str(current_stack_path.relative_to(ROOT)),
+                current_stack,
+            ),
+            (
+                str(current_runner_path.relative_to(ROOT)),
+                current_runner,
+            ),
+            (
+                str(runner_certificate_path.relative_to(ROOT)),
+                runner_certificate,
+            ),
+        )
+    )
+    certificate_id = runner_certificate.get("certificateID")
+    if (
+        current_stack.get("stackID") != current.get("stackID")
+        or current_stack.get("status") != "release-candidate"
+        or current_stack.get("program") != program_reference
+        or current_stack.get("target") != target_reference
+        or current_stack.get("runnerCertificate")
+        != current.get("runnerCertificate")
+        or current_runner.get("schemaVersion")
+        not in {
+            "power-runner-component-manifest-1.0.0-draft.1",
+            "power-runner-component-manifest-1.0.0",
+        }
+        or runner_certificate.get("state") != "active"
+        or runner_certificate.get("runnerComponents")
+        != current.get("runnerComponents")
+        or not isinstance(certificate_id, str)
+    ):
+        raise VerificationError(
+            "active stack, Runner components, and certificate disagree"
+        )
 
     app_reference = current.get("appRelease")
     if not isinstance(app_reference, dict):
@@ -1441,31 +1523,13 @@ def _verify_active_power_state(
         (str(app_release_path.relative_to(ROOT)), app_release)
     )
 
-    app_candidate_reference = candidate.get("appReleaseCandidate")
-    if not isinstance(app_candidate_reference, dict):
-        raise VerificationError("Power candidate has no App release candidate")
-    app_candidate_path = _verify_pinned_asset(
-        app_candidate_reference, "retained App release candidate"
-    )
-    app_candidate = _load_json(app_candidate_path)
-    runner_certificate_path = _verify_pinned_asset(
-        candidate["runnerCertificate"], "active Runner certificate"
-    )
-    runner_certificate = _load_json(runner_certificate_path)
-    certificate_id = runner_certificate.get("certificateID")
     if (
         app_release.get("schemaVersion") != "power-app-release-1.0.0"
         or app_release.get("productID") != "power"
         or app_release.get("state") != "supported"
-        or app_release.get("version") != app_candidate.get("version")
-        or app_release.get("build") != app_candidate.get("build")
-        or app_release.get("sourceRevision")
-        != app_candidate.get("sourceRevision")
-        or app_release.get("bundleIdentifier")
-        != app_candidate.get("bundleIdentifier")
         or app_release.get("buildConfiguration") != "Official"
         or app_release.get("embeddedMeasurementStack")
-        != candidate.get("measurementStack")
+        != current.get("measurementStack")
         or app_release.get("supportedRunnerCertificateIDs")
         != [certificate_id]
         or app_release.get("verification")
@@ -1482,7 +1546,7 @@ def _verify_active_power_state(
     if (
         not isinstance(app_components, dict)
         or app_components.get("sha256")
-        != candidate.get("appCandidate", {}).get("sha256")
+        != app_release.get("sourceRevision")
     ):
         raise VerificationError(
             "active App release component identity is inconsistent"
@@ -1521,7 +1585,7 @@ def _verify_active_power_state(
         "build": app_release.get("build"),
         "sourceRevision": app_release.get("sourceRevision"),
         "embeddedMeasurementStackSHA256":
-            candidate.get("measurementStack", {}).get("sha256"),
+            current.get("measurementStack", {}).get("sha256"),
     }
     if (
         result.get("appRelease") != expected_app_identity
@@ -1566,7 +1630,13 @@ def _verify_active_power_state(
 
 
 def verify_power_candidate() -> dict[str, Any]:
-    """Verify the retained clean-break candidate and active state, if issued."""
+    """Verify active Power state and the fail-closed next release plan.
+
+    The initial activation record is retained for audit, but released source
+    manifests are verified as immutable snapshots rather than re-bound to the
+    mutable working-tree source paths they originally listed. New source is
+    checked independently through ``products/power/next.json``.
+    """
 
     registry_path = _repo_path(POWER_REGISTRY_PATH)
     registry = _load_json(registry_path)
@@ -1601,16 +1671,50 @@ def verify_power_candidate() -> dict[str, Any]:
     runner_candidate_reference = candidate.get("runnerCandidate")
     if not isinstance(runner_candidate_reference, dict):
         raise VerificationError("Power candidate has no runner candidate")
-    runner_component_count, runtime_adapter_implemented = (
-        _verify_runner_candidate(runner_candidate_reference, documents)
-    )
     app_candidate_reference = candidate.get("appCandidate")
     if not isinstance(app_candidate_reference, dict):
         raise VerificationError("Power candidate has no App candidate")
-    app_component_count = _verify_app_candidate(
-        app_candidate_reference,
-        documents,
-    )
+    if active:
+        runner_manifest_path = _verify_pinned_asset(
+            runner_candidate_reference,
+            "released Runner component manifest",
+        )
+        runner_manifest = _load_json(runner_manifest_path)
+        runner_components = runner_manifest.get("components")
+        if not isinstance(runner_components, dict):
+            raise VerificationError(
+                "released Runner manifest has no components"
+            )
+        runner_component_count = len(runner_components)
+        runtime_adapter_implemented = isinstance(
+            runner_components.get("runtimeAdapter"),
+            dict,
+        )
+        current = _load_json(_repo_path(POWER_CURRENT_PATH))
+        app_release_path = _verify_pinned_asset(
+            current.get("appRelease", {}),
+            "active App release",
+        )
+        app_release = _load_json(app_release_path)
+        app_manifest_path = _verify_pinned_asset(
+            app_release.get("appComponents", {}),
+            "released App component manifest",
+        )
+        app_manifest = _load_json(app_manifest_path)
+        app_components = app_manifest.get("components")
+        if not isinstance(app_components, dict):
+            raise VerificationError(
+                "released App manifest has no components"
+            )
+        app_component_count = len(app_components)
+    else:
+        runner_component_count, runtime_adapter_implemented = (
+            _verify_runner_candidate(runner_candidate_reference, documents)
+        )
+        app_component_count = _verify_app_candidate(
+            app_candidate_reference,
+            documents,
+        )
 
     measurement_stack_reference = candidate.get("measurementStack")
     if not isinstance(measurement_stack_reference, dict):
@@ -1696,19 +1800,35 @@ def verify_power_candidate() -> dict[str, Any]:
                 f"candidate {policy_name} policy version mismatch"
             )
 
-    runner_certification_candidate_id, app_release_candidate_id = (
-        _verify_release_candidates(
-            candidate,
-            measurement_stack_reference=measurement_stack_reference,
-            runner_reference=runner_candidate_reference,
-            runner_certificate_reference=runner_certificate_reference,
-            app_reference=app_candidate_reference,
-            program_reference=program_reference,
-            target_reference=target_reference,
-            runner_policy_reference=policies["runner"],
-            documents=documents,
+    if active:
+        runner_candidate_path = _verify_pinned_asset(
+            candidate.get("runnerCertificationCandidate", {}),
+            "retained Runner certificate candidate",
         )
-    )
+        runner_certification_candidate_id = _load_json(
+            runner_candidate_path
+        ).get("certificateID")
+        app_candidate_path = _verify_pinned_asset(
+            candidate.get("appReleaseCandidate", {}),
+            "retained App release candidate",
+        )
+        app_release_candidate_id = _load_json(
+            app_candidate_path
+        ).get("releaseID")
+    else:
+        runner_certification_candidate_id, app_release_candidate_id = (
+            _verify_release_candidates(
+                candidate,
+                measurement_stack_reference=measurement_stack_reference,
+                runner_reference=runner_candidate_reference,
+                runner_certificate_reference=runner_certificate_reference,
+                app_reference=app_candidate_reference,
+                program_reference=program_reference,
+                target_reference=target_reference,
+                runner_policy_reference=policies["runner"],
+                documents=documents,
+            )
+        )
 
     registry_reference = models.get("registry")
     cohort_reference = models.get("cohort")
@@ -1762,6 +1882,357 @@ def verify_power_candidate() -> dict[str, Any]:
     _verify_workload_measurement_modes(contract, documents_by_path)
     _verify_workload_response_contracts(contract, documents_by_path)
 
+    next_state: str | None = None
+    next_runner_certificate_id: str | None = None
+    next_app_release_candidate_id: str | None = None
+    if active:
+        next_path_value = registry.get("nextRelease")
+        if next_path_value != "products/power/next.json":
+            raise VerificationError(
+                "active Power registry has no canonical next-release plan"
+            )
+        next_path = _repo_path(next_path_value)
+        next_release = _load_json(next_path)
+        next_state_value = next_release.get("state")
+        reported_next_state = next_state_value
+        if (
+            next_release.get("schemaVersion")
+            != "power-release-plan-1.0.0"
+            or next_release.get("productID") != "power"
+            or next_state_value not in {
+                "runner-certification-required",
+                "app-release-rehearsal-required",
+                "activated",
+            }
+            or next_release.get("publicIntakeOpen") is not False
+            or (
+                next_state_value != "activated"
+                and next_release.get("appRelease") is not None
+            )
+        ):
+            raise VerificationError(
+                "next Power release plan is not fail-closed"
+            )
+        documents.append((next_path_value, next_release))
+        current = _load_json(_repo_path(POWER_CURRENT_PATH))
+        if next_state_value == "activated":
+            completed_base_path = _verify_pinned_asset(
+                next_release.get("baseRelease", {}),
+                "completed release base snapshot",
+            )
+            completed_app_release = _verify_pinned_asset(
+                next_release.get("appRelease", {}),
+                "completed App release",
+            )
+            completed_activation = next_release.get(
+                "activationEvidence"
+            )
+            if not isinstance(completed_activation, dict):
+                raise VerificationError(
+                    "completed release has no activation evidence"
+                )
+            for key in ("result", "review"):
+                _verify_pinned_asset(
+                    completed_activation.get(key, {}),
+                    f"completed release activation {key}",
+                )
+            if (
+                completed_base_path == _repo_path(POWER_CURRENT_PATH)
+                or completed_app_release
+                != _verify_pinned_asset(
+                    current.get("appRelease", {}),
+                    "active completed App release",
+                )
+                or next_release.get("activatedAt")
+                != current.get("activatedAt")
+                or next_release.get("stackID") != current.get("stackID")
+                or next_release.get("measurementStack")
+                != current.get("measurementStack")
+                or next_release.get("runnerComponents")
+                != current.get("runnerComponents")
+                or next_release.get("runnerCertificate")
+                != current.get("runnerCertificate")
+                or next_release.get("appRelease")
+                != current.get("appRelease")
+                or completed_activation
+                != current.get("activationEvidence")
+            ):
+                raise VerificationError(
+                    "completed next release does not match active Power"
+                )
+            next_release = {
+                **next_release,
+                "state": "app-release-rehearsal-required",
+                "baseRelease": {
+                    "path": POWER_CURRENT_PATH,
+                    "sha256": _sha256(
+                        _repo_path(POWER_CURRENT_PATH)
+                    ),
+                },
+                "appRelease": None,
+            }
+            next_state_value = "app-release-rehearsal-required"
+        base_path = _verify_pinned_asset(
+            next_release.get("baseRelease", {}),
+            "next release base pointer",
+        )
+        if base_path != _repo_path(POWER_CURRENT_PATH):
+            raise VerificationError(
+                "next release is not based on current Power"
+            )
+        next_runner = next_release.get("runnerComponents")
+        if not isinstance(next_runner, dict):
+            raise VerificationError(
+                "next release has no Runner component candidate"
+            )
+        _verify_runner_candidate(next_runner, documents)
+        expected_candidate_id = (
+            "power2-certification-candidate-"
+            + str(next_runner.get("sha256", ""))[:12]
+        )
+        if (
+            next_release.get("runnerCertificationCandidateID")
+            != expected_candidate_id
+        ):
+            raise VerificationError(
+                "next Runner candidate ID is not source-derived"
+            )
+        if next_state_value == "runner-certification-required":
+            if (
+                next_release.get("measurementStack")
+                != current.get("measurementStack")
+                or next_release.get("runnerCertificate") is not None
+                or next_release.get("appReleaseCandidate") is not None
+            ):
+                raise VerificationError(
+                    "initial next release must remain at the closed "
+                    "Runner certification gate"
+                )
+        else:
+            next_stack_path = _verify_pinned_asset(
+                next_release.get("measurementStack", {}),
+                "next release measurement stack",
+            )
+            next_stack = _load_json(next_stack_path)
+            documents.append(
+                (
+                    str(next_stack_path.relative_to(ROOT)),
+                    next_stack,
+                )
+            )
+            next_certificate_reference = next_release.get(
+                "runnerCertificate"
+            )
+            if not isinstance(next_certificate_reference, dict):
+                raise VerificationError(
+                    "App rehearsal has no issued Runner certificate"
+                )
+            next_certificate_path = _verify_pinned_asset(
+                next_certificate_reference,
+                "next release Runner certificate",
+            )
+            next_certificate = _load_json(next_certificate_path)
+            documents.append(
+                (
+                    str(next_certificate_path.relative_to(ROOT)),
+                    next_certificate,
+                )
+            )
+            next_certificate_id = next_certificate.get("certificateID")
+            expected_certificate_id = (
+                "power2-runner-"
+                + str(next_runner.get("sha256", ""))[:12]
+            )
+            if (
+                next_stack.get("stackID")
+                != next_release.get("stackID")
+                or next_stack.get("status") != "release-candidate"
+                or next_stack.get("runnerCertificate")
+                != next_certificate_reference
+                or next_certificate.get("state") != "active"
+                or next_certificate.get("runnerComponents")
+                != next_runner
+                or next_certificate_id != expected_certificate_id
+            ):
+                raise VerificationError(
+                    "next App rehearsal stack and Runner certificate "
+                    "are inconsistent"
+                )
+
+            next_evidence = next_release.get(
+                "runnerCertificationEvidence"
+            )
+            certificate_evidence = next_certificate.get(
+                "certificationEvidence"
+            )
+            if (
+                not isinstance(next_evidence, dict)
+                or not isinstance(certificate_evidence, dict)
+            ):
+                raise VerificationError(
+                    "next Runner certificate has no retained evidence"
+                )
+            evidence_keys = {
+                "result": "result",
+                "review": "review",
+                "runnerComponentsSnapshot": "runnerComponentsSnapshot",
+                "certificationAppComponents":
+                    "certificationAppComponents",
+            }
+            for next_key, certificate_key in evidence_keys.items():
+                reference = next_evidence.get(next_key)
+                if reference != certificate_evidence.get(certificate_key):
+                    raise VerificationError(
+                        "next Runner certification evidence mismatch: "
+                        f"{next_key}"
+                    )
+                evidence_path = _verify_pinned_asset(
+                    reference,
+                    f"next Runner certification evidence {next_key}",
+                )
+                documents.append(
+                    (
+                        str(evidence_path.relative_to(ROOT)),
+                        _load_json(evidence_path),
+                    )
+                )
+            runtime_snapshot = next_evidence.get(
+                "runtimeIdentitySnapshot"
+            )
+            if runtime_snapshot != next_certificate.get(
+                "runtimeIdentity"
+            ):
+                raise VerificationError(
+                    "next Runner runtime snapshot mismatch"
+                )
+            runtime_snapshot_path = _verify_pinned_asset(
+                runtime_snapshot,
+                "next Runner runtime snapshot",
+            )
+            documents.append(
+                (
+                    str(runtime_snapshot_path.relative_to(ROOT)),
+                    _load_json(runtime_snapshot_path),
+                )
+            )
+            certification_result = _load_json(
+                _verify_pinned_asset(
+                    next_evidence["result"],
+                    "next Runner certification result",
+                )
+            )
+            certification_review = _load_json(
+                _verify_pinned_asset(
+                    next_evidence["review"],
+                    "next Runner certification review",
+                )
+            )
+            if (
+                certification_result.get("runnerCertificateID")
+                != next_release.get("runnerCertificationCandidateID")
+                or certification_review.get("runnerCertificateID")
+                != next_release.get("runnerCertificationCandidateID")
+                or certification_review.get("status") != "pass"
+                or certification_review.get("physicalDeviceSmokeRun")
+                != "pass"
+                or certification_review.get("rawResultReview") != "pass"
+                or certification_review.get("publishable") is not False
+                or certification_review.get("rankingEligible") is not False
+                or certification_review.get("sourceResultSHA256")
+                != next_evidence["result"].get("sha256")
+            ):
+                raise VerificationError(
+                    "next Runner certification evidence is not "
+                    "issuance-safe"
+                )
+
+            next_app_candidate_reference = next_release.get(
+                "appReleaseCandidate"
+            )
+            if not isinstance(next_app_candidate_reference, dict):
+                raise VerificationError(
+                    "App rehearsal has no frozen App release candidate"
+                )
+            next_app_candidate_path = _verify_pinned_asset(
+                next_app_candidate_reference,
+                "next App release candidate",
+            )
+            next_app_candidate = _load_json(next_app_candidate_path)
+            documents.append(
+                (
+                    str(next_app_candidate_path.relative_to(ROOT)),
+                    next_app_candidate,
+                )
+            )
+            next_app_reference = next_app_candidate.get("appComponents")
+            if not isinstance(next_app_reference, dict):
+                raise VerificationError(
+                    "next App release candidate has no component manifest"
+                )
+            _verify_app_candidate(next_app_reference, documents)
+            next_app_manifest = _load_json(
+                _verify_pinned_asset(
+                    next_app_reference,
+                    "next App component manifest",
+                )
+            )
+            next_app_identity = _load_json(
+                _verify_pinned_asset(
+                    next_app_manifest.get("releaseIdentity", {}),
+                    "next App release identity",
+                )
+            )
+            next_official_identity = next_app_identity.get(
+                "buildKinds", {}
+            ).get("official", {})
+            next_app_digest = next_app_reference.get("sha256")
+            if (
+                next_app_candidate.get("schemaVersion")
+                != "power-app-release-candidate-1.0.0-draft.1"
+                or next_app_candidate.get("productID") != "power"
+                or next_app_candidate.get("state") != "candidate"
+                or next_app_candidate.get("releaseID")
+                != (
+                    f"power-app-{next_app_identity.get('version')}"
+                    f"-candidate-{str(next_app_digest)[:12]}"
+                )
+                or next_app_candidate.get("sourceRevision")
+                != next_app_digest
+                or next_app_candidate.get("version")
+                != next_app_identity.get("version")
+                or next_app_candidate.get("build")
+                != next_app_identity.get("build")
+                or next_app_candidate.get("bundleIdentifier")
+                != next_official_identity.get("bundleIdentifier")
+                or next_app_candidate.get("buildConfiguration")
+                != "Official"
+                or next_app_candidate.get("embeddedMeasurementStack")
+                != next_release.get("measurementStack")
+                or next_app_candidate.get(
+                    "supportedRunnerCertificateIDs"
+                )
+                != [next_certificate_id]
+                or next_app_candidate.get("verification")
+                != {
+                    "sourceAndDependencyIntegrity": "pass",
+                    "genericIOSReleaseBuild": "pass",
+                    "physicalDeviceEndToEndRehearsal": "pending",
+                }
+                or next_release.get("app")
+                != {
+                    "version": next_app_identity.get("version"),
+                    "build": next_app_identity.get("build"),
+                }
+            ):
+                raise VerificationError(
+                    "next App release candidate is not source-bound"
+                )
+            next_runner_certificate_id = str(next_certificate_id)
+            next_app_release_candidate_id = str(
+                next_app_candidate.get("releaseID")
+            )
+        next_state = str(reported_next_state)
+
     active_release_id: str | None = None
     if active:
         active_release_id = _verify_active_power_state(
@@ -1773,9 +2244,15 @@ def verify_power_candidate() -> dict[str, Any]:
         )
     _reject_legacy_references(documents)
 
+    summary_stack_id = candidate.get("stackID")
+    if active:
+        summary_stack_id = _load_json(
+            _repo_path(POWER_CURRENT_PATH)
+        ).get("stackID")
+
     return {
         "status": "valid-active" if active else "valid-migration-draft",
-        "stackID": candidate.get("stackID"),
+        "stackID": summary_stack_id,
         "publicIntakeOpen": active,
         "program": (
             f"{program_reference.get('id')}@"
@@ -1798,6 +2275,9 @@ def verify_power_candidate() -> dict[str, Any]:
         "runnerCertified": True,
         "appReleased": active,
         "appRelease": active_release_id,
+        "nextReleaseState": next_state,
+        "nextRunnerCertificate": next_runner_certificate_id,
+        "nextAppReleaseCandidate": next_app_release_candidate_id,
     }
 
 
@@ -1877,6 +2357,25 @@ def _build_parser() -> argparse.ArgumentParser:
         "--write",
         action="store_true",
         help="write the verified activation set; omit for a dry run",
+    )
+    next_activation_parser = subparsers.add_parser(
+        "activate-power-next",
+        help=(
+            "review one staged Official result and atomically advance the "
+            "existing Power release"
+        ),
+    )
+    next_activation_parser.add_argument("result", type=Path)
+    next_activation_parser.add_argument("--reviewed-at", required=True)
+    next_activation_parser.add_argument("--activated-at", required=True)
+    next_activation_parser.add_argument(
+        "--validator-source-revision",
+        required=True,
+    )
+    next_activation_parser.add_argument(
+        "--write",
+        action="store_true",
+        help="write the verified upgrade set; omit for a dry run",
     )
     return parser
 
@@ -1966,6 +2465,33 @@ def main() -> int:
             )
             if args.write:
                 write_activation(rendered)
+            summary = {
+                **rendered.summary,
+                "writeRequested": args.write,
+                "written": args.write,
+            }
+        elif args.command == "activate-power-next":
+            try:
+                from scripts.lib.power2.next_activation import (
+                    render_next_activation,
+                    write_next_activation,
+                )
+            except ModuleNotFoundError:
+                from lib.power2.next_activation import (
+                    render_next_activation,
+                    write_next_activation,
+                )
+
+            rendered = render_next_activation(
+                args.result,
+                reviewed_at=args.reviewed_at,
+                validator_source_revision=(
+                    args.validator_source_revision
+                ),
+                activated_at=args.activated_at,
+            )
+            if args.write:
+                write_next_activation(rendered)
             summary = {
                 **rendered.summary,
                 "writeRequested": args.write,

@@ -21,7 +21,8 @@ profile.
 Power 2 is the active clean-break architecture. Its first benchmark cell
 combines the text-generation performance Program with the physical-iPhone
 Target. The exact Runner is certified, Official build 4 passed automated,
-generic Release, and physical-device end-to-end checks, and the immutable App
+generic Release, and physical-device end-to-end checks; Official build 5 then
+replaced it through the same closed release gates, and the immutable App
 release and active public pointer were issued together.
 
 [Power Benchmark 1.1](power-benchmark-1.1-finalization.md) and the completed

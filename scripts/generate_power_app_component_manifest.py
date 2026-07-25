@@ -28,6 +28,12 @@ COMPONENT_ROOTS = {
     "githubSubmission": (
         APP_KIT_ROOT / "Sources" / "PowerGitHubSubmission"
     ),
+    "releasePreflight": (
+        APP_KIT_ROOT / "Sources" / "PowerReleasePreflight"
+    ),
+    "runCheckpointStore": (
+        APP_KIT_ROOT / "Sources" / "PowerRunCheckpointStore"
+    ),
 }
 
 

@@ -3,4 +3,5 @@
 #include "ReleaseIdentity.generated.xcconfig"
 DEVELOPMENT_TEAM =
 POWER_SOURCE_REVISION =
+POWER_RELEASE_REHEARSAL = NO
 #include? "LocalSigning.xcconfig"

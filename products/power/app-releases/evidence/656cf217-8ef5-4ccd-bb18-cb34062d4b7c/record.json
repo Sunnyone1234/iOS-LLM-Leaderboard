@@ -1,0 +1,29 @@
+{
+  "appComponents": {
+    "path": "products/power/app-releases/evidence/candidate-bf5362bad31a/app-component-manifest.json",
+    "sha256": "bf5362bad31a015f76c4227d82f1a88c9dfa9ea4475a30d00bdcb748c9c56a2e"
+  },
+  "appReleaseCandidate": {
+    "path": "products/power/app-releases/candidates/power-app-2.0.0-build.5-bf5362bad31a.json",
+    "sha256": "11a96d43ef492a2d1594ddd6fb31d2b5200d84cd9bcdc3cac3f743c994f4926c"
+  },
+  "productID": "power",
+  "publishable": false,
+  "rankingEligible": false,
+  "reason": "The rehearsal passed, but candidate lifecycle authority was removed from the hashed App source before public activation so the same replacement source can become current without recompilation.",
+  "reasonCode": "candidate-lifecycle-authority-compiled-into-source",
+  "result": {
+    "path": "products/power/app-releases/evidence/656cf217-8ef5-4ccd-bb18-cb34062d4b7c/result.json",
+    "sha256": "2d90b5e3e5094452104b33eadf67eec28b7162579bbd078b9d01235dfad3c929"
+  },
+  "review": {
+    "path": "products/power/app-releases/evidence/656cf217-8ef5-4ccd-bb18-cb34062d4b7c/review.json",
+    "sha256": "ddaccaedcc9726c617966a278c26c27d0f12d38b0d6ab2eaf5d4e8ddd4fc93aa"
+  },
+  "schemaVersion": "power-app-release-rehearsal-record-1.0.0-draft.1",
+  "state": "superseded",
+  "supersededBy": {
+    "path": "products/power/app-releases/candidates/power-app-2.0.0-build.5-a9b1c359107c.json",
+    "sha256": "e347ebef41d7296c525c304753e8a61d8c6e54e686338126b65b3d594a4ae885"
+  }
+}

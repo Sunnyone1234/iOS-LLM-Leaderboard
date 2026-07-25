@@ -10,6 +10,9 @@ struct PowerBenchmarkApp: App {
                 .task {
                     await model.reloadResults()
                 }
+                .task {
+                    await model.refreshReleaseEligibility()
+                }
         }
     }
 }

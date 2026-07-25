@@ -70,7 +70,9 @@ struct PowerTestView: View {
             .disabled(model.runState.isRunning)
 
             Section {
-                if model.measurementAvailable {
+                if releaseCheckInProgress {
+                    ProgressView("Checking the current Power release…")
+                } else if model.measurementAvailable {
                     if PowerAppBuildIdentity.isCertificationBuild {
                         Label(
                             "Certification mode produces candidate "
@@ -78,12 +80,21 @@ struct PowerTestView: View {
                             systemImage: "wrench.and.screwdriver"
                         )
                         .foregroundStyle(.orange)
-                    } else {
+                    } else if model.releaseEligibility == .releaseCandidate {
                         Label(
-                            "Official release identity verified.",
+                            "Closed Official App release rehearsal. Evidence "
+                                + "is saved locally but cannot be submitted "
+                                + "or ranked.",
                             systemImage: "checkmark.shield"
                         )
-                        .foregroundStyle(.green)
+                        .foregroundStyle(.orange)
+                    } else {
+                        Label(
+                            "Supported release identity declared by this "
+                                + "source-built App.",
+                            systemImage: "info.circle"
+                        )
+                        .foregroundStyle(.blue)
                     }
                 } else {
                     Label(
@@ -93,6 +104,14 @@ struct PowerTestView: View {
                     .foregroundStyle(.orange)
                 }
 
+                if releaseCheckCanRetry {
+                    Button("Retry current release check") {
+                        Task {
+                            await model.refreshReleaseEligibility()
+                        }
+                    }
+                }
+
                 if let status = model.runStatusText {
                     if model.runState.isRunning {
                         ProgressView(status)
@@ -100,6 +119,16 @@ struct PowerTestView: View {
                         Text(status)
                             .foregroundStyle(statusColor)
                     }
+                }
+
+                if let notice = model.checkpointRecoveryNotice {
+                    Label(notice, systemImage: "arrow.clockwise.circle")
+                        .foregroundStyle(.orange)
+                }
+
+                if let error = model.checkpointRecoveryError {
+                    Label(error, systemImage: "exclamationmark.triangle")
+                        .foregroundStyle(.red)
                 }
 
                 if model.runState.isRunning {
@@ -120,8 +149,10 @@ struct PowerTestView: View {
                     "Certification evidence uses a candidate certificate ID "
                         + "and cannot pass public intake or enter ranking. "
                         + "Developer builds remain measurement-locked; "
-                        + "Official builds unlock only through the generated "
-                        + "repository release identity."
+                        + "the Official source configuration unlocks only "
+                        + "through the generated repository release identity. "
+                        + "That identity is self-declared by a local build, "
+                        + "not binary attestation."
                 )
             }
         }
@@ -133,8 +164,21 @@ struct PowerTestView: View {
     }
 
     private var lockedReason: String {
-        PowerAppBuildIdentity.measurementLockReason
+        model.measurementLockReason
             ?? "The App release identity is unavailable."
+    }
+
+    private var releaseCheckInProgress: Bool {
+        model.releaseEligibility == .checking
+    }
+
+    private var releaseCheckCanRetry: Bool {
+        switch model.releaseEligibility {
+        case .updateRequired, .unavailable:
+            true
+        case .notRequired, .checking, .releaseCandidate, .current:
+            false
+        }
     }
 
     private var sourceRevisionDisplay: String {
@@ -146,6 +190,9 @@ struct PowerTestView: View {
     private var runButtonTitle: String {
         if PowerAppBuildIdentity.isCertificationBuild {
             return "Run Certification Smoke Test"
+        }
+        if model.releaseEligibility == .releaseCandidate {
+            return "Run Official Release Rehearsal"
         }
         return "Run Benchmark"
     }

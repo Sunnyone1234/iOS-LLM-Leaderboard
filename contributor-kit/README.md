@@ -19,8 +19,10 @@ python3 scripts/power submit /path/to/result.json \
 ```
 
 Power 2 public intake is open for results produced by the supported Official
-App release pinned by `products/power/current.json`. Developer and
-Certification builds remain non-publishable.
+source configuration pinned by `products/power/current.json`. The embedded
+release identity is a self-declaration by a locally signed build. One eligible
+contributor is Accepted; independent matching evidence is required for
+Reproduced. Developer and Certification builds remain non-publishable.
 
 ## Other contributions
 

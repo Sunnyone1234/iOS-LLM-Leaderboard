@@ -31,6 +31,8 @@
 	<string>$(POWER_SOURCE_REVISION)</string>
 	<key>PowerBuildKind</key>
 	<string>$(POWER_BUILD_KIND)</string>
+	<key>PowerReleaseRehearsal</key>
+	<string>$(POWER_RELEASE_REHEARSAL)</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>

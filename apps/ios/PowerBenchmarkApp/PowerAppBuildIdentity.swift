@@ -14,7 +14,7 @@ enum PowerAppBuildKind: String {
         case .certification:
             "Certification"
         case .official:
-            "Official"
+            "Official (source-built)"
         case .invalid:
             "Invalid"
         }
@@ -45,6 +45,16 @@ enum PowerAppBuildIdentity {
 
     static var isDeveloperBuild: Bool {
         kind == .developer
+    }
+
+    static var releaseRehearsalEnabled: Bool {
+        guard isOfficialBuild else { return false }
+        let value = Bundle.main.object(
+            forInfoDictionaryKey: "PowerReleaseRehearsal"
+        ) as? String
+        return ["1", "true", "yes"].contains(
+            value?.lowercased() ?? ""
+        )
     }
 
     static var bundleIdentifier: String {
@@ -94,9 +104,11 @@ enum PowerAppBuildIdentity {
                     + "Build from the generated App component-manifest "
                     + "SHA-256."
             }
-            guard !Power2ProductIdentity.appReleaseAvailable else {
+            guard Power2CandidateCatalog.runnerCertificateID.hasPrefix(
+                "power2-certification-candidate-"
+            ) else {
                 return "Certification measurement is closed because the "
-                    + "Official App release candidate is available."
+                    + "Runner certificate has already been issued."
             }
             return nil
         case .official:
@@ -104,10 +116,6 @@ enum PowerAppBuildIdentity {
                 return "POWER_SOURCE_REVISION is missing or invalid. "
                     + "The Xcode local signing configuration must provide "
                     + "the generated App component-manifest SHA-256."
-            }
-            guard Power2ProductIdentity.appReleaseAvailable else {
-                return "The generated Official App release candidate is "
-                    + "not available."
             }
             return nil
         }

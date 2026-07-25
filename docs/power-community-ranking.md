@@ -1,118 +1,96 @@
-# Power community reproduction and live ranking
+# Power community acceptance, reproduction, and ranking
 
 ## Scope
 
-The live view layers merged community evidence on top of the immutable Power
-1.1 release. It changes no workload, source result schema, App measurement,
-published result, checksum, or release tag. Historical valid Power 1.0
-community packages remain visible under their original identity.
+This document explains the current Power 2 community view. The normative
+ranking contract is the hash-pinned ranking policy referenced by
+[`products/power/current.json`](../products/power/current.json). Power 1
+community datasets remain historical and are not input to this view.
 
-## Accepted current input
+## Admission before ranking
 
-A current result enters the live dataset after its two-file Power 1.1 package:
+A contribution becomes repository evidence only after its current Power 2
+two-file package:
 
-1. is opened by the GitHub account named in `contributor.githubHandle`;
-2. passes package, hash, source-result, exact-runner compatibility, and
-   protocol validation; and
-3. is merged into `main` by the repository's evidence-only automation or a
-   maintainer.
+1. is opened by the GitHub account declared in `submission.json`;
+2. passes trusted package, hash, schema, current-stack, source-declaration,
+   physical-target, duplicate, and result-only-scope checks; and
+3. is merged by the evidence-only automation or a maintainer.
 
-The PR intake automation reads candidate JSON from the pull-request git object
-while executing only trusted base-branch code. It accepts up to ten new
-packages in one PR and assigns one of three outcomes:
+Intake and ranking remain separate. Structurally valid failure, cancellation,
+OOM, assisted-environment, or metric-ineligible evidence can be Accepted and
+retained without supplying a displayed metric.
 
-| Outcome | Conditions | Repository action |
-| --- | --- | --- |
-| `power:auto-accept` | Evidence-only additions; author binding, hashes, declarations, frozen protocol, primary metric, ordinary environment, and duplicate checks all pass; no conflict is disclosed | Squash-merge after required checks |
-| `power:manual-review` | The package is structurally valid, but a conflict or thermal/environmental assistance is disclosed | Preserve the evidence for maintainer review; do not auto-merge |
-| `power:rejected` | Invalid/missing files, non-submission changes, contributor mismatch, unapproved runner identity, protocol or primary-metric failure, duplicate evidence, or more than ten packages | Fail intake and do not merge |
+## Source-built trust states
 
-The merge worker runs only after trusted intake and commit-identity workflows
-complete. It attempts the squash merge only for an open, non-draft PR carrying
-`power:auto-accept`; repository rules still enforce all required checks. After
-the merge it explicitly dispatches the ranking workflow, because GitHub does
-not emit a second workflow run for ordinary events caused by `GITHUB_TOKEN`.
-This automation assigns no formal Verified or Maintainer Reference status.
+The locally signed Official configuration self-declares its App release
+identity. Trusted CI verifies that the declaration and submitted bytes match
+the current repository contracts; it does not attest the installed binary.
 
-The `main` ruleset should require the uniquely named **Power submission
-intake** and **Validate commit identity** checks, allow squash merges, and
-require zero approving reviews. The intake workflow runs for every pull
-request so the required check is never left pending by a path filter; PRs that
-do not touch the current Power intake return `not_applicable` without labels or
-automatic merge. Do not require the path-filtered ranking and Suite B checks
-globally, because unrelated PRs would otherwise wait for checks that never
-start. The repository-level **Allow auto-merge** option may remain enabled, but
-the evidence worker does not depend on it.
-
-The package records thermal assistance. `none` may enter the ordinary live
-ranking; deliberate cooling, deliberate heating, other assistance, or
-`unknown` remains evidence but is excluded from ordinary ranking calculations.
-
-## Exact comparison cell
-
-Independent contributors count together only when all comparison identity
-fields match, including:
-
-- source benchmark release and workload/fixture/mode;
-- runner, App version/build/source commit;
-- generation settings;
-- model artifact/revision/content hash/quantization/tokenizer;
-- runtime version/revision/backend/dependencies; and
-- device machine identifier, physical memory, OS version, and OS build.
-
-Changing one field creates a different exact cell. The website may group patch
-releases for a simpler default display, but exact evidence identities remain
-separate in the dataset.
-
-Compatibility policy 1.1.4 preserves the App 0.13.0 reference, exact App
-0.16.0 build 19 approval, and both exact App 0.17.0 build 20 source identities.
-It also approves App 0.18.0 build 21 only at protected-merge commit
-`8920a423f4b4abff4e34a2d8a128a3962899258e`. It does not reinterpret App
-0.14.0 or 0.15.0 evidence and it does not pre-approve later App commits.
-
-## Contributor counting
-
-- GitHub handle matching is case-insensitive.
-- One account counts once per exact cell.
-- The same account may count in any number of different cells.
-- All valid repeated runs remain linked as evidence.
-- A copied result is rejected by duplicate SHA-256, result ID, or session ID.
-- Each metric first takes a median per contributor, then a median across those
-  contributor medians.
-
-| Eligible contributors | Live display |
+| Distinct eligible contributors in an exact cell | Display state |
 | ---: | --- |
-| 1 | Single contributor |
+| 1 | Accepted |
 | 2 | Reproduced |
-| 3 or more | Reproduced with community aggregate |
+| 3 or more | Contributor-weighted |
 
-Metric-ineligible or environmentally assisted evidence remains in the run and
-evidence counts but does not supply the displayed metric or eligible
-contributor count.
+`Accepted` means admissible single-contributor evidence, not independently
+verified performance. `Reproduced` is derived only from two distinct eligible
+GitHub accounts. Three contributors enable aggregation across one reduced
+value per contributor. There is no global Power score.
 
-## Variation
+## Exact comparison identity
 
-Primary-metric variation is median absolute deviation across per-contributor
-medians, divided by their median. Above 10% is labeled `High variation`.
-Variation is a warning, not an automatic exclusion.
+Contributors count together only when every comparison field required by the
+current policy matches, including:
 
-## Automatic publication
+- Program, Target, workload, workload version, and measurement mode;
+- Runner certificate;
+- exact model artifact, revision, quantization, and tokenizer;
+- Runtime version, revision, backend, and dependency identity;
+- device machine identifier, OS version, and OS build; and
+- inference configuration.
+
+Changing any field creates a different exact cell. The UI may group compatible
+display families, but grouping never rewrites evidence identity.
+
+## Metric reduction
+
+- One GitHub account counts once per exact cell.
+- All accepted repeated runs remain traceable.
+- Each metric first takes the median of eligible runs per contributor.
+- The displayed value is then the median across contributor medians.
+- Metric direction is defined by the pinned Program and ranking policy.
+- Thermal assistance other than `none` remains evidence but is excluded from
+  the ordinary view.
+
+Behavior eligibility, recommendation eligibility, and each metric's ranking
+eligibility are separate decisions. Pipeline TTFT is never relabeled as
+user-visible first-renderable time.
+
+## Automation
 
 ```text
-App export → contributor-owned PR → trusted CI triage and ranking preview
-→ automatic or maintainer merge → deterministic generation → one GitHub Pages deploy
+App or scripts/power package
+→ contributor-owned result PR
+→ Power submission intake + commit identity
+→ evidence-only merge
+→ scripts/power preview
+→ one GitHub Pages deployment
 ```
 
-Generated files:
+The auto-merge worker is triggered after either required check completes. Runs
+for the same fork branch are serialized; the first run that observes both
+successful checks may squash-merge, and a later peer exits successfully if the
+PR is already closed. Normal code and documentation PRs receive
+`not_applicable` intake and are never evidence-auto-merged.
 
-- `results/suite-b-power-community/normalized-results.json`;
-- `results/suite-b-power-community/LEADERBOARD.md`;
-- `results/suite-b-power-community/COVERAGE.md`.
+The repository ruleset should require:
 
-Maintainers can request the same current preview through the **Power community
-ranking** workflow. The retained public `scripts/power.py preview` command is
-an immutable Power 1.1.1 asset; trusted CI uses the separately pinned 1.1.4
-adapter without changing that historical command.
+- **Power submission intake**;
+- **Validate commit identity**;
+- pull-request merges; and
+- no review approval as a universal condition if fully automatic evidence
+  acceptance is desired.
 
-The live view does not grant a formal evidence-level transition. Verified and
-Maintainer Reference remain separate review and release decisions.
+Use `python3 scripts/power preview --output /tmp/power-preview` to reproduce the
+current derived view locally.

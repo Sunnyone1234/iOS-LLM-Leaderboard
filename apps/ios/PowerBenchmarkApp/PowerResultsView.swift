@@ -67,8 +67,8 @@ struct PowerResultsView: View {
                         Text(
                             "The Results Store and submission package preserve "
                                 + "the selected file byte-for-byte. GitHub "
-                                + "submission accepts only evidence produced "
-                                + "by this exact Official App build."
+                                + "submission accepts only evidence declaring "
+                                + "the current supported App release identity."
                         )
                     }
 
@@ -87,6 +87,7 @@ struct PowerResultsView: View {
             }
         }
         .refreshable {
+            await model.refreshReleaseEligibility()
             await model.reloadResults()
         }
     }
@@ -140,18 +141,18 @@ struct PowerResultsView: View {
 
             if model.submissionAvailable {
                 Label(
-                    "Trusted repository CI checks whether this exact App "
-                        + "release is currently supported. Creating a pull "
-                        + "request does not guarantee acceptance or ranking.",
-                    systemImage: "checkmark.shield"
+                    "This source-built App self-declares its release identity. "
+                        + "Trusted repository CI checks the declaration and "
+                        + "evidence contract; it does not attest the local "
+                        + "binary. One eligible contributor is Accepted, and "
+                        + "independent reproduction raises confidence.",
+                    systemImage: "info.circle"
                 )
                 .foregroundStyle(.secondary)
             }
             if !model.submissionAvailable {
                 Label(
-                    "Submission requires an Official build with an embedded "
-                        + "App release identity. Repository CI remains the "
-                        + "acceptance authority.",
+                    submissionUnavailableReason,
                     systemImage: "lock.shield"
                 )
                 .foregroundStyle(.orange)
@@ -171,6 +172,18 @@ struct PowerResultsView: View {
                 .foregroundStyle(.orange)
             }
         }
+    }
+
+    private var submissionUnavailableReason: String {
+        if model.releaseEligibility == .releaseCandidate {
+            return "This is a closed Official App release rehearsal. Its "
+                + "result must be reviewed by a maintainer and cannot be "
+                + "submitted to public intake or ranking."
+        }
+        return model.measurementLockReason
+            ?? "Submission requires the current Official source "
+            + "configuration and a confirmed remote release. Repository "
+            + "CI remains the acceptance authority."
     }
 
     @ViewBuilder

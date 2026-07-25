@@ -23,6 +23,8 @@
 		C10000000000000000000006 /* PowerResultsStore in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000006 /* PowerResultsStore */; };
 		C10000000000000000000007 /* PowerSubmissionKit in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000007 /* PowerSubmissionKit */; };
 		C10000000000000000000008 /* PowerGitHubSubmission in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000008 /* PowerGitHubSubmission */; };
+		C10000000000000000000009 /* PowerRunCheckpointStore in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000009 /* PowerRunCheckpointStore */; };
+		C10000000000000000000010 /* PowerReleasePreflight in Frameworks */ = {isa = PBXBuildFile; productRef = C20000000000000000000010 /* PowerReleasePreflight */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +57,8 @@
 				C10000000000000000000006 /* PowerResultsStore in Frameworks */,
 				C10000000000000000000007 /* PowerSubmissionKit in Frameworks */,
 				C10000000000000000000008 /* PowerGitHubSubmission in Frameworks */,
+				C10000000000000000000009 /* PowerRunCheckpointStore in Frameworks */,
+				C10000000000000000000010 /* PowerReleasePreflight in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,6 +134,8 @@
 				C20000000000000000000006 /* PowerResultsStore */,
 				C20000000000000000000007 /* PowerSubmissionKit */,
 				C20000000000000000000008 /* PowerGitHubSubmission */,
+				C20000000000000000000009 /* PowerRunCheckpointStore */,
+				C20000000000000000000010 /* PowerReleasePreflight */,
 			);
 			productName = PowerBenchmarkApp;
 			productReference = A20000000000000000000007 /* PowerBenchmarkApp.app */;
@@ -410,6 +416,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C30000000000000000000002 /* XCLocalSwiftPackageReference "../PowerAppKit" */;
 			productName = PowerGitHubSubmission;
+		};
+		C20000000000000000000009 /* PowerRunCheckpointStore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C30000000000000000000002 /* XCLocalSwiftPackageReference "../PowerAppKit" */;
+			productName = PowerRunCheckpointStore;
+		};
+		C20000000000000000000010 /* PowerReleasePreflight */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C30000000000000000000002 /* XCLocalSwiftPackageReference "../PowerAppKit" */;
+			productName = PowerReleasePreflight;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

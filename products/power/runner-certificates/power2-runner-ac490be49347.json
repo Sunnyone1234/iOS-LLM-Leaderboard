@@ -1,0 +1,76 @@
+{
+  "certificateID": "power2-runner-ac490be49347",
+  "certificationEvidence": {
+    "candidateCertificateID": "power2-certification-candidate-ac490be49347",
+    "certificationAppComponents": {
+      "path": "products/power/runner-certificates/evidence/83ecb818-e1f7-4118-80c9-1df9e6fbe8fe/app-component-manifest.json",
+      "sha256": "f01acae904467a91cbd1c2662ec25305ead0562ce22a937d2983f17931b2db5e"
+    },
+    "measurementStack": {
+      "path": "products/power/stacks/power-text-iphone-2.0.0-rc.1/manifest.json",
+      "sha256": "a92a208324af0ea85c092e1cf04248c669f01c588c9f0d0b724e4c40a1014642"
+    },
+    "result": {
+      "path": "products/power/runner-certificates/evidence/83ecb818-e1f7-4118-80c9-1df9e6fbe8fe/result.json",
+      "sha256": "4ea800f2bcca6c99e2b4aaea7464de828ecb4e8af84d8625fec38a1dac85b84d"
+    },
+    "review": {
+      "path": "products/power/runner-certificates/evidence/83ecb818-e1f7-4118-80c9-1df9e6fbe8fe/review.json",
+      "sha256": "3b81ee4c97464e7066830faf439a01a235656a115c1862af0dd4902e20f6c36b"
+    },
+    "runnerComponentsSnapshot": {
+      "path": "products/power/runner-certificates/evidence/83ecb818-e1f7-4118-80c9-1df9e6fbe8fe/runner-component-manifest.json",
+      "sha256": "ac490be49347ccf2fe6931aa4327921def04b664563afcec4e2809b201cffb1b"
+    }
+  },
+  "certificationPolicy": {
+    "path": "products/power/policies/runner/1.0.0-draft.1.json",
+    "sha256": "e27e6e9c01479c016d4428153d3a168217b7ea0a858bf34b722deb26d2e08535"
+  },
+  "componentSHA256": {
+    "evidenceEnvelope": "7201d022a0bb2a8f14b2c6d3982d70da5613c96073b1b16dffec55db66996620",
+    "programModule": "99c388df7730f85d056445e71fe263f6a45b099fb44da79b2456bf9f7476f1d0",
+    "runnerCore": "0633e0b8a36037153fb360f812576778e30de2aedd520b056f5d545f69dfbdc5",
+    "runtimeAdapter": "b6774fdf5a316afb4bfd7f767de123735eb55af8aed9ee5a852b20fded08092c",
+    "targetAdapter": "85c71405017e1bf78cdedd84965bcdfe93f967a1cb5364d408bb751c6fea370a"
+  },
+  "issuedAt": "2026-07-25T11:13:06Z",
+  "productID": "power",
+  "programManifestSHA256": "abf6e67b015de53f2f7f8d06dd61189eeeba6b719aa5a7d94433f94b3bbe99eb",
+  "runnerComponents": {
+    "path": "products/power/runner-certificates/evidence/83ecb818-e1f7-4118-80c9-1df9e6fbe8fe/runner-component-manifest.json",
+    "sha256": "ac490be49347ccf2fe6931aa4327921def04b664563afcec4e2809b201cffb1b"
+  },
+  "runtime": {
+    "backend": "mlx-metal",
+    "configuration": {
+      "dependencyLockSHA256": "6dc7774e01f6cd7449d42a1d36655fe61802c832689369e76f0e603ee218e1ef",
+      "includeStopToken": false,
+      "mlxSwiftRevision": "0bb916c67f4b9e5c682cbe02a42c701c93ab5021",
+      "mlxSwiftVersion": "0.31.6",
+      "renderabilityPolicy": "decoded-prefix-non-whitespace-v1",
+      "tokenizerRevision": "b38443e44d93eca770f2eb68e2a4d0fa100f9aa2",
+      "tokenizerVersion": "1.3.0"
+    },
+    "name": "MLX Swift LM",
+    "resolvedRevision": "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+    "version": "3.31.4"
+  },
+  "runtimeIdentity": {
+    "path": "products/power/runner-certificates/evidence/83ecb818-e1f7-4118-80c9-1df9e6fbe8fe/runtime-identity.json",
+    "sha256": "243b814df726662f9a3433aae146ae1e8a82b331b3b75b3e172dcb199f6213cf"
+  },
+  "schemaVersion": "power-runner-certificate-1.0.0-rc.1",
+  "state": "active",
+  "targetManifestSHA256": "d3229e3738ab848b39748d1ee08d1eae3fc68f645bd8f8fa6eef5f52f78f66c4",
+  "verification": {
+    "deterministicSerialization": "pass",
+    "failurePreservation": "pass",
+    "genericIOSReleaseBuild": "pass",
+    "physicalDeviceSmokeRun": "pass",
+    "rawResultReview": "pass",
+    "schemaAndFixtureIntegrity": "pass",
+    "sourceAndDependencyIntegrity": "pass",
+    "unitTests": "pass"
+  }
+}
