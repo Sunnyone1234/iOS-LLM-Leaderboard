@@ -1,14 +1,24 @@
 {
   "acceptedContributionCount": 0,
-  "excluded": [],
-  "excludedContributionCount": 0,
-  "generatedAt": "2026-07-24T00:00:00Z",
+  "excluded": [
+    {
+      "classification": "reject",
+      "reasonCodes": [
+        "runner-certificate-not-active",
+        "app-release-not-supported"
+      ],
+      "sourceResultSHA256": "caaab0a5e9064c9ccb155c52495ed8d44026b22f7ad83d16ea9b4648297fe55d",
+      "submissionID": "34A91509-406A-4948-95A3-54B82E7760A9"
+    }
+  ],
+  "excludedContributionCount": 1,
+  "generatedAt": "2026-07-25T14:13:05Z",
   "rankingPolicy": {
     "id": "power-ranking",
     "sha256": "9a61f66ff1084cd9aa5a3bc1c2bd3f3290e6392fdc343d98b5c48de781e31277",
     "version": "1.0.0-draft.2"
   },
   "schemaVersion": "power-ranking-dataset-1.0.0-draft.1",
-  "validatorSourceRevision": "4407a3776636e6c1a3a5892f78a3f4a841cecac7",
+  "validatorSourceRevision": "58aedff112783c06f2cd875057ac3522cd736f3b",
   "views": []
 }

@@ -1,0 +1,83 @@
+{
+  "archiveID": "power-1.x-operational-archive-2026-07-25",
+  "closedAt": "2026-07-25T14:13:05Z",
+  "licenses": {
+    "code": "MIT",
+    "contractsAndEvidence": "CC-BY-4.0"
+  },
+  "operationalSource": {
+    "revision": "58aedff112783c06f2cd875057ac3522cd736f3b",
+    "tag": "power-1.x-operational-archive-2026-07-25"
+  },
+  "pinnedOperationalFiles": [
+    {
+      "path": ".github/workflows/suite-b-submissions.yml",
+      "sha256": "9ad36964dcdc1196315b37961fcb1d0c8517e23da6c2d9f6837c4c5a7e9f5cfe"
+    },
+    {
+      "path": "tests/test_suite_b_power_submission.py",
+      "sha256": "31d5da2b9875e0c135b669991703b0330e3a473bb1f89bc70bf256d2924c1cae"
+    },
+    {
+      "path": "scripts/power.py",
+      "sha256": "6ea27a4d6cddd704eec497dfbf3256e27001a399be775dd7c91700f4d77d1e73"
+    }
+  ],
+  "releaseManifests": [
+    {
+      "path": "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.0.0-rc.1-publication-candidate.json",
+      "sha256": "00225701d96b7ab707dbdddd84761919dfd52481520e53263d2f6cc154f61278"
+    },
+    {
+      "path": "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.0.0-rc.1.json",
+      "sha256": "5611b5d122dadb3cb9c8aca89f86b30f1e860bdc6cced2446d118e3e0a9fab90"
+    },
+    {
+      "path": "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.0.0.json",
+      "sha256": "bdc7851d48cf830f765f6bf742c23a8bddbf3a318bca67f85a29e19b04d510ee"
+    },
+    {
+      "path": "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.0-draft.1.json",
+      "sha256": "e3161f164435eecb97291723d7051dafef7c06476f69fb3a4f33dfb0adcd9238"
+    },
+    {
+      "path": "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.0-rc.1.json",
+      "sha256": "e43552dddaa24bd09dd7a530929a12d2295059b7080becfd8777a17cd61ef5cd"
+    },
+    {
+      "path": "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.0.json",
+      "sha256": "22dcdbb5960fdf3641b8034aefd2e407d5731bdc371a14c13463e7458326a49e"
+    },
+    {
+      "path": "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.1.json",
+      "sha256": "ab6f16aea60cdc78474c8058b2f0a3fe12f5f6bf924d8586691a8b8fe0144e0d"
+    },
+    {
+      "path": "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.2.json",
+      "sha256": "f871c303b97c1e7f623a4ab0fa7f11de67e600d620d68cd17ddabd4b43752dfa"
+    },
+    {
+      "path": "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.3.json",
+      "sha256": "956cb686876c8792db563253fe6975c60eedc40a486f1fd2b3110769caa52326"
+    },
+    {
+      "path": "benchmarks/suite-b-on-device-performance/releases/suite-b-power-1.1.4.json",
+      "sha256": "9ae294a8e3c02d208ad7780da6f286ce04c76e76e8c15a0704bafa0c03bbd5b3"
+    }
+  ],
+  "retainedRoots": [
+    "benchmarks/suite-b-on-device-performance/",
+    "contributor-kit/power-1.0-quickstart.md",
+    "contributor-kit/power-1.1-quickstart.md",
+    "ios-app/",
+    "results/suite-b-power-1.1/",
+    "results/suite-b-power-1.1.0-rc.1/",
+    "results/suite-b-power-community/",
+    "schemas/suite-b-power-*.json",
+    "submissions/suite-b/power-1.0.0-rc.1/",
+    "submissions/suite-b/power-1.1.0/"
+  ],
+  "runtimeUse": "forbidden",
+  "schemaVersion": "power-historical-archive-1.0.0",
+  "status": "read-only"
+}

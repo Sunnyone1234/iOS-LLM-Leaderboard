@@ -15,6 +15,11 @@ from tests.test_suite_b_power_result import refresh_summary, valid_result
 
 
 ROOT = Path(__file__).resolve().parents[1]
+POWER_1_X_ARCHIVE = (
+    ROOT
+    / "benchmarks/suite-b-on-device-performance/releases"
+    / "power-1.x-archive.json"
+)
 SUBMISSION_A = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
 SUBMISSION_B = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"
 REVIEW_A = "cccccccc-cccc-4ccc-8ccc-cccccccccccc"
@@ -147,12 +152,24 @@ class PowerSubmissionTests(unittest.TestCase):
             hashlib.sha256((ROOT / verification["checksumManifestPath"]).read_bytes()).hexdigest(),
             verification["checksumManifestSHA256"],
         )
+        archive = json.loads(POWER_1_X_ARCHIVE.read_text())
+        archived_digests = {
+            reference["path"]: reference["sha256"]
+            for reference in archive["pinnedOperationalFiles"]
+        }
         for asset in candidate["pinnedAssets"]:
-            self.assertEqual(
-                hashlib.sha256((ROOT / asset["path"]).read_bytes()).hexdigest(),
-                asset["sha256"],
-                asset["path"],
+            path = ROOT / asset["path"]
+            current_digest = (
+                hashlib.sha256(path.read_bytes()).hexdigest()
+                if path.is_file()
+                else None
             )
+            if current_digest != asset["sha256"]:
+                self.assertEqual(
+                    archived_digests.get(asset["path"]),
+                    asset["sha256"],
+                    f"{asset['path']} is neither current nor pinned in the Power 1.x archive",
+                )
 
     def test_creator_preserves_exact_result_bytes(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

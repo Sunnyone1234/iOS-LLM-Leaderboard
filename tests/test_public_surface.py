@@ -38,11 +38,24 @@ class PublicSurfaceTests(unittest.TestCase):
             ROOT / "contributor-kit/README.md",
             ROOT / "submissions/README.md",
             ROOT / "docs/power.md",
+            ROOT / "docs/project-vision.md",
+            ROOT / "products/README.md",
         )
         combined = "\n".join(path.read_text() for path in paths)
         self.assertNotIn("Power 1.0 public intake is open", combined)
+        self.assertNotIn("## Current Power 1.1 intake", combined)
+        self.assertNotIn("Power 2.0 is being built", combined)
+        self.assertNotIn(
+            "The current Power release is\n"
+            "[Power Benchmark 1.1]",
+            combined,
+        )
         self.assertIn("scripts/power", combined)
         self.assertNotIn("python3 scripts/power.py", combined)
+        self.assertIn(
+            "submissions/power/text-generation-performance/2.0.0/draft/",
+            combined,
+        )
 
     def test_power_and_ship_are_separate_public_products(self) -> None:
         paths = (
@@ -107,10 +120,57 @@ class PublicSurfaceTests(unittest.TestCase):
         ]
         self.assertEqual(deployers, ["power-community-ranking.yml"])
 
+    def test_active_workflows_do_not_execute_historical_power(self) -> None:
+        workflows = tuple(
+            sorted((ROOT / ".github/workflows").glob("*.yml"))
+        )
+        self.assertNotIn(
+            "suite-b-submissions.yml",
+            {path.name for path in workflows},
+        )
+        combined = "\n".join(path.read_text() for path in workflows)
+        for retired_surface in (
+            "scripts/power.py",
+            "validate_suite_b_power",
+            "generate_power_community_ranking.py",
+            "submissions/suite-b/power-1.",
+            "results/suite-b-power-1.1",
+            "results/suite-b-power-community",
+        ):
+            with self.subTest(retired_surface=retired_surface):
+                self.assertNotIn(retired_surface, combined)
+
+    def test_active_power_surfaces_do_not_read_the_archive(self) -> None:
+        paths = [
+            ROOT / "scripts/power",
+            ROOT / "index.html",
+            ROOT / "site/app.js",
+            ROOT / "products/power/current.json",
+        ]
+        paths.extend(
+            sorted((ROOT / ".github/workflows").glob("*.yml"))
+        )
+        combined = "\n".join(path.read_text() for path in paths)
+        for retired_path in (
+            "scripts/power.py",
+            "contributor-kit/power-1.1-quickstart.md",
+            "submissions/suite-b/power-1.1.0",
+            "results/suite-b-power-1.1",
+            "suite-b-power-1.1.0",
+        ):
+            with self.subTest(retired_path=retired_path):
+                self.assertNotIn(retired_path, combined)
+
     def test_root_leaderboard_redirects_to_current_views(self) -> None:
         leaderboard = (ROOT / "results/LEADERBOARD.md").read_text()
+        self.assertIn(
+            "power/text-generation-performance/2.0.0/ranking.json",
+            leaderboard,
+        )
         self.assertIn("suite-b-power-1.1/LEADERBOARD.md", leaderboard)
         self.assertIn("suite-b-power-community/LEADERBOARD.md", leaderboard)
+        self.assertIn("static official snapshot", leaderboard)
+        self.assertIn("static community snapshot", leaderboard)
         self.assertNotIn("No eligible non-placeholder results", leaderboard)
 
     def test_power_table_numbers_follow_the_active_sort(self) -> None:

@@ -501,7 +501,7 @@ results/
 └── ship/<program-id>/
 
 scripts/
-├── power.py
+├── power
 ├── repoctl.py
 └── lib/
     ├── contracts/
@@ -923,7 +923,7 @@ refactor.
 - No unapproved Program, Target, Build protocol, or placeholder evidence is
   presented as active.
 
-The initial Power 2 activation items now pass. The phase plan above remains as
-the migration audit record; independent reproductions, community reruns, and
-later historical-plane cleanup are post-activation work rather than blockers
-for the active pointer.
+The Power 2 activation and historical-plane cutover items now pass. The phase
+plan above remains as the migration audit record. Independent reproductions
+and additional community reruns are ongoing product evidence work rather than
+migration blockers.

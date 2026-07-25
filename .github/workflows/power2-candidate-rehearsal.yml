@@ -89,7 +89,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && inputs.pr_number != ''
     runs-on: ubuntu-latest
     steps:
-      - name: Check out trusted migration validator
+      - name: Check out trusted Power 2 validator
         uses: actions/checkout@v4
         with:
           fetch-depth: 0

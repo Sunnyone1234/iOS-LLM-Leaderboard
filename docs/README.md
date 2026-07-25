@@ -21,6 +21,7 @@ Start here rather than reading every historical decision record.
 
 - [Historical Power 1.1 finalization](power-benchmark-1.1-finalization.md)
 - [Historical Power 1.1 RC freeze](power-benchmark-1.1-rc1-freeze.md)
+- [Power 1.x archive manifest](../benchmarks/suite-b-on-device-performance/releases/power-1.x-archive.json)
 - [Benchmark methodology](../methodology/)
 - [Suite B release assets](../benchmarks/suite-b-on-device-performance/)
 - [Schemas](../schemas/README.md)

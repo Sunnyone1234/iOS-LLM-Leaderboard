@@ -61,11 +61,12 @@ own reviewable sources.
 - Developer recipes link deployment claims to tested reference profiles.
 - Suite B remains the canonical owner of device performance measurements.
 
-The current Power release is
-[Power Benchmark 1.1](power-benchmark-1.1-finalization.md). It freezes only
-B-UX-001 and B-PIPE-001, adopts six immutable physical-device results without
-rewriting their RC1 source identity, and separates measured-performance from
-recommendation eligibility. It does not add a Suite D or Suite E task.
+The current Power release is [Power 2](power.md). Its first active benchmark
+cell combines the text-generation performance Program with the
+physical-iPhone Target and keeps responsiveness, sustained generation,
+memory, thermal, failure, and recommendation eligibility as separate
+evidence decisions. Power 1.0 and 1.1 remain a read-only historical plane and
+are not accepted or translated by the current App, intake, or ranking.
 
 ### Phase 2 Research Track: Build
 

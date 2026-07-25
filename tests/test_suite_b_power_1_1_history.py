@@ -103,6 +103,50 @@ def report_reason_codes(report: object) -> set[str]:
 
 
 class PowerOneOneValidatorHistoryTests(unittest.TestCase):
+    def test_historical_plane_has_a_read_only_archive_manifest(self) -> None:
+        archive_path = (
+            SUITE / "releases" / "power-1.x-archive.json"
+        )
+        archive = json.loads(archive_path.read_text())
+
+        self.assertEqual(archive["status"], "read-only")
+        self.assertEqual(archive["runtimeUse"], "forbidden")
+        self.assertEqual(
+            archive["operationalSource"],
+            {
+                "revision":
+                    "58aedff112783c06f2cd875057ac3522cd736f3b",
+                "tag": "power-1.x-operational-archive-2026-07-25",
+            },
+        )
+        self.assertFalse(
+            (ROOT / ".github/workflows/suite-b-submissions.yml").exists()
+        )
+
+        for reference in archive["releaseManifests"]:
+            with self.subTest(path=reference["path"]):
+                path = ROOT / reference["path"]
+                self.assertTrue(path.is_file())
+                self.assertEqual(
+                    hashlib.sha256(path.read_bytes()).hexdigest(),
+                    reference["sha256"],
+                )
+
+        operational = {
+            reference["path"]: reference["sha256"]
+            for reference in archive["pinnedOperationalFiles"]
+        }
+        self.assertEqual(
+            operational["scripts/power.py"],
+            hashlib.sha256(
+                (ROOT / "scripts/power.py").read_bytes()
+            ).hexdigest(),
+        )
+        self.assertIn(
+            ".github/workflows/suite-b-submissions.yml",
+            operational,
+        )
+
     def test_all_frozen_assets_are_digest_pinned(self) -> None:
         for case in CASES:
             with self.subTest(case=case.name):
